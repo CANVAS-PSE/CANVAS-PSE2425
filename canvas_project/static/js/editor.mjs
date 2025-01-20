@@ -7,7 +7,7 @@ import { TransformControls } from "transformControls";
 import { UndoRedoHandler } from "undoRedoHandler";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
 //import { Navbar } from "navbar";
-//import { Overview } from "overview";
+import { OverviewHandler } from "overview";
 //import { ModeSelector } from "modeSelector";
 import { Picker } from "picker";
 //import { ProjectSettingManager } from "projectSettingManager";
@@ -68,7 +68,7 @@ export class Editor {
             this.#selectionBox,
             this.#selectableGroup
         );
-        //this.#overview = new Overview(this.#picker);
+        this.#overview = new OverviewHandler(this.#picker);
         //this.#projectSettingManager = new ProjectSettingManager();
         //this.#quickSelector = new QuickSelector();
         //this.#jobInterface = new JobInterface();
