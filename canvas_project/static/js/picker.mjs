@@ -72,17 +72,23 @@ export class Picker {
      * Adds event listeners for custom events objectCreated and objectDeleted
      */
     #addEventListenerCustomEvent() {
-        // @ts-ignore
-        document.addEventListener("itemDeleted", (event) => {
-            this.#deselectAll();
-            this.#itemSelectedEvent();
-        });
+        this.#canvas.addEventListener(
+            "itemDeleted",
+            (/**  @type {ItemDeletedEvent} */ event) => {
+                if (event.detail.item == this.#selectedObjects[0]) {
+                    this.#deselectAll();
+                    this.#itemSelectedEvent();
+                }
+            }
+        );
 
-        document.addEventListener("itemCreated", (event) => {
-            // @ts-ignore
-            const createdItem = event.detail.item;
-            this.setSelection([createdItem]);
-        });
+        this.#canvas.addEventListener(
+            "itemCreated",
+            (/**  @type {ItemCreatedEvent} */ event) => {
+                const createdItem = event.detail.item;
+                this.setSelection([createdItem]);
+            }
+        );
     }
 
     /**
