@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import login, update_session_auth_hash, logout
-from .forms import RegisterForm, LoginForm, UpdateAccountForm, DeleteAccountForm   , PasswordResetForm
+from .forms import RegisterForm, LoginForm, UpdateAccountForm, DeleteAccountForm, PasswordResetForm, PasswordForgottenForm
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -185,3 +185,46 @@ def delete_account(request):
                     messages.error(request, f"Error in {field.label}: {error}")
         
     return redirect(request.META.get("HTTP_REFERER", "index"))
+
+def password_forgotten_view(request):
+    """
+    View if a user doesn't remember its password and wants to reset it.
+    """
+    if request.method == "POST":
+        form = PasswordForgottenForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            user = User.objects.get(email=email)
+            send_password_forgotten_email(user, request)
+            return redirect('login')
+    else:
+        form = PasswordForgottenForm()
+
+    return render(request, 'password_forgotten.html', {'form': form})
+
+def send_password_forgotten_email(user, request):
+    """
+    Send an email to the user to reset their password.
+    """
+    subject = 'Password Reset'
+
+    # Create the token for the user
+    uid = urlsafe_base64_encode(str(user.id).encode())
+    token = default_token_generator.make_token(user)
+    
+    base_url = request.build_absolute_uri('/')
+    # Create the URL for the password change page
+    password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
+
+    message = render_to_string('accounts/password_forgotten_email.html', {
+        'user': user,
+        'password_reset_url': password_reset_url,
+    })
+
+    to_email = user.email
+    email = EmailMessage(
+        subject,
+        message,
+        to=[to_email]
+    )
+    email.send()
