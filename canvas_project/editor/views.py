@@ -78,7 +78,6 @@ def download(request, project_name):
         FileResponse to download the hdf5 file.
     """
 
-    # Placeholder for actual download functionality added later
     project = get_object_or_404(Project, name=project_name, owner=request.user)
 
     # Set CANVAS_ROOT
