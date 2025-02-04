@@ -79,14 +79,14 @@ export class CommandPrompt {
                             1 +
                             this.#commandListElem.children.length) %
                         this.#commandListElem.children.length;
-                    this.#selectCommand();
+                    this.selectCommand();
                 }
                 if (event.key === "ArrowDown") {
                     event.preventDefault();
                     this.#selectedIndex =
                         (this.#selectedIndex + 1) %
                         this.#commandListElem.children.length;
-                    this.#selectCommand();
+                    this.selectCommand();
                 }
 
                 if (event.key === "Enter") {
@@ -104,26 +104,30 @@ export class CommandPrompt {
         });
 
         this.#commandList = [
-            new LightModePromptCommand(),
-            new DarkModePromptCommand(),
-            new AutoModePromptCommand(),
-            new AddHeliostatPromptCommand(),
-            new AddReceiverPromptCommand(),
-            new AddLightSourcePromptCommand(),
-            new ToggleFullscreenPromptCommand(),
-            new ExportProjectPromptCommand(),
-            new RenderProjectPromptCommand(),
-            new OpenSettingsPromptCommand(),
-            new OpenJobInterfacePromptCommand(),
-            new OpenKeybindsPromptCommand(),
-            new LogoutPromptCommand(),
-            new NewProjectPromptCommand(),
-            new OpenProjectPromptCommand(),
+            new LightModePromptCommand(this),
+            new DarkModePromptCommand(this),
+            new AutoModePromptCommand(this),
+            new AddHeliostatPromptCommand(this),
+            new AddReceiverPromptCommand(this),
+            new AddLightSourcePromptCommand(this),
+            new ToggleFullscreenPromptCommand(this),
+            new ExportProjectPromptCommand(this),
+            new RenderProjectPromptCommand(this),
+            new OpenSettingsPromptCommand(this),
+            new OpenJobInterfacePromptCommand(this),
+            new OpenKeybindsPromptCommand(this),
+            new LogoutPromptCommand(this),
+            new NewProjectPromptCommand(this),
+            new OpenProjectPromptCommand(this),
         ];
 
         this.#commandList.sort((command1, command2) =>
             command1.commandName.localeCompare(command2.commandName)
         );
+    }
+
+    hide() {
+        this.#modal.hide();
     }
 
     #openCommandPrompt() {
@@ -147,7 +151,7 @@ export class CommandPrompt {
                 command.formatCommandName();
             });
             this.#selectedIndex = 0;
-            this.#selectCommand();
+            this.selectCommand();
         }
     }
 
@@ -168,11 +172,16 @@ export class CommandPrompt {
     /**
      * Selects the command specified by the selectedIndex
      */
-    #selectCommand() {
+    selectCommand(selectedIndex = this.#selectedIndex) {
         if (this.#selectedCommand) {
             this.#selectedCommand.classList.remove("text-white");
             this.#selectedCommand.unselect();
         }
+
+        if (selectedIndex !== this.#selectedIndex) {
+            this.#selectedIndex = selectedIndex;
+        }
+
         this.#selectedCommand =
             this.#commandListElem.children[this.#selectedIndex];
         this.#selectedCommand.select();
@@ -227,7 +236,7 @@ export class CommandPrompt {
         if (this.#commandListElem.children.length > 0) {
             // select the new first element
             this.#selectedIndex = 0;
-            this.#selectCommand();
+            this.selectCommand();
         } else {
             if (this.#selectedCommand) {
                 this.#selectedCommand.unselect();

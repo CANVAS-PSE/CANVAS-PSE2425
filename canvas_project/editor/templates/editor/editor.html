@@ -149,9 +149,8 @@
                     Projects will only be saved if they have a name unique to
                     your already existing projects!
                 </p>
-                <form action="" method="POST" class="d-flex flex-column gap-2">
+                <form action="" method="POST" class="d-flex flex-column gap-3">
                     {% csrf_token %} {{ createProjectForm }}
-                    <br />
                     <button class="btn btn-primary rounded-3" type="submit">Create</button>
                 </form>
             </div>
@@ -179,9 +178,15 @@
                             <div class="row g-0">
                                 <div class="col-md-4">
                                     <a class="col-md-4" href="{% url 'editor' project.name %}">
-                                        <img src="{{ project.preview.url }}"
-                                             alt="{{ project.name }}"
-                                             class="img-fluid h-100" />
+                                        {% if project.preview %}
+                                            <img src="{{ project.preview.url }}"
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100" />
+                                        {% else %}
+                                            <img src="{% static 'img/emptyEditor.png' %} "
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100" />
+                                        {% endif %}
                                     </a>
                                 </div>
                                 <div class="col-md-8">
@@ -692,9 +697,7 @@
                     <li>
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
-                            <button type="submit" class="dropdown-item">
-                                Sign out
-                            </button>
+                            <button type="submit" class="dropdown-item">Sign out</button>
                         </form>
                     </li>
                 </ul>

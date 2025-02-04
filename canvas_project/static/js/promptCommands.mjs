@@ -1,4 +1,5 @@
 import { Modal } from "bootstrap";
+import { CommandPrompt } from "commandPrompt";
 
 /**
  * Parent class of all prompt commands
@@ -11,14 +12,17 @@ export class PromptCommand extends HTMLElement {
      */
     #selectedChars = null;
     #commandElem;
+    #commandPrompt;
+
     /**
      * Creates a new prompt command
      * @param {String} name the name of the command
      * @param {String} [keybind=null] the keybind of the command
      */
-    constructor(name, keybind = null) {
+    constructor(name, commandPrompt, keybind = null) {
         super();
         this.#commandName = name;
+        this.#commandPrompt = commandPrompt;
         this.classList.add(
             "rounded-2",
             "p-1",
@@ -27,6 +31,7 @@ export class PromptCommand extends HTMLElement {
             "justify-content-between",
             "align-items-center"
         );
+        this.style.cursor = "pointer";
 
         this.#commandElem = document.createElement("div");
         this.#commandElem.innerHTML = name;
@@ -38,6 +43,24 @@ export class PromptCommand extends HTMLElement {
             keybindElem.classList.add("key", "border", "p-0", "px-2");
             this.appendChild(keybindElem);
         }
+
+        // execute on click
+        this.addEventListener("click", () => {
+            this.execute();
+            this.#commandPrompt.hide();
+        });
+
+        // select this element on hover
+        this.addEventListener("mousemove", (event) => {
+            if (event.target === this) {
+                this.#commandPrompt.selectCommand(
+                    Array.prototype.indexOf.call(
+                        this.parentElement.children,
+                        this
+                    )
+                );
+            }
+        });
     }
 
     get commandName() {
@@ -110,8 +133,12 @@ export class PromptCommand extends HTMLElement {
  */
 export class LightModePromptCommand extends PromptCommand {
     #themeSwitcher;
-    constructor() {
-        super("Use light mode");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Use light mode", commandPrompt);
         this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
@@ -128,8 +155,12 @@ export class LightModePromptCommand extends PromptCommand {
  */
 export class DarkModePromptCommand extends PromptCommand {
     #themeSwitcher;
-    constructor() {
-        super("Use dark mode");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Use dark mode", commandPrompt);
         this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
@@ -145,8 +176,12 @@ export class DarkModePromptCommand extends PromptCommand {
  */
 export class AutoModePromptCommand extends PromptCommand {
     #themeSwitcher;
-    constructor() {
-        super("Use auto mode");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Use auto mode", commandPrompt);
         this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
@@ -167,8 +202,12 @@ export class AutoModePromptCommand extends PromptCommand {
  * Prompt command to add a heliostat to the scene
  */
 export class AddHeliostatPromptCommand extends PromptCommand {
-    constructor() {
-        super("Add heliostat");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Add heliostat", commandPrompt);
     }
 
     execute() {
@@ -180,8 +219,12 @@ export class AddHeliostatPromptCommand extends PromptCommand {
  * Prompt command to add a receiver to the scene
  */
 export class AddReceiverPromptCommand extends PromptCommand {
-    constructor() {
-        super("Add receiver");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Add receiver", commandPrompt);
     }
 
     execute() {
@@ -193,8 +236,12 @@ export class AddReceiverPromptCommand extends PromptCommand {
  * Prompt command to add a lightsource to the scene
  */
 export class AddLightSourcePromptCommand extends PromptCommand {
-    constructor() {
-        super("Add light source");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Add light source", commandPrompt);
     }
 
     execute() {
@@ -206,8 +253,12 @@ export class AddLightSourcePromptCommand extends PromptCommand {
  * Prompt command to toggle fullscreen
  */
 export class ToggleFullscreenPromptCommand extends PromptCommand {
-    constructor() {
-        super("Toggle fullscreen", "F11");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Toggle fullscreen", commandPrompt, "F11");
     }
 
     execute() {
@@ -219,8 +270,12 @@ export class ToggleFullscreenPromptCommand extends PromptCommand {
  * Prompt command to export the current project
  */
 export class ExportProjectPromptCommand extends PromptCommand {
-    constructor() {
-        super("Export project");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Export project", commandPrompt);
     }
 
     execute() {
@@ -232,8 +287,12 @@ export class ExportProjectPromptCommand extends PromptCommand {
  * Prompt command to render the current project
  */
 export class RenderProjectPromptCommand extends PromptCommand {
-    constructor() {
-        super("Render project");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Render project", commandPrompt);
     }
 
     execute() {
@@ -245,8 +304,12 @@ export class RenderProjectPromptCommand extends PromptCommand {
  * Prompt command to open the settings pane
  */
 export class OpenSettingsPromptCommand extends PromptCommand {
-    constructor() {
-        super("Open settings");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Open settings", commandPrompt);
     }
 
     execute() {
@@ -259,8 +322,12 @@ export class OpenSettingsPromptCommand extends PromptCommand {
  * Prompt command to open the job interface pane
  */
 export class OpenJobInterfacePromptCommand extends PromptCommand {
-    constructor() {
-        super("Open job interface");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Open job interface", commandPrompt);
     }
 
     execute() {
@@ -275,8 +342,12 @@ export class OpenJobInterfacePromptCommand extends PromptCommand {
  * Prompt command to open the keybindings help page
  */
 export class OpenKeybindsPromptCommand extends PromptCommand {
-    constructor() {
-        super("Open keybindings help page");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Open keybindings help page", commandPrompt);
     }
 
     execute() {
@@ -291,8 +362,12 @@ export class OpenKeybindsPromptCommand extends PromptCommand {
  * Prompt command to logout the user
  */
 export class LogoutPromptCommand extends PromptCommand {
-    constructor() {
-        super("Logout");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Logout", commandPrompt);
     }
 
     execute() {
@@ -306,8 +381,12 @@ export class LogoutPromptCommand extends PromptCommand {
  * Prompt command to create a new project
  */
 export class NewProjectPromptCommand extends PromptCommand {
-    constructor() {
-        super("Create new project");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Create new project", commandPrompt);
     }
 
     execute() {
@@ -328,8 +407,12 @@ export class NewProjectPromptCommand extends PromptCommand {
  * Prompt command to open an existing project
  */
 export class OpenProjectPromptCommand extends PromptCommand {
-    constructor() {
-        super("Open exisiting project");
+    /**
+     * Create this prompt command
+     * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     */
+    constructor(commandPrompt) {
+        super("Open exisiting project", commandPrompt);
     }
 
     execute() {
