@@ -20,15 +20,16 @@ def projects(request):
         allProjects = Project.objects.all()
         if form.is_valid():
             nameUnique = True
+            formName = form["name"].value()
             for existingProject in allProjects:
-                if form["name"].value() == existingProject.name:
+                if formName == existingProject.name:
                     nameUnique = False
             if nameUnique:
                 form = form.save(commit=False)
                 form.owner = request.user
                 form.last_edited = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 form.save()
-                return HttpResponseRedirect(reverse("projects"))
+                return redirect("editor", project_name=formName)
         context = {"projects": allProjects, "form": form}
         return render(request, "project_management/projects.html", context)
 
