@@ -13,7 +13,6 @@ class Project(models.Model):
     favorite = models.CharField(max_length=5, default="false")
     preview = models.ImageField(
         upload_to="project_previews/",
-        default="project_previews/emptyEditor.png",
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 

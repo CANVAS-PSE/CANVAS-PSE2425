@@ -18,6 +18,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
      */
     constructor(heliostat) {
         super();
+        this.#heliostat = heliostat;
         this.#heliostatCopy = new Heliostat(
             this.#heliostat.objectName == "" || !this.#heliostat.objectName
                 ? "Heliostat_Copy"
@@ -27,7 +28,8 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
             this.#heliostat.numberOfFacets,
             this.#heliostat.kinematicType
         );
-        this.#heliostat = heliostat;
+
+        document.dispatchEvent(new ItemCreatedEvent(this.#heliostatCopy));
     }
 
     async execute() {
@@ -35,7 +37,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemCreatedEvent(this.#heliostat));
+            .dispatchEvent(new ItemCreatedEvent(this.#heliostatCopy));
     }
 
     undo() {
@@ -43,7 +45,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemDeletedEvent(this.#heliostat));
+            .dispatchEvent(new ItemDeletedEvent(this.#heliostatCopy));
     }
 }
 
@@ -61,6 +63,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
      */
     constructor(receiver) {
         super();
+        this.#receiver = receiver;
         this.#receiverCopy = new Receiver(
             this.#receiver.objectName == "" || !this.#receiver.objectName
                 ? "Receiver_Copy"
@@ -76,7 +79,8 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
             this.#receiver.curvatureE,
             this.#receiver.curvatureU
         );
-        this.#receiver = receiver;
+
+        document.dispatchEvent(new ItemCreatedEvent(this.#receiverCopy));
     }
 
     async execute() {
@@ -84,7 +88,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemCreatedEvent(this.#receiver));
+            .dispatchEvent(new ItemCreatedEvent(this.#receiverCopy));
     }
 
     undo() {
@@ -92,7 +96,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemDeletedEvent(this.#receiver));
+            .dispatchEvent(new ItemDeletedEvent(this.#receiverCopy));
     }
 }
 
@@ -110,6 +114,7 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
      */
     constructor(lightsource) {
         super();
+        this.#lightsource = lightsource;
         this.#lightsourceCopy = new LightSource(
             this.#lightsource.objectName == "" || !this.#lightsource.objectName
                 ? "lightsource_Copy"
@@ -120,7 +125,8 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
             this.#lightsource.distributionMean,
             this.#lightsource.distributionCovariance
         );
-        this.#lightsource = lightsource;
+
+        document.dispatchEvent(new ItemCreatedEvent(this.#lightsourceCopy));
     }
 
     async execute() {
@@ -128,7 +134,7 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemCreatedEvent(this.#lightsource));
+            .dispatchEvent(new ItemCreatedEvent(this.#lightsourceCopy));
     }
 
     undo() {
@@ -136,6 +142,6 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemDeletedEvent(this.#lightsource));
+            .dispatchEvent(new ItemDeletedEvent(this.#lightsourceCopy));
     }
 }

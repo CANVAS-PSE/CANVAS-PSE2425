@@ -16,6 +16,17 @@ import {
     UpdateLightsourceCommand,
     UpdateReceiverCommand,
 } from "updateCommands";
+import {
+    DuplicateHeliostatCommand,
+    DuplicateReceiverCommand,
+    DuplicateLightSourceCommand,
+} from "duplicateCommands";
+import {
+    DeleteHeliostatCommand,
+    DeleteLightSourceCommand,
+    DeleteReceiverCommand,
+} from "deleteCommands";
+import { ItemDeletedEvent } from "deleteCommands";
 
 export class SelectableObject extends Object3D {
     #objectName;
@@ -31,6 +42,7 @@ export class SelectableObject extends Object3D {
     constructor(name, Inspe) {
         super();
         this.#objectName = name;
+        this.isSelectable = true;
     }
 
     get objectName() {
@@ -57,8 +69,21 @@ export class SelectableObject extends Object3D {
     }
 
     /**
+     * Duplicates the object
+     */
+    duplicate() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+    /**
+     * Deletes the object
+     */
+    delete() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
      * Updates and saves the new position through a command
-     * @param {Vector3} position 
+     * @param {Vector3} position
      */
     updateAndSaveObjectPosition(position) {
         throw new Error("This method must be implemented in all subclasses");
@@ -82,7 +107,7 @@ export class SelectableObject extends Object3D {
 
     /**
      * Returns the axis on which the object is rotatable
-     * @returns {Boolean}
+     * @returns {string[]} - an array containing all rotable axis
      */
     get rotatableAxis() {
         throw new Error("This method must be implemented in all subclasses");
@@ -93,6 +118,14 @@ export class SelectableObject extends Object3D {
      * @returns {Boolean}
      */
     get isMovable() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
+     * Returns the old position of the heliostat
+     * @returns {THREE.Vector3} the old position of the heliostat
+     */
+    get oldPosition() {
         throw new Error("This method must be implemented in all subclasses");
     }
 }
@@ -112,6 +145,9 @@ export class Heliostat extends SelectableObject {
     #kinematicTypeComponent;
     #undoRedoHandler = new UndoRedoHandler();
     #isMovable = true;
+    /**
+     * @type { string[] }
+     */
     #rotatableAxis = null;
     #oldPosition;
 
@@ -299,26 +335,14 @@ export class Heliostat extends SelectableObject {
         );
     }
 
-    /**
-     * Returns the axis on which the heliostat is rotatable
-     * @returns {Boolean} false, as the heliostat is not rotatable
-     */
     get rotatableAxis() {
         return this.#rotatableAxis;
     }
 
-    /**
-     * Returns whether the heliostat is movable or not
-     * @returns {Boolean} true, as the heliostat is movable
-     */
     get isMovable() {
         return this.#isMovable;
     }
 
-    /**
-     * Returns the old position of the heliostat
-     * @returns {THREE.Vector3} the old position of the heliostat
-     */
     get oldPosition() {
         return this.#oldPosition;
     }
@@ -342,9 +366,19 @@ export class Heliostat extends SelectableObject {
         );
     }
 
+    duplicate() {
+        this.#undoRedoHandler.executeCommand(
+            new DuplicateHeliostatCommand(this)
+        );
+    }
+
+    delete() {
+        this.#undoRedoHandler.executeCommand(new DeleteHeliostatCommand(this));
+    }
+
     /**
      * Updates the position of the heliostat
-     * @param {Vector3} position 
+     * @param {Vector3} position
      */
     updateAndSaveObjectPosition(position) {
         this.#undoRedoHandler.executeCommand(
@@ -471,6 +505,7 @@ export class Receiver extends SelectableObject {
 
         this.#base.rotation.y = rotationY;
         this.#top.rotation.y = rotationY;
+        this.#oldPosition = position.clone();
 
         this.#apiID = apiID;
         this.#towerType = towerType;
@@ -724,20 +759,16 @@ export class Receiver extends SelectableObject {
         );
     }
 
-    /**
-     * Returns whether the receiver is rotatable or not
-     * @returns {Boolean} true, as the receiver is rotatable
-     */
     get rotatableAxis() {
         return this.#rotatableAxis;
     }
 
-    /**
-     * Returns whether the receiver is movable or not
-     * @returns {Boolean} true, as the receiver is movable
-     */
     get isMovable() {
         return this.#isMovable;
+    }
+
+    get oldPosition() {
+        return this.#oldPosition;
     }
 
     /**
@@ -748,6 +779,16 @@ export class Receiver extends SelectableObject {
         this.position.copy(position);
         this.#oldPosition = new Vector3(position.x, position.y, position.z);
         this.#base.position.y = -position.y;
+    }
+
+    /**
+     * Updates the position of the receiver
+     * @param {Vector3} position
+     */
+    updateAndSaveObjectPosition(position) {
+        this.#undoRedoHandler.executeCommand(
+            new UpdateReceiverCommand(this, "position", position)
+        );
     }
 
     getPosition() {
@@ -763,18 +804,14 @@ export class Receiver extends SelectableObject {
         );
     }
 
-    /**
-     * Updates the position of the receiver
-     * @param {Vector3} position 
-     */
-    updateAndSaveObjectPosition(position) {
-        this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "position", position)
-        );
+    delete() {
+        this.#undoRedoHandler.executeCommand(new DeleteReceiverCommand(this));
     }
 
-    get oldPosition() {
-        return this.#oldPosition;
+    duplicate() {
+        this.#undoRedoHandler.executeCommand(
+            new DuplicateReceiverCommand(this)
+        );
     }
 
     get apiID() {
@@ -851,6 +888,11 @@ export class Receiver extends SelectableObject {
 
     get rotationY() {
         return this.#rotationY;
+    }
+
+    set rotationY(newValue) {
+        this.rotation.y = newValue;
+        this.#rotationY = newValue;
     }
 
     updateRotation(rotation) {
@@ -1062,6 +1104,17 @@ export class LightSource extends SelectableObject {
     updateAndSaveObjectName(name) {
         this.#undoRedoHandler.executeCommand(
             new UpdateLightsourceCommand(this, "objectName", name)
+        );
+    }
+
+    duplicate() {
+        this.#undoRedoHandler.executeCommand(
+            new DuplicateLightSourceCommand(this)
+        );
+    }
+    delete() {
+        this.#undoRedoHandler.executeCommand(
+            new DeleteLightSourceCommand(this)
         );
     }
 
