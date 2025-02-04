@@ -302,8 +302,8 @@
                         class="rounded-circle me-2"
                         style="width: 32px; height: 32px; object-fit: cover;">
                 {% else %}
-                    <!-- Falls kein Profilbild existiert, Standardbild anzeigen -->
-                    <img src="{{ MEDIA_URL }}profile_pics/default.jpg"
+                    <!-- If the user doesn't have a profile picture -->
+                    <img src="/media/profile_pics/default.jpg"
                          alt="Default Profile Picture"
                         class="rounded-circle me-2"
                         style="width: 32px; height: 32px; object-fit: cover;">
