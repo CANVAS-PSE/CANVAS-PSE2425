@@ -72,8 +72,12 @@ export class Picker {
         });
 
         // Keyboard event listeners for snap-to-grid functionality
-        window.addEventListener("keydown", (event) => { this.#onKeyDown(event); });
-        window.addEventListener("keyup", (event) => { this.#onKeyUp(event); });
+        window.addEventListener("keydown", (event) => {
+            this.#onKeyDown(event);
+        });
+        window.addEventListener("keyup", (event) => {
+            this.#onKeyUp(event);
+        });
 
         this.#addEventListenerCustomEvent();
     }
@@ -197,12 +201,9 @@ export class Picker {
                 );
                 this.#itemSelectedEvent();
             } else if (this.#transformControls.mode === "rotate") {
-                //TODO: auch mit Commands Updaten + denn Camera fall auch abdecken
-                /*
-                this.#selectedObject.updateRotation(
-                    this.#transformControls.object.rotation
+                this.#selectedObject.updateAndSaveObjectRotation(
+                    this.#transformControls.object.rotation.clone()
                 );
-                */
                 this.#itemSelectedEvent();
             }
         }
@@ -369,7 +370,7 @@ export class Picker {
 
     /**
      * Enables grid snapping when the Shift key is pressed.
-     * @param {KeyboardEvent} event 
+     * @param {KeyboardEvent} event
      */
     #onKeyDown(event) {
         if (event.key === "Shift") {
@@ -377,14 +378,15 @@ export class Picker {
             if (this.#transformControls.mode === "translate") {
                 this.#transformControls.translationSnap = 1; // Snap to grid size of 1 unit
             } else if (this.#transformControls.mode === "rotate") {
-                this.#transformControls.rotationSnap = THREE.MathUtils.degToRad(15); // Snap rotation to 15° increments
+                this.#transformControls.rotationSnap =
+                    THREE.MathUtils.degToRad(15); // Snap rotation to 15° increments
             }
         }
     }
-    
+
     /**
      * Disables grid snapping when the Shift key is released.
-     * @param {KeyboardEvent} event 
+     * @param {KeyboardEvent} event
      */
     #onKeyUp(event) {
         if (event.key === "Shift") {

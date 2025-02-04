@@ -169,7 +169,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
     /**
      * Initializes a new UpdateReceiverCommand with the specified 'Receiver' instance, attribute, and new parameter.
      * @param {Receiver} receiver - This is the receiver object whose attribute will be updated.
-     * @param {"objectName" | "towerType" | "normalVector" | "planeE" | "planeU" | "resolutionE" | "resolutionU" | "curvatureE" | "curvatureU" | "rotationY" | "position" } attribute - The name of the attribute to modify.
+     * @param {"objectName" | "towerType" | "normalVector" | "planeE" | "planeU" | "resolutionE" | "resolutionU" | "curvatureE" | "curvatureU" | "rotation" | "position" } attribute - The name of the attribute to modify.
      * @param {*} newParameter - The new value to assign to the attribute. This can be of any type depending on the attribute being updated.
      */
     constructor(receiver, attribute, newParameter) {
@@ -213,8 +213,8 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
             case "resolutionU":
                 this.#receiver.resolutionU = this.#newParameter;
                 break;
-            case "rotationY":
-                this.#receiver.rotationY = this.#newParameter;
+            case "rotation":
+                this.#receiver.updateRotation(this.#newParameter);
                 break;
             case "position":
                 this.#receiver.updatePosition(this.#newParameter);
@@ -262,8 +262,8 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
             case "resolutionU":
                 this.#receiver.resolutionU = this.#oldParameter;
                 break;
-            case "rotationY":
-                this.#receiver.rotationY = this.#oldParameter;
+            case "rotation":
+                this.#receiver.updateAndSaveObjectRotation(this.#oldParameter);
                 break;
             case "position":
                 this.#receiver.updatePosition(this.#oldParameter);
@@ -303,8 +303,8 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
                 return this.#receiver.resolutionE;
             case "resolutionU":
                 return this.#receiver.resolutionU;
-            case "rotationY":
-                return this.#receiver.rotationY;
+            case "rotation":
+                return this.#receiver.oldRotation;
             case "position":
                 return this.#receiver.oldPosition;
             default:

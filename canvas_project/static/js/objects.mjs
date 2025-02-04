@@ -69,6 +69,21 @@ export class SelectableObject extends Object3D {
     }
 
     /**
+     * Updates and saves the new position through a command
+     * @param {Vector3} position
+     */
+    updateAndSaveObjectPosition(position) {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
+     * Updates and saves the new rotation through a command
+     */
+    updateAndSaveObjectRotation(rotation) {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
      * Duplicates the object
      */
     duplicate() {
@@ -81,13 +96,6 @@ export class SelectableObject extends Object3D {
         throw new Error("This method must be implemented in all subclasses");
     }
 
-    /**
-     * Updates and saves the new position through a command
-     * @param {Vector3} position
-     */
-    updateAndSaveObjectPosition(position) {
-        throw new Error("This method must be implemented in all subclasses");
-    }
 
     /**
      * Updates the position of the object
@@ -446,7 +454,6 @@ export class Receiver extends SelectableObject {
     #resolutionU;
     #curvatureE;
     #curvatureU;
-    #rotationY = 0;
     #undoRedoHandler = new UndoRedoHandler();
 
     #top;
@@ -463,6 +470,7 @@ export class Receiver extends SelectableObject {
     #isMovable = true;
     #rotatableAxis = ["Y"];
     #oldPosition;
+    #oldRotation = new THREE.Euler(0, 0, 0);
 
     /**
      * Creates a Receiver object
@@ -502,10 +510,9 @@ export class Receiver extends SelectableObject {
         this.add(this.#top);
 
         this.updatePosition(position);
+        this.updateRotation(new THREE.Euler(0, rotationY, 0, "XYZ"));
 
-        this.#base.rotation.y = rotationY;
-        this.#top.rotation.y = rotationY;
-        this.#oldPosition = position.clone();
+        //this.#oldPosition = position.clone();
 
         this.#apiID = apiID;
         this.#towerType = towerType;
@@ -516,7 +523,6 @@ export class Receiver extends SelectableObject {
         this.#resolutionU = resolutionU;
         this.#curvatureE = curvatureE;
         this.#curvatureU = curvatureU;
-        this.#rotationY = rotationY;
 
         // create components for the inspector
         this.#headerComponent = new HeaderInspectorComponent(
@@ -594,11 +600,11 @@ export class Receiver extends SelectableObject {
             "Rotation U",
             0,
             360,
-            () => THREE.MathUtils.radToDeg(this.#rotationY),
+            () => THREE.MathUtils.radToDeg(this.#oldRotation.y),
             (newValue) => {
                 newValue = THREE.MathUtils.degToRad(newValue);
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "rotationY", newValue)
+                    new UpdateReceiverCommand(this, "rotation", new THREE.Euler(this.#oldRotation.x, newValue, this.oldRotation.z))
                 );
             },
             15
@@ -771,14 +777,8 @@ export class Receiver extends SelectableObject {
         return this.#oldPosition;
     }
 
-    /**
-     * Updates the receiver’s position by adjusting both the base and the top, ensuring that the base remains on the ground.
-     * @param {THREE.Vector3} position the new position of the receiver
-     */
-    updatePosition(position) {
-        this.position.copy(position);
-        this.#oldPosition = new Vector3(position.x, position.y, position.z);
-        this.#base.position.y = -position.y;
+    get oldRotation() {
+        return this.#oldRotation;
     }
 
     /**
@@ -789,6 +789,16 @@ export class Receiver extends SelectableObject {
         this.#undoRedoHandler.executeCommand(
             new UpdateReceiverCommand(this, "position", position)
         );
+    }
+
+    /**
+     * Updates the receiver’s position by adjusting both the base and the top, ensuring that the base remains on the ground.
+     * @param {THREE.Vector3} position the new position of the receiver
+     */
+    updatePosition(position) {
+        this.position.copy(position);
+        this.#oldPosition = new Vector3(position.x, position.y, position.z);
+        this.#base.position.y = -position.y;
     }
 
     getPosition() {
@@ -802,6 +812,38 @@ export class Receiver extends SelectableObject {
         this.#undoRedoHandler.executeCommand(
             new UpdateReceiverCommand(this, "objectName", name)
         );
+    }
+
+    /**
+     * Updates the rotation of the receiver 
+     * @param {THREE.Euler} rotation 
+     */
+    updateAndSaveObjectRotation(rotation) {
+        console.log("hallooooo");
+        this.#undoRedoHandler.executeCommand(
+            new UpdateReceiverCommand(this, "rotation", rotation)
+        );
+    }
+
+    /**
+     * Updates the rotation of the receiver
+     * @param {THREE.Euler} rotation 
+     */
+    updateRotation(rotation) {
+        console.log(this.rotation);
+        console.log(this.#oldRotation);
+
+        this.rotation.x = rotation.x;
+        this.rotation.y = rotation.y;
+        this.rotation.z = rotation.z;
+        this.#oldRotation = new THREE.Euler(rotation.x, rotation.y, rotation.z, rotation.order);
+
+
+        /*
+        this.rotation.copy(new THREE.Euler(rotation.x, rotation.y, rotation.z, rotation.order));
+        this.#oldRotation.copy(new THREE.Euler(rotation.x, rotation.y, rotation.z, rotation.order));
+        */
+
     }
 
     delete() {
@@ -884,21 +926,6 @@ export class Receiver extends SelectableObject {
 
     set curvatureU(value) {
         this.#curvatureU = value;
-    }
-
-    get rotationY() {
-        return this.#rotationY;
-    }
-
-    set rotationY(newValue) {
-        this.rotation.y = newValue;
-        this.#rotationY = newValue;
-    }
-
-    updateRotation(rotation) {
-        this.#rotationY = rotation;
-        this.#base.rotation.y = rotation;
-        this.#top.rotation.y = rotation;
     }
 
     get inspectorComponents() {
