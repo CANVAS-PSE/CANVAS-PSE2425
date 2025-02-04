@@ -2,7 +2,14 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import login, update_session_auth_hash, logout
-from .forms import RegisterForm, LoginForm, UpdateAccountForm, DeleteAccountForm, PasswordResetForm, PasswordForgottenForm
+from .forms import (
+    RegisterForm,
+    LoginForm,
+    UpdateAccountForm,
+    DeleteAccountForm,
+    PasswordResetForm,
+    PasswordForgottenForm,
+)
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -42,10 +49,59 @@ def register_view(request):
             user.set_password(password)
             user.save()
             login(request, user)
+            send_register_email(user, request)
             return redirect(REDIRECT_PROJECTS_URL)
     else:
         form = RegisterForm()
     return render(request, "register.html", {"form": form})
+
+
+def send_register_email(user, request):
+    """
+    Send an email to the user to confirm that their account has been created.
+    """
+    subject = "CANVAS: Registration Confirmation"
+
+    # Create the token for the user
+    uid = urlsafe_base64_encode(str(user.id).encode())
+    token = default_token_generator.make_token(user)
+
+    base_url = request.build_absolute_uri("/")
+    # Create the URL for the password change page
+    delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
+
+    message = render_to_string(
+        "accounts/account_creation_confirmation_email.html",
+        {
+            "user": user,
+            "delete_account_url": delete_account_url,
+        },
+    )
+
+    to_email = user.email
+    email = EmailMessage(subject, message, to=[to_email])
+    email.send()
+
+
+def confirm_deletion(request, uidb64, token):
+    """
+    Confirm the deletion of the user's account.
+    """
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            logout(request)
+            user.delete()
+            return redirect("login")
+        else:
+            return render(request, "confirm_deletion.html")
+    else:
+        return redirect("invalid_link")
 
 
 def login_view(request):
@@ -75,6 +131,7 @@ def logout_view(request):
     logout(request)
     return redirect(REDIRECT_LOGIN_URL)
 
+
 @require_POST
 @login_required
 def update_account(request):
@@ -82,17 +139,17 @@ def update_account(request):
     Update the user's account information.
     """
     user = request.user
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UpdateAccountForm(instance=request.user, data=request.POST)
         if form.is_valid():
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name'] 
-            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data["first_name"]
+            user.last_name = form.cleaned_data["last_name"]
+            user.email = form.cleaned_data["email"]
             # Set the username to the email for consistency
             user.username = user.email
 
-            old_password = form.cleaned_data['old_password']
-            new_password = form.cleaned_data['new_password']
+            old_password = form.cleaned_data["old_password"]
+            new_password = form.cleaned_data["new_password"]
 
             if old_password and new_password:
                 user.set_password(new_password)
@@ -106,34 +163,34 @@ def update_account(request):
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
         return redirect(request.META.get("HTTP_REFERER", "index"))
-    
+
+
 def send_password_change_email(user, request):
     """
     Send an email to the user to confirm that their password has been changed.
     """
-    subject = 'Password Change Confirmation'
-
+    subject = "Password Change Confirmation"
 
     # Create the token for the user
     uid = urlsafe_base64_encode(str(user.id).encode())
     token = default_token_generator.make_token(user)
-    
-    base_url = request.build_absolute_uri('/')
+
+    base_url = request.build_absolute_uri("/")
     # Create the URL for the password change page
     password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
 
-    message = render_to_string('accounts/password_change_confirmation_email.html', {
-        'user': user,
-        'password_reset_url': password_reset_url,
-    })
+    message = render_to_string(
+        "accounts/password_change_confirmation_email.html",
+        {
+            "user": user,
+            "password_reset_url": password_reset_url,
+        },
+    )
 
     to_email = user.email
-    email = EmailMessage(
-        subject,
-        message,
-        to=[to_email]
-    )
+    email = EmailMessage(subject, message, to=[to_email])
     email.send()
+
 
 def password_reset_view(request, uidb64, token):
     """
@@ -156,16 +213,18 @@ def password_reset_view(request, uidb64, token):
                 logout(request)
 
                 # Redirect to login page
-                return redirect('login')
+                return redirect("login")
         else:
             form = PasswordResetForm()
 
-        return render(request, 'password_reset.html', {'form': form})
+        return render(request, "password_reset.html", {"form": form})
     else:
-        return redirect('password_reset_failed')
-    
-def password_reset_failed(request):
-    return render(request, 'password_reset_failed.html')
+        return redirect("invalid_link")
+
+
+def invalid_link(request):
+    return render(request, "invalid_link.html")
+
 
 @require_POST
 @login_required
@@ -173,7 +232,7 @@ def delete_account(request):
     """
     Delete the user's account.
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = DeleteAccountForm(request.user, request.POST)
         if form.is_valid():
             request.user.delete()
@@ -183,8 +242,9 @@ def delete_account(request):
             for field in form:
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
-        
+
     return redirect(request.META.get("HTTP_REFERER", "index"))
+
 
 def password_forgotten_view(request):
     """
@@ -196,35 +256,35 @@ def password_forgotten_view(request):
             email = form.cleaned_data["email"]
             user = User.objects.get(email=email)
             send_password_forgotten_email(user, request)
-            return redirect('login')
+            return redirect("login")
     else:
         form = PasswordForgottenForm()
 
-    return render(request, 'password_forgotten.html', {'form': form})
+    return render(request, "password_forgotten.html", {"form": form})
+
 
 def send_password_forgotten_email(user, request):
     """
     Send an email to the user to reset their password.
     """
-    subject = 'Password Reset'
+    subject = "Password Reset"
 
     # Create the token for the user
     uid = urlsafe_base64_encode(str(user.id).encode())
     token = default_token_generator.make_token(user)
-    
-    base_url = request.build_absolute_uri('/')
+
+    base_url = request.build_absolute_uri("/")
     # Create the URL for the password change page
     password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
 
-    message = render_to_string('accounts/password_forgotten_email.html', {
-        'user': user,
-        'password_reset_url': password_reset_url,
-    })
+    message = render_to_string(
+        "accounts/password_forgotten_email.html",
+        {
+            "user": user,
+            "password_reset_url": password_reset_url,
+        },
+    )
 
     to_email = user.email
-    email = EmailMessage(
-        subject,
-        message,
-        to=[to_email]
-    )
+    email = EmailMessage(subject, message, to=[to_email])
     email.send()
