@@ -120,6 +120,14 @@ export class SelectableObject extends Object3D {
     get isMovable() {
         throw new Error("This method must be implemented in all subclasses");
     }
+
+    /**
+     * Returns the old position of the heliostat
+     * @returns {THREE.Vector3} the old position of the heliostat
+     */
+    get oldPosition() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
 }
 
 /**
