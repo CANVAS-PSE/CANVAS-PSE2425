@@ -201,10 +201,18 @@ export class Picker {
                 );
                 this.#itemSelectedEvent();
             } else if (this.#transformControls.mode === "rotate") {
-                this.#selectedObject.updateAndSaveObjectRotation(
-                    this.#transformControls.object.rotation.clone()
+                const currentRotation = new THREE.Euler(
+                    this.#transformControls.object.rotation.x,
+                    this.#transformControls.object.rotation.y,
+                    this.#transformControls.object.rotation.z,
+                    "XYZ"
                 );
-                this.#itemSelectedEvent();
+                if (!currentRotation.equals(this.#selectedObject.oldRotation)) {
+                    this.#selectedObject.updateAndSaveObjectRotation(
+                        this.#transformControls.object.rotation.clone()
+                    );
+                    this.#itemSelectedEvent();
+                }
             }
         }
     }

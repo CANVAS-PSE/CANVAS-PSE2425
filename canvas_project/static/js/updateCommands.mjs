@@ -263,7 +263,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
                 this.#receiver.resolutionU = this.#oldParameter;
                 break;
             case "rotation":
-                this.#receiver.updateAndSaveObjectRotation(this.#oldParameter);
+                this.#receiver.updateRotation(this.#oldParameter);
                 break;
             case "position":
                 this.#receiver.updatePosition(this.#oldParameter);
