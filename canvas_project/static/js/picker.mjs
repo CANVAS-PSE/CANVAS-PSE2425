@@ -16,6 +16,9 @@ export class Picker {
     #selectableGroup;
     #selectedObjects;
     #raycaster;
+    /**
+     * @type {  "none" | "move" | "rotate" }
+     */
     #mode;
 
     // Additional fields
@@ -98,7 +101,6 @@ export class Picker {
      * @param {"none" | "move" | "rotate"} mode - The mode to set.
      */
     setMode(mode) {
-        // @ts-ignore
         this.#mode = mode;
         if (mode === Mode.NONE) {
             this.#transformControls.detach();
