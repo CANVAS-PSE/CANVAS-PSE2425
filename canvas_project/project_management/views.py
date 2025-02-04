@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from .models import Project
-from .forms import ProjectForm, UpdateProjectForm
+from .forms import ProjectForm, UpdateProjectForm, ImportProjectForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
@@ -11,9 +11,10 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def projects(request):
     form = ProjectForm()
+    importForm = ImportProjectForm()
     if request.method == "GET":
         allProjects = Project.objects.order_by("-last_edited")
-        context = {"projects": allProjects, "form": form}
+        context = {"projects": allProjects, "form": form, "importForm": importForm}
         return render(request, "project_management/projects.html", context)
     elif request.method == "POST":
         form = ProjectForm(request.POST)
@@ -29,7 +30,7 @@ def projects(request):
                 form.last_edited = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 form.save()
                 return HttpResponseRedirect(reverse("projects"))
-        context = {"projects": allProjects, "form": form}
+        context = {"projects": allProjects, "form": form, "importForm": importForm}
         return render(request, "project_management/projects.html", context)
 
 
@@ -125,3 +126,24 @@ def duplicateProject(request, project_name):
         settings.save()
 
         return redirect("projects")
+
+
+@login_required
+def importProject(request):
+    if request.method == "POST":
+        importForm = ImportProjectForm(request.POST, request.FILES)
+        if importForm.is_valid():
+            projectFile = importForm.cleaned_data["file"]
+            projectName = importForm.cleaned_data["name"]
+            projectDescription = importForm.cleaned_data["description"]
+            openHDF5(projectFile, projectName, projectDescription)
+            return HttpResponseRedirect(reverse("projects"))  # Redirect on success
+    else:
+        importForm = ImportProjectForm()
+    return render(
+        request, "project_management/projects.html", {"importForm": importForm}
+    )
+
+
+def openHDF5(projectFile, projectName, projectDescription):
+    pass

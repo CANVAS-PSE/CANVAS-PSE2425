@@ -17,4 +17,5 @@ urlpatterns = [
         views.duplicateProject,
         name="duplicateProject",
     ),
+    path("importProject/", views.importProject, name="importProject"),
 ]
