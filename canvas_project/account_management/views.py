@@ -18,6 +18,7 @@ from django.core.mail import EmailMessage
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
+from .models import UserProfile
 
 REDIRECT_PROJECTS_URL = "projects"
 REDIRECT_LOGIN_URL = "login"
@@ -140,7 +141,7 @@ def update_account(request):
     """
     user = request.user
     if request.method == "POST":
-        form = UpdateAccountForm(instance=request.user, data=request.POST)
+        form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
         if form.is_valid():
             user.first_name = form.cleaned_data["first_name"]
             user.last_name = form.cleaned_data["last_name"]
@@ -156,7 +157,21 @@ def update_account(request):
                 update_session_auth_hash(request, user)
                 send_password_change_email(user, request)
 
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            if request.POST.get("delete_picture") == "1":
+                if profile.profile_picture and profile.profile_picture.name != "profile_pics/default.jpg":
+                    profile.profile_picture.delete()  # delete former profile picture
+                profile.profile_picture = "profile_pics/default.jpg"  # set default profile picture
+            # Set profile picture only if a new one is uploaded
+            elif form.cleaned_data.get("profile_picture"):
+                 # Check if the current profile picture exists and is not the default picture.
+                if profile.profile_picture and profile.profile_picture.name != "profile_pics/default.jpg":
+                    profile.profile_picture.delete()
+                profile.profile_picture = form.cleaned_data["profile_picture"]
+
             user.save()
+            profile.save()
+
             messages.success(request, "Your account has been updated successfully.")
         else:
             for field in form:
