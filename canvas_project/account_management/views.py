@@ -118,7 +118,10 @@ def login_view(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect(REDIRECT_PROJECTS_URL)
+            next_url = request.POST.get("next") or request.GET.get(
+                "next", REDIRECT_PROJECTS_URL
+            )
+            return redirect(next_url)
     else:
         form = LoginForm()
     return render(request, "login.html", {"form": form})
