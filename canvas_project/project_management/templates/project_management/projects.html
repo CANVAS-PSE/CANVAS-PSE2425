@@ -1,6 +1,12 @@
 {% extends "base.html" %} {% load static %} {% block style %} {{ block.super }}
 <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
-{% endblock %} {% block body %}
+{% endblock %} {% block script %} {{ block.super }}
+<script type="module">
+    import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
+
+    const manager = new ProjectOverviewManager();
+</script>
+{% endblock script %} {% block body %}
 <!--create project modal-->
 <div
     class="modal fade"
@@ -47,50 +53,56 @@
         </button>
         <div class="w-100 d-flex justify-content-center gap-4"></div>
     </div>
-    <div class="d-flex flex-column gap-2 overflow-auto px-2 mt-3 h-100">
+    <div
+        class="d-flex flex-column gap-3 overflow-auto mt-3 h-100 w-50"
+        id="projectList"
+    >
         {% if not projects %}
         <div class="d-flex flex-column justify-content-center gap-4 h-100">
             <img
                 src="{% static 'img/noProjects.svg' %}"
                 class="h-50 w-auto opacity-50"
             />
-            <i class="text-center fs-4 p-3 mb-2 text-secondary opacity-75">
+            <i class="text-center fs-4 mb-2 text-secondary opacity-75">
                 You currently have no projects to work on. Create one to get
                 started!
             </i>
         </div>
-        {% else %}
-        <div class="form-check form-switch position-relative mx-auto">
-            <input
-                class="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="flexSwitchCheckDefault"
-            />
-            <label class="form-check-label" for="flexSwitchCheckDefault"
-                >Only favorites</label
-            >
-        </div>
-        {% for project in projects %}
-        <div class="px-2">
+        {% else %} {% for project in projects %}
+        <div class="project" data-is-favorite="{{ project.favorite }}">
             <div
-                class="card mb-3 rounded-4 bg-body-tertiary overflow-hidden mx-auto"
-                style="width: 65%"
+                class="card rounded-4 bg-body-tertiary overflow-hidden mx-auto"
             >
                 <div class="row g-0">
-                    <div class="col-md-4">
+                    <div class="col-md-4 overflow-hidden">
                         <a
                             class="col-md-4"
                             href="{% url 'editor' project.name %}"
                         >
+                            {% if project.preview %}
                             <img
                                 src="{{ project.preview.url }}"
                                 alt="{{ project.name }}"
-                                class="img-fluid"
+                                class="img-fluid h-100"
+                                style="
+                                    object-fit: cover;
+                                    object-position: center;
+                                "
                             />
+                            {% else %}
+                            <img
+                                src="{% static 'img/emptyEditor.png' %}"
+                                alt="{{ project.name }}"
+                                class="img-fluid h-100"
+                                style="
+                                    object-fit: cover;
+                                    object-position: center;
+                                "
+                            />
+                            {% endif %}
                         </a>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <div class="card-body">
                             <div class="d-flex gap-1">
                                 <div class="d-flex flex-column">
@@ -108,21 +120,25 @@
                                 <!-- favorites-->
                                 <div class="position-absolute end-0 top-0">
                                     {% if project.favorite == "true" %}
-                                    <a
-                                        href="{% url 'defavorProject' project.name %}"
-                                        class="btn btn-primary custom-btn shadow"
+                                    <div
+                                        class="btn btn-primary custom-btn shadow favoriteButton"
                                         style="border-radius: 0%"
-                                        ><i
+                                        data-is-favorite="{{ project.favorite }}"
+                                        data-project-name="{{ project.name }}"
+                                    >
+                                        <i
                                             class="bi bi-star-fill text-warning"
-                                        ></i
-                                    ></a>
+                                        ></i>
+                                    </div>
                                     {% else %}
-                                    <a
-                                        href="{% url 'favorProject' project.name %}"
-                                        class="btn btn-primary custom-btn shadow"
+                                    <div
+                                        class="btn btn-primary custom-btn shadow favoriteButton"
                                         style="border-radius: 0%"
-                                        ><i class="bi bi-star"></i
-                                    ></a>
+                                        data-is-favorite="{{ project.favorite }}"
+                                        data-project-name="{{ project.name }}"
+                                    >
+                                        <i class="bi bi-star"></i>
+                                    </div>
                                     {% endif %}
                                 </div>
                             </div>
@@ -277,15 +293,21 @@
     </div>
     <div class="d-flex w-100 justify-content-end p-2">
         <div class="d-flex justify-content-between mx-3 py-1">
-            <a
-                class="dropdown-toggle d-flex align-items-center link-bo dy-emphasis text-decoration-none py-2 text-reset"
+            <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
-            >
-                <div
-                    class="rounded-circle bg-primary me-2"
-                    style="width: 32px; height: 32px"
-                ></div>
+                aria-expanded="false">
+                {% if request.user.userprofile.profile_picture %}
+                    <img src="{{ request.user.userprofile.profile_picture.url }}"
+                        alt="Profile Picture"
+                        class="rounded-circle me-2"
+                        style="width: 32px; height: 32px; object-fit: cover;">
+                {% else %}
+                    <!-- If the user doesn't have a profile picture -->
+                    <img src="/media/profile_pics/default.jpg"
+                         alt="Default Profile Picture"
+                        class="rounded-circle me-2"
+                        style="width: 32px; height: 32px; object-fit: cover;">
+                {% endif %}
                 <strong class="me-2">{{ request.user.first_name }}</strong>
             </a>
             <ul class="dropdown-menu text-small shadow">

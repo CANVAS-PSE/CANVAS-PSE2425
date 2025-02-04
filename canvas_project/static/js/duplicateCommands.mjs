@@ -20,21 +20,17 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
     constructor(heliostat) {
         super();
         this.#heliostat = heliostat;
-        const position = heliostat.position();
-        const offsetPosition = new THREE.Vector3(
-            position.x + 1,
-            position.y,
-            position.z
-        );
         this.#heliostatCopy = new Heliostat(
             this.#heliostat.objectName == "" || !this.#heliostat.objectName
                 ? "Heliostat_Copy"
                 : this.#heliostat.objectName + "_Copy",
-            offsetPosition,
+            this.#heliostat.position,
             this.#heliostat.aimPoint,
             this.#heliostat.numberOfFacets,
             this.#heliostat.kinematicType
         );
+
+        document.dispatchEvent(new ItemCreatedEvent(this.#heliostatCopy));
     }
 
     async execute() {
@@ -42,7 +38,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemCreatedEvent(this.#heliostat));
+            .dispatchEvent(new ItemCreatedEvent(this.#heliostatCopy));
     }
 
     undo() {
@@ -50,7 +46,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemDeletedEvent(this.#heliostat));
+            .dispatchEvent(new ItemDeletedEvent(this.#heliostatCopy));
     }
 }
 
@@ -69,17 +65,11 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
     constructor(receiver) {
         super();
         this.#receiver = receiver;
-        const position = this.#receiver.getPosition();
-        const offsetPosition = new THREE.Vector3(
-            position.x + 1,
-            position.y,
-            position.z
-        );
         this.#receiverCopy = new Receiver(
             this.#receiver.objectName == "" || !this.#receiver.objectName
                 ? "Receiver_Copy"
                 : this.#receiver.objectName + "_Copy",
-            offsetPosition,
+            this.#receiver.getPosition(),
             this.#receiver.rotationY,
             this.#receiver.normalVector,
             this.#receiver.towerType,
@@ -90,6 +80,8 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
             this.#receiver.curvatureE,
             this.#receiver.curvatureU
         );
+
+        document.dispatchEvent(new ItemCreatedEvent(this.#receiverCopy));
     }
 
     async execute() {
@@ -97,7 +89,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemCreatedEvent(this.#receiver));
+            .dispatchEvent(new ItemCreatedEvent(this.#receiverCopy));
     }
 
     undo() {
@@ -105,7 +97,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemDeletedEvent(this.#receiver));
+            .dispatchEvent(new ItemDeletedEvent(this.#receiverCopy));
     }
 }
 
@@ -134,7 +126,8 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
             this.#lightsource.distributionMean,
             this.#lightsource.distributionCovariance
         );
-        
+
+        document.dispatchEvent(new ItemCreatedEvent(this.#lightsourceCopy));
     }
 
     async execute() {
@@ -142,7 +135,7 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemCreatedEvent(this.#lightsource));
+            .dispatchEvent(new ItemCreatedEvent(this.#lightsourceCopy));
     }
 
     undo() {
@@ -150,6 +143,6 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
 
         document
             .getElementById("canvas")
-            .dispatchEvent(new ItemDeletedEvent(this.#lightsource));
+            .dispatchEvent(new ItemDeletedEvent(this.#lightsourceCopy));
     }
 }

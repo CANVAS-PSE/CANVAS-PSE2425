@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import { SelectableObject } from "objects";
+import { ItemDeletedEvent } from "deleteCommands";
+import { ItemCreatedEvent } from "createCommands";
 
 export const Mode = Object.freeze({
     NONE: "none",
-    SINGLE: "single",
+    MOVE: "move",
     ROTATE: "rotate",
 });
 
@@ -14,19 +16,17 @@ export class Picker {
     #selectableGroup;
     #selectedObjects;
     #raycaster;
+    /**
+     * @type {  "none" | "move" | "rotate" }
+     */
     #mode;
 
     // Additional fields
     #canvas;
     #mouse;
     #mouseDownPos;
-    #isTransformDragging;
     #isDragging;
     #selectedObject;
-    // A helper group for multi-selection
-    #multiSelectionGroup;
-    // A map to store each object's original parent when moved into multiSelectionGroup
-    #originalParents;
 
     /**
      * Creates a new Picker object
@@ -42,43 +42,69 @@ export class Picker {
         this.#selectableGroup = selectableGroup;
         this.#selectedObjects = [];
         this.#raycaster = new THREE.Raycaster();
-        this.#mode = "single";
+        this.#mode = Mode.MOVE;
 
         this.#canvas = document.getElementById("canvas");
         this.#mouse = new THREE.Vector2();
         this.#mouseDownPos = { x: 0, y: 0 };
-        this.#isTransformDragging = false;
         this.#isDragging = false;
         this.#selectedObject = null;
 
-        // Group used to move multiple selected objects together
-        this.#multiSelectionGroup = new THREE.Group();
-        this.#selectableGroup.add(this.#multiSelectionGroup);
-        this.#originalParents = new Map();
-
         // Mouse event listeners on the canvas
-        this.#canvas.addEventListener("mousedown", (event) =>
-            this.#onMouseDown(event)
-        );
-        this.#canvas.addEventListener("mousemove", (event) =>
-            this.#onMouseMove(event)
-        );
-        this.#canvas.addEventListener("mouseup", (event) =>
-            this.#onMouseUp(event)
+        this.#canvas.children[
+            this.#canvas.children.length - 1
+        ].addEventListener("mousedown", (event) => {
+            // @ts-ignore
+            this.#onMouseDown(event);
+        });
+        this.#canvas.children[
+            this.#canvas.children.length - 1
+        ].addEventListener("mousemove", (event) => {
+            // @ts-ignore
+            this.#onMouseMove(event);
+        });
+        this.#canvas.children[
+            this.#canvas.children.length - 1
+        ].addEventListener("mouseup", (event) => {
+            // @ts-ignore
+            this.#onMouseUp(event);
+        });
+
+        this.#addEventListenerCustomEvent();
+    }
+
+    /**
+     * Adds event listeners for custom events objectCreated and objectDeleted
+     */
+    #addEventListenerCustomEvent() {
+        this.#canvas.addEventListener(
+            "itemDeleted",
+            (/**  @type {ItemDeletedEvent} */ event) => {
+                if (event.detail.item == this.#selectedObjects[0]) {
+                    this.#deselectAll();
+                    this.#itemSelectedEvent();
+                }
+            }
         );
 
-        // TODO: Event listener for Rectangular selection (not yet implemented)
+        this.#canvas.addEventListener(
+            "itemCreated",
+            (/**  @type {ItemCreatedEvent} */ event) => {
+                const createdItem = event.detail.item;
+                this.setSelection([createdItem]);
+            }
+        );
     }
 
     /**
      * Sets the mode for the picker.
-     * @param {"none" | "single" | "rotate"} mode - The mode to set.
+     * @param {"none" | "move" | "rotate"} mode - The mode to set.
      */
     setMode(mode) {
         this.#mode = mode;
         if (mode === Mode.NONE) {
             this.#transformControls.detach();
-        } else if (mode === Mode.SINGLE) {
+        } else if (mode === Mode.MOVE) {
             this.#transformControls.setMode("translate");
         } else {
             this.#transformControls.setMode("rotate");
@@ -112,30 +138,30 @@ export class Picker {
             this.#selectedObject = objectList[0];
             this.#attachTransform();
 
-            // 1. Possibility using Boxhelper
+            // @ts-ignore
             this.#selectionBox.setFromObject(this.#selectedObject);
-            this.#selectionBox.visible = true;
-            /*
-            // 2. Possibility using emissive color
-            for (const object of objectList) {
-                object.traverse((child) => {
-                    if (child.type === "Mesh") {
-                        child.material.emissive.set(0xff0000);
-                    }
-                });
+            // Only show the selection box if the object has a position in the scene
+            // @ts-ignore
+            if (this.#selectedObjects.position !== undefined) {
+                this.#selectionBox.visible = true;
             }
-            */
         }
 
         this.#itemSelectedEvent();
     }
 
+    /**
+     * @param {MouseEvent} event
+     */
     #onMouseDown(event) {
         this.#isDragging = false;
         this.#mouseDownPos.x = event.clientX;
         this.#mouseDownPos.y = event.clientY;
     }
 
+    /**
+     * @param {MouseEvent} event
+     */
     #onMouseMove(event) {
         if (event.buttons !== 0) {
             const x = event.clientX - this.#mouseDownPos.x;
@@ -146,18 +172,37 @@ export class Picker {
         }
     }
 
+    /**
+     * @param {MouseEvent} event
+     */
     #onMouseUp(event) {
         // Only calls onClick if it was a real click  and not a drag
-        if (!this.#isDragging && !this.#isTransformDragging) {
+        if (!this.#isDragging) {
             this.#onClick(event);
+        } else if (this.#transformControls.object) {
+            if (this.#transformControls.mode === "translate") {
+                this.#selectedObject.updateAndSaveObjectPosition(
+                    this.#transformControls.object.position.clone()
+                );
+                this.#itemSelectedEvent();
+            } else if (this.#transformControls.mode === "rotate") {
+                //TODO: auch mit Commands Updaten
+                /*
+                this.#selectedObject.updateRotation(
+                    this.#transformControls.object.rotation
+                );
+                */
+                this.#itemSelectedEvent();
+            }
         }
     }
 
     /**
      * Handles the click event on the canvas
+     * @param {MouseEvent} event
      */
     #onClick(event) {
-        if (this.#mode !== Mode.SINGLE) {
+        if (this.#mode !== Mode.MOVE && this.#mode !== Mode.ROTATE) {
             this.#deselectAll();
             return;
         }
@@ -170,8 +215,8 @@ export class Picker {
         // Raycast to find the clicked object
         this.#selectedObject = this.#select(this.#mouse, this.#camera);
 
-        // Update selection (handles shift-key and multi-selection)
-        this.#updateSelection(event.shiftKey);
+        // Update selection (handles ctrl-key and multi-selection)
+        this.#updateSelection(event.ctrlKey);
 
         this.#itemSelectedEvent();
     }
@@ -213,43 +258,28 @@ export class Picker {
     #deselectAll() {
         // Detach transformControls
         this.#transformControls.detach();
-
-        if (this.#selectedObjects.length === 0) {
-            return;
-        }
-        // 1. Possibility using Boxhelper
+        this.#transformControls.showX = true;
+        this.#transformControls.showZ = true;
+        this.#transformControls.showY = true;
         this.#selectionBox.visible = false;
-
-        /*
-        // 2. Possibility using emissive color
-        for (const obj of this.#selectedObjects) {
-            if (obj) {
-                obj.traverse((child) => {
-                    if (child.type === "Mesh") {
-                        child.material.emissive.set(0x000000);
-                    }
-                });
-            }
-        }
-        */
         this.#selectedObjects = [];
     }
 
     /*
-     * Updates the selection based on the shift key
-     * @param {Boolean} shiftKey The state of the shift key
+     * Updates the selection based on the ctrlKey
+     * @param {Boolean} ctrlKey The state of the ctrlKey
      */
-    #updateSelection(shiftKey) {
+    #updateSelection(ctrlKey) {
         // No object was clicked
         if (!this.#selectedObject) {
-            if (!shiftKey) {
+            if (!ctrlKey) {
                 this.#deselectAll();
             }
             return;
         }
 
         // Object was clicked
-        if (shiftKey) {
+        if (ctrlKey) {
             // If object is already in the selection, just attach transformControls
             if (this.#selectedObjects.includes(this.#selectedObject)) {
                 this.#attachTransform();
@@ -272,21 +302,42 @@ export class Picker {
      */
     #attachTransform() {
         if (this.#selectedObjects.length === 0) {
-            this.#transformControls.detach();
+            this.#deselectAll();
         } else if (this.#selectedObjects.length === 1) {
+            if (this.#transformControls.mode === "rotate") {
+                if (!this.#selectedObject.rotatableAxis) {
+                    // @ts-ignore
+                    this.#selectionBox.setFromObject(this.#selectedObject);
+                    this.#selectionBox.visible = true;
+                    return;
+                }
+                this.#selectedObject.rotatableAxis.forEach((axis) => {
+                    this.#transformControls.showX = false;
+                    this.#transformControls.showZ = false;
+                    this.#transformControls.showY = false;
+                    if (axis === "X") {
+                        this.#transformControls.showX = true;
+                    }
+                    if (axis === "Y") {
+                        this.#transformControls.showY = true;
+                    }
+                    if (axis === "Z") {
+                        this.#transformControls.showZ = true;
+                    }
+                });
+            } else if (this.#transformControls.mode === "translate") {
+                if (!this.#selectedObject.isMovable) {
+                    // @ts-ignore
+                    this.#selectionBox.setFromObject(this.#selectedObject);
+                    this.#selectionBox.visible = true;
+                    return;
+                }
+            }
+
             this.#transformControls.attach(this.#selectedObjects[0]);
-            // 1. Posibility using Boxhelper
+            // @ts-ignore
             this.#selectionBox.setFromObject(this.#selectedObject);
             this.#selectionBox.visible = true;
-
-            /*
-            // 2. Possibility using emissive color
-            this.#selectedObject.traverse((child) => {
-                if (child.type === "Mesh") {
-                    child.material.emissive.set(0xff0000);
-                }
-            });
-            */
         } else {
             // TODO: Implement multi-selection
         }

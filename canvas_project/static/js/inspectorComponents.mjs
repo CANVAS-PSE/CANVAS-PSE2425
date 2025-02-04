@@ -366,7 +366,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
     /**
      * Creates a new header component.
      * @param {Function} getFieldValueFunc the function to get the title
-     * @param {Function} saveFunc the function to update the titlte
+     * @param {Function} saveFunc the function to update the title
      */
     constructor(getFieldValueFunc, saveFunc) {
         super();

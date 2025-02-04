@@ -1,9 +1,8 @@
-from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from project_management.models import Project
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse, Http404
 
 import os
 from django.conf import settings
@@ -67,3 +66,33 @@ def download(request, project_name):
     response["Content-Type"] = "application/octet-stream"
     response["Content-Disposition"] = f'attachment; filename="{project.name}.h5"'
     return response
+
+
+@login_required
+def uploadPreview(request, project_name):
+    """
+    Updates the preview of the project
+
+    Parameters
+    ----------
+    request : HttpRequest
+        The request the user send to get here.
+
+    Returns
+    -------
+    HttpResponse : status 200
+        On successfull POST request
+    HttpResponse : status 404
+        on all other occasions
+    """
+
+    if request.method == "POST":
+        project = get_object_or_404(Project, name=project_name, owner=request.user)
+        file = request.FILES["preview"]
+
+        project.preview.delete()
+        project.preview = file
+        project.save()
+
+        return HttpResponse(status=200)
+    return Http404

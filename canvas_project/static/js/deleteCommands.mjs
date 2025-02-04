@@ -104,7 +104,7 @@ export class DeleteLightSourceCommand extends SingleObjectCommand {
     }
 
     undo() {
-        this.#editor.deleteLightsource(this.#lightsource);
+        this.#editor.addLightsource(this.#lightsource);
 
         document
             .getElementById("canvas")
