@@ -286,7 +286,8 @@ export class Editor {
         // set the settings
         this.setShadows(settingsList["shadows"]).setFog(settingsList["fog"]);
 
-        // TODO: Update settings also in UI --> wait till implemented
+        // remove the loading screen
+        document.getElementById("loadingScreen").classList.add("d-none");
 
         return this;
     }

@@ -49,11 +49,58 @@ def register_view(request):
             user.set_password(password)
             user.save()
             login(request, user)
+            send_register_email(user, request)
             return redirect(REDIRECT_PROJECTS_URL)
     else:
         form = RegisterForm()
     return render(request, "register.html", {"form": form})
 
+def send_register_email(user, request):
+    """
+    Send an email to the user to confirm that their account has been created.
+    """
+    subject = 'CANVAS: Registration Confirmation'
+
+    # Create the token for the user
+    uid = urlsafe_base64_encode(str(user.id).encode())
+    token = default_token_generator.make_token(user)
+    
+    base_url = request.build_absolute_uri('/')
+    # Create the URL for the password change page
+    delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
+
+    message = render_to_string('accounts/account_creation_confirmation_email.html', {
+        'user': user,
+        'delete_account_url': delete_account_url,
+    })
+
+    to_email = user.email
+    email = EmailMessage(
+        subject,
+        message,
+        to=[to_email]
+    )
+    email.send()
+
+def confirm_deletion(request, uidb64, token):
+    """
+    Confirm the deletion of the user's account.
+    """
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            logout(request)
+            user.delete()
+            return redirect('login')
+        else:
+            return render(request, 'confirm_deletion.html')
+    else:
+        return redirect('invalid_link')
 
 def login_view(request):
     """
@@ -184,12 +231,10 @@ def password_reset_view(request, uidb64, token):
 
         return render(request, "password_reset.html", {"form": form})
     else:
-        return redirect("password_reset_failed")
-
-
-def password_reset_failed(request):
-    return render(request, "password_reset_failed.html")
-
+        return redirect('invalid_link')
+    
+def invalid_link(request):
+    return render(request, 'invalid_link.html')
 
 @require_POST
 @login_required
