@@ -142,9 +142,8 @@
                                                             </p>
                                                             <form action="{% url 'updateProject' project_name=project.name %}"
                                                                   method="POST"
-                                                                  class="d-flex flex-column gap-2">
+                                                                  class="d-flex flex-column gap-3">
                                                                 {% csrf_token %} {{ form }}
-                                                                <br />
                                                                 <button class="btn btn-primary rounded-3" type="submit">Save</button>
                                                             </form>
                                                         </div>
