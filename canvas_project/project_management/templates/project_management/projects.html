@@ -266,23 +266,37 @@
                     {% endfor %}
                 {% endif %}
             </div>
-            <div class="d-flex w-100 justify-content-end p-2">
-                <div class="d-flex justify-content-between mx-3 py-1">
-                    <a class="dropdown-toggle d-flex align-items-center link-bo dy-emphasis text-decoration-none py-2 text-reset"
+            <div class="d-flex w-100 justify-content-end p-3">
+                <!-- user -->
+                <div class="dropup d-flex justify-content-between mx-3 py-1">
+                    <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
                        data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        <div class="rounded-circle bg-primary me-2"
-                             style="width: 32px;
-                                    height: 32px"></div>
+                        {% if request.user.userprofile.profile_picture %}
+                            <img src="{{ request.user.userprofile.profile_picture.url }}"
+                                 alt="Profile Picture"
+                                 class="rounded-circle me-2"
+                                 style="width: 32px;
+                                        height: 32px;
+                                        object-fit: cover">
+                        {% else %}
+                            <!-- If the user doesn't have a profile picture -->
+                            <img src="/media/profile_pics/default.jpg"
+                                 alt="Default Profile Picture"
+                                 class="rounded-circle me-2"
+                                 style="width: 32px;
+                                        height: 32px;
+                                        object-fit: cover">
+                        {% endif %}
                         <strong class="me-2">{{ request.user.first_name }}</strong>
                     </a>
-                    <ul class="dropdown-menu text-small shadow">
+                    <ul class="dropdown-menu text-small">
                         <div class="px-3 gap-1">
                             <p class="m-0">{{ request.user.first_name }} {{ request.user.last_name }}</p>
                             <p class="text-secondary m-0">{{ request.user.email }}</p>
                         </div>
                         <li>
-                            <hr class="dropdown-divider" />
+                            <hr class="dropdown-divider">
                         </li>
                         <li>
                             <button class="dropdown-item"
@@ -298,4 +312,5 @@
                     </ul>
                 </div>
             </div>
-        {% endblock body %}
+        </div>
+    {% endblock body %}
