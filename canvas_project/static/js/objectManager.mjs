@@ -7,8 +7,6 @@ import {
     CreateHeliostatCommand,
     CreateLightSourceCommand,
 } from "createCommands";
-import { ItemDeletedEvent } from "deleteCommands";
-import { ItemCreatedEvent } from "createCommands";
 
 /**
  * Class to manage the objects in the scene
@@ -60,7 +58,7 @@ export class ObjectManager {
         const receiver = new Receiver(
             "Receiver",
             new Vector3(0, 50, 0),
-            50,
+            0,
             new Vector3(0, 0, 0),
             "round",
             0,
