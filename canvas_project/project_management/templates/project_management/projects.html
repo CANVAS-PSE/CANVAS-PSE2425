@@ -70,9 +70,19 @@
                             <div class="row g-0">
                                 <div class="col-md-4">
                                     <a class="col-md-4" href="{% url 'editor' project.name %}">
-                                        <img src="{{ project.preview.url }}"
-                                             alt="{{ project.name }}"
-                                             class="img-fluid h-100" />
+                                        {% if project.preview %}
+                                            <img src="{{ project.preview.url }}"
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100"
+                                                 style="object-fit: cover;
+                                                        object-position: center" />
+                                        {% else %}
+                                            <img src="{% static 'img/emptyEditor.png' %}"
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100"
+                                                 style="object-fit: cover;
+                                                        object-position: center" />
+                                        {% endif %}
                                     </a>
                                 </div>
                                 <div class="col-md-6">
@@ -198,7 +208,7 @@
                                                                         below can get his own
                                                                         copy of this project.
                                                                     </div>
-                                                                    <div class="fw-bolder">Please copy the link before pressing the share button!</div>
+                                                                    <div class="fw-bolder">Copy the link below, or it will be automatically copied when pressing the share button.</div>
                                                                     <div class="input-group mt-3">
                                                                         <input type="text"
                                                                                class="form-control"
