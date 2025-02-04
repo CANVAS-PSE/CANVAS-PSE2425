@@ -115,9 +115,6 @@ export class ObjectManager {
             if (event.key === "Delete") {
                 if (this.#objectList.length === 1) {
                     this.#objectList[0].delete();
-                    document.dispatchEvent(
-                        new ItemDeletedEvent(this.#objectList[0])
-                    );
                 }
             }
 

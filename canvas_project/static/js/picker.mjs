@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { SelectableObject } from "objects";
+import { ItemDeletedEvent } from "deleteCommands";
+import { ItemCreatedEvent } from "createCommands";
 
 export const Mode = Object.freeze({
     NONE: "none",
