@@ -132,7 +132,7 @@
                                             {% else %}
                                                 <img
                                                     id="previewImage"
-                                                    src="{{ MEDIA_URL }}profile_pics/default.jpg"
+                                                    src="/media/profile_pics/default.jpg"
                                                     alt="Default Profile Picture"
                                                     class="rounded-circle"
                                                     style="width: 100px; height: 100px; object-fit: cover;"
@@ -156,10 +156,8 @@
                                                     class="d-none"
                                                     accept="image/*"
                                                 />
-                                                <!-- Hidden Field für Bildlöschung -->
+                                                <!-- button to delete the current profile picture -->
                                                 <input type="hidden" id="delete_picture" name="delete_picture" value="0">
-
-                                                <!-- Profilbild löschen Button -->
                                                 <button type="button" class="btn btn-danger ms-2" id="deleteProfilePictureBtn">Delete Picture</button>
                                             </div>
                                         </div>
@@ -426,20 +424,21 @@
     });
 </script>
 
+<!-- script for preview of the selected image -->
 <script>
     document
         .getElementById("profile_picture")
         .addEventListener("change", function (event) {
-            let file = event.target.files[0]; // Die ausgewählte Datei
+            let file = event.target.files[0]; 
             let fileNameElement = document.getElementById("fileName");
             let previewImage = document.getElementById("previewImage");
 
             if (file) {
-                fileNameElement.textContent = file.name; // Zeigt den Dateinamen an
+                fileNameElement.textContent = file.name; 
 
                 let reader = new FileReader();
                 reader.onload = function (e) {
-                    previewImage.src = e.target.result; // Zeigt das neue Bild direkt an
+                    previewImage.src = e.target.result; 
                 };
                 reader.readAsDataURL(file);
             } else {
@@ -448,9 +447,10 @@
         });
 </script>
 
+<!-- Script: Reset profile picture to default when the delete button is clicked -->
 <script>
     document.getElementById("deleteProfilePictureBtn").addEventListener("click", function() {
         document.getElementById("delete_picture").value = "1";
-        document.getElementById("previewImage").src = "{{ MEDIA_URL }}profile_pics/default.jpg"; // Standardbild anzeigen
+        document.getElementById("previewImage").src = "/media/profile_pics/default.jpg"; 
     });
-    </script>
+</script>
