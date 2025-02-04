@@ -52,14 +52,9 @@ export class PromptCommand extends HTMLElement {
 
         // select this element on hover
         this.addEventListener("mousemove", (event) => {
-            if (event.target === this) {
-                this.#commandPrompt.selectCommand(
-                    Array.prototype.indexOf.call(
-                        this.parentElement.children,
-                        this
-                    )
-                );
-            }
+            this.#commandPrompt.selectCommand(
+                this.#commandPrompt.currentlyAvailableCommands.indexOf(this)
+            );
         });
     }
 

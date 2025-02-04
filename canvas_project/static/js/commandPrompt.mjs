@@ -95,6 +95,9 @@ export class CommandPrompt {
                         this.#selectedCommand.execute();
                     }
                 }
+                if (event.key === "Escape") {
+                    this.#modal.hide();
+                }
             }
         });
 
@@ -144,7 +147,8 @@ export class CommandPrompt {
             this.#commandInput.value = "";
             this.#commandListElem.innerHTML = "";
             this.#commandInput.focus();
-            this.#commandList.forEach((command) => {
+            this.#currentlyAvailabeCommands = this.#commandList;
+            this.#currentlyAvailabeCommands.forEach((command) => {
                 command.occurenceLength = null;
                 command.selectedChars = null;
                 this.#commandListElem.appendChild(command);
@@ -182,6 +186,7 @@ export class CommandPrompt {
             this.#selectedIndex = selectedIndex;
         }
 
+        //@ts-ignore
         this.#selectedCommand =
             this.#commandListElem.children[this.#selectedIndex];
         this.#selectedCommand.select();
@@ -204,10 +209,7 @@ export class CommandPrompt {
 
         // when no input is given -> render all commands
         if (this.#commandInput.value.length == 0) {
-            this.#commandList.forEach((command) => {
-                this.#commandListElem.appendChild(command);
-                command.formatCommandName();
-            });
+            this.#currentlyAvailabeCommands = this.#commandList;
         } else {
             // calculate the new available commands
             this.#commandList.forEach((command) => {
@@ -225,13 +227,13 @@ export class CommandPrompt {
                 (command1, command2) =>
                     command1.occurenceLength - command2.occurenceLength
             );
-
-            // render new availabe commands
-            this.#currentlyAvailabeCommands.forEach((command) => {
-                this.#commandListElem.appendChild(command);
-                command.formatCommandName();
-            });
         }
+
+        // render new availabe commands
+        this.#currentlyAvailabeCommands.forEach((command) => {
+            this.#commandListElem.appendChild(command);
+            command.formatCommandName();
+        });
 
         if (this.#commandListElem.children.length > 0) {
             // select the new first element
@@ -271,5 +273,9 @@ export class CommandPrompt {
         }
 
         return indexList;
+    }
+
+    get currentlyAvailableCommands() {
+        return this.#currentlyAvailabeCommands;
     }
 }
