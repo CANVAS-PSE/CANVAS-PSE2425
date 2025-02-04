@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from project_management.models import Project
 from django.http import FileResponse
+from django.urls import reverse
 
-import os
+
 from django.conf import settings
 
 from django.conf import settings
@@ -115,18 +116,10 @@ def renderHDF5(request, project_name):
     project = get_object_or_404(Project, name=project_name, owner=request.user)
 
     if request.method == "POST":
-        createHDF5(project)
-        return render(
-            request,
-            "editor/editor.html",
-            context={"project_id": project.pk, "project_name": project.name},
-        )
+        # createHDF5(project)
+        return redirect(reverse("editor", kwargs={"project_name": project_name}))
 
-    return render(
-        request,
-        "editor/editor.html",
-        context={"project_id": project.pk, "project_name": project.name},
-    )
+    return redirect(reverse("editor", kwargs={"project_name": project_name}))
 
 
 def createHDF5(project):
