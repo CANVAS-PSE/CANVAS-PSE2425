@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { SelectableObject } from "objects";
-
+import { ItemDeletedEvent } from "deleteCommands";
+import { ItemCreatedEvent } from "createCommands";
 
 export const Mode = Object.freeze({
     NONE: "none",
@@ -15,6 +16,9 @@ export class Picker {
     #selectableGroup;
     #selectedObjects;
     #raycaster;
+    /**
+     * @type {  "none" | "move" | "rotate" }
+     */
     #mode;
 
     // Additional fields
@@ -50,18 +54,46 @@ export class Picker {
         this.#canvas.children[
             this.#canvas.children.length - 1
         ].addEventListener("mousedown", (event) => {
+            // @ts-ignore
             this.#onMouseDown(event);
         });
         this.#canvas.children[
             this.#canvas.children.length - 1
         ].addEventListener("mousemove", (event) => {
+            // @ts-ignore
             this.#onMouseMove(event);
         });
         this.#canvas.children[
             this.#canvas.children.length - 1
         ].addEventListener("mouseup", (event) => {
+            // @ts-ignore
             this.#onMouseUp(event);
         });
+
+        this.#addEventListenerCustomEvent();
+    }
+
+    /**
+     * Adds event listeners for custom events objectCreated and objectDeleted
+     */
+    #addEventListenerCustomEvent() {
+        this.#canvas.addEventListener(
+            "itemDeleted",
+            (/**  @type {ItemDeletedEvent} */ event) => {
+                if (event.detail.item == this.#selectedObjects[0]) {
+                    this.#deselectAll();
+                    this.#itemSelectedEvent();
+                }
+            }
+        );
+
+        this.#canvas.addEventListener(
+            "itemCreated",
+            (/**  @type {ItemCreatedEvent} */ event) => {
+                const createdItem = event.detail.item;
+                this.setSelection([createdItem]);
+            }
+        );
     }
 
     /**
@@ -106,8 +138,10 @@ export class Picker {
             this.#selectedObject = objectList[0];
             this.#attachTransform();
 
+            // @ts-ignore
             this.#selectionBox.setFromObject(this.#selectedObject);
             // Only show the selection box if the object has a position in the scene
+            // @ts-ignore
             if (this.#selectedObjects.position !== undefined) {
                 this.#selectionBox.visible = true;
             }
@@ -147,7 +181,9 @@ export class Picker {
             this.#onClick(event);
         } else if (this.#transformControls.object) {
             if (this.#transformControls.mode === "translate") {
-                this.#selectedObject.updateAndSaveObjectPosition(this.#transformControls.object.position.clone())
+                this.#selectedObject.updateAndSaveObjectPosition(
+                    this.#transformControls.object.position.clone()
+                );
                 this.#itemSelectedEvent();
             } else if (this.#transformControls.mode === "rotate") {
                 //TODO: auch mit Commands Updaten
@@ -270,6 +306,7 @@ export class Picker {
         } else if (this.#selectedObjects.length === 1) {
             if (this.#transformControls.mode === "rotate") {
                 if (!this.#selectedObject.rotatableAxis) {
+                    // @ts-ignore
                     this.#selectionBox.setFromObject(this.#selectedObject);
                     this.#selectionBox.visible = true;
                     return;
@@ -290,6 +327,7 @@ export class Picker {
                 });
             } else if (this.#transformControls.mode === "translate") {
                 if (!this.#selectedObject.isMovable) {
+                    // @ts-ignore
                     this.#selectionBox.setFromObject(this.#selectedObject);
                     this.#selectionBox.visible = true;
                     return;
@@ -297,6 +335,7 @@ export class Picker {
             }
 
             this.#transformControls.attach(this.#selectedObjects[0]);
+            // @ts-ignore
             this.#selectionBox.setFromObject(this.#selectedObject);
             this.#selectionBox.visible = true;
         } else {

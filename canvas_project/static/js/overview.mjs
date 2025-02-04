@@ -386,38 +386,9 @@ export class OverviewHandler {
             }
         });
 
-        // TODO: ensure real type typesafety, but will work for now, hopefully
         inputField.addEventListener("change", () => {
             if (inputField.value !== object.objectName) {
-                switch (type) {
-                    case this.#objectType.HELIOSTAT:
-                        this.#undoRedoHandler.executeCommand(
-                            new UpdateHeliostatCommand(
-                                object,
-                                "objectName",
-                                inputField.value
-                            )
-                        );
-                        break;
-                    case this.#objectType.RECEIVER:
-                        this.#undoRedoHandler.executeCommand(
-                            new UpdateReceiverCommand(
-                                object,
-                                "objectName",
-                                inputField.value
-                            )
-                        );
-                        break;
-                    case this.#objectType.LIGHTSOURCE:
-                        this.#undoRedoHandler.executeCommand(
-                            new UpdateLightsourceCommand(
-                                object,
-                                "objectName",
-                                inputField.value
-                            )
-                        );
-                        break;
-                }
+                object.updateAndSaveObjectName(inputField.value);
             }
         });
     }
