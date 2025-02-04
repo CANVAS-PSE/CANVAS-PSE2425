@@ -113,18 +113,6 @@
                                                         <p class="fw-light">{{ project.description }}</p>
                                                         <p class="text-start">Last edited: {{ project.last_edited }}</p>
                                                     </div>
-                                                    <!-- favorites-->
-                                                    <div class="position-absolute end-0 top-0">
-                                                        {% if project.favorite == "true" %}
-                                                            <a href="{% url 'defavorProject' project.name %}"
-                                                               class="btn btn-primary custom-btn shadow"
-                                                               style="border-radius: 0%"><i class="bi bi-star-fill text-warning"></i></a>
-                                                        {% else %}
-                                                            <a href="{% url 'favorProject' project.name %}"
-                                                               class="btn btn-primary custom-btn shadow"
-                                                               style="border-radius: 0%"><i class="bi bi-star"></i></a>
-                                                        {% endif %}
-                                                    </div>
                                                 </div>
                                                 <div class="d-flex gap-2">
                                                     <a role="button"
