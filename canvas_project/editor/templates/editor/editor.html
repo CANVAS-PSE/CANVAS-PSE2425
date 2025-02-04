@@ -24,6 +24,8 @@
                 "bulkObjectCommands": "{% static 'js/bulkObjectCommands.mjs' %}",
                 "overview": "{% static 'js/overview.mjs' %}",
                 "editor": "{% static 'js/editor.mjs' %}",
+                "objectManager": "{% static 'js/objectManager.mjs' %}",
+                "quickSelector": "{% static 'js/quickSelector.mjs' %}",
                 "updateCommands": "{% static 'js/updateCommands.mjs' %}",
                 "duplicateCommands": "{% static 'js/duplicateCommands.mjs' %}",
                 "deleteCommands": "{% static 'js/deleteCommands.mjs' %}",
@@ -44,6 +46,14 @@
     </script>
 {% endblock %}
 {% block body %}
+    <!-- loading animation -->
+    <div class="position-fixed z-3 d-flex flex-column gap-3 justify-content-center align-items-center min-vh-100 min-vw-100 bg-body"
+         id="loadingScreen">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div>Loading project</div>
+    </div>
     <!--settings modal-->
     {% include "settings.html" %}
     <!--job interface modal-->
@@ -438,7 +448,7 @@
                         <div class="accordion w-100" id="accordionExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button id="enviroment-settings-button" 
+                                    <button id="enviroment-settings-button"
                                             class="accordion-button collapsed"
                                             type="button"
                                             data-bs-toggle="collapse"
@@ -501,11 +511,20 @@
                     <i class="bi bi-list-ul p-1"></i>
                 </button>
                 <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
-                   data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                    <div class="rounded-circle bg-primary me-2"
-                         style="width: 32px;
-                                height: 32px"></div>
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    {% if request.user.userprofile.profile_picture %}
+                        <img src="{{ request.user.userprofile.profile_picture.url }}"
+                            alt="Profile Picture"
+                            class="rounded-circle me-2"
+                            style="width: 32px; height: 32px; object-fit: cover;">
+                    {% else %}
+                        <!-- If the user doesn't have a profile picture -->
+                        <img src="/media/profile_pics/default.jpg"
+                            alt="Default Profile Picture"
+                            class="rounded-circle me-2"
+                            style="width: 32px; height: 32px; object-fit: cover;">
+                    {% endif %}
                     <strong class="me-2">{{ request.user.first_name }}</strong>
                 </a>
                 <ul class="dropdown-menu text-small">
@@ -524,9 +543,7 @@
                     <li>
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
-                            <button type="submit" class="dropdown-item">
-                                Sign out
-                            </button>
+                            <button type="submit" class="dropdown-item">Sign out</button>
                         </form>
                     </li>
                 </ul>

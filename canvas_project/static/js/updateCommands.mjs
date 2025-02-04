@@ -70,7 +70,7 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
             case "kinematicType":
                 this.#heliostat.kinematicType = this.#newParameter;
                 break;
-                case "position":
+            case "position":
                 this.#heliostat.updatePosition(this.#newParameter);
                 break;
             case "aimPoint":

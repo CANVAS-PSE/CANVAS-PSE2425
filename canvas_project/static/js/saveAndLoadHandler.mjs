@@ -96,9 +96,9 @@ export class SaveAndLoadHandler {
 
         const body = {
             name: receiver.objectName,
-            position_x: receiver.top.position.x,
-            position_y: receiver.top.position.y,
-            position_z: receiver.top.position.z,
+            position_x: receiver.getPosition().x,
+            position_y: receiver.getPosition().y,
+            position_z: receiver.getPosition().z,
             normal_x: receiver.normalVector.x,
             normal_y: receiver.normalVector.y,
             normal_z: receiver.normalVector.z,
