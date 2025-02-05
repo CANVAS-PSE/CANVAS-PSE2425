@@ -43,7 +43,6 @@ export class Picker {
         this.#selectedObjects = [];
         this.#raycaster = new THREE.Raycaster();
         this.#mode = Mode.MOVE;
-        this.#transformControls.setMode("rotate");
 
         this.#canvas = document.getElementById("canvas");
         this.#mouse = new THREE.Vector2();
