@@ -1,53 +1,48 @@
+import { ObjectManager } from "objectManager";
+
 export class Navbar {
-    constructor() {
+    #objectManager;
+    #createHeliostatButton;
+    #createReceiverButton;
+    #createLightSourceButton;
+
+    /**
+     *
+     * @param {ObjectManager} objectManager
+     */
+    constructor(objectManager) {
+        this.#objectManager = objectManager;
+
         this.#setupFullscreen();
-        this.#addElement();
-        this.#fileOptions();
+        this.#setUpObjectPlacement();
+        this.#setupFileOptions();
     }
 
     #setupFullscreen() {
-        let fullscreen = document.getElementById('fullscreen');
+        let fullscreen = document.getElementById("fullscreen");
 
         // Safari
-        if (navigator.userAgent.indexOf('Safari') > -1) {
+        if (navigator.userAgent.indexOf("Safari") > -1) {
             fullscreen.onclick = (_) => {
-                if (document.webkitFullscreenElement === null ) {
+                if (document.webkitFullscreenElement === null) {
                     document.documentElement.webkitRequestFullscreen();
-                } else if ( document.webkitExitFullscreen ) {
+                } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
                 }
-            }
-            return ;
+            };
+            return;
         }
 
         fullscreen.onclick = (_) => {
-		    if ( document.fullscreenElement === null ) {
-			    _ = document.documentElement.requestFullscreen();
-		    } else if ( document.exitFullscreen ) {
-			    _ = document.exitFullscreen();
-		    }
-        }
+            if (document.fullscreenElement === null) {
+                _ = document.documentElement.requestFullscreen();
+            } else if (document.exitFullscreen) {
+                _ = document.exitFullscreen();
+            }
+        };
     }
 
-    #addElement() {
-        let heliostat = document.getElementById('heliostat');
-        let receiver = document.getElementById('receiver');
-        let lightSource = document.getElementById('lightSource');
-
-        heliostat.onclick = (_) => {
-            
-        }
-
-        receiver.onclick = (_) => {
-            
-        }
-
-        lightSource.onclick = (_) => {
-            
-        }
-    }
-
-    #fileOptions() {
+    #setupFileOptions() {
         let newButton = document.getElementById('new');
         let importButton = document.getElementById('import');
         let exportButton = document.getElementById('export');
@@ -59,8 +54,9 @@ export class Navbar {
         fileInput.style.display = 'none';
         document.body.appendChild(fileInput);
 
-        newButton.onclick = (_) => {
-        }
+        newButton.onclick = (_) => {};
+
+        importButton.onclick = (_) => {};
 
         importButton.onclick = (_) => {
             fileInput.click();
@@ -77,5 +73,32 @@ export class Navbar {
         exportButton.onclick = (_) => {
         }
 
+    }
+
+    /**
+     * Method to add event listeners to the buttons on the Navbar
+     */
+    #setUpObjectPlacement() {
+        // Buttons on the bottom bar
+        this.#createHeliostatButton = document.getElementById(
+            "add-heliostat-nav-bar"
+        );
+        this.#createReceiverButton = document.getElementById(
+            "add-receiver-nav-bar"
+        );
+        this.#createLightSourceButton = document.getElementById(
+            "add-lightSource-nav-bar"
+        );
+
+        // Event listeners for the buttons on the bottom bar
+        this.#createHeliostatButton.addEventListener("click", () => {
+            this.#objectManager.createHeliostat();
+        });
+        this.#createReceiverButton.addEventListener("click", () => {
+            this.#objectManager.createReceiver();
+        });
+        this.#createLightSourceButton.addEventListener("click", () => {
+            this.#objectManager.createLightSource();
+        });
     }
 }
