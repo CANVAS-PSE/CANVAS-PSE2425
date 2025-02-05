@@ -31,7 +31,10 @@
             "inspectorClass": ["static/js/inspector.mjs"],
             "previewHandler": ["static/js/previewHandler.mjs"],
             "projectSettingsManager": ["static/js/projectSettingsManager.mjs"],
-            "createCommands": ["static/js/createCommands.mjs"]
+            "createCommands": ["static/js/createCommands.mjs"],
+            "commandPrompt": ["static/js/commandPrompt.mjs"],
+            "promptCommands": ["static/js/promptCommands.mjs"],
+            "bootstrap": ["static/js/bootstrap.esm.js"]
         }
     }
 }

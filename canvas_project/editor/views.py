@@ -1,7 +1,10 @@
 from django.utils import timezone
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from project_management.models import Project
+from django.urls import reverse
+from project_management.forms import ProjectForm
 from django.http import FileResponse, HttpResponse, Http404
 
 import os
@@ -26,16 +29,73 @@ def editor(request, project_name):
         The editor page where the user can edit the project.
     """
 
-    # Return 404 not found if user has no project with this id
-    project = get_object_or_404(Project, name=project_name, owner=request.user)
-    project.last_edited = timezone.now()
-    project.save()
+    if request.method == "GET":
+        # Return 404 not found if user has no project with this id
+        project = get_object_or_404(Project, name=project_name, owner=request.user)
+        project.last_edited = timezone.now()
+        project.save()
 
-    return render(
-        request,
-        "editor/editor.html",
-        context={"project_id": project.pk, "project_name": project.name},
-    )
+        createProjectForm = ProjectForm()
+        allProjects = Project.objects.filter(owner=request.user).order_by(
+            "-last_edited"
+        )
+
+        return render(
+            request,
+            "editor/editor.html",
+            context={
+                "project_id": project.pk,
+                "project_name": project.name,
+                "createProjectForm": createProjectForm,
+                "projects": allProjects,
+            },
+        )
+    elif request.method == "POST":
+        form = ProjectForm(request.POST)
+
+        # if valid redirect to new project
+        if form.is_valid():
+            nameUnique = True
+            allProjects = Project.objects.filter(owner=request.user).order_by(
+                "-last_edited"
+            )
+            new_project_name = form["name"].value()
+            for existingProject in allProjects:
+                if new_project_name == existingProject.name:
+                    nameUnique = False
+            if nameUnique:
+                form = form.save(commit=False)
+                form.owner = request.user
+                form.last_edited = timezone.now()
+                form.save()
+                messages.success(request, "Successfully created the new project")
+                return redirect("/editor/" + new_project_name)
+
+        # if not render error message
+        project = get_object_or_404(Project, name=project_name, owner=request.user)
+        project.last_edited = timezone.now()
+        project.save()
+
+        createProjectForm = ProjectForm()
+        allProjects = Project.objects.filter(owner=request.user).order_by(
+            "-last_edited"
+        )
+
+        messages.error(
+            request,
+            "A project with this name already exists. Please choose a different name.",
+        )
+
+        return render(
+            request,
+            "editor/editor.html",
+            context={
+                "project_id": project.pk,
+                "project_name": project.name,
+                "createProjectForm": createProjectForm,
+                "projects": allProjects,
+            },
+        )
 
 
 @login_required
