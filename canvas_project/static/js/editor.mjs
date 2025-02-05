@@ -13,7 +13,7 @@ import { Picker } from "picker";
 import { ProjectSettingsManager } from "projectSettingsManager";
 import { ObjectManager } from "objectManager";
 import { QuickSelector } from "quickSelector";
-//import { JobInterface } from "jobInterface";
+import { JobInterface } from "jobInterface";
 import { Inspector } from "inspectorClass";
 
 import { Heliostat, Receiver, LightSource, Terrain } from "objects";
@@ -82,7 +82,7 @@ export class Editor {
             this.#undoRedoHandler
         );
         this.#quickSelector = new QuickSelector(this.#objectManager);
-        //this.#jobInterface = new JobInterface();
+        this.#jobInterface = new JobInterface();
         this.#inspector = new Inspector(this.#picker);
         this.#previewHandler = new PreviewHandler(this.#scene);
 

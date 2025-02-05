@@ -31,7 +31,8 @@
             "inspectorClass": ["static/js/inspector.mjs"],
             "previewHandler": ["static/js/previewHandler.mjs"],
             "projectSettingsManager": ["static/js/projectSettingsManager.mjs"],
-            "createCommands": ["static/js/createCommands.mjs"]
+            "createCommands": ["static/js/createCommands.mjs"],
+            "jobInterface": ["static/js/jobInterface.mjs"]
         }
     }
 }

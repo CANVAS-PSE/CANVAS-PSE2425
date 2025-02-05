@@ -33,7 +33,8 @@
                 "inspectorClass": "{% static 'js/inspector.mjs' %}",
                 "previewHandler": "{% static 'js/previewHandler.mjs' %}",
                 "projectSettingsManager": "{% static 'js/projectSettingsManager.mjs' %}",
-                "createCommands": "{% static 'js/createCommands.mjs' %}"
+                "createCommands": "{% static 'js/createCommands.mjs' %}",
+                "jobInterface": "{% static 'js/jobInterface.mjs' %}"
             }
         }
     </script>
@@ -333,7 +334,9 @@
                             id="quickSettingsLightsource">
                         <i class="bi bi-lightbulb text-white"></i>
                     </button>
-                    <button class="btn btn-primary rounded-3 fw-bolder" id="quickSettingsRender">Render</button>
+                    <button class="btn btn-primary rounded-3 fw-bolder"
+                            data-bs-target="#startJobModal"
+                            data-bs-toggle="modal">Render</button>
                 </div>
             </div>
         </div>
@@ -499,31 +502,38 @@
             <div class="dropup d-flex justify-content-between mx-3 py-1">
                 <button class="btn btn-primary custom-btn text-reset fs-3 position-relative p-0 px-1 rounded-3"
                         data-bs-toggle="modal"
-                        data-bs-target="#jobInterface">
-                    <span class="position-absolute top-0 start-100 translate-middle bg-danger bg-opacity-50 rounded-circle"
-                          style="padding: 0.7rem">
-                        <span class="visually-hidden">New alerts</span>
-                    </span>
-                    <span class="position-absolute top-0 start-100 translate-middle bg-danger rounded-circle"
-                          style="padding: 0.3rem">
-                        <span class="visually-hidden">New alerts</span>
-                    </span>
+                        data-bs-target="#jobInterface"
+                        id="jobInterfaceToggle">
+                    <div id="hasActiveJobsIndicator" class="d-none">
+                        <span class="position-absolute top-0 start-100 translate-middle bg-danger bg-opacity-50 rounded-circle"
+                              style="padding: 0.7rem">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                        <span class="position-absolute top-0 start-100 translate-middle bg-danger rounded-circle"
+                              style="padding: 0.3rem">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                    </div>
                     <i class="bi bi-list-ul p-1"></i>
                 </button>
                 <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false">
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
                     {% if request.user.userprofile.profile_picture %}
                         <img src="{{ request.user.userprofile.profile_picture.url }}"
-                            alt="Profile Picture"
-                            class="rounded-circle me-2"
-                            style="width: 32px; height: 32px; object-fit: cover;">
+                             alt="Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
                     {% else %}
                         <!-- If the user doesn't have a profile picture -->
                         <img src="/media/profile_pics/default.jpg"
-                            alt="Default Profile Picture"
-                            class="rounded-circle me-2"
-                            style="width: 32px; height: 32px; object-fit: cover;">
+                             alt="Default Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
                     {% endif %}
                     <strong class="me-2">{{ request.user.first_name }}</strong>
                 </a>
