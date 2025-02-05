@@ -8,6 +8,7 @@ from .forms import (
     UpdateAccountForm,
     DeleteAccountForm,
     PasswordResetForm,
+    PasswordForgottenForm,
 )
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
@@ -55,32 +56,33 @@ def register_view(request):
         form = RegisterForm()
     return render(request, "register.html", {"form": form})
 
+
 def send_register_email(user, request):
     """
     Send an email to the user to confirm that their account has been created.
     """
-    subject = 'CANVAS: Registration Confirmation'
+    subject = "CANVAS: Registration Confirmation"
 
     # Create the token for the user
     uid = urlsafe_base64_encode(str(user.id).encode())
     token = default_token_generator.make_token(user)
-    
-    base_url = request.build_absolute_uri('/')
+
+    base_url = request.build_absolute_uri("/")
     # Create the URL for the password change page
     delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
 
-    message = render_to_string('accounts/account_creation_confirmation_email.html', {
-        'user': user,
-        'delete_account_url': delete_account_url,
-    })
+    message = render_to_string(
+        "accounts/account_creation_confirmation_email.html",
+        {
+            "user": user,
+            "delete_account_url": delete_account_url,
+        },
+    )
 
     to_email = user.email
-    email = EmailMessage(
-        subject,
-        message,
-        to=[to_email]
-    )
+    email = EmailMessage(subject, message, to=[to_email])
     email.send()
+
 
 def confirm_deletion(request, uidb64, token):
     """
@@ -96,11 +98,12 @@ def confirm_deletion(request, uidb64, token):
         if request.method == "POST":
             logout(request)
             user.delete()
-            return redirect('login')
+            return redirect("login")
         else:
-            return render(request, 'confirm_deletion.html')
+            return render(request, "confirm_deletion.html")
     else:
-        return redirect('invalid_link')
+        return redirect("invalid_link")
+
 
 def login_view(request):
     """
@@ -115,7 +118,10 @@ def login_view(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect(REDIRECT_PROJECTS_URL)
+            next_url = request.POST.get("next") or request.GET.get(
+                "next", REDIRECT_PROJECTS_URL
+            )
+            return redirect(next_url)
     else:
         form = LoginForm()
     return render(request, "login.html", {"form": form})
@@ -231,10 +237,12 @@ def password_reset_view(request, uidb64, token):
 
         return render(request, "password_reset.html", {"form": form})
     else:
-        return redirect('invalid_link')
-    
+        return redirect("invalid_link")
+
+
 def invalid_link(request):
-    return render(request, 'invalid_link.html')
+    return render(request, "invalid_link.html")
+
 
 @require_POST
 @login_required
@@ -254,3 +262,47 @@ def delete_account(request):
                     messages.error(request, f"Error in {field.label}: {error}")
 
     return redirect(request.META.get("HTTP_REFERER", "index"))
+
+
+def password_forgotten_view(request):
+    """
+    View if a user doesn't remember its password and wants to reset it.
+    """
+    if request.method == "POST":
+        form = PasswordForgottenForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            user = User.objects.get(email=email)
+            send_password_forgotten_email(user, request)
+            return redirect("login")
+    else:
+        form = PasswordForgottenForm()
+
+    return render(request, "password_forgotten.html", {"form": form})
+
+
+def send_password_forgotten_email(user, request):
+    """
+    Send an email to the user to reset their password.
+    """
+    subject = "Password Reset"
+
+    # Create the token for the user
+    uid = urlsafe_base64_encode(str(user.id).encode())
+    token = default_token_generator.make_token(user)
+
+    base_url = request.build_absolute_uri("/")
+    # Create the URL for the password change page
+    password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
+
+    message = render_to_string(
+        "accounts/password_forgotten_email.html",
+        {
+            "user": user,
+            "password_reset_url": password_reset_url,
+        },
+    )
+
+    to_email = user.email
+    email = EmailMessage(subject, message, to=[to_email])
+    email.send()

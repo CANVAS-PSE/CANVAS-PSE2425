@@ -294,3 +294,23 @@ class PasswordResetForm(forms.Form):
             )
 
         return cleaned_data
+
+    
+class PasswordForgottenForm(forms.Form):
+    """
+    A form for resetting the password when the user has forgotten it. It includes
+    a field for the email address.
+    """
+
+    email = forms.EmailField(label="Email")
+    
+    def clean_email(self):
+        """
+        Checks if the email exists.
+        """
+        email = self.cleaned_data.get("email")
+        if not User.objects.filter(email=email).exists():
+            self.add_error(
+                "email", "This email address is not registered."
+            )
+        return email

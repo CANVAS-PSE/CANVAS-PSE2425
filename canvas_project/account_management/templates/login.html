@@ -28,21 +28,23 @@
                     </a>
                 </div>
                 <hr>
-                <form class="d-flex flex-column" method="POST" action="{% url 'login' %}">
+                <form class="d-flex flex-column"
+                      method="POST"
+                      action="{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
                     {% csrf_token %}
                     {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <ul>
-                            {% for field in form %} {% if field.errors %}
-                            <li>
-                                <strong>{{ field.label }}:</strong>
-                                {% for error in field.errors %}
-                                <p>{{ error }}</p>
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field in form %}
+                                    {% if field.errors %}
+                                        <li>
+                                            <strong>{{ field.label }}:</strong>
+                                            {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
-                            </li>
-                            {% endif %} {% endfor %}
-                        </ul>
-                    </div>
+                            </ul>
+                        </div>
                     {% endif %}
                     <div class="form-floating mb-3">
                         <input type="email"
@@ -60,6 +62,7 @@
                                placeholder="Password">
                         <label for="floatingPassword">Password</label>
                     </div>
+                    <a href="{% url 'password_forgotten' %}" class="mb-3">Forgot password?</a>
                     <button type="submit" class="btn btn-primary rounded-5 fw-bold">Login</button>
                 </form>
             </div>
@@ -70,12 +73,12 @@
             </div>
         </div>
         <!--Placeholder for a 3D scene-->
-        <div id="login-bg" class="w-100 rounded-start-5 overflow-hidden"
-            style="background-image: url('{% static 'img/loginPlaceholder.png' %}'); 
-                background-size: cover; 
-                background-position: center; 
-                height: 100vh;">
-        </div>
+        <div id="login-bg"
+             class="w-100 rounded-start-5 overflow-hidden"
+             style="background-image: url('{% static 'img/loginPlaceholder.png' %}');
+                    background-size: cover;
+                    background-position: center;
+                    height: 100vh"></div>
     </div>
-    </div>
+</div>
 {% endblock body %}
