@@ -600,7 +600,7 @@ export class Receiver extends SelectableObject {
             "Rotation U",
             0,
             360,
-            () => THREE.MathUtils.radToDeg(this.#oldRotation.y),
+            () => (THREE.MathUtils.radToDeg(this.#oldRotation.y) +360) % 360,
             (newValue) => {
                 newValue = THREE.MathUtils.degToRad(newValue);
                 this.#undoRedoHandler.executeCommand(
@@ -819,7 +819,6 @@ export class Receiver extends SelectableObject {
      * @param {THREE.Euler} rotation 
      */
     updateAndSaveObjectRotation(rotation) {
-        console.log("hallooooo");
         this.#undoRedoHandler.executeCommand(
             new UpdateReceiverCommand(this, "rotation", rotation)
         );
@@ -837,12 +836,6 @@ export class Receiver extends SelectableObject {
         this.rotation.y = rotation.y;
         this.rotation.z = rotation.z;
         this.#oldRotation = new THREE.Euler(rotation.x, rotation.y, rotation.z, rotation.order);
-
-
-        /*
-        this.rotation.copy(new THREE.Euler(rotation.x, rotation.y, rotation.z, rotation.order));
-        this.#oldRotation.copy(new THREE.Euler(rotation.x, rotation.y, rotation.z, rotation.order));
-        */
 
     }
 
