@@ -201,15 +201,9 @@ export class Picker {
                 );
                 this.#itemSelectedEvent();
             } else if (this.#transformControls.mode === "rotate") {
-                const currentRotation = new THREE.Euler(
-                    this.#transformControls.object.rotation.x,
-                    this.#transformControls.object.rotation.y,
-                    this.#transformControls.object.rotation.z,
-                    "XYZ"
-                );
-                if (!currentRotation.equals(this.#selectedObject.oldRotation)) {
+                if (!this.#transformControls.object.quaternion.equals(this.#selectedObject.oldQuaternion)) {
                     this.#selectedObject.updateAndSaveObjectRotation(
-                        this.#transformControls.object.rotation.clone()
+                        this.#transformControls.object.quaternion.clone()
                     );
                     this.#itemSelectedEvent();
                 }

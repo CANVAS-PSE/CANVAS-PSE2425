@@ -80,7 +80,6 @@ export class ProjectOverviewManager {
             );
 
         favoriteSwitch.addEventListener("change", () => {
-            console.log("test");
             document.querySelectorAll(".project").forEach((project) => {
                 if (favoriteSwitch.checked) {
                     if (project.dataset.isFavorite == "true") {

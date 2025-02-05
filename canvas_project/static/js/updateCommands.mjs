@@ -304,7 +304,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
             case "resolutionU":
                 return this.#receiver.resolutionU;
             case "rotation":
-                return this.#receiver.oldRotation;
+                return this.#receiver.oldQuaternion;
             case "position":
                 return this.#receiver.oldPosition;
             default:

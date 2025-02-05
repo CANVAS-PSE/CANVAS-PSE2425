@@ -107,7 +107,7 @@ export class SelectableObject extends Object3D {
 
     /**
      * Updates the rotation of the object
-     * @param {THREE.Euler} rotation
+     * @param {THREE.Quaternion} rotation
      */
     updateRotation(rotation) {
         throw new Error("This method must be implemented in all subclasses");
@@ -470,7 +470,7 @@ export class Receiver extends SelectableObject {
     #isMovable = true;
     #rotatableAxis = ["Y"];
     #oldPosition;
-    #oldRotation = new THREE.Euler(0, 0, 0);
+    #oldQuaternion = new THREE.Quaternion();
 
     /**
      * Creates a Receiver object
@@ -510,9 +510,7 @@ export class Receiver extends SelectableObject {
         this.add(this.#top);
 
         this.updatePosition(position);
-        this.updateRotation(new THREE.Euler(0, rotationY, 0, "XYZ"));
-
-        //this.#oldPosition = position.clone();
+        this.updateRotation(this.yDegreeToQuaternion(rotationY));
 
         this.#apiID = apiID;
         this.#towerType = towerType;
@@ -600,11 +598,11 @@ export class Receiver extends SelectableObject {
             "Rotation U",
             0,
             360,
-            () => (THREE.MathUtils.radToDeg(this.#oldRotation.y) +360) % 360,
+            () => this.quaternionToYDegree(this.#oldQuaternion),
             (newValue) => {
-                newValue = THREE.MathUtils.degToRad(newValue);
+                newValue = this.yDegreeToQuaternion(newValue);
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "rotation", new THREE.Euler(this.#oldRotation.x, newValue, this.oldRotation.z))
+                    new UpdateReceiverCommand(this, "rotation", new THREE.Quaternion().copy(newValue))
                 );
             },
             15
@@ -765,6 +763,30 @@ export class Receiver extends SelectableObject {
         );
     }
 
+    /**
+     * Converts a quaternion to a y degree (a number from 0 to 360)
+     * @param {THREE.Quaternion} quaternion 
+     * @returns 
+     */
+    quaternionToYDegree(quaternion) {
+        const euler = new THREE.Euler();
+        euler.setFromQuaternion(quaternion, "YXZ");
+        let angle = THREE.MathUtils.radToDeg(euler.y);
+        return (angle + 360) % 360;
+    }
+
+    /**
+     * Converts a y degree (a number from 0 to 360) to a quaternion
+     * @param {Number} angle 
+     * @returns 
+     */
+    yDegreeToQuaternion(angle) {
+        const euler = new THREE.Euler(0, THREE.MathUtils.degToRad(angle), 0, 'YXZ');
+        const quaternion = new THREE.Quaternion().setFromEuler(euler);
+        return quaternion;
+    }
+
+
     get rotatableAxis() {
         return this.#rotatableAxis;
     }
@@ -777,8 +799,8 @@ export class Receiver extends SelectableObject {
         return this.#oldPosition;
     }
 
-    get oldRotation() {
-        return this.#oldRotation;
+    get oldQuaternion() {
+        return this.#oldQuaternion;
     }
 
     /**
@@ -816,7 +838,7 @@ export class Receiver extends SelectableObject {
 
     /**
      * Updates the rotation of the receiver 
-     * @param {THREE.Euler} rotation 
+     * @param {THREE.Quaternion} rotation 
      */
     updateAndSaveObjectRotation(rotation) {
         this.#undoRedoHandler.executeCommand(
@@ -825,24 +847,26 @@ export class Receiver extends SelectableObject {
     }
 
     /**
-     * Updates the rotation of the receiver
-     * @param {THREE.Euler} rotation 
+     * Updates the quaternion of the receiver, and indirectly updates the rotation of the receiver
+     * @param {THREE.Quaternion} quaternion 
      */
-    updateRotation(rotation) {
-        console.log(this.rotation);
-        console.log(this.#oldRotation);
-
-        this.rotation.x = rotation.x;
-        this.rotation.y = rotation.y;
-        this.rotation.z = rotation.z;
-        this.#oldRotation = new THREE.Euler(rotation.x, rotation.y, rotation.z, rotation.order);
-
+    updateRotation(quaternion) {
+        const axis = new THREE.Vector3(0, 1, 0);
+        const angle = Math.PI / 6;
+        this.quaternion.copy(quaternion);
+        this.#oldQuaternion = new THREE.Quaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);  
     }
 
+    /**
+     * Deletes the receiver
+     */
     delete() {
         this.#undoRedoHandler.executeCommand(new DeleteReceiverCommand(this));
     }
 
+    /**
+     * Duplicates the receiver
+     */
     duplicate() {
         this.#undoRedoHandler.executeCommand(
             new DuplicateReceiverCommand(this)
