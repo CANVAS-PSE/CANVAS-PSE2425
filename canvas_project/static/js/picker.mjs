@@ -150,9 +150,6 @@ export class Picker {
             this.#selectedObject = objectList[0];
             this.#attachTransform();
             this.#attachSelectionBox();
-
-            // Only show the selection box if the object has a position in the scene
-            // @ts-ignore
         }
 
         this.#itemSelectedEvent();
@@ -219,11 +216,6 @@ export class Picker {
      * @param {MouseEvent} event
      */
     #onClick(event) {
-        if (this.#mode !== Mode.MOVE && this.#mode !== Mode.ROTATE) {
-            this.#deselectAll();
-            return;
-        }
-
         // Get normalized mouse position
         this.#mouse = this.#mouseposition(
             new THREE.Vector2(event.clientX, event.clientY)
@@ -287,6 +279,7 @@ export class Picker {
      * @param {Boolean} ctrlKey The state of the ctrlKey
      */
     #updateSelection(ctrlKey) {
+        console.log(this.#selectedObject);
         // No object was clicked
         if (!this.#selectedObject) {
             if (!ctrlKey) {
@@ -294,7 +287,6 @@ export class Picker {
             }
             return;
         }
-
         // Object was clicked
         if (ctrlKey) {
             // If object is already in the selection, just attach transformControls
@@ -314,6 +306,8 @@ export class Picker {
             this.#attachTransform();
             this.#attachSelectionBox();
         }
+
+        console.log(this.#selectedObjects);
     }
 
     /**
@@ -321,41 +315,45 @@ export class Picker {
      * or a multiSelectionGroup that contains all currently selected objects.
      */
     #attachTransform() {
-        // reset previous available axis
-        this.#transformControls.showX = true;
-        this.#transformControls.showZ = true;
-        this.#transformControls.showY = true;
+        if (this.#mode !== Mode.NONE) {
+            // reset previous available axis
+            this.#transformControls.showX = true;
+            this.#transformControls.showZ = true;
+            this.#transformControls.showY = true;
 
-        if (this.#selectedObjects.length === 0) {
-            this.#deselectAll();
-        } else if (this.#selectedObjects.length === 1) {
-            if (this.#transformControls.mode === "rotate") {
-                this.#transformControls.attach(this.#selectedObjects[0]);
-                this.#transformControls.showX = false;
-                this.#transformControls.showZ = false;
-                this.#transformControls.showY = false;
-                if (this.#selectedObject.rotatableAxis) {
-                    this.#selectedObject.rotatableAxis.forEach((axis) => {
-                        if (axis === "X") {
-                            this.#transformControls.showX = true;
-                        }
-                        if (axis === "Y") {
-                            this.#transformControls.showY = true;
-                        }
-                        if (axis === "Z") {
-                            this.#transformControls.showZ = true;
-                        }
-                    });
-                }
-            } else if (this.#transformControls.mode === "translate") {
-                if (this.#selectedObject.isMovable) {
+            if (this.#selectedObjects.length === 0) {
+                this.#deselectAll();
+            } else if (this.#selectedObjects.length === 1) {
+                if (this.#transformControls.mode === "rotate") {
                     this.#transformControls.attach(this.#selectedObjects[0]);
+                    this.#transformControls.showX = false;
+                    this.#transformControls.showZ = false;
+                    this.#transformControls.showY = false;
+                    if (this.#selectedObject.rotatableAxis) {
+                        this.#selectedObject.rotatableAxis.forEach((axis) => {
+                            if (axis === "X") {
+                                this.#transformControls.showX = true;
+                            }
+                            if (axis === "Y") {
+                                this.#transformControls.showY = true;
+                            }
+                            if (axis === "Z") {
+                                this.#transformControls.showZ = true;
+                            }
+                        });
+                    }
+                } else if (this.#transformControls.mode === "translate") {
+                    if (this.#selectedObject.isMovable) {
+                        this.#transformControls.attach(
+                            this.#selectedObjects[0]
+                        );
+                    }
                 }
+            } else {
+                // TODO: Implement multi-selection
+                // hide every control as they will not work properly
+                this.#transformControls.detach();
             }
-        } else {
-            // TODO: Implement multi-selection
-            // hide every control as they will not work properly
-            this.#deselectAll();
         }
     }
 
