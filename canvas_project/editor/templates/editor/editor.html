@@ -24,6 +24,8 @@
                 "bulkObjectCommands": "{% static 'js/bulkObjectCommands.mjs' %}",
                 "overview": "{% static 'js/overview.mjs' %}",
                 "editor": "{% static 'js/editor.mjs' %}",
+                "objectManager": "{% static 'js/objectManager.mjs' %}",
+                "quickSelector": "{% static 'js/quickSelector.mjs' %}",
                 "updateCommands": "{% static 'js/updateCommands.mjs' %}",
                 "duplicateCommands": "{% static 'js/duplicateCommands.mjs' %}",
                 "deleteCommands": "{% static 'js/deleteCommands.mjs' %}",
@@ -48,6 +50,14 @@
     </script>
 {% endblock %}
 {% block body %}
+    <!-- loading animation -->
+    <div class="position-fixed z-3 d-flex flex-column gap-3 justify-content-center align-items-center min-vh-100 min-vw-100 bg-body"
+         id="loadingScreen">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div>Loading project</div>
+    </div>
     <!-- message system -->
     {% if messages %}
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -676,9 +686,22 @@
                 <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
                    data-bs-toggle="dropdown"
                    aria-expanded="false">
-                    <div class="rounded-circle bg-primary me-2"
-                         style="width: 32px;
-                                height: 32px"></div>
+                    {% if request.user.userprofile.profile_picture %}
+                        <img src="{{ request.user.userprofile.profile_picture.url }}"
+                             alt="Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
+                    {% else %}
+                        <!-- If the user doesn't have a profile picture -->
+                        <img src="/media/profile_pics/default.jpg"
+                             alt="Default Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
+                    {% endif %}
                     <strong class="me-2">{{ request.user.first_name }}</strong>
                 </a>
                 <ul class="dropdown-menu text-small">

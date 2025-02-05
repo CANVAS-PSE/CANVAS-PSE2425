@@ -6,7 +6,7 @@
          aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered"
-             style="height:80vh">
+             style="height: 80vh">
             <div class="modal-content rounded-4 h-100 overflow-auto">
                 <div class="modal-header">
                     <h5 class="modal-title">Settings</h5>
@@ -82,9 +82,49 @@
                                  tabindex="0">
                                 <form class="d-flex flex-column h-100"
                                       method="POST"
-                                      action="{% url 'update_account' %}">
+                                      action="{% url 'update_account' %}"
+                                      enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="flex-grow-1 overflow-auto">
+                                        <!-- profile picture -->
+                                        <h5 class="fw-bold">Profile Picture</h5>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <!-- current profile picture -->
+                                            <div class="d-flex align-items-center">
+                                                {% if user.userprofile.profile_picture %}
+                                                    <img id="previewImage"
+                                                         src="{{ user.userprofile.profile_picture.url }}"
+                                                         alt="Profile Picture"
+                                                         class="rounded-circle"
+                                                         style="width: 100px;
+                                                                height: 100px;
+                                                                object-fit: cover" />
+                                                {% else %}
+                                                    <img id="previewImage"
+                                                         src="/media/profile_pics/default.jpg"
+                                                         alt="Default Profile Picture"
+                                                         class="rounded-circle"
+                                                         style="width: 100px;
+                                                                height: 100px;
+                                                                object-fit: cover" />
+                                                {% endif %}
+                                                <!-- Custom Upload Button -->
+                                                <div class="ms-3">
+                                                    <label for="profile_picture" class="btn btn-primary">Upload New Picture</label>
+                                                    <span id="fileName" class="ms-2">No file chosen</span>
+                                                    <input type="file"
+                                                           id="profile_picture"
+                                                           name="profile_picture"
+                                                           class="d-none"
+                                                           accept="image/*" />
+                                                    <!-- button to delete the current profile picture -->
+                                                    <input type="hidden" id="delete_picture" name="delete_picture" value="0">
+                                                    <button type="button"
+                                                            class="btn btn-danger ms-2"
+                                                            id="deleteProfilePictureBtn">Delete Picture</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <h5 class="fw-bold">Account Details</h5>
                                         <div class="mb-3 d-flex">
                                             <div class="me-2 w-50">
@@ -178,7 +218,10 @@
                             aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete your account? Please enter your password to confirm.</p>
+                    <p>
+                        Are you sure you want to delete your account? Please enter
+                        your password to confirm.
+                    </p>
                     <form method="POST" action="/delete_account/">
                         {% csrf_token %}
                         <div class="mb-3">
@@ -187,7 +230,7 @@
                                    class="form-control"
                                    id="confirm_password"
                                    name="password"
-                                   required>
+                                   required />
                         </div>
                         <div class="d-flex justify-content-end">
                             <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
@@ -222,24 +265,24 @@
     </div>
     {% if messages %}
         <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var messageList = document.getElementById('message-list');
-            var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+    document.addEventListener("DOMContentLoaded", function () {
+        var messageList = document.getElementById('message-list');
+        var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
 
-            {% for message in messages %}
-                var listItem = document.createElement('li');
-                listItem.textContent = "{{ message|escapejs }}";
+        {% for message in messages %}
+            var listItem = document.createElement('li');
+            listItem.textContent = "{{ message|escapejs }}";
 
-                {% if message.tags == "success" %}
-                    listItem.style.color = "green";
-                {% elif message.tags == "error" %}
-                    listItem.style.color = "red";
-                {% else %}
-                    listItem.style.color = "black";
-                {% endif %}
+            {% if message.tags == "success" %}
+                listItem.style.color = "green";
+            {% elif message.tags == "error" %}
+                listItem.style.color = "red";
+            {% else %}
+                listItem.style.color = "black";
+            {% endif %}
 
-                messageList.appendChild(listItem);
-            {% endfor %}
+            messageList.appendChild(listItem);
+        {% endfor %}
 
             if (messageList.children.length > 0) {
                 messageModal.show();
@@ -250,19 +293,50 @@
 {% endblock body %}
 <!-- Script to handle custom behavior for Ctrl + S -->
 <script>
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener("keydown", function (event) {
         // Check if Ctrl + S is pressed
-        if (event.ctrlKey && event.key === 's') {
+        if (event.ctrlKey && event.key === "s") {
             event.preventDefault(); // Prevent default browser "save" action
 
             // Check if we are on the Account settings tab
-            const accountTab = document.getElementById('v-pills-profil');
-            if (accountTab && accountTab.classList.contains('show')) {
-                const form = document.querySelector('form[action="{% url "update_account" %}"]');
+            const accountTab = document.getElementById("v-pills-profil");
+            if (accountTab && accountTab.classList.contains("show")) {
+                const form = document.querySelector(
+                    'form[action="{% url "update_account" %}"]'
+                );
                 if (form) {
-                    form.submit();  // Submit the form
+                    form.submit(); // Submit the form
                 }
             }
         }
+    });
+</script>
+<!-- script for preview of the selected image -->
+<script>
+    document
+        .getElementById("profile_picture")
+        .addEventListener("change", function (event) {
+            let file = event.target.files[0]; 
+            let fileNameElement = document.getElementById("fileName");
+            let previewImage = document.getElementById("previewImage");
+
+            if (file) {
+                fileNameElement.textContent = file.name; 
+
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result; 
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileNameElement.textContent = "No file chosen";
+            }
+        });
+</script>
+<!-- Script: Reset profile picture to default when the delete button is clicked -->
+<script>
+    document.getElementById("deleteProfilePictureBtn").addEventListener("click", function() {
+        document.getElementById("delete_picture").value = "1";
+        document.getElementById("previewImage").src = "/media/profile_pics/default.jpg"; 
     });
 </script>

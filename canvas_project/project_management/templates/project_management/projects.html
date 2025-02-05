@@ -6,11 +6,13 @@
 {% endblock %}
 {% block script %}
     {{ block.super }}
-    <script type="module">
-    import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
+    {% if projects %}
+        <script type="module">
+            import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
 
-    const manager = new ProjectOverviewManager();
-    </script>
+            const manager = new ProjectOverviewManager();
+        </script>
+    {% endif %}
 {% endblock script %}
 {% block body %}
     <!--create project modal-->
@@ -26,8 +28,9 @@
                         Projects will only be saved if they have a name unique to
                         your already existing projects!
                     </p>
-                    <form action="" method="POST" class="d-flex flex-column gap-3">
+                    <form action="" method="POST" class="d-flex flex-column gap-2">
                         {% csrf_token %} {{ form }}
+                        <br />
                         <button class="btn btn-primary rounded-3" type="submit">Create</button>
                     </form>
                 </div>
@@ -65,7 +68,7 @@
                     <div class="project" data-is-favorite="{{ project.favorite }}">
                         <div class="card rounded-4 bg-body-tertiary overflow-hidden mx-auto">
                             <div class="row g-0">
-                                <div class="col-md-4 overflow-hidden">
+                                <div class="col-md-4">
                                     <a class="col-md-4" href="{% url 'editor' project.name %}">
                                         {% if project.preview %}
                                             <img src="{{ project.preview.url }}"
@@ -83,113 +86,174 @@
                                     </a>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="card-body">
-                                        <div class="d-flex gap-1">
-                                            <div class="d-flex flex-column">
-                                                <h1 class="fw-bolder">{{ project.name }}</h1>
-                                                <p class="fw-light">{{ project.description }}</p>
-                                                <p class="text-start">Last edited: {{ project.last_edited }}</p>
-                                            </div>
-                                            <!-- favorites-->
-                                            <div class="position-absolute end-0 top-0">
-                                                {% if project.favorite == "true" %}
-                                                    <div class="btn btn-primary custom-btn shadow favoriteButton"
-                                                         style="border-radius: 0%"
-                                                         data-is-favorite="{{ project.favorite }}"
-                                                         data-project-name="{{ project.name }}">
-                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                    </div>
-                                                {% else %}
-                                                    <div class="btn btn-primary custom-btn shadow favoriteButton"
-                                                         style="border-radius: 0%"
-                                                         data-is-favorite="{{ project.favorite }}"
-                                                         data-project-name="{{ project.name }}">
-                                                        <i class="bi bi-star"></i>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
+                                    <div class="d-flex">
+                                        <!-- favorites-->
+                                        <div class="position-absolute end-0 top-0">
+                                            {% if project.favorite == "true" %}
+                                                <div class="btn btn-primary custom-btn shadow favoriteButton"
+                                                     style="border-radius: 0%"
+                                                     data-is-favorite="{{ project.favorite }}"
+                                                     data-project-name="{{ project.name }}">
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                </div>
+                                            {% else %}
+                                                <div class="btn btn-primary custom-btn shadow favoriteButton"
+                                                     style="border-radius: 0%"
+                                                     data-is-favorite="{{ project.favorite }}"
+                                                     data-project-name="{{ project.name }}">
+                                                    <i class="bi bi-star"></i>
+                                                </div>
+                                            {% endif %}
                                         </div>
-                                        <div class="d-flex gap-2">
-                                            <a role="button"
-                                               href="{% url 'editor' project_name=project.name %}"
-                                               class="btn btn-primary">Open</a>
-                                            <!-- Edit Button -->
-                                            <button type="button"
-                                                    class="btn btn-primary custom-btn shadow"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#updateModal-{{ project.name }}">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
-                                            <div class="modal fade"
-                                                 id="updateModal-{{ project.name }}"
-                                                 tabindex="-1"
-                                                 aria-labelledby="updateModal"
-                                                 aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="deleteModalHeader">Edit Project</h1>
-                                                            <button type="button"
-                                                                    class="btn-close"
-                                                                    data-bs-dismiss="modal"
-                                                                    aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p class="font-italic">
-                                                                Projects will only be
-                                                                updated if they have a
-                                                                unique name!
-                                                            </p>
-                                                            <form action="{% url 'updateProject' project_name=project.name %}"
-                                                                  method="POST"
-                                                                  class="d-flex flex-column gap-3">
-                                                                {% csrf_token %} {{ form }}
-                                                                <button class="btn btn-primary rounded-3" type="submit">Save</button>
-                                                            </form>
-                                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <div class="d-flex gap-1">
+                                                    <div class="d-flex flex-column">
+                                                        <h1 class="fw-bolder">{{ project.name }}</h1>
+                                                        <p class="fw-light">{{ project.description }}</p>
+                                                        <p class="text-start">Last edited: {{ project.last_edited }}</p>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <!-- Duplicate Button -->
-                                            <a href="{% url 'duplicateProject' project_name=project.name %}"
-                                               class="btn btn-primary custom-btn shadow">
-                                                <i class="bi bi-copy"></i>
-                                            </a>
-                                            <!-- Share Button -->
-                                            <button class="btn btn-primary custom-btn shadow">
-                                                <i class="bi bi-share"></i>
-                                            </button>
-                                            <!-- Delete Button -->
-                                            <button type="button"
-                                                    class="btn btn-outline-danger"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#deleteModal-{{ project.name }}">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                            <div class="modal fade"
-                                                 id="deleteModal-{{ project.name }}"
-                                                 tabindex="-1"
-                                                 aria-labelledby="deleteModal"
-                                                 aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="deleteModalHeader">Delete Project</h1>
-                                                            <button type="button"
-                                                                    class="btn-close"
-                                                                    data-bs-dismiss="modal"
-                                                                    aria-label="Close"></button>
+                                                <div class="d-flex gap-2">
+                                                    <a role="button"
+                                                       href="{% url 'editor' project_name=project.name %}"
+                                                       class="btn btn-primary">Open</a>
+                                                    <!-- Edit Button -->
+                                                    <button type="button"
+                                                            class="btn btn-primary custom-btn shadow"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#updateModal-{{ project.name }}">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                    <div class="modal fade"
+                                                         id="updateModal-{{ project.name }}"
+                                                         tabindex="-1"
+                                                         aria-labelledby="updateModal"
+                                                         aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h1 class="modal-title fs-5" id="deleteModalHeader">Edit Project</h1>
+                                                                    <button type="button"
+                                                                            class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p class="font-italic">
+                                                                        Projects will only be
+                                                                        updated if they have a
+                                                                        unique name!
+                                                                    </p>
+                                                                    <form action="{% url 'updateProject' project_name=project.name %}"
+                                                                          method="POST"
+                                                                          class="d-flex flex-column">
+                                                                        {% csrf_token %} {{ form }}
+                                                                        <br />
+                                                                        <button class="btn btn-primary rounded-3" type="submit">Save</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="modal-body">
-                                                            By clicking
-                                                            <i>Delete {{ project.name }}</i>, this project and all
-                                                            associated data will be
-                                                            irretrievably removed from the
-                                                            database and cannot be restored.
+                                                    </div>
+                                                    <!-- Duplicate Button -->
+                                                    <a href="{% url 'duplicateProject' project_name=project.name %}"
+                                                       class="btn btn-primary custom-btn shadow">
+                                                        <i class="bi bi-copy"></i>
+                                                    </a>
+                                                    <!-- Share Button -->
+                                                    <button class="btn btn-primary custom-btn shadow"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#shareModal-{{ project.name }}">
+                                                        <i class="bi bi-share"></i>
+                                                    </button>
+                                                    <div class="modal fade"
+                                                         id="shareModal-{{ project.name }}"
+                                                         tabindex="-1"
+                                                         aria-labelledby="shareModel"
+                                                         aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h1 class="modal-title fs-5" id="shareModelHeader">Share this project</h1>
+                                                                    <button type="button"
+                                                                            class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body d-flex flex-column gap-2">
+                                                                    <script>
+                                                                        function handleCancelClick(projectName) {
+                                                                                const copyLinkButton = document.getElementById(`copyLink-${projectName}`);
+                                                                                navigator.clipboard.writeText(copyLinkButton.previousElementSibling.value);
+                                                                                copyLinkButton.innerHTML = 'Copied';
+                                                                                copyLinkButton.classList.add('active');
+                                                                        }
+                                                                    </script>
+                                                                    <div>
+                                                                        By clicking
+                                                                        <i>Share {{ project.name }}</i>, for the next 72 hours anybody with the link
+                                                                        below can get his own
+                                                                        copy of this project.
+                                                                    </div>
+                                                                    <div class="fw-bolder">Copy the link below, or it will be automatically copied when pressing the share button.</div>
+                                                                    <div class="input-group mt-3">
+                                                                        <input type="text"
+                                                                               class="form-control"
+                                                                               value="{{ request.build_absolute_uri }}sharedProjects/{{ project.uid }}/{{ project.token }}"
+                                                                               readonly />
+                                                                        <button class="btn btn-outline-secondary"
+                                                                                id="copyLink-{{ project.name }}"
+                                                                                type="button"
+                                                                                onclick="handleCancelClick('{{ project.name }}')">
+                                                                            Copy
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        <a href="{% url 'shareProject' project_name=project.name %}"
+                                                                           type="button"
+                                                                           onclick="handleCancelClick('{{ project.name }}')"
+                                                                           class="btn btn-primary">Share {{ project.name }}</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                            <a href="{% url 'deleteProject' project.name %}" class="btn btn-danger">Delete {{ project.name }}</a>
+                                                        <!-- Delete Button -->
+                                                        <button type="button"
+                                                                class="btn btn-outline-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#deleteModal-{{ project.name }}">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                        <div class="modal fade"
+                                                             id="deleteModal-{{ project.name }}"
+                                                             tabindex="-1"
+                                                             aria-labelledby="deleteModal"
+                                                             aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h1 class="modal-title fs-5" id="deleteModalHeader">Delete Project</h1>
+                                                                        <button type="button"
+                                                                                class="btn-close"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        By clicking
+                                                                        <i>Delete {{ project.name }}</i>,
+                                                                        this project and all associated
+                                                                        data will be irretrievably
+                                                                        removed from the database and
+                                                                        cannot be restored.
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        <a href="{% url 'deleteProject' project.name %}" class="btn btn-danger">Delete {{ project.name }}</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -199,41 +263,54 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <div class="d-flex w-100 justify-content-end p-2">
-            <div class="d-flex justify-content-between mx-3 py-1">
-                <a class="dropdown-toggle d-flex align-items-center link-bo dy-emphasis text-decoration-none py-2 text-reset"
-                   data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                    <div class="rounded-circle bg-primary me-2"
-                         style="width: 32px;
-                                height: 32px"></div>
-                    <strong class="me-2">{{ request.user.first_name }}</strong>
-                </a>
-                <ul class="dropdown-menu text-small shadow">
-                    <div class="px-3 gap-1">
-                        <p class="m-0">{{ request.user.first_name }} {{ request.user.last_name }}</p>
-                        <p class="text-secondary m-0">{{ request.user.email }}</p>
-                    </div>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    <li>
-                        <button class="dropdown-item"
-                                data-bs-toggle="modal"
-                                data-bs-target="#settings">Settings</button>
-                    </li>
-                    <li>
-                        <form action="{% url 'logout' %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="dropdown-item">Sign out</button>
-                        </form>
-                    </li>
-                </ul>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="d-flex w-100 justify-content-end p-3">
+                <!-- user -->
+                <div class="dropup d-flex justify-content-between mx-3 py-1">
+                    <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        {% if request.user.userprofile.profile_picture %}
+                            <img src="{{ request.user.userprofile.profile_picture.url }}"
+                                 alt="Profile Picture"
+                                 class="rounded-circle me-2"
+                                 style="width: 32px;
+                                        height: 32px;
+                                        object-fit: cover">
+                        {% else %}
+                            <!-- If the user doesn't have a profile picture -->
+                            <img src="/media/profile_pics/default.jpg"
+                                 alt="Default Profile Picture"
+                                 class="rounded-circle me-2"
+                                 style="width: 32px;
+                                        height: 32px;
+                                        object-fit: cover">
+                        {% endif %}
+                        <strong class="me-2">{{ request.user.first_name }}</strong>
+                    </a>
+                    <ul class="dropdown-menu text-small">
+                        <div class="px-3 gap-1">
+                            <p class="m-0">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                            <p class="text-secondary m-0">{{ request.user.email }}</p>
+                        </div>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <button class="dropdown-item"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#settings">Settings</button>
+                        </li>
+                        <li>
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">Sign out</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-{% endblock body %}
+    {% endblock body %}
