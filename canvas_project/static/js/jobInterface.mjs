@@ -1,12 +1,20 @@
+let apiUrl = window.location.origin;
+
 export class JobInterface {
     #jobInterfaceBody;
+    #projectID;
     /**
      * @type {Job[]}
      */
     #jobList = [];
 
-    constructor() {
+    /**
+     *
+     * @param {Number} projectID
+     */
+    constructor(projectID) {
         this.#jobInterfaceBody = document.getElementById("jobInterfaceBody");
+        this.#projectID = projectID;
 
         document
             .getElementById("createNewJob")
@@ -43,7 +51,7 @@ export class JobInterface {
     }
 
     #createNewJob() {
-        fetch(window.location.origin + "/jobs/", {
+        fetch(apiUrl + "/jobs/" + this.#projectID + "/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -52,7 +60,7 @@ export class JobInterface {
         })
             .then((res) => res.json())
             .then((data) => {
-                const newJob = new Job(this, data.jobID);
+                const newJob = new Job(this, data.jobID, this.#projectID);
                 if (this.#jobList.length == 0) {
                     this.#jobInterfaceBody.innerHTML = "";
                 }
@@ -81,7 +89,7 @@ export class JobInterface {
                 .classList.add("d-none");
         }
 
-        fetch(window.location.origin + "/jobs/" + job.jobID + "/", {
+        fetch(apiUrl + "/jobs/" + this.#projectID + "/" + job.jobID + "/", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -93,13 +101,16 @@ export class JobInterface {
     }
 
     #getJobs() {
-        fetch(window.location.origin + "/jobs/", {})
+        fetch(apiUrl + "/jobs/" + this.#projectID + "/")
             .then((res) => res.json())
             .then((data) => {
                 data["jobIDs"].forEach((job) => {
-                    const newJob = new Job(this, job);
+                    const newJob = new Job(this, job, this.#projectID);
                     this.#jobList.push(newJob);
                     this.#jobInterfaceBody.appendChild(newJob);
+                    document
+                        .getElementById("hasActiveJobsIndicator")
+                        .classList.remove("d-none");
                 });
             })
             .catch((error) => {
@@ -135,6 +146,7 @@ export class JobInterface {
 export class Job extends HTMLElement {
     #id;
     #jobInterface;
+    #projectID;
     #progress = 0.8;
     #isFinished = false;
 
@@ -142,10 +154,11 @@ export class Job extends HTMLElement {
     #progressElem;
     #resultButton;
 
-    constructor(jobInterface, jobID) {
+    constructor(jobInterface, jobID, projectID) {
         super();
         this.#id = jobID;
         this.#jobInterface = jobInterface;
+        this.#projectID = projectID;
 
         this.#createJobElement();
     }
@@ -209,7 +222,7 @@ export class Job extends HTMLElement {
 
     fetchStatus() {
         if (!this.#isFinished) {
-            fetch(window.location.origin + "/jobs/" + this.#id)
+            fetch(apiUrl + "/jobs/" + this.#projectID + "/" + this.#id)
                 .then((res) => res.json())
                 .then((data) => {
                     this.#statusElem.innerHTML = "Status: " + data["status"];
@@ -221,8 +234,7 @@ export class Job extends HTMLElement {
                         data["progress"] * 100 + "%";
                     if (data["progress"] >= 1) {
                         this.#resultButton.classList.toggle("d-none");
-                        this.#resultButton.href =
-                            window.location.origin + data["result"];
+                        this.#resultButton.href = apiUrl + data["result"];
                         this.#isFinished = true;
                     }
                 })

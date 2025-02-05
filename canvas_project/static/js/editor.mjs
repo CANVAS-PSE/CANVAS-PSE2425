@@ -82,7 +82,7 @@ export class Editor {
             this.#undoRedoHandler
         );
         this.#quickSelector = new QuickSelector(this.#objectManager);
-        this.#jobInterface = new JobInterface();
+        this.#jobInterface = new JobInterface(projectId);
         this.#inspector = new Inspector(this.#picker);
         this.#previewHandler = new PreviewHandler(this.#scene);
 
