@@ -81,6 +81,7 @@ class Receiver(models.Model):
     normal_z = models.FloatField(default=0)
 
     rotation_y = models.FloatField(default=0)
+    receiver_type = models.CharField(max_length=300, default="planar")
 
     # optional fields
     curvature_e = models.FloatField(default=0)
