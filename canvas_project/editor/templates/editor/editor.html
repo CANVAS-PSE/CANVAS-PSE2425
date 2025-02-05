@@ -5,7 +5,7 @@
     <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block script %}
-    {{ block.super }}
+    <script src="{% static 'js/darkmode.js' %}"></script>
     <script type="importmap">
         {
             "imports": {
@@ -24,6 +24,8 @@
                 "bulkObjectCommands": "{% static 'js/bulkObjectCommands.mjs' %}",
                 "overview": "{% static 'js/overview.mjs' %}",
                 "editor": "{% static 'js/editor.mjs' %}",
+                "objectManager": "{% static 'js/objectManager.mjs' %}",
+                "quickSelector": "{% static 'js/quickSelector.mjs' %}",
                 "updateCommands": "{% static 'js/updateCommands.mjs' %}",
                 "duplicateCommands": "{% static 'js/duplicateCommands.mjs' %}",
                 "deleteCommands": "{% static 'js/deleteCommands.mjs' %}",
@@ -31,7 +33,11 @@
                 "inspectorClass": "{% static 'js/inspector.mjs' %}",
                 "previewHandler": "{% static 'js/previewHandler.mjs' %}",
                 "projectSettingsManager": "{% static 'js/projectSettingsManager.mjs' %}",
-                "createCommands": "{% static 'js/createCommands.mjs' %}"
+                "createCommands": "{% static 'js/createCommands.mjs' %}",
+                "commandPrompt": "{% static 'js/commandPrompt.mjs' %}",
+                "promptCommands": "{% static 'js/promptCommands.mjs' %}",
+                "bootstrap": "{% static 'js/bootstrap.esm.js' %}",
+                "@popperjs/core": "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/esm/popper.min.js"
             }
         }
     </script>
@@ -52,100 +58,261 @@
         </div>
         <div>Loading project</div>
     </div>
-    <!--settings modal-->
-    {% include "settings.html" %}
-    <!--job interface modal-->
-    {% include "editor/jobInterface.html" %}
-    <!-- keybindings modal -->
-    <div class="modal modal-lg fade"
-         id="keyboardModal"
-         tabindex="-1"
-         aria-labelledby="keyboardModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row align-items-center pb-3">
-                        <div class="col-2">
-                            <span class="key">Esc</span>
+    <!-- message system -->
+    {% if messages %}
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class="toast show"
+                         style="backdrop-filter: blur(0.7rem)"
+                         role="alert"
+                         aria-live="assertive"
+                         aria-atomic="true">
+                        <div class="toast-header text-bg-danger">
+                            <strong class="me-auto">Error</strong>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
                         </div>
-                        <div class="col-10 fw-medium">Close dialogs</div>
+                        <div class="toast-body">{{ message }}</div>
                     </div>
-                    <div class="row align-items-center pb-3">
-                        <div class="col-2">
-                            <span class="key">Ctrl</span>
-                            <span class="mx-1">+</span>
-                            <span class="key">A</span>
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                    <div class="toast show"
+                         style="backdrop-filter: blur(0.7rem)"
+                         role="alert"
+                         aria-live="assertive"
+                         aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">Info</strong>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
                         </div>
-                        <div class="col-10 fw-medium">Select everything</div>
+                        <div class="toast-body">{{ message }}</div>
+                    </div>
+                </div>
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <div class="toast show"
+                     style="backdrop-filter: blur(0.7rem)"
+                     role="alert"
+                     aria-live="assertive"
+                     aria-atomic="true">
+                    <div class="toast-header text-bg-success">
+                        <strong class="me-auto">Success</strong>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="toast"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">{{ message }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+<!--settings modal-->
+{% include "settings.html" %}
+<!--job interface modal-->
+{% include "editor/jobInterface.html" %}
+<!-- command prompt modal-->
+<div class="modal" id="commandPrompt">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header p-1 px-3">
+                <div id="commandInput"></div>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        style="transform: scale(0.7)"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="overflow-auto" id="commandList" style="max-height: 10rem"></div>
+                <div class="d-flex justify-content-around text-secondary pt-2">
+                    <div>
+                        <i class="bi bi-arrow-down-up"></i> To navigate
+                    </div>
+                    <div>
+                        <i class="bi bi-arrow-return-right"></i> To execute
+                    </div>
+                    <div class="d-flex gap-1">
+                        <div class="key p-0 border px-1">Esc</div>
+                        To dismiss
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- about modal -->
-    <div class="modal fade"
-         id="aboutModal"
-         tabindex="-1"
-         aria-labelledby="aboutModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="aboutModalLabel">About</h5>
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+</div>
+<!-- create new project modal -->
+<div class="modal fade"
+     id="createNewProject"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-body">
+                <p class="font-italic">
+                    Projects will only be saved if they have a name unique to
+                    your already existing projects!
+                </p>
+                <form action="" method="POST" class="d-flex flex-column gap-3">
+                    {% csrf_token %} {{ createProjectForm }}
+                    <button class="btn btn-primary rounded-3" type="submit">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- open existing project modal -->
+<div class="modal modal-lg fade"
+     id="openProject"
+     tabindex="-1"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Projects</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column gap-3">
+                {% for project in projects %}
+                    <div class="px-2">
+                        <div class="card rounded-3 bg-body-tertiary overflow-hidden mx-auto w-100">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <a class="col-md-4" href="{% url 'editor' project.name %}">
+                                        {% if project.preview %}
+                                            <img src="{{ project.preview.url }}"
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100" />
+                                        {% else %}
+                                            <img src="{% static 'img/emptyEditor.png' %} "
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100" />
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <div class="d-flex gap-1">
+                                            <div class="d-flex flex-column">
+                                                <h1 class="fw-bolder">{{ project.name }}</h1>
+                                                <p class="fw-light">{{ project.description }}</p>
+                                                <p class="text-start">Last edited: {{ project.last_edited }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <a role="button"
+                                               href="{% url 'editor' project_name=project.name %}"
+                                               class="btn btn-primary">Open</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- keybindings modal -->
+<div class="modal modal-lg fade"
+     id="keyboardModal"
+     tabindex="-1"
+     aria-labelledby="keyboardModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row align-items-center pb-3">
+                    <div class="col-2">
+                        <span class="key">Esc</span>
+                    </div>
+                    <div class="col-10 fw-medium">Close dialogs</div>
                 </div>
-                <div class="modal-body">
-                    <p class="fw-bold">CANVAS Editor</p>
-                    <p>
-                        Version 0.1.0
-                        <br>
-                        For non-commercial use only
-                    </p>
-                    <p>
-                        Powered by open-source software
-                        <ul>
-                            <li>
-                                <a href="https://www.python.org/">Python</a>
-                            </li>
-                            <li>
-                                <a href="https://www.djangoproject.com/">Django</a>
-                            </li>
-                            <li>
-                                <a href="https://getbootstrap.com/">Bootstrap</a>
-                            </li>
-                            <li>
-                                <a href="https://threejs.org/">three.js</a>
-                            </li>
-                        </ul>
-                        Copyright © 2024 ARTIST Association
-                    </p>
-                    <div class="d-flex justify-content-center pt-3 pb-3">
-                        <img class="about-logo px-3"
-                             height="auto"
-                             width="auto"
-                             alt="logo of the KIT"
-                             src="{% static 'img/logo_kit.svg' %}">
-                    </img>
+                <div class="row align-items-center pb-3">
+                    <div class="col-2">
+                        <span class="key">Ctrl</span>
+                        <span class="mx-1">+</span>
+                        <span class="key">A</span>
+                    </div>
+                    <div class="col-10 fw-medium">Select everything</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- about modal -->
+<div class="modal fade"
+     id="aboutModal"
+     tabindex="-1"
+     aria-labelledby="aboutModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aboutModalLabel">About</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold">CANVAS Editor</p>
+                <p>
+                    Version 0.1.0
+                    <br>
+                    For non-commercial use only
+                </p>
+                <p>
+                    Powered by open-source software
+                    <ul>
+                        <li>
+                            <a href="https://www.python.org/">Python</a>
+                        </li>
+                        <li>
+                            <a href="https://www.djangoproject.com/">Django</a>
+                        </li>
+                        <li>
+                            <a href="https://getbootstrap.com/">Bootstrap</a>
+                        </li>
+                        <li>
+                            <a href="https://threejs.org/">three.js</a>
+                        </li>
+                    </ul>
+                    Copyright © 2024 ARTIST Association
+                </p>
+                <div class="d-flex justify-content-center pt-3 pb-3">
                     <img class="about-logo px-3"
                          height="auto"
                          width="auto"
-                         alt="logo of the DLR"
-                         src="{% static 'img/logo_dlr.svg' %}">
+                         alt="logo of the KIT"
+                         src="{% static 'img/logo_kit.svg' %}">
                 </img>
-            </div>
+                <img class="about-logo px-3"
+                     height="auto"
+                     width="auto"
+                     alt="logo of the DLR"
+                     src="{% static 'img/logo_dlr.svg' %}">
+            </img>
         </div>
     </div>
+</div>
 </div>
 </div>
 <!-- main content -->
@@ -176,6 +343,14 @@
                             </button>
                         </div>
                     </div>
+                </li>
+                <!-- command prompt -->
+                <li class="nav-item bg-body-secondary rounded-4 p-0 d-flex justify-content-center border shadow-sm">
+                    <button class="btn text-reset rounded-4"
+                            id="commandPromptToggle"
+                            style="--bs-btn-hover-bg: var(--bs-tertiary-bg)">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </li>
                 <!-- file -->
                 <li class="nav-item dropdown mx-2">
@@ -329,7 +504,7 @@
                     </button>
                     <button class="btn btn-primary custom-btn d-flex gap-1 text-reset"
                             id="quickSettingsLightsource">
-                        <i class="bi bi-lightbulb text-white"></i>
+                        <i class="bi bi-lightbulb"></i>
                     </button>
                     <button class="btn btn-primary rounded-3 fw-bolder" id="quickSettingsRender">Render</button>
                 </div>
@@ -511,9 +686,22 @@
                 <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
                    data-bs-toggle="dropdown"
                    aria-expanded="false">
-                    <div class="rounded-circle bg-primary me-2"
-                         style="width: 32px;
-                                height: 32px"></div>
+                    {% if request.user.userprofile.profile_picture %}
+                        <img src="{{ request.user.userprofile.profile_picture.url }}"
+                             alt="Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
+                    {% else %}
+                        <!-- If the user doesn't have a profile picture -->
+                        <img src="/media/profile_pics/default.jpg"
+                             alt="Default Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
+                    {% endif %}
                     <strong class="me-2">{{ request.user.first_name }}</strong>
                 </a>
                 <ul class="dropdown-menu text-small">
@@ -540,7 +728,7 @@
         </div>
     </main>
     <script>{
-        // fix the size of the inspector pane to prevent overflowing (welcome for better solutions)
+        // fix the size of the inspector pane to prevent overflowing (open for better solutions)
         const content = document.getElementById("content");
         const tab = document.getElementById("propertiesTab");
         const userSettings = document.getElementById("settings");

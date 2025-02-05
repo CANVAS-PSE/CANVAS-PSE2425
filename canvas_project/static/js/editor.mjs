@@ -11,11 +11,13 @@ import { OverviewHandler } from "overview";
 //import { ModeSelector } from "modeSelector";
 import { Picker } from "picker";
 import { ProjectSettingsManager } from "projectSettingsManager";
-//import { QuickSelector } from "quickSelector";
+import { ObjectManager } from "objectManager";
+import { QuickSelector } from "quickSelector";
 //import { JobInterface } from "jobInterface";
 import { Inspector } from "inspectorClass";
 
 import { Heliostat, Receiver, LightSource, Terrain } from "objects";
+import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
 
 let editorInstance = null;
@@ -27,9 +29,11 @@ export class Editor {
     #overview;
     #modeSelector;
     #projectSettingManager;
+    #objectManager;
     #quickSelector;
     #jobInterface;
     #inspector;
+    #commandPrompt;
     #previewHandler;
 
     #projectId;
@@ -75,10 +79,17 @@ export class Editor {
         );
         this.#overview = new OverviewHandler(this.#picker);
         this.#projectSettingManager = new ProjectSettingsManager();
-        //this.#quickSelector = new QuickSelector();
+        this.#objectManager = new ObjectManager(
+            this.#picker,
+            this.#undoRedoHandler
+        );
+        this.#quickSelector = new QuickSelector(this.#objectManager);
         //this.#jobInterface = new JobInterface();
         this.#inspector = new Inspector(this.#picker);
+        this.#commandPrompt = new CommandPrompt();
         this.#previewHandler = new PreviewHandler(this.#scene);
+
+        //this.#picker.setMode("rotate");
 
         window.addEventListener("resize", () => this.onWindowResize());
 
