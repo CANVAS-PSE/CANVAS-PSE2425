@@ -35,6 +35,11 @@ export class JobInterface {
                 this.#jobList.forEach((job) => job.fetchStatus());
             }
         }, 5000);
+
+        /**
+         * Add all the previous jobs
+         */
+        this.#getJobs();
     }
 
     #createNewJob() {
@@ -67,7 +72,7 @@ export class JobInterface {
      * @param {Job} job the job you want to delete
      */
     deleteJob(job) {
-        this.#jobList.splice(this.#jobList.indexOf(job));
+        this.#jobList.splice(this.#jobList.indexOf(job), 1);
         job.remove();
         if (this.#jobList.length == 0) {
             this.#jobInterfaceBody.innerHTML = "You currently have no jobs.";
@@ -75,6 +80,31 @@ export class JobInterface {
                 .getElementById("hasActiveJobsIndicator")
                 .classList.add("d-none");
         }
+
+        fetch(window.location.origin + "/jobs/" + job.jobID + "/", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.#getCookie("csrftoken"),
+            },
+        }).catch((error) => {
+            console.error("Error deleting new job:", error);
+        });
+    }
+
+    #getJobs() {
+        fetch(window.location.origin + "/jobs/", {})
+            .then((res) => res.json())
+            .then((data) => {
+                data["jobIDs"].forEach((job) => {
+                    const newJob = new Job(this, job);
+                    this.#jobList.push(newJob);
+                    this.#jobInterfaceBody.appendChild(newJob);
+                });
+            })
+            .catch((error) => {
+                console.error("Error getting all jobs:", error);
+            });
     }
 
     /**
@@ -200,6 +230,10 @@ export class Job extends HTMLElement {
                     console.error("Error creating new job:", error);
                 });
         }
+    }
+
+    get jobID() {
+        return this.#id;
     }
 }
 
