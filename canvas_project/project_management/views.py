@@ -1,10 +1,13 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect, render
-from .models import Project
+from .models import Project, Heliostat, Lightsource, Receiver
 from .forms import ProjectForm, UpdateProjectForm, ImportProjectForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+
+import h5py
+import numpy as np
 
 
 # General project handling
@@ -22,7 +25,10 @@ def projects(request):
         if form.is_valid():
             nameUnique = True
             for existingProject in allProjects:
-                if form["name"].value() == existingProject.name:
+                if (
+                    form["name"].value() == existingProject.name
+                    and existingProject.owner == request.user
+                ):
                     nameUnique = False
             if nameUnique:
                 form = form.save(commit=False)
@@ -136,8 +142,22 @@ def importProject(request):
             projectFile = importForm.cleaned_data["file"]
             projectName = importForm.cleaned_data["name"]
             projectDescription = importForm.cleaned_data["description"]
-            openHDF5(projectFile, projectName, projectDescription)
-            return HttpResponseRedirect(reverse("projects"))  # Redirect on success
+
+            allProjects = Project.objects.all()
+            nameUnique = True
+            for existingProject in allProjects:
+                if projectName == existingProject.name and str(
+                    (existingProject.owner) == request.user
+                ):
+                    nameUnique = False
+
+            if nameUnique:
+                newProject = Project(name=projectName, description=projectDescription)
+                newProject.owner = request.user
+                newProject.last_edited = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                newProject.save()
+                openHDF5_CreateProject(projectFile, newProject)
+                return redirect("editor", project_name=projectName)
     else:
         importForm = ImportProjectForm()
     return render(
@@ -145,5 +165,86 @@ def importProject(request):
     )
 
 
-def openHDF5(projectFile, projectName, projectDescription):
-    pass
+def openHDF5_CreateProject(projectFile, newProject):
+    with h5py.File(projectFile, "r") as f:
+        heliostatsGroup = f.get("heliostats")
+        for heliostatObject in heliostatsGroup:
+            heliostat = heliostatsGroup[heliostatObject]
+
+            aimpoint = heliostat["aim_point"]
+            aimpoint_x = aimpoint[0]
+            aimpoint_y = aimpoint[1]
+            aimpoint_z = aimpoint[2]
+
+            position = heliostat["position"]
+            position_x = position[0]
+            position_y = position[1]
+            position_z = position[2]
+
+            Heliostat.objects.create(
+                project=newProject,
+                name=str(heliostatObject),
+                position_x=position_x,
+                position_y=position_y,
+                position_z=position_z,
+                aimpoint_x=aimpoint_x,
+                aimpoint_y=aimpoint_y,
+                aimpoint_z=aimpoint_z,
+            )
+
+        lightsourcesGroup = f.get("lightsources")
+        for lightsourceObject in lightsourcesGroup:
+            lightsource = lightsourcesGroup[lightsourceObject]
+            numberOfRays = lightsource["number_of_rays"]
+            lightsourceType = lightsource["type"]
+
+            distributionParams = lightsource["distribution_parameters"]
+            covariance = distributionParams["covariance"]
+            distributionType = distributionParams["distribution_type"]
+            mean = distributionParams["mean"]
+
+            Lightsource.objects.create(
+                project=newProject,
+                name=str(lightsourceObject),
+                number_of_rays=numberOfRays[()],
+                lightsource_type=lightsourceType[()],
+                covariance=covariance[()],
+                distribution_type=distributionType[()],
+                mean=mean[()],
+            )
+
+        powerplantGroup = f.get("power_plant")
+        # At the moment there is no powerPlant position stored with a scenario in CANVAS
+
+        prototypesGroup = f.get("prototypes")
+        # Placeholder for when prototypes are effectively used
+
+        receiversGroup = f.get("target_areas")
+        for receiverObject in receiversGroup:
+            receiver = receiversGroup[receiverObject]
+
+            position = receiver["position_center"]
+            position_x = position[0]
+            position_y = position[1]
+            position_z = position[2]
+
+            normal = receiver["normal_vector"]
+            normal_x = normal[0]
+            normal_y = normal[1]
+            normal_z = normal[2]
+
+            plane_e = receiver["plane_e"]
+            plane_u = receiver["plane_u"]
+
+            Receiver.objects.create(
+                project=newProject,
+                name=str(receiverObject),
+                position_x=position_x,
+                position_y=position_y,
+                position_z=position_z,
+                normal_x=normal_x,
+                normal_y=normal_y,
+                normal_z=normal_z,
+                plane_e=plane_e[()],
+                plane_u=plane_u[()],
+            )
