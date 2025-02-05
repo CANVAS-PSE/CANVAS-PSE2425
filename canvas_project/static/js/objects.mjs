@@ -42,7 +42,6 @@ export class SelectableObject extends Object3D {
     constructor(name, Inspe) {
         super();
         this.#objectName = name;
-        this.isSelectable = true;
     }
 
     get objectName() {
@@ -96,7 +95,6 @@ export class SelectableObject extends Object3D {
         throw new Error("This method must be implemented in all subclasses");
     }
 
-
     /**
      * Updates the position of the object
      * @param {THREE.Vector3} position
@@ -126,6 +124,14 @@ export class SelectableObject extends Object3D {
      * @returns {Boolean}
      */
     get isMovable() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
+     * Returns whether an object is selectable or not
+     * @returns {boolean}
+     */
+    get isSelectable() {
         throw new Error("This method must be implemented in all subclasses");
     }
 
@@ -351,6 +357,10 @@ export class Heliostat extends SelectableObject {
         return this.#isMovable;
     }
 
+    get isSelectable() {
+        return true;
+    }
+
     get oldPosition() {
         return this.#oldPosition;
     }
@@ -540,11 +550,7 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(
-                            newValue,
-                            this.position.y,
-                            this.position.z
-                        )
+                        new Vector3(newValue, this.position.y, this.position.z)
                     )
                 );
             }
@@ -559,11 +565,7 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(
-                            this.position.x,
-                            newValue,
-                            this.position.z
-                        )
+                        new Vector3(this.position.x, newValue, this.position.z)
                     )
                 );
             }
@@ -578,11 +580,7 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(
-                            this.position.x,
-                            this.position.y,
-                            newValue
-                        )
+                        new Vector3(this.position.x, this.position.y, newValue)
                     )
                 );
             }
@@ -602,7 +600,11 @@ export class Receiver extends SelectableObject {
             (newValue) => {
                 newValue = this.yDegreeToQuaternion(newValue);
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "rotation", new THREE.Quaternion().copy(newValue))
+                    new UpdateReceiverCommand(
+                        this,
+                        "rotation",
+                        new THREE.Quaternion().copy(newValue)
+                    )
                 );
             },
             15
@@ -765,8 +767,8 @@ export class Receiver extends SelectableObject {
 
     /**
      * Converts a quaternion to a y degree (a number from 0 to 360)
-     * @param {THREE.Quaternion} quaternion 
-     * @returns 
+     * @param {THREE.Quaternion} quaternion
+     * @returns
      */
     quaternionToYDegree(quaternion) {
         const euler = new THREE.Euler();
@@ -777,15 +779,19 @@ export class Receiver extends SelectableObject {
 
     /**
      * Converts a y degree (a number from 0 to 360) to a quaternion
-     * @param {Number} angle 
-     * @returns 
+     * @param {Number} angle
+     * @returns
      */
     yDegreeToQuaternion(angle) {
-        const euler = new THREE.Euler(0, THREE.MathUtils.degToRad(angle), 0, 'YXZ');
+        const euler = new THREE.Euler(
+            0,
+            THREE.MathUtils.degToRad(angle),
+            0,
+            "YXZ"
+        );
         const quaternion = new THREE.Quaternion().setFromEuler(euler);
         return quaternion;
     }
-
 
     get rotatableAxis() {
         return this.#rotatableAxis;
@@ -793,6 +799,10 @@ export class Receiver extends SelectableObject {
 
     get isMovable() {
         return this.#isMovable;
+    }
+
+    get isSelectable() {
+        return true;
     }
 
     get oldPosition() {
@@ -837,8 +847,8 @@ export class Receiver extends SelectableObject {
     }
 
     /**
-     * Updates the rotation of the receiver 
-     * @param {THREE.Quaternion} rotation 
+     * Updates the rotation of the receiver
+     * @param {THREE.Quaternion} rotation
      */
     updateAndSaveObjectRotation(rotation) {
         this.#undoRedoHandler.executeCommand(
@@ -848,13 +858,18 @@ export class Receiver extends SelectableObject {
 
     /**
      * Updates the quaternion of the receiver, and indirectly updates the rotation of the receiver
-     * @param {THREE.Quaternion} quaternion 
+     * @param {THREE.Quaternion} quaternion
      */
     updateRotation(quaternion) {
         const axis = new THREE.Vector3(0, 1, 0);
         const angle = Math.PI / 6;
         this.quaternion.copy(quaternion);
-        this.#oldQuaternion = new THREE.Quaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);  
+        this.#oldQuaternion = new THREE.Quaternion(
+            quaternion.x,
+            quaternion.y,
+            quaternion.z,
+            quaternion.w
+        );
     }
 
     /**
@@ -1128,7 +1143,7 @@ export class LightSource extends SelectableObject {
 
     /**
      * Returns whether the lightsource is rotatable or not
-     * @returns {Boolean} false, as the lightsource is not rotatable
+     * @returns {string[]} false, as the lightsource is not rotatable
      */
     get rotatableAxis() {
         return this.#rotatableAxis;
@@ -1140,6 +1155,10 @@ export class LightSource extends SelectableObject {
      */
     get isMovable() {
         return this.#isMovable;
+    }
+
+    get isSelectable() {
+        return false;
     }
 
     /**

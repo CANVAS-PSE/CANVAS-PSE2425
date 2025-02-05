@@ -7,6 +7,7 @@ import {
     CreateHeliostatCommand,
     CreateLightSourceCommand,
 } from "createCommands";
+import * as bootstrap from "bootstrap";
 
 /**
  * Class to manage the objects in the scene
