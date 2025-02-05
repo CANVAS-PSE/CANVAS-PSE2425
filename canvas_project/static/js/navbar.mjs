@@ -43,7 +43,7 @@ export class Navbar {
     }
 
     #setupFileOptions() {
-        let newButton = document.getElementById('new');
+        let createNewProject = document.getElementById('createNewProject');
         let importButton = document.getElementById('import');
         let exportButton = document.getElementById('export');
 
@@ -54,7 +54,12 @@ export class Navbar {
         fileInput.style.display = 'none';
         document.body.appendChild(fileInput);
 
-        newButton.onclick = (_) => {};
+        // ensure that the form is reset when the modal is closed
+        createNewProject.addEventListener('hidden.bs.modal', function () {
+            var form = createNewProject.querySelector('form');
+            form.reset();
+        });
+
 
         importButton.onclick = (_) => {};
 
