@@ -117,6 +117,10 @@ export class Picker {
         } else {
             this.#transformControls.setMode("rotate");
         }
+
+        // update the available input methods, depending on the mode
+        this.#attachTransform();
+        this.#attachSelectionBox();
     }
 
     /**
@@ -145,14 +149,10 @@ export class Picker {
         if (objectList) {
             this.#selectedObject = objectList[0];
             this.#attachTransform();
+            this.#attachSelectionBox();
 
-            // @ts-ignore
-            this.#selectionBox.setFromObject(this.#selectedObject);
             // Only show the selection box if the object has a position in the scene
             // @ts-ignore
-            if (this.#selectedObjects.position !== undefined) {
-                this.#selectionBox.visible = true;
-            }
         }
 
         this.#itemSelectedEvent();
@@ -200,7 +200,11 @@ export class Picker {
                 );
                 this.#itemSelectedEvent();
             } else if (this.#transformControls.mode === "rotate") {
-                if (!this.#transformControls.object.quaternion.equals(this.#selectedObject.oldQuaternion)) {
+                if (
+                    !this.#transformControls.object.quaternion.equals(
+                        this.#selectedObject.oldQuaternion
+                    )
+                ) {
                     this.#selectedObject.updateAndSaveObjectRotation(
                         this.#transformControls.object.quaternion.clone()
                     );
@@ -296,16 +300,19 @@ export class Picker {
             // If object is already in the selection, just attach transformControls
             if (this.#selectedObjects.includes(this.#selectedObject)) {
                 this.#attachTransform();
+                this.#attachSelectionBox();
             } else {
                 // Add it to the selection
                 this.#selectedObjects.push(this.#selectedObject);
                 this.#attachTransform();
+                this.#attachSelectionBox();
             }
         } else {
             // deselect everything, then select the clicked object
             this.#deselectAll();
             this.#selectedObjects.push(this.#selectedObject);
             this.#attachTransform();
+            this.#attachSelectionBox();
         }
     }
 
@@ -314,45 +321,53 @@ export class Picker {
      * or a multiSelectionGroup that contains all currently selected objects.
      */
     #attachTransform() {
+        // reset previous available axis
+        this.#transformControls.showX = true;
+        this.#transformControls.showZ = true;
+        this.#transformControls.showY = true;
+
         if (this.#selectedObjects.length === 0) {
             this.#deselectAll();
         } else if (this.#selectedObjects.length === 1) {
             if (this.#transformControls.mode === "rotate") {
-                if (!this.#selectedObject.rotatableAxis) {
-                    // @ts-ignore
-                    this.#selectionBox.setFromObject(this.#selectedObject);
-                    this.#selectionBox.visible = true;
-                    return;
+                this.#transformControls.attach(this.#selectedObjects[0]);
+                this.#transformControls.showX = false;
+                this.#transformControls.showZ = false;
+                this.#transformControls.showY = false;
+                if (this.#selectedObject.rotatableAxis) {
+                    this.#selectedObject.rotatableAxis.forEach((axis) => {
+                        if (axis === "X") {
+                            this.#transformControls.showX = true;
+                        }
+                        if (axis === "Y") {
+                            this.#transformControls.showY = true;
+                        }
+                        if (axis === "Z") {
+                            this.#transformControls.showZ = true;
+                        }
+                    });
                 }
-                this.#selectedObject.rotatableAxis.forEach((axis) => {
-                    this.#transformControls.showX = false;
-                    this.#transformControls.showZ = false;
-                    this.#transformControls.showY = false;
-                    if (axis === "X") {
-                        this.#transformControls.showX = true;
-                    }
-                    if (axis === "Y") {
-                        this.#transformControls.showY = true;
-                    }
-                    if (axis === "Z") {
-                        this.#transformControls.showZ = true;
-                    }
-                });
             } else if (this.#transformControls.mode === "translate") {
-                if (!this.#selectedObject.isMovable) {
-                    // @ts-ignore
-                    this.#selectionBox.setFromObject(this.#selectedObject);
-                    this.#selectionBox.visible = true;
-                    return;
+                if (this.#selectedObject.isMovable) {
+                    this.#transformControls.attach(this.#selectedObjects[0]);
                 }
             }
-
-            this.#transformControls.attach(this.#selectedObjects[0]);
-            // @ts-ignore
-            this.#selectionBox.setFromObject(this.#selectedObject);
-            this.#selectionBox.visible = true;
         } else {
             // TODO: Implement multi-selection
+            // hide every control as they will not work properly
+            this.#deselectAll();
+        }
+    }
+
+    #attachSelectionBox() {
+        if (this.#selectedObjects.length == 1) {
+            if (this.#selectedObjects[0].isSelectable) {
+                //@ts-ignore
+                this.#selectionBox.setFromObject(this.#selectedObjects[0]);
+                this.#selectionBox.visible = true;
+            } else {
+                this.#selectionBox.visible = false;
+            }
         }
     }
 
