@@ -279,7 +279,6 @@ export class Picker {
      * @param {Boolean} ctrlKey The state of the ctrlKey
      */
     #updateSelection(ctrlKey) {
-        console.log(this.#selectedObject);
         // No object was clicked
         if (!this.#selectedObject) {
             if (!ctrlKey) {
@@ -306,8 +305,6 @@ export class Picker {
             this.#attachTransform();
             this.#attachSelectionBox();
         }
-
-        console.log(this.#selectedObjects);
     }
 
     /**
