@@ -70,6 +70,14 @@ export class Picker {
             this.#onMouseUp(event);
         });
 
+        // Keyboard event listeners for snap-to-grid functionality
+        window.addEventListener("keydown", (event) => {
+            this.#onKeyDown(event);
+        });
+        window.addEventListener("keyup", (event) => {
+            this.#onKeyUp(event);
+        });
+
         this.#addEventListenerCustomEvent();
     }
 
@@ -180,19 +188,24 @@ export class Picker {
         if (!this.#isDragging) {
             this.#onClick(event);
         } else if (this.#transformControls.object) {
-            if (this.#transformControls.mode === "translate") {
+            // also checks if the object was moved or if the camara was adjusted
+            if (
+                this.#transformControls.mode === "translate" &&
+                !this.#transformControls.object.position.equals(
+                    this.#selectedObject.oldPosition
+                )
+            ) {
                 this.#selectedObject.updateAndSaveObjectPosition(
                     this.#transformControls.object.position.clone()
                 );
                 this.#itemSelectedEvent();
             } else if (this.#transformControls.mode === "rotate") {
-                //TODO: auch mit Commands Updaten
-                /*
-                this.#selectedObject.updateRotation(
-                    this.#transformControls.object.rotation
-                );
-                */
-                this.#itemSelectedEvent();
+                if (!this.#transformControls.object.quaternion.equals(this.#selectedObject.oldQuaternion)) {
+                    this.#selectedObject.updateAndSaveObjectRotation(
+                        this.#transformControls.object.quaternion.clone()
+                    );
+                    this.#itemSelectedEvent();
+                }
             }
         }
     }
@@ -354,6 +367,34 @@ export class Picker {
             ((position.x - rect.left) / rect.width) * 2 - 1,
             -((position.y - rect.top) / rect.height) * 2 + 1
         );
+    }
+
+    /**
+     * Enables grid snapping when the Shift key is pressed.
+     * @param {KeyboardEvent} event
+     */
+    #onKeyDown(event) {
+        if (event.key === "Shift") {
+            // Enable snapping depending on the transform mode
+            if (this.#transformControls.mode === "translate") {
+                this.#transformControls.translationSnap = 1; // Snap to grid size of 1 unit
+            } else if (this.#transformControls.mode === "rotate") {
+                this.#transformControls.rotationSnap =
+                    THREE.MathUtils.degToRad(15); // Snap rotation to 15° increments
+            }
+        }
+    }
+
+    /**
+     * Disables grid snapping when the Shift key is released.
+     * @param {KeyboardEvent} event
+     */
+    #onKeyUp(event) {
+        if (event.key === "Shift") {
+            // Disable snapping
+            this.#transformControls.translationSnap = null;
+            this.#transformControls.rotationSnap = null;
+        }
     }
 }
 
