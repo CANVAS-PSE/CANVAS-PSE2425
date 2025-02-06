@@ -69,7 +69,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
                 ? "Receiver_Copy"
                 : this.#receiver.objectName + "_Copy",
             this.#receiver.getPosition(),
-            this.#receiver.rotationY,
+            this.#receiver.quaternionToYDegree(this.#receiver.oldQuaternion),
             this.#receiver.normalVector,
             this.#receiver.towerType,
             this.#receiver.planeE,
