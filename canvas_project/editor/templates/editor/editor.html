@@ -113,6 +113,30 @@
         {% endfor %}
     </div>
 {% endif %}
+<!-- HDF5 Creation Modal -->
+<div class="modal fade"
+     id="loadingModal"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false"
+     tabindex="-1"
+     aria-labelledby="loadingModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="loadingModalLabel">Generating scenario file</h1>
+                <div class="d-flex align-items-center ms-auto">
+                    <div class="spinner-border"></div>
+                </div>
+            </div>
+            <div class="modal-body">
+                An export file is being generated. This could take a
+                short moment. The file will be downloaded and the page
+                reloaded when this process is finished.
+            </div>
+        </div>
+    </div>
+</div>
 <!--settings modal-->
 {% include "settings.html" %}
 <!--job interface modal-->
@@ -380,7 +404,8 @@
                                 <i class="bi-file-earmark-arrow-down me-2"></i>Export
                             </button>
                         </form>
-                        <script>
+                        <script type="module">
+                            import * as bootstrap from "bootstrap"
                             // Handle form submission and display the modal
                             document
                                 .getElementById("exportForm")
