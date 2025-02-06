@@ -94,9 +94,10 @@ export class UndoRedoHandler {
                 event.preventDefault();
                 this.undo();
             } else if (
-                event.ctrlKey &&
-                event.shiftKey &&
-                event.key.toLowerCase() === "z"
+                (event.ctrlKey &&
+                    event.shiftKey &&
+                    event.key.toLowerCase() === "z") ||
+                (event.ctrlKey && event.key.toLowerCase() === "y")
             ) {
                 event.preventDefault();
                 this.redo();

@@ -1,64 +1,242 @@
-{% extends 'base.html' %} {% load static %} {% block style %} {{ block.super }}
-<link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
-{% endblock %} {% block script %} {{ block.super }}
-<script type="importmap">
-    {
-        "imports": {
-            "three": "{% static 'js/three.module.js' %}",
-            "three/addons/": "{% static 'js/three/examples/jsm/' %}",
-            "navbar": "{% static 'js/navbar.mjs' %}",
-            "compass": "{% static 'js/compass.mjs' %}",
-            "objects": "{% static 'js/objects.mjs' %}",
-            "orbitControls": "{% static 'js/three/examples/jsm/controls/OrbitControls.js' %}",
-            "transformControls": "{% static 'js/three/examples/jsm/controls/TransformControls.js' %}",
-            "command": "{% static 'js/command.mjs' %}",
-            "undoRedoHandler": "{% static 'js/undoRedoHandler.mjs' %}",
-            "singleObjectCommands": "{% static 'js/singleObjectCommands.mjs' %}",
-            "picker": "{% static 'js/picker.mjs' %}",
-            "saveAndLoadHandler": "{% static 'js/saveAndLoadHandler.mjs' %}",
-            "bulkObjectCommands": "{% static 'js/bulkObjectCommands.mjs' %}",
-            "overview": "{% static 'js/overview.mjs' %}",
-            "editor": "{% static 'js/editor.mjs' %}",
-            "updateCommands": "{% static 'js/updateCommands.mjs' %}",
-            "duplicateCommands": "{% static 'js/duplicateCommands.mjs' %}",
-            "deleteCommands": "{% static 'js/deleteCommands.mjs' %}",
-            "inspectorComponents": "{% static 'js/inspectorComponents.mjs' %}",
-            "inspectorClass": "{% static 'js/inspector.mjs' %}",
-            "projectSettingsManager": "{% static 'js/projectSettingsManager.mjs' %}",
-            "createCommands": "{% static 'js/createCommands.mjs' %}"
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    {{ block.super }}
+    <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/darkmode.js' %}"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "{% static 'js/three.module.js' %}",
+                "three/addons/": "{% static 'js/three/examples/jsm/' %}",
+                "navbar": "{% static 'js/navbar.mjs' %}",
+                "compass": "{% static 'js/compass.mjs' %}",
+                "objects": "{% static 'js/objects.mjs' %}",
+                "orbitControls": "{% static 'js/three/examples/jsm/controls/OrbitControls.js' %}",
+                "transformControls": "{% static 'js/three/examples/jsm/controls/TransformControls.js' %}",
+                "command": "{% static 'js/command.mjs' %}",
+                "undoRedoHandler": "{% static 'js/undoRedoHandler.mjs' %}",
+                "singleObjectCommands": "{% static 'js/singleObjectCommands.mjs' %}",
+                "picker": "{% static 'js/picker.mjs' %}",
+                "saveAndLoadHandler": "{% static 'js/saveAndLoadHandler.mjs' %}",
+                "bulkObjectCommands": "{% static 'js/bulkObjectCommands.mjs' %}",
+                "overview": "{% static 'js/overview.mjs' %}",
+                "editor": "{% static 'js/editor.mjs' %}",
+                "objectManager": "{% static 'js/objectManager.mjs' %}",
+                "quickSelector": "{% static 'js/quickSelector.mjs' %}",
+                "updateCommands": "{% static 'js/updateCommands.mjs' %}",
+                "duplicateCommands": "{% static 'js/duplicateCommands.mjs' %}",
+                "deleteCommands": "{% static 'js/deleteCommands.mjs' %}",
+                "inspectorComponents": "{% static 'js/inspectorComponents.mjs' %}",
+                "inspectorClass": "{% static 'js/inspector.mjs' %}",
+                "previewHandler": "{% static 'js/previewHandler.mjs' %}",
+                "projectSettingsManager": "{% static 'js/projectSettingsManager.mjs' %}",
+                "createCommands": "{% static 'js/createCommands.mjs' %}",
+                "commandPrompt": "{% static 'js/commandPrompt.mjs' %}",
+                "promptCommands": "{% static 'js/promptCommands.mjs' %}",
+                "bootstrap": "{% static 'js/bootstrap.esm.js' %}",
+                "@popperjs/core": "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/esm/popper.min.js"
+            }
         }
-    }
-</script>
+    </script>
 <script type="module">
     import { Editor } from "{% static 'js/editor.mjs' %}";
 
-    window.addEventListener("DOMContentLoaded", (_) => {
-        new Editor("{{ project_id }}");
-    });
-</script>
-{% endblock %} {% block body %}
+        window.addEventListener('DOMContentLoaded', (_) => {
+            new Editor("{{ project_id }}");
+        });
+    </script>
+{% endblock %}
+{% block body %}
+    <!-- loading animation -->
+    <div class="position-fixed z-3 d-flex flex-column gap-3 justify-content-center align-items-center min-vh-100 min-vw-100 bg-body"
+         id="loadingScreen">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div>Loading project</div>
+    </div>
+    <!-- message system -->
+    {% if messages %}
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class="toast show"
+                         style="backdrop-filter: blur(0.7rem)"
+                         role="alert"
+                         aria-live="assertive"
+                         aria-atomic="true">
+                        <div class="toast-header text-bg-danger">
+                            <strong class="me-auto">Error</strong>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">{{ message }}</div>
+                    </div>
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                    <div class="toast show"
+                         style="backdrop-filter: blur(0.7rem)"
+                         role="alert"
+                         aria-live="assertive"
+                         aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">Info</strong>
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">{{ message }}</div>
+                    </div>
+                </div>
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <div class="toast show"
+                     style="backdrop-filter: blur(0.7rem)"
+                     role="alert"
+                     aria-live="assertive"
+                     aria-atomic="true">
+                    <div class="toast-header text-bg-success">
+                        <strong class="me-auto">Success</strong>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="toast"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">{{ message }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
 <!--settings modal-->
 {% include "settings.html" %}
 <!--job interface modal-->
 {% include "editor/jobInterface.html" %}
+<!-- command prompt modal-->
+<div class="modal" id="commandPrompt">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header p-1 px-3">
+                <div id="commandInput"></div>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        style="transform: scale(0.7)"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="overflow-auto" id="commandList" style="max-height: 10rem"></div>
+                <div class="d-flex justify-content-around text-secondary pt-2">
+                    <div>
+                        <i class="bi bi-arrow-down-up"></i> To navigate
+                    </div>
+                    <div>
+                        <i class="bi bi-arrow-return-right"></i> To execute
+                    </div>
+                    <div class="d-flex gap-1">
+                        <div class="key p-0 border px-1">Esc</div>
+                        To dismiss
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- create new project modal -->
+<div class="modal fade"
+     id="createNewProject"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-body">
+                <p class="font-italic">
+                    Projects will only be saved if they have a name unique to
+                    your already existing projects!
+                </p>
+                <form action="" method="POST" class="d-flex flex-column gap-3">
+                    {% csrf_token %} {{ createProjectForm }}
+                    <button class="btn btn-primary rounded-3" type="submit">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- open existing project modal -->
+<div class="modal modal-lg fade"
+     id="openProject"
+     tabindex="-1"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Projects</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column gap-3">
+                {% for project in projects %}
+                    <div class="px-2">
+                        <div class="card rounded-3 bg-body-tertiary overflow-hidden mx-auto w-100">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <a class="col-md-4" href="{% url 'editor' project.name %}">
+                                        {% if project.preview %}
+                                            <img src="{{ project.preview.url }}"
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100" />
+                                        {% else %}
+                                            <img src="{% static 'img/emptyEditor.png' %} "
+                                                 alt="{{ project.name }}"
+                                                 class="img-fluid h-100" />
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <div class="d-flex gap-1">
+                                            <div class="d-flex flex-column">
+                                                <h1 class="fw-bolder">{{ project.name }}</h1>
+                                                <p class="fw-light">{{ project.description }}</p>
+                                                <p class="text-start">Last edited: {{ project.last_edited }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <a role="button"
+                                               href="{% url 'editor' project_name=project.name %}"
+                                               class="btn btn-primary">Open</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 <!-- keybindings modal -->
-<div
-    class="modal modal-lg fade"
-    id="keyboardModal"
-    tabindex="-1"
-    aria-labelledby="keyboardModalLabel"
-    aria-hidden="true"
->
+<div class="modal modal-lg fade"
+     id="keyboardModal"
+     tabindex="-1"
+     aria-labelledby="keyboardModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                ></button>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row align-items-center pb-3">
@@ -143,6 +321,7 @@
         </div>
     </div>
 </div>
+</div>
 <!-- main content -->
 <div class="container-fluid d-flex flex-column min-vh-100 p-0">
     <!-- navigation bar -->
@@ -179,6 +358,14 @@
                             </button>
                         </div>
                     </div>
+                </li>
+                <!-- command prompt -->
+                <li class="nav-item bg-body-secondary rounded-4 p-0 d-flex justify-content-center border shadow-sm">
+                    <button class="btn text-reset rounded-4"
+                            id="commandPromptToggle"
+                            style="--bs-btn-hover-bg: var(--bs-tertiary-bg)">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </li>
                 <!-- file -->
                 <li class="nav-item dropdown mx-2">
@@ -397,13 +584,8 @@
             id="canvas"
         >
             <!--mode selector-->
-            <div class="position-absolute mt-4 ms-4 fs-5">
-                <ul
-                    class="nav nav-pills flex-column p-2 gap-1 shadow-sm small bg-body-secondary bg-opacity-75 rounded-4 border"
-                    id="pillNav2"
-                    role="tablist"
-                    style="backdrop-filter: blur(0.7rem)"
-                >
+            <div class="position-absolute mt-4 ms-4 fs-5" id="selectionBar">
+                <ul class="nav nav-pills flex-column p-2 gap-1 shadow-sm small bg-body-secondary bg-opacity-75 rounded-4 border" id="pillNav2" role="tablist" style="backdrop-filter: blur(0.7rem)"
                     <li class="nav-item" role="presentation">
                         <button
                             class="nav-link active rounded-3"
@@ -812,21 +994,31 @@
                     </span>
                     <i class="bi bi-list-ul p-1"></i>
                 </button>
-                <a
-                    class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                >
-                    <div
-                        class="rounded-circle bg-primary me-2"
-                        style="width: 32px; height: 32px"
-                    ></div>
-                    <strong class="me-2">Max</strong>
+                <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    {% if request.user.userprofile.profile_picture %}
+                        <img src="{{ request.user.userprofile.profile_picture.url }}"
+                             alt="Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
+                    {% else %}
+                        <!-- If the user doesn't have a profile picture -->
+                        <img src="/media/profile_pics/default.jpg"
+                             alt="Default Profile Picture"
+                             class="rounded-circle me-2"
+                             style="width: 32px;
+                                    height: 32px;
+                                    object-fit: cover">
+                    {% endif %}
+                    <strong class="me-2">{{ request.user.first_name }}</strong>
                 </a>
                 <ul class="dropdown-menu text-small">
                     <div class="px-3 gap-1">
-                        <p class="m-0">Max Mustermann</p>
-                        <p class="text-secondary m-0">max.muster@example.com</p>
+                        <p class="m-0">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                        <p class="text-secondary m-0">{{ request.user.email }}</p>
                     </div>
                     <li>
                         <hr class="dropdown-divider" />
@@ -841,21 +1033,23 @@
                         </button>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="/">Sign out</a>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Sign out</button>
+                        </form>
                     </li>
                 </ul>
             </div>
         </div>
     </main>
-    <script>
-        {
-            // fix the size of the inspector pane to prevent overflowing (welcome for better solutions)
-            const content = document.getElementById("content");
-            const tab = document.getElementById("propertiesTab");
-            const userSettings = document.getElementById("settings");
-            const calculateMaxHeight = () => {
-                const tabRect = tab.getBoundingClientRect();
-                const userSettingsRect = userSettings.getBoundingClientRect();
+    <script>{
+        // fix the size of the inspector pane to prevent overflowing (open for better solutions)
+        const content = document.getElementById("content");
+        const tab = document.getElementById("propertiesTab");
+        const userSettings = document.getElementById("settings");
+        const calculateMaxHeight = () => {
+            const tabRect = tab.getBoundingClientRect();
+            const userSettingsRect = userSettings.getBoundingClientRect();
 
                 let maxHeight = tabRect.bottom - userSettingsRect.top;
                 maxHeight = Math.abs(maxHeight);
