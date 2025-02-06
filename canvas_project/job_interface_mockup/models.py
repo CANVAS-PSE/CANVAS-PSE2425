@@ -7,4 +7,4 @@ from project_management.models import Project
 class Job(models.Model):
     starting_time = models.DateTimeField(default=timezone.now)
     owner = models.ForeignKey("auth.User", on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True)
