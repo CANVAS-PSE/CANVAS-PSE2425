@@ -1,3 +1,5 @@
 django
 djangorestframework
+torch
 django-cleanup
+git+https://github.com/ARTIST-Association/ARTIST.git@pre-commit-ci-update-config

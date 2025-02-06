@@ -3,6 +3,8 @@ import { SelectableObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 import { ItemCreatedEvent } from "createCommands";
 
+import * as bootstrap from "bootstrap";
+
 export const Mode = Object.freeze({
     NONE: "none",
     MOVE: "move",
@@ -42,7 +44,7 @@ export class Picker {
         this.#selectableGroup = selectableGroup;
         this.#selectedObjects = [];
         this.#raycaster = new THREE.Raycaster();
-        this.#mode = Mode.MOVE;
+        this.#mode = Mode.NONE;
 
         this.#canvas = document.getElementById("canvas");
         this.#mouse = new THREE.Vector2();
@@ -70,7 +72,16 @@ export class Picker {
             this.#onMouseUp(event);
         });
 
+        // Keyboard event listeners for snap-to-grid functionality
+        window.addEventListener("keydown", (event) => {
+            this.#onKeyDown(event);
+        });
+        window.addEventListener("keyup", (event) => {
+            this.#onKeyUp(event);
+        });
+
         this.#addEventListenerCustomEvent();
+        this.#addEventListenersModeSelection();
     }
 
     /**
@@ -96,6 +107,52 @@ export class Picker {
         );
     }
 
+    #addEventListenersModeSelection() {
+        //initialize the mode selection buttons
+        const modeSelectionButton = document.getElementById("modeSelect");
+        const modeMoveButton = document.getElementById("modeMove");
+        const modeRotateButton = document.getElementById("modeRotate");
+
+        //add event listeners to the mode selection buttons
+        modeSelectionButton.addEventListener("click", () => {
+            this.setMode(Mode.NONE);
+        });
+        modeMoveButton.addEventListener("click", () => {
+            this.setMode(Mode.MOVE);
+        });
+        modeRotateButton.addEventListener("click", () => {
+            this.setMode(Mode.ROTATE);
+        });
+
+        //add event listener for the keyboard shortcut to change the mode and show the corresponding tab
+        window.addEventListener("keydown", (event) => {
+            if (
+                (event.ctrlKey || event.metaKey) &&
+                event.key.toLowerCase() === "m"
+            ) {
+                //calculate the next mode
+                const modesArray = [Mode.NONE, Mode.MOVE, Mode.ROTATE];
+                let currentModeIndex = modesArray.indexOf(this.#mode);
+                currentModeIndex = (currentModeIndex + 1) % modesArray.length;
+                const newMode = modesArray[currentModeIndex];
+                this.setMode(newMode);
+
+                if (newMode === Mode.NONE) {
+                    const tabInstance = new bootstrap.Tab(modeSelectionButton);
+                    tabInstance.show();
+                } else if (newMode === Mode.MOVE) {
+                    const tabMoveInstance = new bootstrap.Tab(modeMoveButton);
+                    tabMoveInstance.show();
+                } else if (newMode === Mode.ROTATE) {
+                    const tabRotateInstance = new bootstrap.Tab(
+                        modeRotateButton
+                    );
+                    tabRotateInstance.show();
+                }
+            }
+        });
+    }
+
     /**
      * Sets the mode for the picker.
      * @param {"none" | "move" | "rotate"} mode - The mode to set.
@@ -109,6 +166,10 @@ export class Picker {
         } else {
             this.#transformControls.setMode("rotate");
         }
+
+        // update the available input methods, depending on the mode
+        this.#attachTransform();
+        this.#attachSelectionBox();
     }
 
     /**
@@ -137,14 +198,7 @@ export class Picker {
         if (objectList) {
             this.#selectedObject = objectList[0];
             this.#attachTransform();
-
-            // @ts-ignore
-            this.#selectionBox.setFromObject(this.#selectedObject);
-            // Only show the selection box if the object has a position in the scene
-            // @ts-ignore
-            if (this.#selectedObjects.position !== undefined) {
-                this.#selectionBox.visible = true;
-            }
+            this.#attachSelectionBox();
         }
 
         this.#itemSelectedEvent();
@@ -180,19 +234,28 @@ export class Picker {
         if (!this.#isDragging) {
             this.#onClick(event);
         } else if (this.#transformControls.object) {
-            if (this.#transformControls.mode === "translate") {
+            // also checks if the object was moved or if the camara was adjusted
+            if (
+                this.#transformControls.mode === "translate" &&
+                !this.#transformControls.object.position.equals(
+                    this.#selectedObject.oldPosition
+                )
+            ) {
                 this.#selectedObject.updateAndSaveObjectPosition(
                     this.#transformControls.object.position.clone()
                 );
                 this.#itemSelectedEvent();
             } else if (this.#transformControls.mode === "rotate") {
-                //TODO: auch mit Commands Updaten
-                /*
-                this.#selectedObject.updateRotation(
-                    this.#transformControls.object.rotation
-                );
-                */
-                this.#itemSelectedEvent();
+                if (
+                    !this.#transformControls.object.quaternion.equals(
+                        this.#selectedObject.oldQuaternion
+                    )
+                ) {
+                    this.#selectedObject.updateAndSaveObjectRotation(
+                        this.#transformControls.object.quaternion.clone()
+                    );
+                    this.#itemSelectedEvent();
+                }
             }
         }
     }
@@ -202,11 +265,6 @@ export class Picker {
      * @param {MouseEvent} event
      */
     #onClick(event) {
-        if (this.#mode !== Mode.MOVE && this.#mode !== Mode.ROTATE) {
-            this.#deselectAll();
-            return;
-        }
-
         // Get normalized mouse position
         this.#mouse = this.#mouseposition(
             new THREE.Vector2(event.clientX, event.clientY)
@@ -277,22 +335,24 @@ export class Picker {
             }
             return;
         }
-
         // Object was clicked
         if (ctrlKey) {
             // If object is already in the selection, just attach transformControls
             if (this.#selectedObjects.includes(this.#selectedObject)) {
                 this.#attachTransform();
+                this.#attachSelectionBox();
             } else {
                 // Add it to the selection
                 this.#selectedObjects.push(this.#selectedObject);
                 this.#attachTransform();
+                this.#attachSelectionBox();
             }
         } else {
             // deselect everything, then select the clicked object
             this.#deselectAll();
             this.#selectedObjects.push(this.#selectedObject);
             this.#attachTransform();
+            this.#attachSelectionBox();
         }
     }
 
@@ -301,45 +361,57 @@ export class Picker {
      * or a multiSelectionGroup that contains all currently selected objects.
      */
     #attachTransform() {
-        if (this.#selectedObjects.length === 0) {
-            this.#deselectAll();
-        } else if (this.#selectedObjects.length === 1) {
-            if (this.#transformControls.mode === "rotate") {
-                if (!this.#selectedObject.rotatableAxis) {
-                    // @ts-ignore
-                    this.#selectionBox.setFromObject(this.#selectedObject);
-                    this.#selectionBox.visible = true;
-                    return;
-                }
-                this.#selectedObject.rotatableAxis.forEach((axis) => {
+        if (this.#mode !== Mode.NONE) {
+            // reset previous available axis
+            this.#transformControls.showX = true;
+            this.#transformControls.showZ = true;
+            this.#transformControls.showY = true;
+
+            if (this.#selectedObjects.length === 0) {
+                this.#deselectAll();
+            } else if (this.#selectedObjects.length === 1) {
+                if (this.#transformControls.mode === "rotate") {
+                    this.#transformControls.attach(this.#selectedObjects[0]);
                     this.#transformControls.showX = false;
                     this.#transformControls.showZ = false;
                     this.#transformControls.showY = false;
-                    if (axis === "X") {
-                        this.#transformControls.showX = true;
+                    if (this.#selectedObject.rotatableAxis) {
+                        this.#selectedObject.rotatableAxis.forEach((axis) => {
+                            if (axis === "X") {
+                                this.#transformControls.showX = true;
+                            }
+                            if (axis === "Y") {
+                                this.#transformControls.showY = true;
+                            }
+                            if (axis === "Z") {
+                                this.#transformControls.showZ = true;
+                            }
+                        });
                     }
-                    if (axis === "Y") {
-                        this.#transformControls.showY = true;
+                } else if (this.#transformControls.mode === "translate") {
+                    if (this.#selectedObject.isMovable) {
+                        this.#transformControls.attach(
+                            this.#selectedObjects[0]
+                        );
                     }
-                    if (axis === "Z") {
-                        this.#transformControls.showZ = true;
-                    }
-                });
-            } else if (this.#transformControls.mode === "translate") {
-                if (!this.#selectedObject.isMovable) {
-                    // @ts-ignore
-                    this.#selectionBox.setFromObject(this.#selectedObject);
-                    this.#selectionBox.visible = true;
-                    return;
                 }
+            } else {
+                // TODO: Implement multi-selection
+                // hide every control as they will not work properly
+                this.#transformControls.detach();
             }
+        }
+    }
 
-            this.#transformControls.attach(this.#selectedObjects[0]);
-            // @ts-ignore
-            this.#selectionBox.setFromObject(this.#selectedObject);
-            this.#selectionBox.visible = true;
-        } else {
-            // TODO: Implement multi-selection
+    #attachSelectionBox() {
+        if (this.#selectedObjects.length == 1) {
+            if (this.#selectedObjects[0].isSelectable) {
+                //@ts-ignore
+                this.#selectionBox.setFromObject(this.#selectedObjects[0]);
+                this.#selectionBox.visible = true;
+            } else {
+                this.#selectionBox.visible = false;
+            }
         }
     }
 
@@ -354,6 +426,34 @@ export class Picker {
             ((position.x - rect.left) / rect.width) * 2 - 1,
             -((position.y - rect.top) / rect.height) * 2 + 1
         );
+    }
+
+    /**
+     * Enables grid snapping when the Shift key is pressed.
+     * @param {KeyboardEvent} event
+     */
+    #onKeyDown(event) {
+        if (event.key === "Shift") {
+            // Enable snapping depending on the transform mode
+            if (this.#transformControls.mode === "translate") {
+                this.#transformControls.translationSnap = 1; // Snap to grid size of 1 unit
+            } else if (this.#transformControls.mode === "rotate") {
+                this.#transformControls.rotationSnap =
+                    THREE.MathUtils.degToRad(15); // Snap rotation to 15° increments
+            }
+        }
+    }
+
+    /**
+     * Disables grid snapping when the Shift key is released.
+     * @param {KeyboardEvent} event
+     */
+    #onKeyUp(event) {
+        if (event.key === "Shift") {
+            // Disable snapping
+            this.#transformControls.translationSnap = null;
+            this.#transformControls.rotationSnap = null;
+        }
     }
 }
 

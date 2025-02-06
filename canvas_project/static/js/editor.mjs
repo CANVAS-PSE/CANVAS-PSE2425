@@ -17,6 +17,7 @@ import { JobInterface } from "jobInterface";
 import { Inspector } from "inspectorClass";
 
 import { Heliostat, Receiver, LightSource, Terrain } from "objects";
+import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
 
 let editorInstance = null;
@@ -32,6 +33,7 @@ export class Editor {
     #quickSelector;
     #jobInterface;
     #inspector;
+    #commandPrompt;
     #previewHandler;
 
     #projectId;
@@ -84,9 +86,8 @@ export class Editor {
         this.#quickSelector = new QuickSelector(this.#objectManager);
         this.#jobInterface = new JobInterface(projectId);
         this.#inspector = new Inspector(this.#picker);
+        this.#commandPrompt = new CommandPrompt();
         this.#previewHandler = new PreviewHandler(this.#scene);
-
-        //this.#picker.setMode("rotate");
 
         window.addEventListener("resize", () => this.onWindowResize());
 
