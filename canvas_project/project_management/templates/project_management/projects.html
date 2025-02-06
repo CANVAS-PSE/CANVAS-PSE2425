@@ -17,6 +17,7 @@
     {% if projects %}
         <script type="module">
         import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
+        import * as bootstrap from "bootstrap"
 
         const manager = new ProjectOverviewManager();
         </script>
@@ -155,7 +156,7 @@
                                                                     </p>
                                                                     <form action="{% url 'updateProject' project_name=project.name %}"
                                                                           method="POST"
-                                                                          class="d-flex flex-column">
+                                                                          class="d-flex flex-column gap-2">
                                                                         {% csrf_token %} {{ form }}
                                                                         <br />
                                                                         <button class="btn btn-primary rounded-3" type="submit">Save</button>
