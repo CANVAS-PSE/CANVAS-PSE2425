@@ -1,5 +1,6 @@
 import { Modal } from "bootstrap";
 import { CommandPrompt } from "commandPrompt";
+import { ObjectManager } from "objectManager";
 
 /**
  * Parent class of all prompt commands
@@ -40,7 +41,8 @@ export class PromptCommand extends HTMLElement {
         if (keybind) {
             const keybindElem = document.createElement("div");
             keybindElem.innerHTML = keybind;
-            keybindElem.classList.add("key", "border", "p-0", "px-2");
+            keybindElem.classList.add("rounded-2", "border", "p-0", "px-2");
+            keybindElem.style.fontSize = "80%";
             this.appendChild(keybindElem);
         }
 
@@ -197,16 +199,19 @@ export class AutoModePromptCommand extends PromptCommand {
  * Prompt command to add a heliostat to the scene
  */
 export class AddHeliostatPromptCommand extends PromptCommand {
+    #objectManager;
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     * @param {ObjectManager} objectManager
      */
-    constructor(commandPrompt) {
+    constructor(commandPrompt, objectManager) {
         super("Add heliostat", commandPrompt);
+        this.#objectManager = objectManager;
     }
 
     execute() {
-        console.log("heliostat");
+        this.#objectManager.createHeliostat();
     }
 }
 
@@ -214,16 +219,19 @@ export class AddHeliostatPromptCommand extends PromptCommand {
  * Prompt command to add a receiver to the scene
  */
 export class AddReceiverPromptCommand extends PromptCommand {
+    #objectManager;
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     * @param {ObjectManager} objectManager
      */
-    constructor(commandPrompt) {
+    constructor(commandPrompt, objectManager) {
         super("Add receiver", commandPrompt);
+        this.#objectManager = objectManager;
     }
 
     execute() {
-        console.log("receiver");
+        this.#objectManager.createReceiver();
     }
 }
 
@@ -231,16 +239,19 @@ export class AddReceiverPromptCommand extends PromptCommand {
  * Prompt command to add a lightsource to the scene
  */
 export class AddLightSourcePromptCommand extends PromptCommand {
+    #objectManager;
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
+     * @param {ObjectManager} objectManager
      */
-    constructor(commandPrompt) {
+    constructor(commandPrompt, objectManager) {
         super("Add light source", commandPrompt);
+        this.#objectManager = objectManager;
     }
 
     execute() {
-        console.log("light source");
+        this.#objectManager.createLightSource();
     }
 }
 
@@ -257,7 +268,20 @@ export class ToggleFullscreenPromptCommand extends PromptCommand {
     }
 
     execute() {
-        console.log("toggle fullscreen");
+        if (navigator.userAgent.indexOf("Safari") > -1) {
+            if (document.webkitFullscreenElement === null) {
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+            return;
+        }
+
+        if (document.fullscreenElement === null) {
+            document.documentElement.requestFullscreen();
+        } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
     }
 }
 
@@ -274,7 +298,59 @@ export class ExportProjectPromptCommand extends PromptCommand {
     }
 
     execute() {
-        window.location.href = window.location + "/hdf5";
+        let modal = new Modal(document.getElementById("loadingModal"));
+        modal.show();
+
+        fetch(window.location + "/download", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.#getCookie("csrftoken"),
+            },
+        })
+            .then((response) => {
+                // Trigger file download after response
+                return response.blob();
+            })
+            .then((data) => {
+                let link = document.createElement("a");
+
+                link.href = URL.createObjectURL(data);
+                link.download = `{{ project_name }}.h5`;
+                link.click();
+
+                // After download, close modal and redirect
+                modal.hide();
+                window.location.href = "/editor/{{ project_name }}";
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                modal.hide();
+            });
+    }
+
+    /**
+     * Gets the cookie specified by the name
+     * @param {String} name The name of the cookie you want to get.
+     * @returns the cookie or null if it couldn't be found.
+     */
+    #getCookie(name) {
+        if (!document.cookie) {
+            return null;
+        }
+
+        // document.cookie is a key=value list separated by ';'
+        const xsrfCookies = document.cookie
+            .split(";")
+            .map((c) => c.trim())
+            //filter the right cookie name
+            .filter((c) => c.startsWith(name + "="));
+
+        if (xsrfCookies.length === 0) {
+            return null;
+        }
+        // return the decoded value of the first cookie found
+        return decodeURIComponent(xsrfCookies[0].split("=")[1]);
     }
 }
 
@@ -291,7 +367,14 @@ export class RenderProjectPromptCommand extends PromptCommand {
     }
 
     execute() {
-        console.log("render");
+        const jobModal = new Modal(document.getElementById("startJobModal"));
+        jobModal.show();
+
+        document
+            .getElementById("startJobModal")
+            .addEventListener("shown.bs.modal", () => {
+                document.getElementById("createNewJob").focus();
+            });
     }
 }
 
@@ -330,6 +413,12 @@ export class OpenJobInterfacePromptCommand extends PromptCommand {
             document.getElementById("jobInterface")
         );
         jobInterfaceModal.show();
+
+        document
+            .getElementById("jobInterface")
+            .addEventListener("shown.bs.modal", () => {
+                document.getElementById("createNewJob").focus();
+            });
     }
 }
 
@@ -366,9 +455,38 @@ export class LogoutPromptCommand extends PromptCommand {
     }
 
     execute() {
-        fetch(window.location.origin + "/logout", {
+        fetch(window.location.origin + "/logout/", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.#getCookie("csrftoken"),
+            },
         });
+        window.location.href = window.location.origin;
+    }
+
+    /**
+     * Gets the cookie specified by the name
+     * @param {String} name The name of the cookie you want to get.
+     * @returns the cookie or null if it couldn't be found.
+     */
+    #getCookie(name) {
+        if (!document.cookie) {
+            return null;
+        }
+
+        // document.cookie is a key=value list separated by ';'
+        const xsrfCookies = document.cookie
+            .split(";")
+            .map((c) => c.trim())
+            //filter the right cookie name
+            .filter((c) => c.startsWith(name + "="));
+
+        if (xsrfCookies.length === 0) {
+            return null;
+        }
+        // return the decoded value of the first cookie found
+        return decodeURIComponent(xsrfCookies[0].split("=")[1]);
     }
 }
 
@@ -392,7 +510,7 @@ export class NewProjectPromptCommand extends PromptCommand {
 
         document
             .getElementById("createNewProject")
-            .addEventListener("shown.bs.modal", function () {
+            .addEventListener("shown.bs.modal", () => {
                 document.getElementById("createProjectNameInput").focus();
             });
     }

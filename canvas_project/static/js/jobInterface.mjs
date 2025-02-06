@@ -26,8 +26,8 @@ export class JobInterface {
          * Update when opening
          */
         document
-            .getElementById("jobInterfaceToggle")
-            .addEventListener("click", () => {
+            .getElementById("jobInterface")
+            .addEventListener("shown.bs.modal", () => {
                 if (this.#jobList.length == 0) {
                     this.#jobInterfaceBody.innerHTML =
                         "You currently have no jobs.";

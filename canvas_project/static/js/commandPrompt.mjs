@@ -1,4 +1,5 @@
 import { Modal } from "bootstrap";
+import { ObjectManager } from "objectManager";
 import {
     LightModePromptCommand,
     DarkModePromptCommand,
@@ -41,13 +42,16 @@ export class CommandPrompt {
      * @type {PromptCommand}
      */
     #selectedCommand;
+    #objectManager;
 
     /**
      * Creates the new command prompt handler
+     * @param {ObjectManager} objectManager the object manager for this scene
      */
-    constructor() {
+    constructor(objectManager) {
         this.#commandListElem = document.getElementById("commandList");
         this.#modal = new Modal(document.getElementById("commandPrompt"));
+        this.#objectManager = objectManager;
 
         this.#createInputField();
 
@@ -110,9 +114,9 @@ export class CommandPrompt {
             new LightModePromptCommand(this),
             new DarkModePromptCommand(this),
             new AutoModePromptCommand(this),
-            new AddHeliostatPromptCommand(this),
-            new AddReceiverPromptCommand(this),
-            new AddLightSourcePromptCommand(this),
+            new AddHeliostatPromptCommand(this, this.#objectManager),
+            new AddReceiverPromptCommand(this, this.#objectManager),
+            new AddLightSourcePromptCommand(this, this.#objectManager),
             new ToggleFullscreenPromptCommand(this),
             new ExportProjectPromptCommand(this),
             new RenderProjectPromptCommand(this),
