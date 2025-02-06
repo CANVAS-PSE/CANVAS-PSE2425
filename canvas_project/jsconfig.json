@@ -22,6 +22,8 @@
             "bulkObjectCommands": ["static/js/bulkObjectCommands.mjs"],
             "overview": ["static/js/overview.mjs"],
             "editor": ["static/js/editor.mjs"],
+            "objectManager": ["static/js/objectManager.mjs"],
+            "quickSelector": ["static/js/quickSelector.mjs"],
             "updateCommands": ["static/js/updateCommands.mjs"],
             "duplicateCommands": ["static/js/duplicateCommands.mjs"],
             "deleteCommands": ["static/js/deleteCommands.mjs"],
@@ -29,7 +31,11 @@
             "inspectorClass": ["static/js/inspector.mjs"],
             "previewHandler": ["static/js/previewHandler.mjs"],
             "projectSettingsManager": ["static/js/projectSettingsManager.mjs"],
-            "createCommands": ["static/js/createCommands.mjs"]
+            "createCommands": ["static/js/createCommands.mjs"],
+            "jobInterface": ["static/js/jobInterface.mjs"]
+            "commandPrompt": ["static/js/commandPrompt.mjs"],
+            "promptCommands": ["static/js/promptCommands.mjs"],
+            "bootstrap": ["static/js/bootstrap.esm.js"]
         }
     }
 }

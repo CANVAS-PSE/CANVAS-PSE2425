@@ -8,6 +8,7 @@ from .forms import (
     UpdateAccountForm,
     DeleteAccountForm,
     PasswordResetForm,
+    PasswordForgottenForm,
 )
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
@@ -17,6 +18,7 @@ from django.core.mail import EmailMessage
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
+from .models import UserProfile
 
 REDIRECT_PROJECTS_URL = "projects"
 REDIRECT_LOGIN_URL = "login"
@@ -49,10 +51,59 @@ def register_view(request):
             user.save()
             user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
+            send_register_email(user, request)
             return redirect(REDIRECT_PROJECTS_URL)
     else:
         form = RegisterForm()
     return render(request, "register.html", {"form": form})
+
+
+def send_register_email(user, request):
+    """
+    Send an email to the user to confirm that their account has been created.
+    """
+    subject = "CANVAS: Registration Confirmation"
+
+    # Create the token for the user
+    uid = urlsafe_base64_encode(str(user.id).encode())
+    token = default_token_generator.make_token(user)
+
+    base_url = request.build_absolute_uri("/")
+    # Create the URL for the password change page
+    delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
+
+    message = render_to_string(
+        "accounts/account_creation_confirmation_email.html",
+        {
+            "user": user,
+            "delete_account_url": delete_account_url,
+        },
+    )
+
+    to_email = user.email
+    email = EmailMessage(subject, message, to=[to_email])
+    email.send()
+
+
+def confirm_deletion(request, uidb64, token):
+    """
+    Confirm the deletion of the user's account.
+    """
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            logout(request)
+            user.delete()
+            return redirect("login")
+        else:
+            return render(request, "confirm_deletion.html")
+    else:
+        return redirect("invalid_link")
 
 
 def login_view(request):
@@ -70,7 +121,10 @@ def login_view(request):
             user = form.get_user()
             user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
-            return redirect(REDIRECT_PROJECTS_URL)
+            next_url = request.POST.get("next") or request.GET.get(
+                "next", REDIRECT_PROJECTS_URL
+            )
+            return redirect(next_url)
     else:
         form = LoginForm()
     return render(request, "login.html", {"form": form})
@@ -93,7 +147,7 @@ def update_account(request):
     """
     user = request.user
     if request.method == "POST":
-        form = UpdateAccountForm(instance=request.user, data=request.POST)
+        form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
         if form.is_valid():
             user.first_name = form.cleaned_data["first_name"]
             user.last_name = form.cleaned_data["last_name"]
@@ -109,7 +163,21 @@ def update_account(request):
                 update_session_auth_hash(request, user)
                 send_password_change_email(user, request)
 
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            if request.POST.get("delete_picture") == "1":
+                if profile.profile_picture and profile.profile_picture.name != "profile_pics/default.jpg":
+                    profile.profile_picture.delete()  # delete former profile picture
+                profile.profile_picture = "profile_pics/default.jpg"  # set default profile picture
+            # Set profile picture only if a new one is uploaded
+            elif form.cleaned_data.get("profile_picture"):
+                 # Check if the current profile picture exists and is not the default picture.
+                if profile.profile_picture and profile.profile_picture.name != "profile_pics/default.jpg":
+                    profile.profile_picture.delete()
+                profile.profile_picture = form.cleaned_data["profile_picture"]
+
             user.save()
+            profile.save()
+
             messages.success(request, "Your account has been updated successfully.")
         else:
             for field in form:
@@ -172,11 +240,12 @@ def password_reset_view(request, uidb64, token):
 
         return render(request, "password_reset.html", {"form": form})
     else:
-        return redirect("password_reset_failed")
+        return redirect("invalid_link")
 
 
-def password_reset_failed(request):
-    return render(request, "password_reset_failed.html")
+def invalid_link(request):
+    return render(request, "invalid_link.html")
+
 
 
 @require_POST
@@ -197,3 +266,47 @@ def delete_account(request):
                     messages.error(request, f"Error in {field.label}: {error}")
 
     return redirect(request.META.get("HTTP_REFERER", "index"))
+
+
+def password_forgotten_view(request):
+    """
+    View if a user doesn't remember its password and wants to reset it.
+    """
+    if request.method == "POST":
+        form = PasswordForgottenForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            user = User.objects.get(email=email)
+            send_password_forgotten_email(user, request)
+            return redirect("login")
+    else:
+        form = PasswordForgottenForm()
+
+    return render(request, "password_forgotten.html", {"form": form})
+
+
+def send_password_forgotten_email(user, request):
+    """
+    Send an email to the user to reset their password.
+    """
+    subject = "Password Reset"
+
+    # Create the token for the user
+    uid = urlsafe_base64_encode(str(user.id).encode())
+    token = default_token_generator.make_token(user)
+
+    base_url = request.build_absolute_uri("/")
+    # Create the URL for the password change page
+    password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
+
+    message = render_to_string(
+        "accounts/password_forgotten_email.html",
+        {
+            "user": user,
+            "password_reset_url": password_reset_url,
+        },
+    )
+
+    to_email = user.email
+    email = EmailMessage(subject, message, to=[to_email])
+    email.send()

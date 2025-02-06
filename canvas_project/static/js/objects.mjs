@@ -16,6 +16,17 @@ import {
     UpdateLightsourceCommand,
     UpdateReceiverCommand,
 } from "updateCommands";
+import {
+    DuplicateHeliostatCommand,
+    DuplicateReceiverCommand,
+    DuplicateLightSourceCommand,
+} from "duplicateCommands";
+import {
+    DeleteHeliostatCommand,
+    DeleteLightSourceCommand,
+    DeleteReceiverCommand,
+} from "deleteCommands";
+import { ItemDeletedEvent } from "deleteCommands";
 
 export class SelectableObject extends Object3D {
     #objectName;
@@ -58,9 +69,29 @@ export class SelectableObject extends Object3D {
 
     /**
      * Updates and saves the new position through a command
-     * @param {Vector3} position 
+     * @param {Vector3} position
      */
     updateAndSaveObjectPosition(position) {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
+     * Updates and saves the new rotation through a command
+     */
+    updateAndSaveObjectRotation(rotation) {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
+     * Duplicates the object
+     */
+    duplicate() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+    /**
+     * Deletes the object
+     */
+    delete() {
         throw new Error("This method must be implemented in all subclasses");
     }
 
@@ -74,7 +105,7 @@ export class SelectableObject extends Object3D {
 
     /**
      * Updates the rotation of the object
-     * @param {THREE.Euler} rotation
+     * @param {THREE.Quaternion} rotation
      */
     updateRotation(rotation) {
         throw new Error("This method must be implemented in all subclasses");
@@ -82,7 +113,7 @@ export class SelectableObject extends Object3D {
 
     /**
      * Returns the axis on which the object is rotatable
-     * @returns {Boolean}
+     * @returns {string[]} - an array containing all rotable axis
      */
     get rotatableAxis() {
         throw new Error("This method must be implemented in all subclasses");
@@ -93,6 +124,22 @@ export class SelectableObject extends Object3D {
      * @returns {Boolean}
      */
     get isMovable() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
+     * Returns whether an object is selectable or not
+     * @returns {boolean}
+     */
+    get isSelectable() {
+        throw new Error("This method must be implemented in all subclasses");
+    }
+
+    /**
+     * Returns the old position of the heliostat
+     * @returns {THREE.Vector3} the old position of the heliostat
+     */
+    get oldPosition() {
         throw new Error("This method must be implemented in all subclasses");
     }
 }
@@ -112,6 +159,9 @@ export class Heliostat extends SelectableObject {
     #kinematicTypeComponent;
     #undoRedoHandler = new UndoRedoHandler();
     #isMovable = true;
+    /**
+     * @type { string[] }
+     */
     #rotatableAxis = null;
     #oldPosition;
 
@@ -151,7 +201,7 @@ export class Heliostat extends SelectableObject {
         this.#aimPoint = aimPoint;
         this.#numberOfFacets = numberOfFacets;
         this.#kinematicType = kinematicType;
-        this.lookAt(this.#aimPoint.x, 0, this.#aimPoint.z);
+        this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
 
         // create components for inspector
         this.#headerComponent = new HeaderInspectorComponent(
@@ -299,26 +349,18 @@ export class Heliostat extends SelectableObject {
         );
     }
 
-    /**
-     * Returns the axis on which the heliostat is rotatable
-     * @returns {Boolean} false, as the heliostat is not rotatable
-     */
     get rotatableAxis() {
         return this.#rotatableAxis;
     }
 
-    /**
-     * Returns whether the heliostat is movable or not
-     * @returns {Boolean} true, as the heliostat is movable
-     */
     get isMovable() {
         return this.#isMovable;
     }
 
-    /**
-     * Returns the old position of the heliostat
-     * @returns {THREE.Vector3} the old position of the heliostat
-     */
+    get isSelectable() {
+        return true;
+    }
+
     get oldPosition() {
         return this.#oldPosition;
     }
@@ -330,7 +372,7 @@ export class Heliostat extends SelectableObject {
     updatePosition(position) {
         this.position.copy(position);
         this.#oldPosition = new Vector3(position.x, position.y, position.z);
-        this.lookAt(this.#aimPoint.x, 0, this.#aimPoint.z);
+        this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
     }
 
     /**
@@ -342,9 +384,19 @@ export class Heliostat extends SelectableObject {
         );
     }
 
+    duplicate() {
+        this.#undoRedoHandler.executeCommand(
+            new DuplicateHeliostatCommand(this)
+        );
+    }
+
+    delete() {
+        this.#undoRedoHandler.executeCommand(new DeleteHeliostatCommand(this));
+    }
+
     /**
      * Updates the position of the heliostat
-     * @param {Vector3} position 
+     * @param {Vector3} position
      */
     updateAndSaveObjectPosition(position) {
         this.#undoRedoHandler.executeCommand(
@@ -357,7 +409,7 @@ export class Heliostat extends SelectableObject {
      */
     set aimPoint(aimPoint) {
         this.#aimPoint = aimPoint;
-        this.lookAt(aimPoint.x, 0, aimPoint.z);
+        this.lookAt(aimPoint.x, this.oldPosition.y, aimPoint.z);
     }
 
     get aimPoint() {
@@ -412,7 +464,6 @@ export class Receiver extends SelectableObject {
     #resolutionU;
     #curvatureE;
     #curvatureU;
-    #rotationY = 0;
     #undoRedoHandler = new UndoRedoHandler();
 
     #top;
@@ -429,6 +480,7 @@ export class Receiver extends SelectableObject {
     #isMovable = true;
     #rotatableAxis = ["Y"];
     #oldPosition;
+    #oldQuaternion = new THREE.Quaternion();
 
     /**
      * Creates a Receiver object
@@ -468,9 +520,7 @@ export class Receiver extends SelectableObject {
         this.add(this.#top);
 
         this.updatePosition(position);
-
-        this.#base.rotation.y = rotationY;
-        this.#top.rotation.y = rotationY;
+        this.updateRotation(this.yDegreeToQuaternion(rotationY));
 
         this.#apiID = apiID;
         this.#towerType = towerType;
@@ -481,7 +531,6 @@ export class Receiver extends SelectableObject {
         this.#resolutionU = resolutionU;
         this.#curvatureE = curvatureE;
         this.#curvatureU = curvatureU;
-        this.#rotationY = rotationY;
 
         // create components for the inspector
         this.#headerComponent = new HeaderInspectorComponent(
@@ -501,11 +550,7 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(
-                            newValue,
-                            this.#top.position.y,
-                            this.#top.position.z
-                        )
+                        new Vector3(newValue, this.position.y, this.position.z)
                     )
                 );
             }
@@ -520,11 +565,7 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(
-                            this.#top.position.x,
-                            newValue,
-                            this.#top.position.z
-                        )
+                        new Vector3(this.position.x, newValue, this.position.z)
                     )
                 );
             }
@@ -539,11 +580,7 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(
-                            this.#top.position.x,
-                            this.#top.position.y,
-                            newValue
-                        )
+                        new Vector3(this.position.x, this.position.y, newValue)
                     )
                 );
             }
@@ -559,11 +596,15 @@ export class Receiver extends SelectableObject {
             "Rotation U",
             0,
             360,
-            () => THREE.MathUtils.radToDeg(this.#rotationY),
+            () => this.quaternionToYDegree(this.#oldQuaternion),
             (newValue) => {
-                newValue = THREE.MathUtils.degToRad(newValue);
+                newValue = this.yDegreeToQuaternion(newValue);
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "rotationY", newValue)
+                    new UpdateReceiverCommand(
+                        this,
+                        "rotation",
+                        new THREE.Quaternion().copy(newValue)
+                    )
                 );
             },
             15
@@ -725,19 +766,61 @@ export class Receiver extends SelectableObject {
     }
 
     /**
-     * Returns whether the receiver is rotatable or not
-     * @returns {Boolean} true, as the receiver is rotatable
+     * Converts a quaternion to a y degree (a number from 0 to 360)
+     * @param {THREE.Quaternion} quaternion
+     * @returns
      */
+    quaternionToYDegree(quaternion) {
+        const euler = new THREE.Euler();
+        euler.setFromQuaternion(quaternion, "YXZ");
+        let angle = THREE.MathUtils.radToDeg(euler.y);
+        return (angle + 360) % 360;
+    }
+
+    /**
+     * Converts a y degree (a number from 0 to 360) to a quaternion
+     * @param {Number} angle
+     * @returns
+     */
+    yDegreeToQuaternion(angle) {
+        const euler = new THREE.Euler(
+            0,
+            THREE.MathUtils.degToRad(angle),
+            0,
+            "YXZ"
+        );
+        const quaternion = new THREE.Quaternion().setFromEuler(euler);
+        return quaternion;
+    }
+
     get rotatableAxis() {
         return this.#rotatableAxis;
     }
 
-    /**
-     * Returns whether the receiver is movable or not
-     * @returns {Boolean} true, as the receiver is movable
-     */
     get isMovable() {
         return this.#isMovable;
+    }
+
+    get isSelectable() {
+        return true;
+    }
+
+    get oldPosition() {
+        return this.#oldPosition;
+    }
+
+    get oldQuaternion() {
+        return this.#oldQuaternion;
+    }
+
+    /**
+     * Updates the position of the receiver
+     * @param {Vector3} position
+     */
+    updateAndSaveObjectPosition(position) {
+        this.#undoRedoHandler.executeCommand(
+            new UpdateReceiverCommand(this, "position", position)
+        );
     }
 
     /**
@@ -764,17 +847,45 @@ export class Receiver extends SelectableObject {
     }
 
     /**
-     * Updates the position of the receiver
-     * @param {Vector3} position 
+     * Updates the rotation of the receiver
+     * @param {THREE.Quaternion} rotation
      */
-    updateAndSaveObjectPosition(position) {
+    updateAndSaveObjectRotation(rotation) {
         this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "position", position)
+            new UpdateReceiverCommand(this, "rotation", rotation)
         );
     }
 
-    get oldPosition() {
-        return this.#oldPosition;
+    /**
+     * Updates the quaternion of the receiver, and indirectly updates the rotation of the receiver
+     * @param {THREE.Quaternion} quaternion
+     */
+    updateRotation(quaternion) {
+        const axis = new THREE.Vector3(0, 1, 0);
+        const angle = Math.PI / 6;
+        this.quaternion.copy(quaternion);
+        this.#oldQuaternion = new THREE.Quaternion(
+            quaternion.x,
+            quaternion.y,
+            quaternion.z,
+            quaternion.w
+        );
+    }
+
+    /**
+     * Deletes the receiver
+     */
+    delete() {
+        this.#undoRedoHandler.executeCommand(new DeleteReceiverCommand(this));
+    }
+
+    /**
+     * Duplicates the receiver
+     */
+    duplicate() {
+        this.#undoRedoHandler.executeCommand(
+            new DuplicateReceiverCommand(this)
+        );
     }
 
     get apiID() {
@@ -847,16 +958,6 @@ export class Receiver extends SelectableObject {
 
     set curvatureU(value) {
         this.#curvatureU = value;
-    }
-
-    get rotationY() {
-        return this.#rotationY;
-    }
-
-    updateRotation(rotation) {
-        this.#rotationY = rotation;
-        this.#base.rotation.y = rotation;
-        this.#top.rotation.y = rotation;
     }
 
     get inspectorComponents() {
@@ -1042,7 +1143,7 @@ export class LightSource extends SelectableObject {
 
     /**
      * Returns whether the lightsource is rotatable or not
-     * @returns {Boolean} false, as the lightsource is not rotatable
+     * @returns {string[]} false, as the lightsource is not rotatable
      */
     get rotatableAxis() {
         return this.#rotatableAxis;
@@ -1056,12 +1157,27 @@ export class LightSource extends SelectableObject {
         return this.#isMovable;
     }
 
+    get isSelectable() {
+        return false;
+    }
+
     /**
      * @param {String} name the new name
      */
     updateAndSaveObjectName(name) {
         this.#undoRedoHandler.executeCommand(
             new UpdateLightsourceCommand(this, "objectName", name)
+        );
+    }
+
+    duplicate() {
+        this.#undoRedoHandler.executeCommand(
+            new DuplicateLightSourceCommand(this)
+        );
+    }
+    delete() {
+        this.#undoRedoHandler.executeCommand(
+            new DeleteLightSourceCommand(this)
         );
     }
 
