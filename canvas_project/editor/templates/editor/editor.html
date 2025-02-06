@@ -34,6 +34,7 @@
                 "previewHandler": "{% static 'js/previewHandler.mjs' %}",
                 "projectSettingsManager": "{% static 'js/projectSettingsManager.mjs' %}",
                 "createCommands": "{% static 'js/createCommands.mjs' %}",
+                "jobInterface": "{% static 'js/jobInterface.mjs' %}"
                 "commandPrompt": "{% static 'js/commandPrompt.mjs' %}",
                 "promptCommands": "{% static 'js/promptCommands.mjs' %}",
                 "bootstrap": "{% static 'js/bootstrap.esm.js' %}",
@@ -650,56 +651,9 @@
                     >
                         <i class="bi bi-lightbulb text-white"></i>
                     </button>
-                    <form
-                        id="renderForm"
-                        action="{% url 'renderHDF5' project_name=project_name %}"
-                        method="post"
-                    >
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">
-                            Render
-                        </button>
-                    </form>
-                    <script>
-                        document
-                            .getElementById("renderForm")
-                            .addEventListener("submit", function () {
-                                // Show the modal before submitting the form
-                                let modal = new bootstrap.Modal(
-                                    document.getElementById("renderModal")
-                                );
-                                modal.show();
-                            });
-                    </script>
-                </div>
-            </div>
-        </div>
-
-        <!-- HDF5 Creation Modal -->
-        <div
-            class="modal fade"
-            id="loadingModal"
-            data-bs-backdrop="static"
-            data-bs-keyboard="false"
-            tabindex="-1"
-            aria-labelledby="loadingModalLabel"
-            aria-hidden="true"
-        >
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="loadingModalLabel">
-                            Generating scenario file
-                        </h1>
-                        <div class="d-flex align-items-center ms-auto">
-                            <div class="spinner-border"></div>
-                        </div>
-                    </div>
-                    <div class="modal-body">
-                        An export file is being generated. This could take a
-                        short moment. The file will be downloaded and the page
-                        reloaded when this process is finished.
-                    </div>
+                    <button class="btn btn-primary rounded-3 fw-bolder"
+                            data-bs-target="#startJobModal"
+                            data-bs-toggle="modal">Render</button>
                 </div>
             </div>
         </div>
@@ -975,23 +929,20 @@
             </div>
             <!-- user -->
             <div class="dropup d-flex justify-content-between mx-3 py-1">
-                <button
-                    class="btn btn-primary custom-btn text-reset fs-3 position-relative p-0 px-1 rounded-3"
-                    data-bs-toggle="modal"
-                    data-bs-target="#jobInterface"
-                >
-                    <span
-                        class="position-absolute top-0 start-100 translate-middle bg-danger bg-opacity-50 rounded-circle"
-                        style="padding: 0.7rem"
-                    >
-                        <span class="visually-hidden">New alerts</span>
-                    </span>
-                    <span
-                        class="position-absolute top-0 start-100 translate-middle bg-danger rounded-circle"
-                        style="padding: 0.3rem"
-                    >
-                        <span class="visually-hidden">New alerts</span>
-                    </span>
+                <button class="btn btn-primary custom-btn text-reset fs-3 position-relative p-0 px-1 rounded-3"
+                        data-bs-toggle="modal"
+                        data-bs-target="#jobInterface"
+                        id="jobInterfaceToggle">
+                    <div id="hasActiveJobsIndicator" class="d-none">
+                        <span class="position-absolute top-0 start-100 translate-middle bg-danger bg-opacity-50 rounded-circle"
+                              style="padding: 0.7rem">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                        <span class="position-absolute top-0 start-100 translate-middle bg-danger rounded-circle"
+                              style="padding: 0.3rem">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                    </div>
                     <i class="bi bi-list-ul p-1"></i>
                 </button>
                 <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
