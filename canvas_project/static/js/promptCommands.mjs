@@ -461,8 +461,9 @@ export class LogoutPromptCommand extends PromptCommand {
                 "Content-Type": "application/json",
                 "X-CSRFToken": this.#getCookie("csrftoken"),
             },
+        }).then(() => {
+            window.location.href = window.location.origin;
         });
-        window.location.href = window.location.origin;
     }
 
     /**
