@@ -41,8 +41,8 @@
             }
         }
     </script>
-    <script type="module">
-        import { Editor } from "{% static 'js/editor.mjs' %}";
+<script type="module">
+    import { Editor } from "{% static 'js/editor.mjs' %}";
 
         window.addEventListener('DOMContentLoaded', (_) => {
             new Editor("{{ project_id }}");
@@ -258,29 +258,33 @@
     </div>
 </div>
 <!-- about modal -->
-<div class="modal fade"
-     id="aboutModal"
-     tabindex="-1"
-     aria-labelledby="aboutModalLabel"
-     aria-hidden="true">
+<div
+    class="modal fade"
+    id="aboutModal"
+    tabindex="-1"
+    aria-labelledby="aboutModalLabel"
+    aria-hidden="true"
+>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="aboutModalLabel">About</h5>
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
             </div>
             <div class="modal-body">
                 <p class="fw-bold">CANVAS Editor</p>
                 <p>
                     Version 0.1.0
-                    <br>
+                    <br />
                     For non-commercial use only
                 </p>
-                <p>
-                    Powered by open-source software
+                <p>Powered by open-source software</p>
+                <div>
                     <ul>
                         <li>
                             <a href="https://www.python.org/">Python</a>
@@ -296,23 +300,26 @@
                         </li>
                     </ul>
                     Copyright © 2024 ARTIST Association
-                </p>
+                </div>
                 <div class="d-flex justify-content-center pt-3 pb-3">
-                    <img class="about-logo px-3"
-                         height="auto"
-                         width="auto"
-                         alt="logo of the KIT"
-                         src="{% static 'img/logo_kit.svg' %}">
-                </img>
-                <img class="about-logo px-3"
-                     height="auto"
-                     width="auto"
-                     alt="logo of the DLR"
-                     src="{% static 'img/logo_dlr.svg' %}">
-            </img>
+                    <img
+                        class="about-logo px-3"
+                        height="auto"
+                        width="auto"
+                        alt="logo of the KIT"
+                        src="{% static 'img/logo_kit.svg' %}"
+                    />
+                    <img
+                        class="about-logo px-3"
+                        height="auto"
+                        width="auto"
+                        alt="logo of the DLR"
+                        src="{% static 'img/logo_dlr.svg' %}"
+                    />
+                </div>
+            </div>
         </div>
     </div>
-</div>
 </div>
 </div>
 <!-- main content -->
@@ -320,25 +327,33 @@
     <!-- navigation bar -->
     <nav class="navbar navbar-expand-sm navbar-light">
         <a class="navbar-brand ms-4" href="/projects">
-            <img src="{% static "img/logo_canvas_round.svg" %}"
-                 alt="canvas logo"
-                 width="32px"
-                 height="32px">
+            <img
+                src="{% static 'img/logo_canvas_round.svg' %}"
+                alt="canvas logo"
+                width="32px"
+                height="32px"
+            />
         </a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 <!--undo redo buttons-->
                 <li class="nav-item">
                     <div class="d-flex px-2">
-                        <div class="shadow-sm bg-body-secondary rounded-4 border d-flex">
-                            <button class="btn text-reset rounded-4"
-                                    id="undo"
-                                    style="--bs-btn-hover-bg: var(--bs-tertiary-bg)">
+                        <div
+                            class="shadow-sm bg-body-secondary rounded-4 border d-flex"
+                        >
+                            <button
+                                class="btn text-reset rounded-4"
+                                id="undo"
+                                style="--bs-btn-hover-bg: var(--bs-tertiary-bg)"
+                            >
                                 <i class="bi bi-arrow-counterclockwise"></i>
                             </button>
-                            <button class="btn text-reset rounded-4"
-                                    id="redo"
-                                    style="--bs-btn-hover-bg: var(--bs-tertiary-bg)">
+                            <button
+                                class="btn text-reset rounded-4"
+                                id="redo"
+                                style="--bs-btn-hover-bg: var(--bs-tertiary-bg)"
+                            >
                                 <i class="bi bi-arrow-clockwise"></i>
                             </button>
                         </div>
@@ -354,13 +369,15 @@
                 </li>
                 <!-- file -->
                 <li class="nav-item dropdown mx-2">
-                    <a class="nav-link dropdown-toggle"
-                       id="fileDropdown"
-                       href="#"
-                       role="button"
-                       data-bs-toggle="dropdown"
-                       aria-haspopup="true"
-                       aria-expanded="false">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        id="fileDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         <i class="bi-file-earmark me-2"></i>File
                     </a>
                     <div class="dropdown-menu" aria-labelledby="fileDropdown">
@@ -371,27 +388,126 @@
                         <a class="dropdown-item" id="import" href="#">
                             <i class="bi-file-earmark-arrow-up me-2"></i>Open
                         </a>
-                        <a class="dropdown-item"
-                           id="export"
-                           href="{% url 'download' project_name %}">
-                            <i class="bi-file-earmark-arrow-down me-2"></i>Export
-                        </a>
+                        <form
+                            id="exportForm"
+                            class="dropdown-item"
+                            action="{% url 'download' project_name=project_name %}"
+                            method="post"
+                        >
+                            {% csrf_token %}
+                            <button class="btn link-btn" type="submit">
+                                <i class="bi-file-earmark-arrow-down me-2"></i
+                                >Export
+                            </button>
+                        </form>
+                        <script>
+                            // Handle form submission and display the modal
+                            document
+                                .getElementById("exportForm")
+                                .addEventListener("submit", function (event) {
+                                    event.preventDefault(); // Prevent default form submission
+                                    let modal = new bootstrap.Modal(
+                                        document.getElementById("loadingModal")
+                                    );
+                                    modal.show();
+
+                                    let form =
+                                        document.getElementById("exportForm");
+                                    let formData = new FormData(form);
+
+                                    fetch(form.action, {
+                                        method: form.method,
+                                        body: formData,
+                                    })
+                                        .then((response) => {
+                                            // Trigger file download after response
+                                            return response.blob();
+                                        })
+                                        .then((data) => {
+                                            let link =
+                                                document.createElement("a");
+
+                                            link.href =
+                                                URL.createObjectURL(data);
+                                            link.download = `{{ project_name }}.h5`;
+                                            link.click();
+
+                                            // After download, close modal and redirect
+                                            modal.hide();
+                                            window.location.href =
+                                                "/editor/{{ project_name }}";
+                                        })
+                                        .catch((error) => {
+                                            console.error("Error:", error);
+                                            modal.hide();
+                                        });
+                                });
+                        </script>
                     </div>
                 </li>
+                <!-- Download confirm Modal -->
+                <div
+                    class="modal fade"
+                    id="downloadConfirmModal"
+                    tabindex="-1"
+                    aria-labelledby="downloadConfirmLabel"
+                    aria-hidden="true"
+                >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1
+                                    class="modal-title fs-5"
+                                    id="exampleModalLabel"
+                                >
+                                    Exporting scenario
+                                </h1>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div class="modal-body">
+                                The scenario file is being generated and then
+                                downloaded. This could take a short moment.
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                >
+                                    Close
+                                </button>
+                                <a
+                                    type="button"
+                                    class="btn btn-primary"
+                                    href="{% url 'download' project_name %}"
+                                    >Export
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- insert -->
                 <li class="nav-item dropdown mx-2">
-                    <a class="nav-link dropdown-toggle"
-                       id="insertDropdown"
-                       href="#"
-                       role="button"
-                       data-bs-toggle="dropdown"
-                       aria-haspopup="true"
-                       aria-expanded="false">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        id="insertDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         <i class="bi-plus-square me-2"></i>Insert
                     </a>
                     <div class="dropdown-menu" aria-labelledby="insertDropdown">
                         <a class="dropdown-item" id="heliostat" href="#">
-                            <i class="bi-arrow-up-right-square me-2"></i>Heliostat
+                            <i class="bi-arrow-up-right-square me-2"></i
+                            >Heliostat
                         </a>
                         <a class="dropdown-item" id="receiver" href="#">
                             <i class="bi-align-bottom me-2"></i>Receiver
@@ -403,13 +519,15 @@
                 </li>
                 <!-- view -->
                 <li class="nav-item dropdown mx-2">
-                    <a class="nav-link dropdown-toggle"
-                       id="viewDropdown"
-                       href="#"
-                       role="button"
-                       data-bs-toggle="dropdown"
-                       aria-haspopup="true"
-                       aria-expanded="false">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        id="viewDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         <i class="bi-view-list me-2"></i>View
                     </a>
                     <div class="dropdown-menu" aria-labelledby="viewDropdown">
@@ -420,29 +538,37 @@
                 </li>
                 <!-- help -->
                 <li class="nav-item dropdown mx-2">
-                    <a class="nav-link dropdown-toggle"
-                       id="helpDropdown"
-                       href="#"
-                       role="button"
-                       data-bs-toggle="dropdown"
-                       aria-haspopup="true"
-                       aria-expanded="false">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        id="helpDropdown"
+                        href="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         <i class="bi-question-square me-2"></i>Help
                     </a>
                     <div class="dropdown-menu" aria-labelledby="helpDropdown">
-                        <a class="dropdown-item"
-                           data-bs-toggle="modal"
-                           data-bs-target="#keyboardModal">
+                        <a
+                            class="dropdown-item"
+                            data-bs-toggle="modal"
+                            data-bs-target="#keyboardModal"
+                        >
                             <i class="bi-keyboard me-2"></i>Keybindings
                         </a>
-                        <a class="dropdown-item"
-                           href="https://github.com/ARTIST-Association/CANVAS/"
-                           target="_blank">
+                        <a
+                            class="dropdown-item"
+                            href="https://github.com/ARTIST-Association/CANVAS/"
+                            target="_blank"
+                        >
                             <i class="bi-code-slash me-2"></i>Source
                         </a>
-                        <a class="dropdown-item"
-                           data-bs-toggle="modal"
-                           data-bs-target="#aboutModal">
+                        <a
+                            class="dropdown-item"
+                            data-bs-toggle="modal"
+                            data-bs-target="#aboutModal"
+                        >
                             <i class="bi-info me-2"></i>About
                         </a>
                     </div>
@@ -453,212 +579,391 @@
     <!-- main editor pane -->
     <main class="d-flex flex-row flex-fill">
         <!-- canvas -->
-        <div class="mb-2 mx-0 ms-2 overflow-hidden rounded-3 shadow position-relative"
-             id="canvas">
+        <div
+            class="mb-2 mx-0 ms-2 overflow-hidden rounded-3 shadow position-relative"
+            id="canvas"
+        >
             <!--mode selector-->
             <div class="position-absolute mt-4 ms-4 fs-5" id="selectionBar">
                 <ul class="nav nav-pills flex-column p-2 gap-1 shadow-sm small bg-body-secondary bg-opacity-75 rounded-4 border" id="pillNav2" role="tablist" style="backdrop-filter: blur(0.7rem)"
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active rounded-3"
-                                id="modeSelect"
-                                data-bs-toggle="tab"
-                                type="button"
-                                role="tab"
-                                aria-selected="true">
+                        <button
+                            class="nav-link active rounded-3"
+                            id="modeSelect"
+                            data-bs-toggle="tab"
+                            type="button"
+                            role="tab"
+                            aria-selected="true"
+                        >
                             <i class="bi bi-cursor"></i>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-3"
-                                id="modeMove"
-                                data-bs-toggle="tab"
-                                type="button"
-                                role="tab"
-                                aria-selected="false">
+                        <button
+                            class="nav-link rounded-3"
+                            id="modeMove"
+                            data-bs-toggle="tab"
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                        >
                             <i class="bi bi-arrows-move"></i>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-3"
-                                id="modeRotate"
-                                data-bs-toggle="tab"
-                                type="button"
-                                role="tab"
-                                aria-selected="false">
+                        <button
+                            class="nav-link rounded-3"
+                            id="modeRotate"
+                            data-bs-toggle="tab"
+                            type="button"
+                            role="tab"
+                            aria-selected="false"
+                        >
                             <i class="bi bi-arrow-repeat"></i>
                         </button>
                     </li>
                 </ul>
             </div>
             <!--quick settings-->
-            <div class="position-absolute bottom-0 mb-4 fs-5 d-flex justify-content-center w-100">
-                <div class="p-2 gap-2 shadow-sm bg-body-secondary bg-opacity-75 rounded-4 border d-flex"
-                     style="backdrop-filter: blur(0.7rem)">
-                    <button class="btn btn-primary custom-btn d-flex gap-1 text-reset"
-                            id="quickSettingsHeliostat">
+            <div
+                class="position-absolute bottom-0 mb-4 fs-5 d-flex justify-content-center w-100"
+            >
+                <div
+                    class="p-2 gap-2 shadow-sm bg-body-secondary bg-opacity-75 rounded-4 border d-flex"
+                    style="backdrop-filter: blur(0.7rem)"
+                >
+                    <button
+                        class="btn btn-primary custom-btn d-flex gap-1 text-reset"
+                        id="quickSettingsHeliostat"
+                    >
                         <i class="bi bi-arrow-up-right-square"></i>
                     </button>
-                    <button class="btn btn-primary custom-btn d-flex gap-1 text-reset"
-                            id="quickSettingsReceiver">
+                    <button
+                        class="btn btn-primary custom-btn d-flex gap-1 text-reset"
+                        id="quickSettingsReceiver"
+                    >
                         <i class="bi bi-align-bottom"></i>
                     </button>
-                    <button class="btn btn-primary custom-btn d-flex gap-1 text-reset"
-                            id="quickSettingsLightsource">
-                        <i class="bi bi-lightbulb"></i>
+                    <button
+                        class="btn btn-primary custom-btn d-flex gap-1 text-reset"
+                        id="quickSettingsLightsource"
+                    >
+                        <i class="bi bi-lightbulb text-white"></i>
                     </button>
-                    <button class="btn btn-primary rounded-3 fw-bolder" id="quickSettingsRender">Render</button>
+                    <form
+                        id="renderForm"
+                        action="{% url 'renderHDF5' project_name=project_name %}"
+                        method="post"
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">
+                            Render
+                        </button>
+                    </form>
+                    <script>
+                        document
+                            .getElementById("renderForm")
+                            .addEventListener("submit", function () {
+                                // Show the modal before submitting the form
+                                let modal = new bootstrap.Modal(
+                                    document.getElementById("renderModal")
+                                );
+                                modal.show();
+                            });
+                    </script>
                 </div>
             </div>
         </div>
+
+        <!-- HDF5 Creation Modal -->
+        <div
+            class="modal fade"
+            id="loadingModal"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="loadingModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="loadingModalLabel">
+                            Generating scenario file
+                        </h1>
+                        <div class="d-flex align-items-center ms-auto">
+                            <div class="spinner-border"></div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        An export file is being generated. This could take a
+                        short moment. The file will be downloaded and the page
+                        reloaded when this process is finished.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HDF5 Render Modal -->
+        <div
+            class="modal fade"
+            id="renderModal"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="renderModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="renderModalLabel">
+                            Generating scenario file
+                        </h1>
+                        <div class="d-flex align-items-center ms-auto">
+                            <div class="spinner-border"></div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        An scenario file is being generated. This could take a
+                        short moment. The file will be sent to the Job Interface
+                        and the page reloaded when this process is finished.
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- sidebar -->
-        <div class="d-flex flex-column flex-shrink-0 py-2 border-left m-2 mt-0 bg-body-secondary rounded-3"
-             id="sidebar">
+        <div
+            class="d-flex flex-column flex-shrink-0 py-2 border-left m-2 mt-0 bg-body-secondary rounded-3"
+            id="sidebar"
+        >
             <!-- properties -->
-            <ul class="nav nav-tabs nav-underline px-2 nav-fill mb-auto"
+            <ul
+                class="nav nav-tabs nav-underline px-2 nav-fill mb-auto"
                 id="propertiesTab"
-                role="tablist">
+                role="tablist"
+            >
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active text-reset"
-                            id="object-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#object-tab-pane"
-                            type="button"
-                            role="tab"
-                            aria-controls="object-tab-pane"
-                            aria-selected="true">
+                    <button
+                        class="nav-link active text-reset"
+                        id="object-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#object-tab-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="object-tab-pane"
+                        aria-selected="true"
+                    >
                         <i class="bi-box me-2"></i>Inspector
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link text-reset"
-                            id="overview-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#overview-tab-pane"
-                            type="button"
-                            role="tab"
-                            aria-controls="overview-tab-pane"
-                            aria-selected="true">
+                    <button
+                        class="nav-link text-reset"
+                        id="overview-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#overview-tab-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="overview-tab-pane"
+                        aria-selected="true"
+                    >
                         <i class="bi-projector me-2"></i>Overview
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link text-reset"
-                            id="project-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#project-tab-pane"
-                            type="button"
-                            role="tab"
-                            aria-controls="project-tab-pane"
-                            aria-selected="true">
+                    <button
+                        class="nav-link text-reset"
+                        id="project-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#project-tab-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="project-tab-pane"
+                        aria-selected="true"
+                    >
                         <i class="bi-kanban me-2"></i>Project
                     </button>
                 </li>
             </ul>
-            <div id="content" class="overflow-auto d-flex flex-fill flex-grow-1 w-100">
+            <div
+                id="content"
+                class="overflow-auto d-flex flex-fill flex-grow-1 w-100"
+            >
                 <div class="tab-content h-100 w-100 p-2" id="myTabContent">
                     <!--Inspector-->
-                    <div class="tab-pane fade show active"
-                         id="object-tab-pane"
-                         role="tabpanel"
-                         aria-labelledby="object-tab"
-                         tabindex="0">
-                        <div id="inspector" class="d-flex flex-column gap-2"></div>
+                    <div
+                        class="tab-pane fade show active"
+                        id="object-tab-pane"
+                        role="tabpanel"
+                        aria-labelledby="object-tab"
+                        tabindex="0"
+                    >
+                        <div
+                            id="inspector"
+                            class="d-flex flex-column gap-2"
+                        ></div>
                     </div>
                     <!--Item overview-->
-                    <div class="tab-pane fade"
-                         id="overview-tab-pane"
-                         role="tabpanel"
-                         aria-labelledby="overview-tab"
-                         tabindex="0">
+                    <div
+                        class="tab-pane fade"
+                        id="overview-tab-pane"
+                        role="tabpanel"
+                        aria-labelledby="overview-tab"
+                        tabindex="0"
+                    >
                         <div class="accordion w-100" id="accordionOverview">
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#overviewCollapseOne"
-                                            aria-expanded="true"
-                                            aria-controls="overviewCollapseOne">Heliostats</button>
+                                    <button
+                                        class="accordion-button"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#overviewCollapseOne"
+                                        aria-expanded="true"
+                                        aria-controls="overviewCollapseOne"
+                                    >
+                                        Heliostats
+                                    </button>
                                 </h2>
-                                <div id="overviewCollapseOne" class="accordion-collapse collapse show">
-                                    <div class="accordion-body d-flex flex-column gap-2" id="heliostatList"></div>
+                                <div
+                                    id="overviewCollapseOne"
+                                    class="accordion-collapse collapse show"
+                                >
+                                    <div
+                                        class="accordion-body d-flex flex-column gap-2"
+                                        id="heliostatList"
+                                    ></div>
                                 </div>
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#overviewCollapseTwo"
-                                            aria-expanded="false"
-                                            aria-controls="overviewCollapseTwo">Receivers</button>
+                                    <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#overviewCollapseTwo"
+                                        aria-expanded="false"
+                                        aria-controls="overviewCollapseTwo"
+                                    >
+                                        Receivers
+                                    </button>
                                 </h2>
-                                <div id="overviewCollapseTwo" class="accordion-collapse collapse">
-                                    <div class="accordion-body d-flex flex-column gap-2" id="receiverList"></div>
+                                <div
+                                    id="overviewCollapseTwo"
+                                    class="accordion-collapse collapse"
+                                >
+                                    <div
+                                        class="accordion-body d-flex flex-column gap-2"
+                                        id="receiverList"
+                                    ></div>
                                 </div>
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#overviewCollapseThree"
-                                            aria-expanded="false"
-                                            aria-controls="overviewCollapseThree">Light Sources</button>
+                                    <button
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#overviewCollapseThree"
+                                        aria-expanded="false"
+                                        aria-controls="overviewCollapseThree"
+                                    >
+                                        Light Sources
+                                    </button>
                                 </h2>
-                                <div id="overviewCollapseThree" class="accordion-collapse collapse">
-                                    <div class="accordion-body d-flex flex-column gap-2" id="lightsourceList"></div>
+                                <div
+                                    id="overviewCollapseThree"
+                                    class="accordion-collapse collapse"
+                                >
+                                    <div
+                                        class="accordion-body d-flex flex-column gap-2"
+                                        id="lightsourceList"
+                                    ></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!--Project-->
-                    <div class="tab-pane fade"
-                         id="project-tab-pane"
-                         role="tabpanel"
-                         aria-labelledby="project-tab"
-                         tabindex="0">
+                    <div
+                        class="tab-pane fade"
+                        id="project-tab-pane"
+                        role="tabpanel"
+                        aria-labelledby="project-tab"
+                        tabindex="0"
+                    >
                         <div class="accordion w-100" id="accordionExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button id="enviroment-settings-button"
-                                            class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseOne"
-                                            aria-expanded="false"
-                                            aria-controls="collapseOne">Enviroment Settings</button>
+                                    <button
+                                        id="enviroment-settings-button"
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne"
+                                        aria-expanded="false"
+                                        aria-controls="collapseOne"
+                                    >
+                                        Enviroment Settings
+                                    </button>
                                 </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse">
-                                    <div class="accordion-body" id="enviroment-settings"></div>
+                                <div
+                                    id="collapseOne"
+                                    class="accordion-collapse collapse"
+                                >
+                                    <div
+                                        class="accordion-body"
+                                        id="enviroment-settings"
+                                    ></div>
                                 </div>
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button id="graphic-settings-button"
-                                            class="accordion-button"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseTwo"
-                                            aria-expanded="true"
-                                            aria-controls="collapseTwo">Graphic Settings</button>
+                                    <button
+                                        id="graphic-settings-button"
+                                        class="accordion-button"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo"
+                                        aria-expanded="true"
+                                        aria-controls="collapseTwo"
+                                    >
+                                        Graphic Settings
+                                    </button>
                                 </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse show">
-                                    <div class="accordion-body" id="graphic-settings"></div>
+                                <div
+                                    id="collapseTwo"
+                                    class="accordion-collapse collapse show"
+                                >
+                                    <div
+                                        class="accordion-body"
+                                        id="graphic-settings"
+                                    ></div>
                                 </div>
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button id="other-settings-button"
-                                            class="accordion-button collapsed"
-                                            type="button"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#collapseThree"
-                                            aria-expanded="false"
-                                            aria-controls="collapseThree">Other</button>
+                                    <button
+                                        id="other-settings-button"
+                                        class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseThree"
+                                        aria-expanded="false"
+                                        aria-controls="collapseThree"
+                                    >
+                                        Other
+                                    </button>
                                 </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse">
-                                    <div class="accordion-body" id="other-settings"></div>
+                                <div
+                                    id="collapseThree"
+                                    class="accordion-collapse collapse"
+                                >
+                                    <div
+                                        class="accordion-body"
+                                        id="other-settings"
+                                    ></div>
                                 </div>
                             </div>
                         </div>
@@ -666,19 +971,25 @@
                 </div>
             </div>
             <div id="settings" class="pb-3 pt-2">
-                <hr class="m-0">
+                <hr class="m-0" />
             </div>
             <!-- user -->
             <div class="dropup d-flex justify-content-between mx-3 py-1">
-                <button class="btn btn-primary custom-btn text-reset fs-3 position-relative p-0 px-1 rounded-3"
-                        data-bs-toggle="modal"
-                        data-bs-target="#jobInterface">
-                    <span class="position-absolute top-0 start-100 translate-middle bg-danger bg-opacity-50 rounded-circle"
-                          style="padding: 0.7rem">
+                <button
+                    class="btn btn-primary custom-btn text-reset fs-3 position-relative p-0 px-1 rounded-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#jobInterface"
+                >
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle bg-danger bg-opacity-50 rounded-circle"
+                        style="padding: 0.7rem"
+                    >
                         <span class="visually-hidden">New alerts</span>
                     </span>
-                    <span class="position-absolute top-0 start-100 translate-middle bg-danger rounded-circle"
-                          style="padding: 0.3rem">
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle bg-danger rounded-circle"
+                        style="padding: 0.3rem"
+                    >
                         <span class="visually-hidden">New alerts</span>
                     </span>
                     <i class="bi bi-list-ul p-1"></i>
@@ -710,12 +1021,16 @@
                         <p class="text-secondary m-0">{{ request.user.email }}</p>
                     </div>
                     <li>
-                        <hr class="dropdown-divider">
+                        <hr class="dropdown-divider" />
                     </li>
                     <li>
-                        <button class="dropdown-item"
-                                data-bs-toggle="modal"
-                                data-bs-target="#settings">Settings</button>
+                        <button
+                            class="dropdown-item"
+                            data-bs-toggle="modal"
+                            data-bs-target="#settings"
+                        >
+                            Settings
+                        </button>
                     </li>
                     <li>
                         <form action="{% url 'logout' %}" method="post">
@@ -736,14 +1051,14 @@
             const tabRect = tab.getBoundingClientRect();
             const userSettingsRect = userSettings.getBoundingClientRect();
 
-            let maxHeight = tabRect.bottom - userSettingsRect.top;
-            maxHeight = Math.abs(maxHeight);
-            content.style.height = maxHeight + "px";
-        };
+                let maxHeight = tabRect.bottom - userSettingsRect.top;
+                maxHeight = Math.abs(maxHeight);
+                content.style.height = maxHeight + "px";
+            };
 
-        window.addEventListener('resize', calculateMaxHeight);
-        document.addEventListener('DOMContentLoaded', calculateMaxHeight);
-    }
+            window.addEventListener("resize", calculateMaxHeight);
+            document.addEventListener("DOMContentLoaded", calculateMaxHeight);
+        }
     </script>
 </div>
 {% endblock body %}
