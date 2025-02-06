@@ -57,7 +57,7 @@ export class CommandPrompt {
 
         // open and close the command prompt
         document.addEventListener("keydown", (event) => {
-            if (event.ctrlKey && event.key.toLowerCase() === "p") {
+            if (event.ctrlKey && event.code == "Space") {
                 event.preventDefault();
                 this.#openCommandPrompt();
             }
