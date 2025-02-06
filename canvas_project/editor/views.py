@@ -154,32 +154,33 @@ def download(request, project_name):
 
 
 @login_required
-def renderHDF5(request, project_name):
+def uploadPreview(request, project_name):
     """
-        Renders the specified project into an hdf5 file and sends it to the JobInterface.
+    Updates the preview of the project
 
+    Parameters
+    ----------
+    request : HttpRequest
+        The request the user send to get here.
 
-        Parameters
-        ----------
-        request : HttpRequest
-            The request the user send to get here.
-    <<<<<<< HEAD
-        project_name : str
-            The project_name specified as a url parameter.
-
-        Returns
-        -------
-        HttpResponse
-            ...
+    Returns
+    -------
+    HttpResponse : status 200
+        On successfull POST request
+    HttpResponse : status 404
+        on all other occasions
     """
-
-    project = get_object_or_404(Project, name=project_name, owner=request.user)
 
     if request.method == "POST":
-        createHDF5(project)
-        return redirect(reverse("editor", kwargs={"project_name": project_name}))
+        project = get_object_or_404(Project, name=project_name, owner=request.user)
+        file = request.FILES["preview"]
 
-    return redirect(reverse("editor", kwargs={"project_name": project_name}))
+        project.preview.delete()
+        project.preview = file
+        project.save()
+
+        return HttpResponse(status=200)
+    return Http404
 
 
 def createHDF5(project):
