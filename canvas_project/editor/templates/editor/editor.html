@@ -255,14 +255,21 @@
                     <div class="col-9 fw-medium">Undo</div>
                 </div>
                 <div class="row align-items-center pb-3">
-                    <div class="col-3">
-                        <span class="key">Ctrl</span>
-                        <span class="mx-1">+</span>
-                        <span class="key">Shift</span>
-                        <span class="mx-1">+</span>
-                        <span class="key">Z</span>
+                    <div class="col-3 d-flex flex-column justify-content-center">
+                        <div class="mb-3">
+                            <span class="key">Ctrl</span>
+                            <span class="mx-1">+</span>
+                            <span class="key">Shift</span>
+                            <span class="mx-1">+</span>
+                            <span class="key">Z</span>
+                        </div>
+                        <div>
+                            <span class="key">Ctrl</span>
+                            <span class="mx-1">+</span>
+                            <span class="key">Y</span>
+                        </div>
                     </div>
-                    <div class="col-9 fw-medium">Redo</div>
+                    <div class="col-9 fw-medium d-flex align-items-center">Redo</div>
                 </div>
                 <div class="row align-items-center pb-3">
                     <div class="col-3">
@@ -289,6 +296,14 @@
                         <span class="key">Ctrl</span>
                     </div>
                     <div class="col-9 fw-medium">Add to object selection</div>
+                </div>
+                <div class="row align-items-center pb-3">
+                    <div class="col-3">
+                        <span class="key">Ctrl</span>
+                        <span class="mx-1">+</span>
+                        <span class="key">M</span>
+                    </div>
+                    <div class="col-9 fw-medium">Cycle through modes</div>
                 </div>
                 <div class="row align-items-center pb-3">
                     <div class="col-3">
@@ -422,7 +437,7 @@
                             <i class="bi-file-earmark-plus me-2"></i>New
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" id="import" href="#">
+                        <a class="dropdown-item" id="import" href="#openProject" data-bs-toggle="modal">
                             <i class="bi-file-earmark-arrow-up me-2"></i>Open
                         </a>
                         <a class="dropdown-item"
