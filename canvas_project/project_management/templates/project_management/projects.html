@@ -5,15 +5,23 @@
     <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block script %}
-    {{ block.super }}
+    <script src="{% static 'js/darkmode.js' %}"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "bootstrap": "{% static 'js/bootstrap.esm.js' %}",
+                "@popperjs/core": "https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/esm/popper.min.js"
+            }
+        }
+    </script>
     {% if projects %}
         <script type="module">
-            import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
+        import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
 
-            const manager = new ProjectOverviewManager();
+        const manager = new ProjectOverviewManager();
         </script>
     {% endif %}
-{% endblock script %}
+{% endblock %}
 {% block body %}
     <!--create project modal-->
     <div class="modal fade"
