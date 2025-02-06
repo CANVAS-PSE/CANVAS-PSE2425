@@ -34,6 +34,7 @@
                 "previewHandler": "{% static 'js/previewHandler.mjs' %}",
                 "projectSettingsManager": "{% static 'js/projectSettingsManager.mjs' %}",
                 "createCommands": "{% static 'js/createCommands.mjs' %}",
+                "navBar": "{% static 'js/navbar.mjs' %}",
                 "jobInterface": "{% static 'js/jobInterface.mjs' %}",
                 "commandPrompt": "{% static 'js/commandPrompt.mjs' %}",
                 "promptCommands": "{% static 'js/promptCommands.mjs' %}",
@@ -239,20 +240,88 @@
                         data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="row align-items-center pb-3">
-                    <div class="col-2">
-                        <span class="key">Esc</span>
+            <div class="modal-body gap-1">
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Esc</span>
                     </div>
-                    <div class="col-10 fw-medium">Close dialogs</div>
+                    <div class="col-9 fw-medium">Close dialogs</div>
                 </div>
-                <div class="row align-items-center pb-3">
-                    <div class="col-2">
-                        <span class="key">Ctrl</span>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
                         <span class="mx-1">+</span>
-                        <span class="key">A</span>
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Z</span>
                     </div>
-                    <div class="col-10 fw-medium">Select everything</div>
+                    <div class="col-9 fw-medium">Undo</div>
+                </div>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <div class="mb-3">
+                            <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
+                            <span class="mx-1">+</span>
+                            <span class="border rounded-1 p-2" style="font-size: 80%">Shift</span>
+                            <span class="mx-1">+</span>
+                            <span class="border rounded-1 p-2" style="font-size: 80%">Z</span>
+                        </div>
+                        <div>
+                            <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
+                            <span class="mx-1">+</span>
+                            <span class="border rounded-1 p-2" style="font-size: 80%">Y</span>
+                        </div>
+                    </div>
+                    <div class="col-9 fw-medium d-flex align-items-center">Redo</div>
+                </div>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Delete</span>
+                    </div>
+                    <div class="col-9 fw-medium">Delete object</div>
+                </div>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Cmd</span>
+                        <span class="mx-1">+</span>
+                        <span class="border rounded-1 p-2" style="font-size: 80%">D</span>
+                    </div>
+                    <div class="col-9 fw-medium">Duplicate object</div>
+                </div>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Shift</span>
+                        <i class="bi bi-hand-index"></i>
+                    </div>
+                    <div class="col-9 fw-medium">Snap to grid</div>
+                </div>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
+                    </div>
+                    <div class="col-9 fw-medium">Add to object selection</div>
+                </div>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
+                        <span class="mx-1">+</span>
+                        <span class="border rounded-1 p-2" style="font-size: 80%">M</span>
+                    </div>
+                    <div class="col-9 fw-medium">Cycle through modes</div>
+                </div>
+                <hr>
+                <div class="row align-items-center">
+                    <div class="col-3">
+                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
+                        <span class="mx-1">+</span>
+                        <span class="border rounded-1 p-2" style="font-size: 80%">&#9251;</span>
+                    </div>
+                    <div class="col-9 fw-medium">Command palette</div>
                 </div>
             </div>
         </div>
@@ -294,6 +363,15 @@
                         </li>
                         <li>
                             <a href="https://threejs.org/">three.js</a>
+                        </li>
+                    </ul>
+                    Powered by open-source models
+                    <ul>
+                        <li>
+                            <a href="https://sketchfab.com/3d-models/heliostat-a69be2b713d54a6eab3ce3e49fb65060">Heliostat</a>
+                        </li>
+                        <li>
+                            <a href="https://sketchfab.com/3d-models/tower-fe6dcf4c1f344b339c49d59ba9dd1aa3">Receiver</a>
                         </li>
                     </ul>
                     Copyright © 2024 ARTIST Association
@@ -364,11 +442,17 @@
                         <i class="bi-file-earmark me-2"></i>File
                     </a>
                     <div class="dropdown-menu" aria-labelledby="fileDropdown">
-                        <a class="dropdown-item" id="new" href="#">
+                        <a class="dropdown-item"
+                           id="new"
+                           href="#createNewProject"
+                           data-bs-toggle="modal">
                             <i class="bi-file-earmark-plus me-2"></i>New
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" id="import" href="#">
+                        <a class="dropdown-item"
+                           id="import"
+                           href="#openProject"
+                           data-bs-toggle="modal">
                             <i class="bi-file-earmark-arrow-up me-2"></i>Open
                         </a>
                         <form id="exportForm"
@@ -465,13 +549,13 @@
                         <i class="bi-plus-square me-2"></i>Insert
                     </a>
                     <div class="dropdown-menu" aria-labelledby="insertDropdown">
-                        <a class="dropdown-item" id="heliostat" href="#">
+                        <a class="dropdown-item" id="add-heliostat-nav-bar" href="#">
                             <i class="bi-arrow-up-right-square me-2"></i>Heliostat
                         </a>
-                        <a class="dropdown-item" id="receiver" href="#">
+                        <a class="dropdown-item" id="add-receiver-nav-bar" href="#">
                             <i class="bi-align-bottom me-2"></i>Receiver
                         </a>
-                        <a class="dropdown-item" id="lightSource" href="#">
+                        <a class="dropdown-item" id="add-lightSource-nav-bar" href="#">
                             <i class="bi-lightbulb me-2"></i>Light source
                         </a>
                     </div>
