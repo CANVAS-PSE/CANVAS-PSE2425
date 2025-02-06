@@ -7,3 +7,4 @@ class AccountManagementConfig(AppConfig):
 
     def ready(self):
         import account_management.signals
+

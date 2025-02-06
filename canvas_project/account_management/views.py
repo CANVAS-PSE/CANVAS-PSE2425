@@ -49,6 +49,7 @@ def register_view(request):
             )
             user.set_password(password)
             user.save()
+            user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
             send_register_email(user, request)
             return redirect(REDIRECT_PROJECTS_URL)
@@ -117,7 +118,9 @@ def login_view(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            login(request, form.get_user())
+            user = form.get_user()
+            user.backend = "django.contrib.auth.backends.ModelBackend"
+            login(request, user)
             next_url = request.POST.get("next") or request.GET.get(
                 "next", REDIRECT_PROJECTS_URL
             )
@@ -242,6 +245,7 @@ def password_reset_view(request, uidb64, token):
 
 def invalid_link(request):
     return render(request, "invalid_link.html")
+
 
 
 @require_POST
