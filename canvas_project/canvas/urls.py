@@ -27,4 +27,5 @@ urlpatterns = [
     path(r"admin/", admin.site.urls),
     path(r"editor/", include("editor.urls")),
     path(r"projects/", include("project_management.urls")),
+    path(r"accounts/", include("allauth.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

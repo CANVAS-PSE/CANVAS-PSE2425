@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
 {% block style %}
     {{ block.super }}
     <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" />
@@ -17,12 +18,12 @@
             <div class="d-flex flex-column gap-1">
                 <div class="d-flex gap-2 flex-column">
                     <a class="rounded-5 border border-1 border-body-secondary text-decoration-none text-reset d-flex justify-content-center align-items-center gap-2 p-2 px-3 bg-body"
-                       href="">
+                       href="{% provider_login_url 'google' %}">
                         <i class="bi bi-google"></i>
                         <p class="m-0">Continue with Google</p>
                     </a>
                     <a class="rounded-5 border border-1 border-body-secondary text-decoration-none text-reset d-flex justify-content-center align-items-center gap-2 p-2 px-3 bg-body"
-                       href="">
+                       href="{% provider_login_url 'github' %}">
                         <i class="bi bi-github"></i>
                         <p class="m-0">Continue with Github</p>
                     </a>
