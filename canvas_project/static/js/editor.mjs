@@ -89,8 +89,6 @@ export class Editor {
         this.#commandPrompt = new CommandPrompt();
         this.#previewHandler = new PreviewHandler(this.#scene);
 
-        //this.#picker.setMode("rotate");
-
         window.addEventListener("resize", () => this.onWindowResize());
 
         this.animate();
