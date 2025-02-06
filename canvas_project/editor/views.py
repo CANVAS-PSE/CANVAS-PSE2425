@@ -116,7 +116,7 @@ def renderHDF5(request, project_name):
     project = get_object_or_404(Project, name=project_name, owner=request.user)
 
     if request.method == "POST":
-        # createHDF5(project)
+        createHDF5(project)
         return redirect(reverse("editor", kwargs={"project_name": project_name}))
 
     return redirect(reverse("editor", kwargs={"project_name": project_name}))

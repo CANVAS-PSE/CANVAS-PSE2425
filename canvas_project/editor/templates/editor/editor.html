@@ -484,7 +484,7 @@
                             .addEventListener("submit", function () {
                                 // Show the modal before submitting the form
                                 let modal = new bootstrap.Modal(
-                                    document.getElementById("loadingModal")
+                                    document.getElementById("renderModal")
                                 );
                                 modal.show();
                             });
@@ -517,6 +517,35 @@
                         An export file is being generated. This could take a
                         short moment. The file will be downloaded and the page
                         reloaded when this process is finished.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HDF5 Render Modal -->
+        <div
+            class="modal fade"
+            id="renderModal"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="renderModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="renderModalLabel">
+                            Generating scenario file
+                        </h1>
+                        <div class="d-flex align-items-center ms-auto">
+                            <div class="spinner-border"></div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        An scenario file is being generated. This could take a
+                        short moment. The file will be sent to the Job Interface
+                        and the page reloaded when this process is finished.
                     </div>
                 </div>
             </div>
