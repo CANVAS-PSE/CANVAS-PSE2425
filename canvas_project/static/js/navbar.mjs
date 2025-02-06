@@ -43,11 +43,11 @@ export class Navbar {
     }
 
     #setupFileOptions() {
-        let createNewProject = document.getElementById('createNewProject');
+        let createNewProject = document.getElementById("createNewProject");
 
         // ensure that the form is reset when the modal is closed
-        createNewProject.addEventListener('hidden.bs.modal', function () {
-            var form = createNewProject.querySelector('form');
+        createNewProject.addEventListener("hidden.bs.modal", function () {
+            var form = createNewProject.querySelector("form");
             form.reset();
         });
     }
