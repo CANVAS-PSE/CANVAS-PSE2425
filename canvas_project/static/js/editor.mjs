@@ -6,7 +6,7 @@ import { TransformControls } from "transformControls";
 
 import { UndoRedoHandler } from "undoRedoHandler";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
-//import { Navbar } from "navbar";
+import { Navbar } from "navbar";
 import { OverviewHandler } from "overview";
 //import { ModeSelector } from "modeSelector";
 import { Picker } from "picker";
@@ -69,7 +69,6 @@ export class Editor {
 
         // initiate needed classes
         this.#undoRedoHandler = new UndoRedoHandler();
-        //this.#navbar = new Navbar();
         //this.#modeSelector = new ModeSelector();
         this.#picker = new Picker(
             this.#camera,
@@ -83,6 +82,7 @@ export class Editor {
             this.#picker,
             this.#undoRedoHandler
         );
+        this.#navbar = new Navbar(this.#objectManager);
         this.#quickSelector = new QuickSelector(this.#objectManager);
         this.#jobInterface = new JobInterface(projectId);
         this.#inspector = new Inspector(this.#picker);

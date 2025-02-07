@@ -679,7 +679,7 @@ export class Receiver extends SelectableObject {
             () => this.#towerType,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "towerType", newValue)
+                    new UpdateReceiverCommand(this, "type", newValue)
                 );
             }
         );

@@ -1,0 +1,10 @@
+django
+djangorestframework
+django-allauth
+requests
+PyJWT
+django-cleanup
+python-dotenv
+cryptography
+Pillow
+git+https://github.com/ARTIST-Association/ARTIST.git@f2e80df

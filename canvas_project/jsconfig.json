@@ -33,6 +33,7 @@
             "projectSettingsManager": ["static/js/projectSettingsManager.mjs"],
             "createCommands": ["static/js/createCommands.mjs"],
             "jobInterface": ["static/js/jobInterface.mjs"],
+            "navbar": ["static/js/navbar.mjs"],
             "commandPrompt": ["static/js/commandPrompt.mjs"],
             "promptCommands": ["static/js/promptCommands.mjs"],
             "bootstrap2": ["static/js/bootstrap.esm.js"]
