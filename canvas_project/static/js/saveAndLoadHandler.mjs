@@ -335,6 +335,7 @@ export class SaveAndLoadHandler {
         const body = {
             id: receiver.apiID,
             name: receiver.objectName,
+            receiver_type: receiver.towerType,
             position_x: receiver.getPosition().x,
             position_y: receiver.getPosition().y,
             position_z: receiver.getPosition().z,
