@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.urls import reverse
+from .models import Project, Heliostat, Lightsource, Receiver
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Project
 from .forms import ProjectForm, UpdateProjectForm
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -9,11 +9,16 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 
+import h5py
+
 
 # General project handling
 @login_required
 def projects(request):
     form = ProjectForm()
+    projectFile = request.FILES.get("file")
+    projectName = request.POST.get("name")
+    projectDescription = request.POST.get("description")
     if request.method == "GET":
         allProjects = Project.objects.filter(owner=request.user).order_by(
             "-last_edited"
@@ -29,25 +34,44 @@ def projects(request):
         return render(request, "project_management/projects.html", context)
     elif request.method == "POST":
         form = ProjectForm(request.POST)
-        allProjects = Project.objects.filter(owner=request.user).order_by(
-            "-last_edited"
-        )
-        for project in allProjects:
-            project.uid = _generate_uid(request)
-            project.token = _generate_token(project.name)
+        if projectFile is None:
+            allProjects = Project.objects.all()
+            if form.is_valid():
+                nameUnique = True
+                for existingProject in allProjects:
+                    if (
+                        form["name"].value() == existingProject.name
+                        and existingProject.owner == request.user
+                    ):
+                        nameUnique = False
+                if nameUnique:
+                    newProject = Project(
+                        name=projectName, description=projectDescription
+                    )
+                    newProject.owner = request.user
+                    newProject.last_edited = timezone.now()
+                    newProject.save()
+                    return redirect("editor", project_name=projectName)
+        else:
+            if form.is_valid():
+                allProjects = Project.objects.filter(owner=request.user)
+                nameUnique = True
+                for existingProject in allProjects:
+                    if projectName == existingProject.name and str(
+                        (existingProject.owner) == request.user
+                    ):
+                        nameUnique = False
 
-        if form.is_valid():
-            nameUnique = True
-            formName = form["name"].value()
-            for existingProject in allProjects:
-                if formName == existingProject.name:
-                    nameUnique = False
-            if nameUnique:
-                form = form.save(commit=False)
-                form.owner = request.user
-                form.last_edited = timezone.now()
-                form.save()
-                return redirect("editor", project_name=formName)
+                if nameUnique:
+                    newProject = Project(
+                        name=projectName, description=projectDescription
+                    )
+                    newProject.owner = request.user
+                    newProject.last_edited = timezone.now()
+                    newProject.save()
+                    openHDF5_CreateProject(projectFile, newProject)
+                    return redirect("editor", project_name=projectName)
+
         context = {"projects": allProjects, "form": form}
         return render(request, "project_management/projects.html", context)
 
@@ -144,6 +168,98 @@ def duplicateProject(request, project_name):
         settings.save()
 
         return redirect("projects")
+
+
+def openHDF5_CreateProject(projectFile, newProject):
+    with h5py.File(projectFile, "r") as f:
+        heliostatsGroup = f.get("heliostats")
+        if heliostatsGroup is not None:
+            for heliostatObject in heliostatsGroup:
+                heliostat = heliostatsGroup[heliostatObject]
+
+                aimpoint = heliostat["aim_point"]
+                aimpoint_x = aimpoint[0]
+                aimpoint_y = aimpoint[1]
+                aimpoint_z = aimpoint[2]
+
+                position = heliostat["position"]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
+
+                Heliostat.objects.create(
+                    project=newProject,
+                    name=str(heliostatObject),
+                    position_x=position_x,
+                    position_y=position_y,
+                    position_z=position_z,
+                    aimpoint_x=aimpoint_x,
+                    aimpoint_y=aimpoint_y,
+                    aimpoint_z=aimpoint_z,
+                )
+
+        lightsourcesGroup = f.get("lightsources")
+        if lightsourcesGroup is not None:
+            for lightsourceObject in lightsourcesGroup:
+                lightsource = lightsourcesGroup[lightsourceObject]
+                numberOfRays = lightsource["number_of_rays"]
+                lightsourceType = lightsource["type"]
+
+                distributionParams = lightsource["distribution_parameters"]
+                covariance = distributionParams["covariance"]
+                distributionType = distributionParams["distribution_type"]
+                mean = distributionParams["mean"]
+
+                Lightsource.objects.create(
+                    project=newProject,
+                    name=str(lightsourceObject),
+                    number_of_rays=numberOfRays[()],
+                    lightsource_type=lightsourceType[()],
+                    covariance=covariance[()],
+                    distribution_type=distributionType[()],
+                    mean=mean[()],
+                )
+
+        powerplantGroup = f.get("power_plant")
+        if powerplantGroup is not None:
+            pass
+        # At the moment there is no powerPlant position stored with a scenario in CANVAS
+
+        prototypesGroup = f.get("prototypes")
+        if prototypesGroup is not None:
+            pass
+        # Placeholder for when prototypes are effectively used
+
+        receiversGroup = f.get("target_areas")
+        if receiversGroup is not None:
+            for receiverObject in receiversGroup:
+                receiver = receiversGroup[receiverObject]
+
+                position = receiver["position_center"]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
+
+                normal = receiver["normal_vector"]
+                normal_x = normal[0]
+                normal_y = normal[1]
+                normal_z = normal[2]
+
+                plane_e = receiver["plane_e"]
+                plane_u = receiver["plane_u"]
+
+                Receiver.objects.create(
+                    project=newProject,
+                    name=str(receiverObject),
+                    position_x=position_x,
+                    position_y=position_y,
+                    position_z=position_z,
+                    normal_x=normal_x,
+                    normal_y=normal_y,
+                    normal_z=normal_z,
+                    plane_e=plane_e[()],
+                    plane_u=plane_u[()],
+                )
 
 
 # Share a project
