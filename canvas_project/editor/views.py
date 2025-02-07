@@ -471,7 +471,7 @@ def openHDF5_CreateProject(projectFile, newProject):
                     aimpoint_x=aimpoint_x,
                     aimpoint_y=aimpoint_y,
                     aimpoint_z=aimpoint_z,
-                    numberOfFacets=numberOfFacets,
+                    number_of_facets=numberOfFacets,
                 )
 
         powerplantGroup = f.get("power_plant")
