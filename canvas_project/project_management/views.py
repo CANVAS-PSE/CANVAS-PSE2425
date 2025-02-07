@@ -49,14 +49,12 @@ def projects(request):
                         name=projectName, description=projectDescription
                     )
                     newProject.owner = request.user
-                    newProject.last_edited = datetime.now().strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
+                    newProject.last_edited = timezone.now()
                     newProject.save()
                     return redirect("editor", project_name=projectName)
         else:
             if form.is_valid():
-                allProjects = Project.objects.all()
+                allProjects = Project.objects.filter(owner=request.user)
                 nameUnique = True
                 for existingProject in allProjects:
                     if projectName == existingProject.name and str(
@@ -69,12 +67,11 @@ def projects(request):
                         name=projectName, description=projectDescription
                     )
                     newProject.owner = request.user
-                    newProject.last_edited = datetime.now().strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
+                    newProject.last_edited = timezone.now()
                     newProject.save()
                     openHDF5_CreateProject(projectFile, newProject)
                     return redirect("editor", project_name=projectName)
+
         context = {"projects": allProjects, "form": form}
         return render(request, "project_management/projects.html", context)
 
@@ -263,6 +260,8 @@ def openHDF5_CreateProject(projectFile, newProject):
                     plane_e=plane_e[()],
                     plane_u=plane_u[()],
                 )
+
+
 # Share a project
 @login_required
 def shareProject(request, project_name):

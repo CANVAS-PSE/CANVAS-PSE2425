@@ -17,19 +17,18 @@
     {% if projects %}
         <script type="module">
         import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
-        import * as bootstrap from "bootstrap"
         const manager = new ProjectOverviewManager();
         </script>
     {% endif %}
+    <script type="module">import * as bootstrap from "bootstrap"</script>
 {% endblock script %}
 {% block body %}
-<!--create project modal-->
-    <div
-        class="modal fade"
-        id="createProject"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <!--create project modal-->
+    <div class="modal fade"
+         id="createProject"
+         tabindex="-1"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4">
                 <div class="modal-body">
@@ -37,16 +36,13 @@
                         Projects will only be saved if they have a name unique to
                         your already existing projects!
                     </p>
-                    <form
-                        action=""
-                        method="POST"
-                        class="d-flex flex-column"
-                        enctype="multipart/form-data"
-                    >
-                        {% csrf_token %} {{form}} <br />
-                        <button class="btn btn-primary rounded-3" type="submit">
-                            Create
-                        </button>
+                    <form action=""
+                          method="POST"
+                          class="d-flex flex-column gap-2"
+                          enctype="multipart/form-data">
+                        {% csrf_token %} {{ form }}
+                        <br />
+                        <button class="btn btn-primary rounded-3" type="submit">Create</button>
                     </form>
                 </div>
             </div>
