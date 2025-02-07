@@ -1,4 +1,11 @@
 django
 djangorestframework
+torch
 django-cleanup
+git+https://github.com/ARTIST-Association/ARTIST.git@f2e80df
+django-allauth
+requests
+PyJWT
+python-dotenv
+cryptography
 Pillow

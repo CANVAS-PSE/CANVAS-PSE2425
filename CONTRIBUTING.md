@@ -1,3 +1,6 @@
+> **⚠️ This document is currently under maintenance and may contain outdated information. Please check back later for the latest guidelines. ⚠️**
+
+
 # Contributing to CANVAS
 
 Welcome to ``CANVAS``:sun_with_face:! We're thrilled that you're interested in contributing to our open-source project :fire:.

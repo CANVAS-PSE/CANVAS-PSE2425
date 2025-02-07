@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Project(models.Model):
@@ -9,7 +10,8 @@ class Project(models.Model):
 
     name = models.CharField(max_length=300)
     description = models.CharField(max_length=500)
-    last_edited = models.DateTimeField("timezone.now")
+    last_edited = models.DateTimeField(default=timezone.now)
+    last_shared = models.DateTimeField(null=True, blank=True)
     favorite = models.CharField(max_length=5, default="false")
     preview = models.ImageField(
         upload_to="project_previews/",
@@ -79,6 +81,7 @@ class Receiver(models.Model):
     normal_z = models.FloatField(default=0)
 
     rotation_y = models.FloatField(default=0)
+    receiver_type = models.CharField(max_length=300, default="planar")
 
     # optional fields
     curvature_e = models.FloatField(default=0)

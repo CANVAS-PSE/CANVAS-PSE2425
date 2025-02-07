@@ -6,17 +6,20 @@ import { TransformControls } from "transformControls";
 
 import { UndoRedoHandler } from "undoRedoHandler";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
-//import { Navbar } from "navbar";
+import { Navbar } from "navbar";
 import { OverviewHandler } from "overview";
 //import { ModeSelector } from "modeSelector";
 import { Picker } from "picker";
 import { ProjectSettingsManager } from "projectSettingsManager";
-//import { QuickSelector } from "quickSelector";
-//import { JobInterface } from "jobInterface";
+import { ObjectManager } from "objectManager";
+import { QuickSelector } from "quickSelector";
+import { JobInterface } from "jobInterface";
 import { Inspector } from "inspectorClass";
 
 import { Heliostat, Receiver, LightSource, Terrain } from "objects";
+import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
+import { ModeSelector } from "modeSelector";
 
 let editorInstance = null;
 export class Editor {
@@ -27,9 +30,11 @@ export class Editor {
     #overview;
     #modeSelector;
     #projectSettingManager;
+    #objectManager;
     #quickSelector;
     #jobInterface;
     #inspector;
+    #commandPrompt;
     #previewHandler;
 
     #projectId;
@@ -65,7 +70,6 @@ export class Editor {
 
         // initiate needed classes
         this.#undoRedoHandler = new UndoRedoHandler();
-        //this.#navbar = new Navbar();
         //this.#modeSelector = new ModeSelector();
         this.#picker = new Picker(
             this.#camera,
@@ -75,10 +79,17 @@ export class Editor {
         );
         this.#overview = new OverviewHandler(this.#picker);
         this.#projectSettingManager = new ProjectSettingsManager();
-        //this.#quickSelector = new QuickSelector();
-        //this.#jobInterface = new JobInterface();
+        this.#objectManager = new ObjectManager(
+            this.#picker,
+            this.#undoRedoHandler
+        );
+        this.#navbar = new Navbar(this.#objectManager);
+        this.#quickSelector = new QuickSelector(this.#objectManager);
+        this.#jobInterface = new JobInterface(projectId);
         this.#inspector = new Inspector(this.#picker);
+        this.#commandPrompt = new CommandPrompt(this.#objectManager);
         this.#previewHandler = new PreviewHandler(this.#scene);
+        this.#modeSelector = new ModeSelector(this.#picker);
 
         window.addEventListener("resize", () => this.onWindowResize());
 

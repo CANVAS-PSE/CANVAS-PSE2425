@@ -11,6 +11,7 @@ class UpdateProjectForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["name"].widget.attrs.update({"class": "form-control"})
+        self.fields["name"].widget.attrs.update({"id": "createProjectNameInput"})
         self.fields["description"].widget.attrs.update({"class": "form-control"})
 
 
