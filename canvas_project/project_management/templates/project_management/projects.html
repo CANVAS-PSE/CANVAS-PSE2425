@@ -17,11 +17,11 @@
     {% if projects %}
         <script type="module">
         import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
-        import * as bootstrap from "bootstrap"
 
         const manager = new ProjectOverviewManager();
         </script>
     {% endif %}
+    <script type="module">import * as bootstrap from "bootstrap"</script>
 {% endblock %}
 {% block body %}
     <!--create project modal-->
