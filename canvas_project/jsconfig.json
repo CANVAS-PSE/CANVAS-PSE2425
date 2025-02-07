@@ -32,11 +32,11 @@
             "previewHandler": ["static/js/previewHandler.mjs"],
             "projectSettingsManager": ["static/js/projectSettingsManager.mjs"],
             "createCommands": ["static/js/createCommands.mjs"],
+            "jobInterface": ["static/js/jobInterface.mjs"],
             "navbar": ["static/js/navbar.mjs"],
-            "jobInterface": ["static/js/jobInterface.mjs"]
             "commandPrompt": ["static/js/commandPrompt.mjs"],
             "promptCommands": ["static/js/promptCommands.mjs"],
-            "bootstrap": ["static/js/bootstrap.esm.js"]
+            "bootstrap2": ["static/js/bootstrap.esm.js"]
         }
     }
 }

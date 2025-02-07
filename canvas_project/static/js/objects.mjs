@@ -480,7 +480,7 @@ export class Receiver extends SelectableObject {
     #isMovable = true;
     #rotatableAxis = ["Y"];
     #oldPosition;
-    #oldQuaternion = new THREE.Quaternion();
+    #oldQuaternion;
 
     /**
      * Creates a Receiver object
@@ -531,6 +531,7 @@ export class Receiver extends SelectableObject {
         this.#resolutionU = resolutionU;
         this.#curvatureE = curvatureE;
         this.#curvatureU = curvatureU;
+        this.#oldQuaternion = new THREE.Quaternion(0, rotationY, 0);
 
         // create components for the inspector
         this.#headerComponent = new HeaderInspectorComponent(
@@ -678,7 +679,7 @@ export class Receiver extends SelectableObject {
             () => this.#towerType,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "towerType", newValue)
+                    new UpdateReceiverCommand(this, "type", newValue)
                 );
             }
         );
