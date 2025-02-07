@@ -321,7 +321,7 @@ export class ExportProjectPromptCommand extends PromptCommand {
 
                 // After download, close modal and redirect
                 modal.hide();
-                window.location.href = "/editor/{{ project_name }}";
+                window.location.reload();
             })
             .catch((error) => {
                 console.error("Error:", error);
