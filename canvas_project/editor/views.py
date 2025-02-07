@@ -80,7 +80,6 @@ def editor(request, project_name):
         projectName = request.POST.get("name")
         projectDescription = request.POST.get("description")
         form = ProjectForm(request.POST)
-        print(projectFile)
         if projectFile is None:
             allProjects = Project.objects.all()
             if form.is_valid():

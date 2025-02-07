@@ -187,6 +187,10 @@ def openHDF5_CreateProject(projectFile, newProject):
                 position_y = position[1]
                 position_z = position[2]
 
+                surface = heliostat["surface"]
+                facets = surface["facets"]
+                numberOfFacets = len(facets.keys())
+
                 Heliostat.objects.create(
                     project=newProject,
                     name=str(heliostatObject),
@@ -196,6 +200,7 @@ def openHDF5_CreateProject(projectFile, newProject):
                     aimpoint_x=aimpoint_x,
                     aimpoint_y=aimpoint_y,
                     aimpoint_z=aimpoint_z,
+                    numberOfFacets=numberOfFacets,
                 )
 
         powerplantGroup = f.get("power_plant")
