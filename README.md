@@ -6,9 +6,9 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Installation
+We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` virtual environment ([click here for the documentation](https://docs.python.org/3/library/venv.html)).
 
-We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` virtual environment.
-
+After setting up and activating the virtual environment *(or deciding against against it)*, execute the following instructions, to set up the code base
 ```bash
 # for Mac users: replace python with python3
 # clone the repo
@@ -18,8 +18,8 @@ git clone https://github.com/CANVAS-PSE/CANVAS-PSE2425.git
 cd CANVAS-PSE2425/
 pip install -r requirements.txt
 
-# add the .env file
-# containing debug variable, client_id + secret_key for OpenID, email-host password
+# add the .env file to the root of the canvas_project folder 
+# containing debug variable, client_id + secret_key for OpenID, email-host password, etc.
 
 # configure the database
 cd canvas_project/
@@ -28,7 +28,7 @@ python manage.py migrate
 # start the server
 python manage.py runserver
 
-# access the website under the specified url
+# access the website under the in the command line specified url
 ```
 
 ## How to contribute
