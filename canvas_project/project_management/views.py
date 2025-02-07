@@ -187,6 +187,10 @@ def openHDF5_CreateProject(projectFile, newProject):
                 position_y = position[1]
                 position_z = position[2]
 
+                surface = heliostat["surface"]
+                facets = surface["facets"]
+                numberOfFacets = len(facets.keys())
+
                 Heliostat.objects.create(
                     project=newProject,
                     name=str(heliostatObject),
@@ -196,7 +200,18 @@ def openHDF5_CreateProject(projectFile, newProject):
                     aimpoint_x=aimpoint_x,
                     aimpoint_y=aimpoint_y,
                     aimpoint_z=aimpoint_z,
+                    numberOfFacets=numberOfFacets,
                 )
+
+        powerplantGroup = f.get("power_plant")
+        if powerplantGroup is not None:
+            pass
+        # At the moment there is no powerPlant position stored with a scenario in CANVAS
+
+        prototypesGroup = f.get("prototypes")
+        if prototypesGroup is not None:
+            pass
+            # Placeholder for when prototypes are effectively used
 
         lightsourcesGroup = f.get("lightsources")
         if lightsourcesGroup is not None:
@@ -214,21 +229,11 @@ def openHDF5_CreateProject(projectFile, newProject):
                     project=newProject,
                     name=str(lightsourceObject),
                     number_of_rays=numberOfRays[()],
-                    lightsource_type=lightsourceType[()],
+                    lightsource_type=lightsourceType[()].decode("utf-8"),
                     covariance=covariance[()],
-                    distribution_type=distributionType[()],
+                    distribution_type=distributionType[()].decode("utf-8"),
                     mean=mean[()],
                 )
-
-        powerplantGroup = f.get("power_plant")
-        if powerplantGroup is not None:
-            pass
-        # At the moment there is no powerPlant position stored with a scenario in CANVAS
-
-        prototypesGroup = f.get("prototypes")
-        if prototypesGroup is not None:
-            pass
-        # Placeholder for when prototypes are effectively used
 
         receiversGroup = f.get("target_areas")
         if receiversGroup is not None:
