@@ -10,7 +10,7 @@ We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` vir
 
 After setting up and activating the virtual environment *(or deciding against against it)*, execute the following instructions, to set up the code base
 ```bash
-# for Mac users: replace python with python3
+# You may have to replace python with python3, depending on your operating system.
 # clone the repo
 git clone https://github.com/CANVAS-PSE/CANVAS-PSE2425.git
 
