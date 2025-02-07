@@ -2,7 +2,7 @@ django
 djangorestframework
 torch
 django-cleanup
-git+https://github.com/ARTIST-Association/ARTIST.git@f2e80df
+git+https://github.com/ARTIST-Association/ARTIST.git@08d73d3
 django-allauth
 requests
 PyJWT
