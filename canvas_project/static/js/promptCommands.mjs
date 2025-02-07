@@ -512,7 +512,7 @@ export class NewProjectPromptCommand extends PromptCommand {
         document
             .getElementById("createNewProject")
             .addEventListener("shown.bs.modal", () => {
-                document.getElementById("createProjectNameInput").focus();
+                document.getElementById("id_name").focus();
             });
     }
 }
