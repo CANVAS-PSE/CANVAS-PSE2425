@@ -22,41 +22,15 @@
                     Projects will only be saved if they have a name unique to
                     your already existing projects!
                 </p>
-                <form action="" method="POST" class="d-flex flex-column">
+                <form
+                    action=""
+                    method="POST"
+                    class="d-flex flex-column"
+                    enctype="multipart/form-data"
+                >
                     {% csrf_token %} {{form}} <br />
                     <button class="btn btn-primary rounded-3" type="submit">
                         Create
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- import project modal -->
-<div
-    class="modal fade"
-    id="importProject"
-    tabindex="-1"
-    aria-labelledby="importProjectLabel"
-    aria-hidden="true"
->
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4">
-            <div class="modal-body">
-                <p class="font-italic">
-                    Projects will only be saved if they have a name unique to
-                    your already existing projects!
-                </p>
-                <form
-                    action="{% url 'importProject' %}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    class="d-flex flex-column"
-                >
-                    {% csrf_token %} {{ importForm.as_p }}
-                    <button class="btn btn-primary rounded-3" type="submit">
-                        Import
                     </button>
                 </form>
             </div>
@@ -81,14 +55,6 @@
             data-bs-target="#createProject"
         >
             <i class="bi bi-plus-lg"></i>New Project
-        </button>
-        <button
-            class="btn btn-outline-primary rounded-4 fw-bolder fs-5"
-            data-bs-toggle="modal"
-            data-bs-target="#importProject"
-        >
-            <i class="bi-file-earmark-arrow-up me-2"></i>Import Project from
-            HDF5
         </button>
         <div class="w-100 d-flex justify-content-center gap-4"></div>
     </div>

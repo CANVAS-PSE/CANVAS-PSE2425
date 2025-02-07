@@ -2,41 +2,69 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from .models import Project, Heliostat, Lightsource, Receiver
-from .forms import ProjectForm, UpdateProjectForm, ImportProjectForm
+from .forms import ProjectForm, UpdateProjectForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
 import h5py
-import numpy as np
 
 
 # General project handling
 @login_required
 def projects(request):
     form = ProjectForm()
-    importForm = ImportProjectForm()
+    projectFile = request.FILES.get("file")
+    projectName = request.POST.get("name")
+    projectDescription = request.POST.get("description")
     if request.method == "GET":
         allProjects = Project.objects.order_by("-last_edited")
-        context = {"projects": allProjects, "form": form, "importForm": importForm}
+        context = {"projects": allProjects, "form": form}
         return render(request, "project_management/projects.html", context)
     elif request.method == "POST":
         form = ProjectForm(request.POST)
-        allProjects = Project.objects.all()
-        if form.is_valid():
-            nameUnique = True
-            for existingProject in allProjects:
-                if (
-                    form["name"].value() == existingProject.name
-                    and existingProject.owner == request.user
-                ):
-                    nameUnique = False
-            if nameUnique:
-                form = form.save(commit=False)
-                form.owner = request.user
-                form.last_edited = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                form.save()
-                return HttpResponseRedirect(reverse("projects"))
-        context = {"projects": allProjects, "form": form, "importForm": importForm}
+        if projectFile is None:
+            allProjects = Project.objects.all()
+            if form.is_valid():
+                nameUnique = True
+                for existingProject in allProjects:
+                    if (
+                        form["name"].value() == existingProject.name
+                        and existingProject.owner == request.user
+                    ):
+                        nameUnique = False
+                if nameUnique:
+                    newProject = Project(
+                        name=projectName, description=projectDescription
+                    )
+                    newProject.owner = request.user
+                    newProject.last_edited = datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+                    newProject.save()
+                    return redirect("editor", project_name=projectName)
+        else:
+            if form.is_valid():
+                allProjects = Project.objects.all()
+                nameUnique = True
+                for existingProject in allProjects:
+                    if projectName == existingProject.name and str(
+                        (existingProject.owner) == request.user
+                    ):
+                        nameUnique = False
+
+                if nameUnique:
+                    newProject = Project(
+                        name=projectName, description=projectDescription
+                    )
+                    newProject.owner = request.user
+                    newProject.last_edited = datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+                    newProject.save()
+                    openHDF5_CreateProject(projectFile, newProject)
+                    return redirect("editor", project_name=projectName)
+
+        context = {"projects": allProjects, "form": form}
         return render(request, "project_management/projects.html", context)
 
 
@@ -132,37 +160,6 @@ def duplicateProject(request, project_name):
         settings.save()
 
         return redirect("projects")
-
-
-@login_required
-def importProject(request):
-    if request.method == "POST":
-        importForm = ImportProjectForm(request.POST, request.FILES)
-        if importForm.is_valid():
-            projectFile = importForm.cleaned_data["file"]
-            projectName = importForm.cleaned_data["name"]
-            projectDescription = importForm.cleaned_data["description"]
-
-            allProjects = Project.objects.all()
-            nameUnique = True
-            for existingProject in allProjects:
-                if projectName == existingProject.name and str(
-                    (existingProject.owner) == request.user
-                ):
-                    nameUnique = False
-
-            if nameUnique:
-                newProject = Project(name=projectName, description=projectDescription)
-                newProject.owner = request.user
-                newProject.last_edited = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                newProject.save()
-                openHDF5_CreateProject(projectFile, newProject)
-                return redirect("editor", project_name=projectName)
-    else:
-        importForm = ImportProjectForm()
-    return render(
-        request, "project_management/projects.html", {"importForm": importForm}
-    )
 
 
 def openHDF5_CreateProject(projectFile, newProject):
