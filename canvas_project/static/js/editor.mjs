@@ -19,6 +19,7 @@ import { Inspector } from "inspectorClass";
 import { Heliostat, Receiver, LightSource, Terrain } from "objects";
 import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
+import { ModeSelector } from "modeSelector";
 
 let editorInstance = null;
 export class Editor {
@@ -88,6 +89,7 @@ export class Editor {
         this.#inspector = new Inspector(this.#picker);
         this.#commandPrompt = new CommandPrompt(this.#objectManager);
         this.#previewHandler = new PreviewHandler(this.#scene);
+        this.#modeSelector = new ModeSelector(this.#picker);
 
         window.addEventListener("resize", () => this.onWindowResize());
 

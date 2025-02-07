@@ -81,7 +81,6 @@ export class Picker {
         });
 
         this.#addEventListenerCustomEvent();
-        this.#addEventListenersModeSelection();
     }
 
     /**
@@ -105,52 +104,6 @@ export class Picker {
                 this.setSelection([createdItem]);
             }
         );
-    }
-
-    #addEventListenersModeSelection() {
-        //initialize the mode selection buttons
-        const modeSelectionButton = document.getElementById("modeSelect");
-        const modeMoveButton = document.getElementById("modeMove");
-        const modeRotateButton = document.getElementById("modeRotate");
-
-        //add event listeners to the mode selection buttons
-        modeSelectionButton.addEventListener("click", () => {
-            this.setMode(Mode.NONE);
-        });
-        modeMoveButton.addEventListener("click", () => {
-            this.setMode(Mode.MOVE);
-        });
-        modeRotateButton.addEventListener("click", () => {
-            this.setMode(Mode.ROTATE);
-        });
-
-        //add event listener for the keyboard shortcut to change the mode and show the corresponding tab
-        window.addEventListener("keydown", (event) => {
-            if (
-                (event.ctrlKey || event.metaKey) &&
-                event.key.toLowerCase() === "m"
-            ) {
-                //calculate the next mode
-                const modesArray = [Mode.NONE, Mode.MOVE, Mode.ROTATE];
-                let currentModeIndex = modesArray.indexOf(this.#mode);
-                currentModeIndex = (currentModeIndex + 1) % modesArray.length;
-                const newMode = modesArray[currentModeIndex];
-                this.setMode(newMode);
-
-                if (newMode === Mode.NONE) {
-                    const tabInstance = new bootstrap.Tab(modeSelectionButton);
-                    tabInstance.show();
-                } else if (newMode === Mode.MOVE) {
-                    const tabMoveInstance = new bootstrap.Tab(modeMoveButton);
-                    tabMoveInstance.show();
-                } else if (newMode === Mode.ROTATE) {
-                    const tabRotateInstance = new bootstrap.Tab(
-                        modeRotateButton
-                    );
-                    tabRotateInstance.show();
-                }
-            }
-        });
     }
 
     /**
