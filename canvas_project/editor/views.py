@@ -8,8 +8,6 @@ from project_management.forms import ProjectForm
 from django.http import FileResponse, HttpResponse, Http404
 
 from django.conf import settings
-
-from django.conf import settings
 import pathlib
 import torch
 from artist.util import config_dictionary, set_logger_config
@@ -340,7 +338,6 @@ def createHDF5(project):
 
     #
     # Prototype
-    # Probably needs more specific config
     #
 
     # Generate surface configuration from STRAL data.
