@@ -86,7 +86,7 @@ export class Editor {
         this.#quickSelector = new QuickSelector(this.#objectManager);
         this.#jobInterface = new JobInterface(projectId);
         this.#inspector = new Inspector(this.#picker);
-        this.#commandPrompt = new CommandPrompt();
+        this.#commandPrompt = new CommandPrompt(this.#objectManager);
         this.#previewHandler = new PreviewHandler(this.#scene);
 
         window.addEventListener("resize", () => this.onWindowResize());
