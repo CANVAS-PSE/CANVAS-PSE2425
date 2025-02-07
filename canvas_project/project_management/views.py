@@ -165,83 +165,90 @@ def duplicateProject(request, project_name):
 def openHDF5_CreateProject(projectFile, newProject):
     with h5py.File(projectFile, "r") as f:
         heliostatsGroup = f.get("heliostats")
-        for heliostatObject in heliostatsGroup:
-            heliostat = heliostatsGroup[heliostatObject]
+        if heliostatsGroup is not None:
+            for heliostatObject in heliostatsGroup:
+                heliostat = heliostatsGroup[heliostatObject]
 
-            aimpoint = heliostat["aim_point"]
-            aimpoint_x = aimpoint[0]
-            aimpoint_y = aimpoint[1]
-            aimpoint_z = aimpoint[2]
+                aimpoint = heliostat["aim_point"]
+                aimpoint_x = aimpoint[0]
+                aimpoint_y = aimpoint[1]
+                aimpoint_z = aimpoint[2]
 
-            position = heliostat["position"]
-            position_x = position[0]
-            position_y = position[1]
-            position_z = position[2]
+                position = heliostat["position"]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
 
-            Heliostat.objects.create(
-                project=newProject,
-                name=str(heliostatObject),
-                position_x=position_x,
-                position_y=position_y,
-                position_z=position_z,
-                aimpoint_x=aimpoint_x,
-                aimpoint_y=aimpoint_y,
-                aimpoint_z=aimpoint_z,
-            )
+                Heliostat.objects.create(
+                    project=newProject,
+                    name=str(heliostatObject),
+                    position_x=position_x,
+                    position_y=position_y,
+                    position_z=position_z,
+                    aimpoint_x=aimpoint_x,
+                    aimpoint_y=aimpoint_y,
+                    aimpoint_z=aimpoint_z,
+                )
 
         lightsourcesGroup = f.get("lightsources")
-        for lightsourceObject in lightsourcesGroup:
-            lightsource = lightsourcesGroup[lightsourceObject]
-            numberOfRays = lightsource["number_of_rays"]
-            lightsourceType = lightsource["type"]
+        if lightsourcesGroup is not None:
+            for lightsourceObject in lightsourcesGroup:
+                lightsource = lightsourcesGroup[lightsourceObject]
+                numberOfRays = lightsource["number_of_rays"]
+                lightsourceType = lightsource["type"]
 
-            distributionParams = lightsource["distribution_parameters"]
-            covariance = distributionParams["covariance"]
-            distributionType = distributionParams["distribution_type"]
-            mean = distributionParams["mean"]
+                distributionParams = lightsource["distribution_parameters"]
+                covariance = distributionParams["covariance"]
+                distributionType = distributionParams["distribution_type"]
+                mean = distributionParams["mean"]
 
-            Lightsource.objects.create(
-                project=newProject,
-                name=str(lightsourceObject),
-                number_of_rays=numberOfRays[()],
-                lightsource_type=lightsourceType[()],
-                covariance=covariance[()],
-                distribution_type=distributionType[()],
-                mean=mean[()],
-            )
+                Lightsource.objects.create(
+                    project=newProject,
+                    name=str(lightsourceObject),
+                    number_of_rays=numberOfRays[()],
+                    lightsource_type=lightsourceType[()],
+                    covariance=covariance[()],
+                    distribution_type=distributionType[()],
+                    mean=mean[()],
+                )
 
         powerplantGroup = f.get("power_plant")
+        if powerplantGroup is not None:
+            pass
         # At the moment there is no powerPlant position stored with a scenario in CANVAS
 
         prototypesGroup = f.get("prototypes")
+        if prototypesGroup is not None:
+            pass
         # Placeholder for when prototypes are effectively used
 
         receiversGroup = f.get("target_areas")
-        for receiverObject in receiversGroup:
-            receiver = receiversGroup[receiverObject]
+        if receiversGroup is not None:
+            for receiverObject in receiversGroup:
+                receiver = receiversGroup[receiverObject]
 
-            position = receiver["position_center"]
-            position_x = position[0]
-            position_y = position[1]
-            position_z = position[2]
+                position = receiver["position_center"]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
 
-            normal = receiver["normal_vector"]
-            normal_x = normal[0]
-            normal_y = normal[1]
-            normal_z = normal[2]
+                normal = receiver["normal_vector"]
+                normal_x = normal[0]
+                normal_y = normal[1]
+                normal_z = normal[2]
 
-            plane_e = receiver["plane_e"]
-            plane_u = receiver["plane_u"]
+                plane_e = receiver["plane_e"]
+                plane_u = receiver["plane_u"]
 
-            Receiver.objects.create(
-                project=newProject,
-                name=str(receiverObject),
-                position_x=position_x,
-                position_y=position_y,
-                position_z=position_z,
-                normal_x=normal_x,
-                normal_y=normal_y,
-                normal_z=normal_z,
-                plane_e=plane_e[()],
-                plane_u=plane_u[()],
-            )
+                Receiver.objects.create(
+                    project=newProject,
+                    name=str(receiverObject),
+                    position_x=position_x,
+                    position_y=position_y,
+                    position_z=position_z,
+                    normal_x=normal_x,
+                    normal_y=normal_y,
+                    normal_z=normal_z,
+                    plane_e=plane_e[()],
+                    plane_u=plane_u[()],
+                )
