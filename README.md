@@ -8,7 +8,7 @@
 ## Installation
 We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` virtual environment ([click here for the documentation](https://docs.python.org/3/library/venv.html)).
 
-After setting up and activating the virtual environment *(or deciding against against it)*, execute the following instructions, to set up the code base
+After setting up and activating the virtual environment *(or deciding against it)*, execute the following instructions, to set up the code base
 ```bash
 # You may have to replace python with python3, depending on your operating system.
 # clone the repo
