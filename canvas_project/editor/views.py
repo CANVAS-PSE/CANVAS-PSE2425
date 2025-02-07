@@ -182,6 +182,36 @@ def renderHDF5(request, project_name):
     return redirect(reverse("editor", kwargs={"project_name": project_name}))
 
 
+@login_required
+def uploadPreview(request, project_name):
+    """
+    Updates the preview of the project
+
+    Parameters
+    ----------
+    request : HttpRequest
+        The request the user send to get here.
+
+    Returns
+    -------
+    HttpResponse : status 200
+        On successfull POST request
+    HttpResponse : status 404
+        on all other occasions
+    """
+
+    if request.method == "POST":
+        project = get_object_or_404(Project, name=project_name, owner=request.user)
+        file = request.FILES["preview"]
+
+        project.preview.delete()
+        project.preview = file
+        project.save()
+
+        return HttpResponse(status=200)
+    return Http404
+
+
 def createHDF5(project):
     """
     Creates the actual HDF5 file

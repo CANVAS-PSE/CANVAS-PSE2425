@@ -71,7 +71,13 @@
     window.addEventListener("DOMContentLoaded", () => {
         showActiveTheme(getPreferredTheme());
 
-        document.getElementById("mode-toggle").addEventListener("click", () => {
+        const toggle = document.getElementById("mode-toggle");
+
+        if (!toggle) {
+            return;
+        }
+
+        toggle.addEventListener("click", () => {
             var theme;
             switch (getStoredTheme()) {
                 case "light":

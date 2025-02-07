@@ -264,30 +264,34 @@
         </div>
     </div>
     {% if messages %}
-        <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var messageList = document.getElementById('message-list');
-        var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-
-        {% for message in messages %}
-            var listItem = document.createElement('li');
-            listItem.textContent = "{{ message|escapejs }}";
-
-            {% if message.tags == "success" %}
-                listItem.style.color = "green";
-            {% elif message.tags == "error" %}
-                listItem.style.color = "red";
-            {% else %}
-                listItem.style.color = "black";
-            {% endif %}
-
-            messageList.appendChild(listItem);
-        {% endfor %}
-
-            if (messageList.children.length > 0) {
-                messageModal.show();
-            }
-        });
+        <script type="module">
+        import * as bootstrap from "bootstrap"    
+        if (window.location.pathname == '/projects/') {
+            console.log(window.location.pathname);
+            document.addEventListener("DOMContentLoaded", function () {
+                var messageList = document.getElementById('message-list');
+                var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        
+                {% for message in messages %}
+                    var listItem = document.createElement('li');
+                    listItem.textContent = "{{ message|escapejs }}";
+        
+                    {% if message.tags == "success" %}
+                        listItem.style.color = "green";
+                    {% elif message.tags == "error" %}
+                        listItem.style.color = "red";
+                    {% else %}
+                        listItem.style.color = "black";
+                    {% endif %}
+        
+                    messageList.appendChild(listItem);
+                {% endfor %}
+        
+                    if (messageList.children.length > 0) {
+                        messageModal.show();
+                    }
+                });
+        }
         </script>
     {% endif %}
 {% endblock body %}
