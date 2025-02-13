@@ -3,6 +3,7 @@
         "checkJs": true,
         "target": "ES2016",
         "baseUrl": ".",
+        "moduleResolution": "nodenext",
         "paths": {
             "three": ["static/js/three.module.js"],
             "objects": ["static/js/objects.mjs"],
