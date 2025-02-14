@@ -22,9 +22,11 @@ jobs:
                   node-version: 22.x
                   cache: "npm"
                   cache-dependency-path: "**/package-lock.json"
-            - run: |
+            - name: Install dependencies
+              run: |
                   cd canvas_project/
                   npm ci
-            - run: |
+            - name: Run tests
+              run: |
                   cd canvas_project/
                   npm run test
