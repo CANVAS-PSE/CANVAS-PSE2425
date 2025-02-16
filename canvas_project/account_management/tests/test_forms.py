@@ -419,3 +419,41 @@ class UpdateAccountFormTest(TestCase):
             form.errors["new_password"],
             ["Please enter a new password."],
         )
+
+
+class DeleteAccountFormTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="test@mail.de",
+            first_name="test_first_name",
+            last_name="test_last_name",
+            email="test@mail.de",
+            password="SecurePassword123!",
+        )
+
+    def test_delete_account_form_valid_data(self):
+        form = DeleteAccountForm(
+            user=self.user,
+            data={
+                "password": "SecurePassword123!",
+            },
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_delete_account_form_no_data(self):
+        form = DeleteAccountForm(user=self.user, data={})
+        self.assertFalse(form.is_valid())
+
+    def test_delete_account_form_wrong_password(self):
+        form = DeleteAccountForm(
+            user=self.user,
+            data={
+                "password": "WrongPassword123!",
+            },
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["password"],
+            ["The password you entered is incorrect."],
+        )
