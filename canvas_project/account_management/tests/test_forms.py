@@ -563,3 +563,39 @@ class PasswordResetFormTest(TestCase):
                 "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
             ],
         )
+
+
+class PasswordForgottenFormTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="test@mail.de",
+            first_name="test_first_name",
+            last_name="test_last_name",
+            email="test@mail.de",
+            password="SecurePassword123!",
+        )
+
+    def test_password_forgotten_form_valid_data(self):
+        form = PasswordForgottenForm(
+            data={
+                "email": "test@mail.de",
+            }
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_password_forgotten_form_no_data(self):
+        form = PasswordForgottenForm(data={})
+        self.assertFalse(form.is_valid())
+
+    def test_password_forgotten_form_wrong_email(self):
+        form = PasswordForgottenForm(
+            data={
+                "email": "test2@mail.de",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["email"],
+            ["This email address is not registered."],
+        )
