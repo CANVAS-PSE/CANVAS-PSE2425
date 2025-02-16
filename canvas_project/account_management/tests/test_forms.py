@@ -424,6 +424,7 @@ class UpdateAccountFormTest(TestCase):
 class DeleteAccountFormTest(TestCase):
 
     def setUp(self):
+
         self.user = User.objects.create_user(
             username="test@mail.de",
             first_name="test_first_name",
@@ -456,4 +457,109 @@ class DeleteAccountFormTest(TestCase):
         self.assertEqual(
             form.errors["password"],
             ["The password you entered is incorrect."],
+        )
+
+
+class PasswordResetFormTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="test@mail.de",
+            first_name="test_first_name",
+            last_name="test_last_name",
+            email="test@mail.de",
+            password="SecurePassword123!",
+        )
+
+    def test_password_reset_form_valid_data(self):
+        form = PasswordResetForm(
+            data={
+                "new_password": "NewSecurePassword123!",
+                "password_confirmation": "NewSecurePassword123!",
+            }
+        )
+        self.assertTrue(form.is_valid())
+
+    def test_password_reset_form_no_data(self):
+        form = PasswordResetForm(data={})
+        self.assertFalse(form.is_valid())
+
+    def test_password_reset_form_passwords_not_matching(self):
+        form = PasswordResetForm(
+            data={
+                "new_password": "NewSecurePassword123!",
+                "password_confirmation": "NewSecurePassword123",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["password_confirmation"],
+            ["The passwords you entered do not match. Please try again."],
+        )
+
+    def test_password_reset_form_password_too_short(self):
+        form = PasswordResetForm(
+            data={
+                "new_password": "Save-1",
+                "password_confirmation": "Save-1",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["new_password"],
+            ["Password must be at least 8 characters long."],
+        )
+
+    def test_password_reset_form_password_no_uppercase(self):
+        form = PasswordResetForm(
+            data={
+                "new_password": "securepassword123!",
+                "password_confirmation": "securepassword123!",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["new_password"],
+            ["Password must contain at least one uppercase letter."],
+        )
+
+    def test_password_reset_form_password_no_lowercase(self):
+        form = PasswordResetForm(
+            data={
+                "new_password": "SECUREPASSWORD123!",
+                "password_confirmation": "SECUREPASSWORD123!",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["new_password"],
+            ["Password must contain at least one lowercase letter."],
+        )
+
+    def test_password_reset_form_password_no_number(self):
+        form = PasswordResetForm(
+            data={
+                "new_password": "SecurePassword!",
+                "password_confirmation": "SecurePassword!",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["new_password"],
+            ["Password must contain at least one digit."],
+        )
+
+    def test_password_reset_form_password_no_special_character(self):
+        form = PasswordResetForm(
+            data={
+                "new_password": "SecurePassword123",
+                "password_confirmation": "SecurePassword123",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["new_password"],
+            [
+                "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
+            ],
         )
