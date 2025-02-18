@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.contrib.messages import get_messages
 import os
 from django.conf import settings
+import datetime
+import h5py
 
 
 class EditorViewTest(TestCase):
@@ -132,18 +134,21 @@ class DownloadViewTest(TestCase):
         heliostat = Heliostat()
         heliostat.name = "testHeliostat"
         heliostat.project = project
+        heliostat.aimpoint_x = 42
         heliostat.save()
 
         # Add a receiver to the project
         receiver = Receiver()
         receiver.name = "testReceiver"
         receiver.project = project
+        receiver.normal_x = 42
         receiver.save()
 
         # Add a light source to the project
         light_source = Lightsource()
         light_source.name = "testLightSource"
         light_source.project = project
+        light_source.number_of_rays = 42
         light_source.save()
 
     def test_download(self):
@@ -155,7 +160,29 @@ class DownloadViewTest(TestCase):
             'attachment; filename="testProject.h5"', response["Content-Disposition"]
         )
 
-        # TODO: Test if the file contains all the necassary information
+        # TODO: Test if the file contains all the necessary information
+
+        test_file_path = os.path.join(
+            settings.BASE_DIR, "hdfCreation/scenarios/scenarioFile.h5"
+        )
+        with h5py.File(test_file_path, "r") as hdf5_file:
+            # Check if the datasets contain the expected data
+            heliostats = hdf5_file.get("heliostats")
+            receivers = hdf5_file.get("target_areas")
+            lightsources = hdf5_file.get("lightsources")
+
+            self.assertIsNotNone(heliostats)
+            self.assertIsNotNone(lightsources)
+            self.assertIsNotNone(lightsources)
+
+            for heliostat in heliostats:
+                self.assertEqual(42, heliostats[heliostat]["aim_point"][0])
+
+            for receiver in receivers:
+                self.assertEqual(42, receivers[receiver]["normal_vector"][0])
+
+            for lightsource in lightsources:
+                self.assertEqual(42, lightsources[lightsource]["number_of_rays"][()])
 
 
 class RenderViewTest(TestCase):
@@ -172,9 +199,19 @@ class RenderViewTest(TestCase):
         project.save()
 
     def test_render(self):
+        file_path = os.path.join(
+            settings.BASE_DIR, "hdfCreation/scenarios/scenarioFile.h5"
+        )
+        last_modified_time = datetime.datetime.fromtimestamp(
+            os.path.getmtime(file_path)
+        )
+
         response = self.client.post(self.render)
         self.assertEqual(response.status_code, 302)
-        # TODO: test if an hdf5 file was created
+
+        # check if the file was modified
+        new_modified_time = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
+        self.assertNotEqual(last_modified_time, new_modified_time)
 
     def test_wrong_method(self):
         response = self.client.get(self.render)
