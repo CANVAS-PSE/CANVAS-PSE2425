@@ -9,6 +9,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        environment: .env
         steps:
             - uses: actions/checkout@v4
             - name: Set up Python 3.12
