@@ -5,7 +5,12 @@ from django.core import mail
 from django.test.client import RequestFactory
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
-from account_management.views import send_register_email, send_password_change_email
+from account_management.views import (
+    send_register_email,
+    send_password_change_email,
+    send_password_forgotten_email,
+)
+from django.contrib.messages import get_messages
 
 
 class RegisterViewTests(TestCase):
@@ -381,10 +386,11 @@ class DeleteAccountTest(TestCase):
             {"password": "SecurePass123"},
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "delete_account.html")
-        self.assertTrue(response.context["form"].errors)
-        self.assertContains(response, "The password you entered is incorrect.")
+        self.assertEqual(response.status_code, 302)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any("he password you entered is incorrect." in str(msg) for msg in messages)
+        )
         self.assertTrue(User.objects.filter(id=self.user.id).exists())
 
     def test_POST_not_authenticated(self):
@@ -395,3 +401,73 @@ class DeleteAccountTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/?next=/delete_account/")
+
+
+class PasswordForgottenViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@mail.de",
+            email="test@mail.de",
+            password="SecurePass123!",
+            first_name="test_first_name",
+            last_name="test_last_name",
+        )
+        self.password_forgotten_url = reverse("password_forgotten")
+
+    def test_GET(self):
+        response = self.client.get(self.password_forgotten_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "password_forgotten.html")
+
+    def test_POST_valid_data(self):
+        response = self.client.post(
+            self.password_forgotten_url,
+            {"email": "test@mail.de"},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("login"))
+
+    def test_POST_invalid_data(self):
+        response = self.client.post(
+            self.password_forgotten_url,
+            {"email": "test2@mail.de"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "password_forgotten.html")
+        self.assertTrue(response.context["form"].errors)
+        self.assertContains(
+            response,
+            "This email address is not registered.",
+        )
+
+
+class SendPasswordForgottenMailTest(TestCase):
+    def test_send_password_forgotten_email(self):
+        user = User.objects.create_user(
+            username="test@mail.de",
+            email="test@mail.de",
+            password="SecurePass123!",
+            first_name="test_first_name",
+            last_name="test_last_name",
+        )
+
+        factory = RequestFactory()
+        request = factory.get("/")
+
+        send_password_forgotten_email(user, request)
+
+        assert len(mail.outbox) == 1
+        email = mail.outbox[0]
+
+        assert email.subject == "Password Reset"
+        assert email.to == ["test@mail.de"]
+
+        uid = urlsafe_base64_encode(str(user.id).encode())
+        token = default_token_generator.make_token(user)
+        expected_url_part = f"password_reset/{uid}/{token}/"
+
+        assert expected_url_part in email.body
