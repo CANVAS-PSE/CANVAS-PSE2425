@@ -348,6 +348,13 @@ export class Picker {
                         );
                     }
                 }
+                // Prevents an object from being dragged below ground level
+                this.#transformControls.addEventListener('objectChange', () => {
+                    const groundLevel = 0; 
+                    if (this.#selectedObject.position.y < groundLevel) {
+                        this.#selectedObject.position.y = groundLevel;
+                    }
+                });
             } else {
                 // TODO: Implement multi-selection
                 // hide every control as they will not work properly
