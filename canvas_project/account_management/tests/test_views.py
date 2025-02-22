@@ -11,6 +11,12 @@ from account_management.views import (
     send_password_forgotten_email,
 )
 from django.contrib.messages import get_messages
+from account_management.models import UserProfile
+from django.core.files.uploadedfile import SimpleUploadedFile
+from project_management.models import Project
+from account_management.forms import UpdateAccountForm
+from PIL import Image
+import io
 
 
 class RegisterViewTests(TestCase):
@@ -389,7 +395,9 @@ class DeleteAccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any("he password you entered is incorrect." in str(msg) for msg in messages)
+            any(
+                "The password you entered is incorrect." in str(msg) for msg in messages
+            )
         )
         self.assertTrue(User.objects.filter(id=self.user.id).exists())
 
@@ -471,3 +479,140 @@ class SendPasswordForgottenMailTest(TestCase):
         expected_url_part = f"password_reset/{uid}/{token}/"
 
         assert expected_url_part in email.body
+
+
+class UpdateAccountTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@mail.de",
+            email="test@mail.de",
+            password="SecurePass123!",
+            first_name="test_first_name",
+            last_name="test_last_name",
+        )
+        self.profile, created = UserProfile.objects.get_or_create(user=self.user)
+        self.update_account_url = reverse("update_account")
+
+    def test_GET(self):
+        response = self.client.get(self.update_account_url)
+
+        self.assertEqual(response.status_code, 405)
+
+    def test_POST_not_authenticated(self):
+        response = self.client.post(
+            self.update_account_url,
+            {
+                "first_name": "new_first_name",
+                "last_name": "new_last_name",
+                "email": "new_test@mail.de",
+                "old_password": "SecurePass123!",
+                "new_password": "NewSecurePassword123!",
+                "password_confirmation": "NewSecurePassword123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/?next=/update_account/")
+
+    def test_POST_valid_data_without_profile(self):
+        self.client.login(username="test@mail.de", password="SecurePass123!")
+
+        response = self.client.post(
+            self.update_account_url,
+            {
+                "first_name": "new_first_name",
+                "last_name": "new_last_name",
+                "email": "new_test@mail.de",
+                "old_password": "SecurePass123!",
+                "new_password": "NewSecurePassword123!",
+                "password_confirmation": "NewSecurePassword123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "new_first_name")
+        self.assertEqual(self.user.last_name, "new_last_name")
+        self.assertTrue(self.user.check_password("NewSecurePassword123!"))
+        self.assertEqual(self.user.email, "new_test@mail.de")
+        self.assertEqual(self.user.username, "new_test@mail.de")
+
+    def test_POST_invalid_data(self):
+        User.objects.create_user(
+            username="test2@mail.de",
+            email="test2@mail.de",
+            password="SecurePass123!",
+            first_name="test2_first_name",
+            last_name="test2_last_name",
+        )
+        self.client.login(username="test@mail.de", password="SecurePass123!")
+
+        response = self.client.post(
+            self.update_account_url,
+            {
+                "first_name": "new_first_name",
+                "last_name": "new_last_name",
+                "email": "test2@mail.de",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "test_first_name")
+        self.assertEqual(self.user.last_name, "test_last_name")
+        self.assertEqual(self.user.email, "test@mail.de")
+        messages = list(get_messages(response.wsgi_request))
+        self.assertTrue(
+            any(
+                "This email address is already in use. Please try another." in str(msg)
+                for msg in messages
+            )
+        )
+
+    def test_POST_From_projects_page(self):
+        self.client.login(username="test@mail.de", password="SecurePass123!")
+
+        response = self.client.post(
+            self.update_account_url,
+            {
+                "first_name": "new_first_name",
+                "last_name": "new_last_name",
+                "email": "test@mail.de",
+            },
+            HTTP_REFERER="/projects/",
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/projects/")
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "new_first_name")
+        self.assertEqual(self.user.last_name, "new_last_name")
+        self.assertEqual(self.user.email, "test@mail.de")
+        self.assertTrue(self.user.check_password("SecurePass123!"))
+
+    def test_POST_from_editor_page(self):
+        self.client.login(username="test@mail.de", password="SecurePass123!")
+
+        project = Project.objects.create(
+            name="test_project",
+            owner=self.user,
+        )
+        editor_url = reverse("editor", args=[project.name])
+
+        response = self.client.post(
+            self.update_account_url,
+            {
+                "first_name": "new_first_name",
+                "last_name": "new_last_name",
+                "email": "test@mail.de",
+            },
+            HTTP_REFERER=editor_url,
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, editor_url)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "new_first_name")
+        self.assertEqual(self.user.last_name, "new_last_name")
+        self.assertEqual(self.user.email, "test@mail.de")
