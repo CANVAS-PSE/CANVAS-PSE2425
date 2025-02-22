@@ -41,6 +41,7 @@
                             id="floatingFirstName"
                             name="first_name"
                             placeholder="First Name"
+                            value="{{ form.first_name.value|default_if_none:'' }}"
                             required
                         />
                         <label for="floatingFirstName">First Name</label>
@@ -52,6 +53,7 @@
                             id="floatingLastName"
                             name="last_name"
                             placeholder="Last Name"
+                            value="{{ form.last_name.value|default_if_none:'' }}"
                             required
                         />
                         <label for="floatingLastName">Last Name</label>
@@ -65,6 +67,7 @@
                         id="floatingEmail"
                         name="email"
                         placeholder="name@example.com"
+                        value="{{ form.email.value|default_if_none:'' }}"
                         required
                     />
                     <label for="floatingEmail">E-Mail</label>
