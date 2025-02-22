@@ -74,6 +74,11 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
         // save changes on blur and re-render
         input.addEventListener("change", () => {
             if (input.value !== this.#getFieldValueFunc().toString()) {
+                // prevents objects from going under the ground
+                if (parseFloat(input.value) < 0) {
+                    input.value = "0";
+                }
+                
                 this.#saveFunc(input.value);
             }
         });
