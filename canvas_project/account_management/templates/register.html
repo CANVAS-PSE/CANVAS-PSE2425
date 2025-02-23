@@ -79,6 +79,7 @@
                         id="floatingPassword1"
                         name="password"
                         placeholder="Password"
+                        value="{{ form.password.value|default_if_none:'' }}"
                         required
                     />
                     <label for="floatingPassword1">Password</label>
@@ -90,6 +91,7 @@
                         id="floatingPassword2"
                         name="password_confirmation"
                         placeholder="Repeat Password"
+                        value="{{ form.password_confirmation.value|default_if_none:'' }}"
                         required
                     />
                     <label for="floatingPassword2">Confirm Password</label>
