@@ -152,28 +152,22 @@
                                                    name="email"
                                                    value="{{ user.email }}" />
                                         </div>
-                                        <hr />
-                                        <h5 class="fw-bold">Change Password</h5>
-                                        <div class="mb-3">
-                                            <label for="old_password" class="form-label">Old Password</label>
-                                            <input type="password"
-                                                   class="form-control"
-                                                   id="old_password"
-                                                   name="old_password" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="new_password" class="form-label">New Password</label>
-                                            <input type="password"
-                                                   class="form-control"
-                                                   id="new_password"
-                                                   name="new_password" />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="password_confirmation" class="form-label">Confirm New Password</label>
-                                            <input type="password"
-                                                   class="form-control"
-                                                   id="password_confirmation"
-                                                   name="password_confirmation" />
+                                        <!-- Change Password Section (Only for non-OpenID users) -->
+                                        <div id="passwordSection" style="display: none;">
+                                            <hr />
+                                            <h5 class="fw-bold">Change Password</h5>
+                                            <div class="mb-3">
+                                                <label for="old_password" class="form-label">Old Password</label>
+                                                <input type="password" class="form-control" id="old_password" name="old_password" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="new_password" class="form-label">New Password</label>
+                                                <input type="password" class="form-control" id="new_password" name="new_password" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="password_confirmation" class="form-label">Confirm New Password</label>
+                                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" />
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between mt-3">
@@ -342,5 +336,24 @@
     document.getElementById("deleteProfilePictureBtn").addEventListener("click", function() {
         document.getElementById("delete_picture").value = "1";
         document.getElementById("previewImage").src = "/media/profile_pics/default.jpg"; 
+    });
+</script>
+
+<!-- JavaScript to handle AJAX request when the modal is opened -->
+<script>
+    document.getElementById('settings').addEventListener('show.bs.modal', function () {
+        fetch('/get_user_info/')
+            .then(response => response.json())
+            .then(data => {
+                const isOpenIDUser = data.is_openid_user;
+
+                // Show or hide the password change section based on whether the user is OpenID
+                const passwordSection = document.getElementById('passwordSection');
+                if (isOpenIDUser) {
+                    passwordSection.style.display = 'none';
+                } else {
+                    passwordSection.style.display = 'block';
+                }
+            });
     });
 </script>

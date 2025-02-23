@@ -19,6 +19,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from .models import UserProfile
+from allauth.socialaccount.models import SocialAccount
+from django.http import JsonResponse
 
 REDIRECT_PROJECTS_URL = "projects"
 REDIRECT_LOGIN_URL = "login"
@@ -146,6 +148,10 @@ def update_account(request):
     Update the user's account information.
     """
     user = request.user
+    is_openid_user = SocialAccount.objects.filter(user=user).exists()
+
+    print(is_openid_user)
+    
     if request.method == "POST":
         form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
         if form.is_valid():
@@ -155,13 +161,14 @@ def update_account(request):
             # Set the username to the email for consistency
             user.username = user.email
 
-            old_password = form.cleaned_data["old_password"]
-            new_password = form.cleaned_data["new_password"]
+            if not is_openid_user:
+                old_password = form.cleaned_data["old_password"]
+                new_password = form.cleaned_data["new_password"]
 
-            if old_password and new_password:
-                user.set_password(new_password)
-                update_session_auth_hash(request, user)
-                send_password_change_email(user, request)
+                if old_password and new_password:
+                    user.set_password(new_password)
+                    update_session_auth_hash(request, user)
+                    send_password_change_email(user, request)
 
             profile, created = UserProfile.objects.get_or_create(user=user)
             if request.POST.get("delete_picture") == "1":
@@ -184,6 +191,13 @@ def update_account(request):
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
         return redirect(request.META.get("HTTP_REFERER", "index"))
+    
+
+@login_required
+def get_user_info(request):
+    user = request.user
+    is_openid_user = SocialAccount.objects.filter(user=user).exists()
+    return JsonResponse({'is_openid_user': is_openid_user})
 
 
 def send_password_change_email(user, request):
