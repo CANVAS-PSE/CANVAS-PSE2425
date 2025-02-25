@@ -11,6 +11,17 @@
             <br />
             Canvas!
         </h1>
+        <!-- Passwort-Anforderungen oben auf der Seite -->
+        <div id="password-requirements" class="alert alert-info">
+            <strong>Password must contain:</strong>
+            <ul>
+                <li id="length">At least 8 characters</li>
+                <li id="uppercase">At least one uppercase letter</li>
+                <li id="lowercase">At least one lowercase letter</li>
+                <li id="number">At least one digit</li>
+                <li id="special">At least one special character (!@#$%^&*)</li>
+            </ul>
+        </div>
         <div class="d-flex flex-column gap-1">
             <hr />
             <form
@@ -121,4 +132,45 @@
         "
     ></div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("floatingPassword1");
+
+        const requirements = {
+            length: document.getElementById("length"),
+            uppercase: document.getElementById("uppercase"),
+            lowercase: document.getElementById("lowercase"),
+            number: document.getElementById("number"),
+            special: document.getElementById("special"),
+        };
+
+        passwordInput.addEventListener("input", function () {
+            const password = passwordInput.value;
+
+            updateRequirement(requirements.length, password.length >= 8);
+            updateRequirement(requirements.uppercase, /[A-Z]/.test(password));
+            updateRequirement(requirements.lowercase, /[a-z]/.test(password));
+            updateRequirement(requirements.number, /\d/.test(password));
+            updateRequirement(requirements.special, /[!@#$%^&*()\-_=+<>?/]/.test(password));
+        });
+
+        function updateRequirement(element, isValid) {
+            if (isValid) {
+                // Wenn gültig, das Häkchen setzen (✅) und die Farbe auf grün ändern
+                if (!element.innerHTML.startsWith('✅')) {
+                    element.innerHTML = `✅ ${element.innerHTML.slice(2).trim()}`; // Das ❌ durch ✅ ersetzen
+                    element.style.color = "green";
+                }
+            } else {
+                // Wenn ungültig, das X setzen (❌) und die Farbe auf rot ändern
+                if (!element.innerHTML.startsWith('❌')) {
+                    element.innerHTML = `❌ ${element.innerHTML.slice(2).trim()}`; // Das ✅ durch ❌ ersetzen
+                    element.style.color = "red";
+                }
+            }
+        }
+    });
+</script>
+
 {% endblock body %}
