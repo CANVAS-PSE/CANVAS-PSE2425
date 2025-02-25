@@ -24,4 +24,5 @@ urlpatterns = [
         views.password_forgotten_view,
         name="password_forgotten",
     ),
+    path('get_user_info/', views.get_user_info, name='get_user_info'),
 ]

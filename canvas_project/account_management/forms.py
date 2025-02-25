@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from allauth.socialaccount.models import SocialAccount
 
 
 class RegisterForm(forms.Form):
@@ -140,6 +141,8 @@ class UpdateAccountForm(forms.ModelForm):
         Validates the email address.
         """
         email = self.cleaned_data.get("email")
+        if SocialAccount.objects.filter(user=self.instance).exists():
+            return self.instance.email
         if User.objects.filter(email=email).exclude(id=self.instance.id).exists():
             self.add_error(
                 "email", "This email address is already in use. Please try another."
