@@ -349,7 +349,9 @@
 
                 // Show or hide the password change section based on whether the user is OpenID
                 const passwordSection = document.getElementById('passwordSection');
+                const emailField = document.getElementById('email');
                 if (isOpenIDUser) {
+                    emailField.disabled = true;
                     passwordSection.style.display = 'none';
                 } else {
                     passwordSection.style.display = 'block';
