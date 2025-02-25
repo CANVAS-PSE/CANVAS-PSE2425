@@ -224,7 +224,8 @@ export class Heliostat extends SelectableObject {
                         new Vector3(newValue, this.position.y, this.position.z)
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         const uCoordinate = new SingleFieldInspectorComponent(
@@ -239,7 +240,8 @@ export class Heliostat extends SelectableObject {
                         new Vector3(this.position.x, newValue, this.position.z)
                     )
                 );
-            }
+            },
+            0
         );
 
         const eCoordinate = new SingleFieldInspectorComponent(
@@ -254,7 +256,8 @@ export class Heliostat extends SelectableObject {
                         new Vector3(this.position.x, this.position.y, newValue)
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#positionComponent = new MultiFieldInspectorComponent("Position", [
@@ -279,7 +282,8 @@ export class Heliostat extends SelectableObject {
                         )
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         const uAimpoint = new SingleFieldInspectorComponent(
@@ -298,7 +302,8 @@ export class Heliostat extends SelectableObject {
                         )
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         const eAimpoint = new SingleFieldInspectorComponent(
@@ -317,7 +322,8 @@ export class Heliostat extends SelectableObject {
                         )
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#aimPointComponent = new MultiFieldInspectorComponent("Aimpoint", [
@@ -334,7 +340,8 @@ export class Heliostat extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateHeliostatCommand(this, "numberOfFacets", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#kinematicTypeComponent = new SelectFieldInspectorComponent(
@@ -554,7 +561,8 @@ export class Receiver extends SelectableObject {
                         new Vector3(newValue, this.position.y, this.position.z)
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         const uCoordinate = new SingleFieldInspectorComponent(
@@ -569,7 +577,8 @@ export class Receiver extends SelectableObject {
                         new Vector3(this.position.x, newValue, this.position.z)
                     )
                 );
-            }
+            },
+            0
         );
 
         const eCoordinate = new SingleFieldInspectorComponent(
@@ -584,7 +593,8 @@ export class Receiver extends SelectableObject {
                         new Vector3(this.position.x, this.position.y, newValue)
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#positionComponent = new MultiFieldInspectorComponent("Position", [
@@ -627,7 +637,8 @@ export class Receiver extends SelectableObject {
                         )
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         const uNormalVector = new SingleFieldInspectorComponent(
@@ -646,7 +657,8 @@ export class Receiver extends SelectableObject {
                         )
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         const eNormalVector = new SingleFieldInspectorComponent(
@@ -665,7 +677,8 @@ export class Receiver extends SelectableObject {
                         )
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#normalVectorComponent = new MultiFieldInspectorComponent(
@@ -692,7 +705,8 @@ export class Receiver extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateReceiverCommand(this, "curvatureE", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         const uCurvature = new SingleFieldInspectorComponent(
@@ -703,7 +717,8 @@ export class Receiver extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateReceiverCommand(this, "curvatureU", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#curvatureComponent = new MultiFieldInspectorComponent(
@@ -719,7 +734,8 @@ export class Receiver extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateReceiverCommand(this, "planeE", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         const uPlane = new SingleFieldInspectorComponent(
@@ -730,7 +746,8 @@ export class Receiver extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateReceiverCommand(this, "planeU", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#planeComponent = new MultiFieldInspectorComponent("Plane", [
@@ -746,7 +763,8 @@ export class Receiver extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateReceiverCommand(this, "resolutionE", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         const uResolution = new SingleFieldInspectorComponent(
@@ -757,7 +775,8 @@ export class Receiver extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateReceiverCommand(this, "resolutionU", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#resolutionComponent = new MultiFieldInspectorComponent(
@@ -1077,7 +1096,8 @@ export class LightSource extends SelectableObject {
                 this.#undoRedoHandler.executeCommand(
                     new UpdateLightsourceCommand(this, "numberOfRays", newValue)
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#lightsourceTypeComponent = new SelectFieldInspectorComponent(
@@ -1122,7 +1142,8 @@ export class LightSource extends SelectableObject {
                         newValue
                     )
                 );
-            }
+            },
+            -Infinity
         );
 
         this.#distributionCovarianceComponent =
@@ -1138,7 +1159,8 @@ export class LightSource extends SelectableObject {
                             newValue
                         )
                     );
-                }
+                },
+                -Infinity
             );
     }
 

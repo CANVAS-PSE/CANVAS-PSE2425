@@ -36,6 +36,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     #getFieldValueFunc;
     #saveFunc;
     #hasBorder;
+    #InputLimitButtom;
 
     /**
      * Creates a new single field component.
@@ -43,14 +44,22 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
      * @param {"text" | "number"} fieldType is the type of the input field
      * @param {Function} getFieldValueFunc is the function to get the field value
      * @param {Function} saveFunc is the function to update the field value
+     * @param {Number} InputLimitButtom is the limit of the input field
      */
-    constructor(fieldName, fieldType, getFieldValueFunc, saveFunc) {
+    constructor(
+        fieldName,
+        fieldType,
+        getFieldValueFunc,
+        saveFunc,
+        InputLimitButtom
+    ) {
         super();
         this.#fieldName = fieldName;
         this.#fieldType = fieldType;
         this.#getFieldValueFunc = getFieldValueFunc;
         this.#saveFunc = saveFunc;
         this.#hasBorder = true;
+        this.#InputLimitButtom = InputLimitButtom;
     }
 
     render() {
@@ -74,11 +83,11 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
         // save changes on blur and re-render
         input.addEventListener("change", () => {
             if (input.value !== this.#getFieldValueFunc().toString()) {
-                // prevents objects from going under the ground
-                if (parseFloat(input.value) < 0) {
-                    input.value = "0";
+                // prevents objects from going under the preset limit
+                if (parseFloat(input.value) < this.#InputLimitButtom) {
+                    input.value = this.#InputLimitButtom.toString();
                 }
-                
+
                 this.#saveFunc(input.value);
             }
         });
