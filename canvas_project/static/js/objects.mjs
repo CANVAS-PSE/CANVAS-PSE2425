@@ -813,6 +813,11 @@ export class Receiver extends SelectableObject {
         return quaternion;
     }
 
+    //
+    lockPositionY(y) {
+        this.#base.position.y = y;
+    }
+
     get rotatableAxis() {
         return this.#rotatableAxis;
     }
