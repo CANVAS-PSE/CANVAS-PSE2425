@@ -387,12 +387,14 @@ export class HeaderInspectorComponent extends InspectorComponent {
         title.innerHTML = this.#getFieldValueFunc();
         title.style.whiteSpace = "normal";
         title.style.wordBreak = "break-word";
+        title.title = "Edit Name";
         title.style.width = "70%";
         wrapper.appendChild(title);
 
         const editButton = document.createElement("div");
         editButton.classList.add("btn");
         const buttonIcon = document.createElement("i");
+        buttonIcon.title = "Edit Name";
         buttonIcon.classList.add("bi", "bi-pencil-square");
         editButton.appendChild(buttonIcon);
 
@@ -402,6 +404,16 @@ export class HeaderInspectorComponent extends InspectorComponent {
         inputField.type = "text";
         inputField.classList.add("form-control", "rounded-1");
 
+        // Event listeners for clicking the title
+        title.addEventListener("click", () => {
+            title.innerHTML = "";
+            inputField.value = this.#getFieldValueFunc();
+            title.appendChild(inputField);
+            inputField.focus();
+            inputField.select();
+        });
+
+        // Event listeners for clicking the edit button
         editButton.addEventListener("click", () => {
             title.innerHTML = "";
             inputField.value = this.#getFieldValueFunc();
@@ -413,9 +425,11 @@ export class HeaderInspectorComponent extends InspectorComponent {
         // duplicate button
         const duplicateButton = document.createElement("button");
         duplicateButton.classList.add("btn", "btn-outline-primary", "p-1");
+        duplicateButton.style.height = "40px";
         const duplicateIcon = document.createElement("i");
         duplicateIcon.classList.add("bi", "bi-copy");
         duplicateButton.style.marginRight = "5px";
+        duplicateButton.title = "Duplicate";
         duplicateButton.appendChild(duplicateIcon);
 
         wrapper.appendChild(duplicateButton);
@@ -427,8 +441,10 @@ export class HeaderInspectorComponent extends InspectorComponent {
         // delete button
         const deleteButton = document.createElement("button");
         deleteButton.classList.add("btn", "btn-outline-danger", "p-1");
+        deleteButton.style.height = "40px";
         const deleteIcon = document.createElement("i");
         deleteIcon.classList.add("bi", "bi-trash");
+        deleteButton.title = "Delete";
         deleteButton.appendChild(deleteIcon);
 
         wrapper.appendChild(deleteButton);
