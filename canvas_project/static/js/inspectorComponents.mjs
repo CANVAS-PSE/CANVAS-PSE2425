@@ -1,3 +1,5 @@
+import { ItemDeletedEvent } from "deleteCommands";
+
 /**
  * Represents a single component of the inspector
  */
@@ -362,16 +364,18 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
 export class HeaderInspectorComponent extends InspectorComponent {
     #getFieldValueFunc;
     #saveFunc;
+    #selectedObject;
 
     /**
      * Creates a new header component.
      * @param {Function} getFieldValueFunc the function to get the title
      * @param {Function} saveFunc the function to update the title
      */
-    constructor(getFieldValueFunc, saveFunc) {
+    constructor(getFieldValueFunc, saveFunc, selectedObject) {
         super();
         this.#getFieldValueFunc = getFieldValueFunc;
         this.#saveFunc = saveFunc;
+        this.#selectedObject = selectedObject;
     }
 
     render() {
@@ -381,6 +385,9 @@ export class HeaderInspectorComponent extends InspectorComponent {
         const title = document.createElement("div");
         title.classList.add("fw-bolder", "fs-4");
         title.innerHTML = this.#getFieldValueFunc();
+        title.style.whiteSpace = "normal";
+        title.style.wordBreak = "break-word";
+        title.style.width = "70%";
         wrapper.appendChild(title);
 
         const editButton = document.createElement("div");
@@ -401,6 +408,33 @@ export class HeaderInspectorComponent extends InspectorComponent {
             title.appendChild(inputField);
             inputField.focus();
             inputField.select();
+        });
+
+        // duplicate button
+        const duplicateButton = document.createElement("button");
+        duplicateButton.classList.add("btn", "btn-outline-primary", "p-1");
+        const duplicateIcon = document.createElement("i");
+        duplicateIcon.classList.add("bi", "bi-copy");
+        duplicateButton.style.marginRight = "5px";
+        duplicateButton.appendChild(duplicateIcon);
+
+        wrapper.appendChild(duplicateButton);
+
+        duplicateButton.addEventListener("click", () => {
+            this.#selectedObject.duplicate();
+        });
+
+        // delete button
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("btn", "btn-outline-danger", "p-1");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("bi", "bi-trash");
+        deleteButton.appendChild(deleteIcon);
+
+        wrapper.appendChild(deleteButton);
+
+        deleteButton.addEventListener("click", () => {
+            this.#selectedObject.delete();
         });
 
         inputField.addEventListener("change", () => {

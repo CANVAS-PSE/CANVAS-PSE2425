@@ -209,7 +209,8 @@ export class Heliostat extends SelectableObject {
                 this.objectName !== "" && this.objectName
                     ? this.objectName
                     : "Heliostat",
-            (name) => this.updateAndSaveObjectName(name)
+            (name) => this.updateAndSaveObjectName(name),
+            this
         );
 
         const nCoordinate = new SingleFieldInspectorComponent(
@@ -539,7 +540,8 @@ export class Receiver extends SelectableObject {
                 this.objectName !== "" && this.objectName
                     ? this.objectName
                     : "Receiver",
-            (name) => this.updateAndSaveObjectName(name)
+            (name) => this.updateAndSaveObjectName(name),
+            this
         );
 
         const nCoordinate = new SingleFieldInspectorComponent(
@@ -1066,7 +1068,8 @@ export class LightSource extends SelectableObject {
                 this.objectName !== "" && this.objectName
                     ? this.objectName
                     : "Light source",
-            (newValue) => this.updateAndSaveObjectName(newValue)
+            (newValue) => this.updateAndSaveObjectName(newValue),
+            this
         );
 
         this.#numberOfRaysComponent = new SingleFieldInspectorComponent(
