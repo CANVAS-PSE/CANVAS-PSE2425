@@ -234,7 +234,7 @@ def uploadPreview(request, project_name):
         project.save()
 
         return HttpResponse(status=200)
-    return Http404
+    raise Http404
 
 
 def createHDF5(project):
