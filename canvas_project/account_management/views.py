@@ -19,6 +19,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from .models import UserProfile
+from allauth.socialaccount.models import SocialAccount
+from django.http import JsonResponse
 
 REDIRECT_PROJECTS_URL = "projects"
 REDIRECT_LOGIN_URL = "login"
@@ -146,6 +148,8 @@ def update_account(request):
     Update the user's account information.
     """
     user = request.user
+    is_openid_user = SocialAccount.objects.filter(user=user).exists()
+
     if request.method == "POST":
         form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
         if form.is_valid():
@@ -192,6 +196,13 @@ def update_account(request):
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
         return redirect(request.META.get("HTTP_REFERER", "projects"))
+
+
+@login_required
+def get_user_info(request):
+    user = request.user
+    is_openid_user = SocialAccount.objects.filter(user=user).exists()
+    return JsonResponse({"is_openid_user": is_openid_user})
 
 
 def send_password_change_email(user, request):

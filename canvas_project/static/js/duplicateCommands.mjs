@@ -3,6 +3,7 @@ import { Heliostat, LightSource, Receiver } from "objects";
 import { SingleObjectCommand } from "singleObjectCommands";
 import { ItemCreatedEvent } from "createCommands";
 import { ItemDeletedEvent } from "deleteCommands";
+import * as THREE from "three";
 
 /**
  * Command to duplicate a heliostat.
@@ -11,6 +12,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
     #editor = new Editor();
     #heliostat;
     #heliostatCopy;
+    #newPosition;
 
     /**
      * Create the command
@@ -19,11 +21,13 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
     constructor(heliostat) {
         super();
         this.#heliostat = heliostat;
+        this.#newPosition = this.#heliostat.position.clone();
+        this.#newPosition.add(new THREE.Vector3(0, 0, -3));
         this.#heliostatCopy = new Heliostat(
             this.#heliostat.objectName == "" || !this.#heliostat.objectName
                 ? "Heliostat_Copy"
                 : this.#heliostat.objectName + "_Copy",
-            this.#heliostat.position,
+            this.#newPosition,
             this.#heliostat.aimPoint,
             this.#heliostat.numberOfFacets,
             this.#heliostat.kinematicType
@@ -56,6 +60,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
     #editor = new Editor();
     #receiver;
     #receiverCopy;
+    #newPosition;
 
     /**
      * Create the command
@@ -64,11 +69,13 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
     constructor(receiver) {
         super();
         this.#receiver = receiver;
+        this.#newPosition = this.#receiver.getPosition().clone();
+        this.#newPosition.add(new THREE.Vector3(0, 0, -35));
         this.#receiverCopy = new Receiver(
             this.#receiver.objectName == "" || !this.#receiver.objectName
                 ? "Receiver_Copy"
                 : this.#receiver.objectName + "_Copy",
-            this.#receiver.getPosition(),
+            this.#newPosition,
             this.#receiver.quaternionToYDegree(this.#receiver.oldQuaternion),
             this.#receiver.normalVector,
             this.#receiver.towerType,

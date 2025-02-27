@@ -8,11 +8,13 @@ from account_management.forms import (
     PasswordResetForm,
 )
 from account_management.models import User
+from allauth.socialaccount.models import SocialAccount
 
 
 class RegisterFormTest(TestCase):
 
     def test_register_form_valid_data(self):
+        # Test case for valid data submission in RegisterForm
         form = RegisterForm(
             data={
                 "first_name": "test_first_name",
@@ -25,10 +27,12 @@ class RegisterFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_register_form_no_data(self):
+        # Test case for RegisterForm with no data
         form = RegisterForm(data={})
         self.assertFalse(form.is_valid())
 
     def test_register_form_existing_mail(self):
+        # Test case for RegisterForm with an already existing email
         User.objects.create_user(
             username="test@mail.de",
             first_name="test_first_name",
@@ -52,6 +56,7 @@ class RegisterFormTest(TestCase):
         )
 
     def test_register_form_passwords_not_matching(self):
+        # Test case for RegisterForm where passwords do not match
         form = RegisterForm(
             data={
                 "first_name": "test_first_name",
@@ -68,6 +73,7 @@ class RegisterFormTest(TestCase):
         )
 
     def test_register_form_password_too_short(self):
+        # Test case for RegisterForm where password is too short
         form = RegisterForm(
             data={
                 "first_name": "test_first_name",
@@ -84,6 +90,7 @@ class RegisterFormTest(TestCase):
         )
 
     def test_register_form_password_no_uppercase(self):
+        # Test case for RegisterForm where password has no uppercase letter
         form = RegisterForm(
             data={
                 "first_name": "test_first_name",
@@ -100,6 +107,7 @@ class RegisterFormTest(TestCase):
         )
 
     def test_register_form_password_no_lowercase(self):
+        # Test case for RegisterForm where password has no lowercase letter
         form = RegisterForm(
             data={
                 "first_name": "test_first_name",
@@ -116,6 +124,7 @@ class RegisterFormTest(TestCase):
         )
 
     def test_register_form_password_no_number(self):
+        # Test case for RegisterForm where password has no number
         form = RegisterForm(
             data={
                 "first_name": "test_first_name",
@@ -132,6 +141,7 @@ class RegisterFormTest(TestCase):
         )
 
     def test_register_form_password_no_special_character(self):
+        # Test case for RegisterForm where password has no special character
         form = RegisterForm(
             data={
                 "first_name": "test_first_name",
@@ -162,6 +172,7 @@ class LoginFormTest(TestCase):
         )
 
     def test_login_form_valid_data(self):
+        # Test case for valid data submission in LoginForm
         form = LoginForm(
             data={
                 "email": "test@mail.de",
@@ -172,10 +183,12 @@ class LoginFormTest(TestCase):
         self.assertEqual(form.get_user(), self.user)
 
     def test_login_form_no_data(self):
+        # Test case for LoginForm with no data
         form = LoginForm(data={})
         self.assertFalse(form.is_valid())
 
     def test_login_form_wrong_email(self):
+        # Test case for LoginForm with not existing email
         form = LoginForm(
             data={
                 "email": "test2@mail.de",
@@ -189,6 +202,7 @@ class LoginFormTest(TestCase):
         )
 
     def test_login_form_wrong_password(self):
+        # Test case for LoginForm with wrong password
         form = LoginForm(
             data={
                 "email": "test@mail.de",
@@ -214,6 +228,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_valid_data(self):
+        # Test case for valid data submission in UpdateAccountForm
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -228,6 +243,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_update_account_form_no_password(self):
+        # Test case for UpdateAccountForm with no password
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -239,6 +255,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_update_account_form_existing_mail(self):
+        # Test case for UpdateAccountForm with an already existing email
         User.objects.create_user(
             username="test2@mail.de",
             first_name="test2_first_name",
@@ -260,7 +277,23 @@ class UpdateAccountFormTest(TestCase):
             ["This email address is already in use. Please try another."],
         )
 
+    def test_update_account_form_openID_account(self):
+        # Test case for UpdateAccountForm with OpenID account
+        self.social_account = SocialAccount.objects.create(
+            user=self.user, provider="google"
+        )
+        form = UpdateAccountForm(
+            instance=self.user,
+            data={
+                "first_name": "new_first_name",
+                "last_name": "new_last_name",
+            },
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.clean_email(), self.user.email)
+
     def test_update_account_form_passwords_not_matching(self):
+        # Test case for UpdateAccountForm where passwords do not match
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -279,6 +312,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_password_too_short(self):
+        # Test case for UpdateAccountForm where password is too short
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -297,6 +331,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_password_no_uppercase(self):
+        # Test case for UpdateAccountForm where password has no uppercase letter
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -315,6 +350,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_password_no_lowercase(self):
+        # Test case for UpdateAccountForm where password has no lowercase letter
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -333,6 +369,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_password_no_number(self):
+        # Test case for UpdateAccountForm where password has no number
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -351,6 +388,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_password_no_special_character(self):
+        # Test case for UpdateAccountForm where password has no special character
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -371,6 +409,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_wrong_password(self):
+        # Test case for UpdateAccountForm with wrong password
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -388,6 +427,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_no_old_password(self):
+        # Test case for UpdateAccountForm with no old password
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -405,6 +445,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
     def test_update_account_form_no_new_password(self):
+        # Test case for UpdateAccountForm with no new password
         form = UpdateAccountForm(
             instance=self.user,
             data={
@@ -434,6 +475,7 @@ class DeleteAccountFormTest(TestCase):
         )
 
     def test_delete_account_form_valid_data(self):
+        # Test case for valid data submission in DeleteAccountForm
         form = DeleteAccountForm(
             user=self.user,
             data={
@@ -443,10 +485,12 @@ class DeleteAccountFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_delete_account_form_no_data(self):
+        # Test case for DeleteAccountForm with no data
         form = DeleteAccountForm(user=self.user, data={})
         self.assertFalse(form.is_valid())
 
     def test_delete_account_form_wrong_password(self):
+        # Test case for DeleteAccountForm with wrong password
         form = DeleteAccountForm(
             user=self.user,
             data={
@@ -472,6 +516,7 @@ class PasswordResetFormTest(TestCase):
         )
 
     def test_password_reset_form_valid_data(self):
+        # Test case for valid data submission in PasswordResetForm
         form = PasswordResetForm(
             data={
                 "new_password": "NewSecurePassword123!",
@@ -481,10 +526,12 @@ class PasswordResetFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_password_reset_form_no_data(self):
+        # Test case for PasswordResetForm with no data
         form = PasswordResetForm(data={})
         self.assertFalse(form.is_valid())
 
     def test_password_reset_form_passwords_not_matching(self):
+        # Test case for PasswordResetForm where passwords do not match
         form = PasswordResetForm(
             data={
                 "new_password": "NewSecurePassword123!",
@@ -498,6 +545,7 @@ class PasswordResetFormTest(TestCase):
         )
 
     def test_password_reset_form_password_too_short(self):
+        # Test case for PasswordResetForm where password is too short
         form = PasswordResetForm(
             data={
                 "new_password": "Save-1",
@@ -511,6 +559,7 @@ class PasswordResetFormTest(TestCase):
         )
 
     def test_password_reset_form_password_no_uppercase(self):
+        # Test case for PasswordResetForm where password has no uppercase letter
         form = PasswordResetForm(
             data={
                 "new_password": "securepassword123!",
@@ -524,6 +573,7 @@ class PasswordResetFormTest(TestCase):
         )
 
     def test_password_reset_form_password_no_lowercase(self):
+        # Test case for PasswordResetForm where password has no lowercase letter
         form = PasswordResetForm(
             data={
                 "new_password": "SECUREPASSWORD123!",
@@ -537,6 +587,7 @@ class PasswordResetFormTest(TestCase):
         )
 
     def test_password_reset_form_password_no_number(self):
+        # Test case for PasswordResetForm where password has no number
         form = PasswordResetForm(
             data={
                 "new_password": "SecurePassword!",
@@ -550,6 +601,7 @@ class PasswordResetFormTest(TestCase):
         )
 
     def test_password_reset_form_password_no_special_character(self):
+        # Test case for PasswordResetForm where password has no special character
         form = PasswordResetForm(
             data={
                 "new_password": "SecurePassword123",
@@ -577,6 +629,7 @@ class PasswordForgottenFormTest(TestCase):
         )
 
     def test_password_forgotten_form_valid_data(self):
+        # Test case for valid data submission in PasswordForgottenForm
         form = PasswordForgottenForm(
             data={
                 "email": "test@mail.de",
@@ -585,10 +638,12 @@ class PasswordForgottenFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_password_forgotten_form_no_data(self):
+        # Test case for PasswordForgottenForm with no data
         form = PasswordForgottenForm(data={})
         self.assertFalse(form.is_valid())
 
     def test_password_forgotten_form_wrong_email(self):
+        # Test case for PasswordForgottenForm with not existing email
         form = PasswordForgottenForm(
             data={
                 "email": "test2@mail.de",

@@ -4,6 +4,7 @@
 
 [![](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Django CI](https://github.com/CANVAS-PSE/CANVAS-PSE2425/actions/workflows/django.yml/badge.svg)](https://github.com/CANVAS-PSE/CANVAS-PSE2425/actions/workflows/django.yml)
 
 ## Installation
 We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` virtual environment ([click here for the documentation](https://docs.python.org/3/library/venv.html)).
