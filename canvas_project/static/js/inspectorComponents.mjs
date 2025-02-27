@@ -395,6 +395,8 @@ export class HeaderInspectorComponent extends InspectorComponent {
         const title = document.createElement("div");
         title.classList.add("fw-bolder", "fs-4");
         title.innerHTML = this.#getFieldValueFunc();
+        title.style.whiteSpace = "normal";
+        title.style.wordBreak = "break-word";
         wrapper.appendChild(title);
 
         const editButton = document.createElement("div");
