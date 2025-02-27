@@ -160,8 +160,6 @@ class DownloadViewTest(TestCase):
             'attachment; filename="testProject.h5"', response["Content-Disposition"]
         )
 
-        # TODO: Test if the file contains all the necessary information
-
         test_file_path = os.path.join(
             settings.BASE_DIR, "hdfCreation/scenarios/scenarioFile.h5"
         )
