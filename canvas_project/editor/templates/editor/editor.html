@@ -143,6 +143,8 @@
 {% include "settings.html" %}
 <!--job interface modal-->
 {% include "editor/jobInterface.html" %}
+<!--keybindings modal-->
+{% include "editor/keybindings.html" %}
 <!-- command prompt modal-->
 <div class="modal" id="commandPrompt">
     <div class="modal-dialog">
@@ -264,134 +266,22 @@
       </div>
       <div class="modal-body gap-1">
         <div class="row align-items-center">
-          <div class="col-3">
-            <span class="border rounded-1 p-2" style="font-size: 80%">Esc</span>
+          <div class="col-3 fw-medium">
+            Choose your client
           </div>
-          <div class="col-9 fw-medium">Close dialogs</div>
-        </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3">
-            <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-            <span class="mx-1">+</span>
-            <span class="border rounded-1 p-2" style="font-size: 80%">Z</span>
+          <div class="col-9">
+            <select id="clientSelect" class="form-select">
+              <option value="">-- Please select --</option>
+              <option value="mac">Mac</option>
+              <option value="other">Windows/Others</option>
+            </select>
           </div>
-          <div class="col-9 fw-medium">Undo</div>
         </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3">
-            <div class="mb-3">
-              <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-              <span class="mx-1">+</span>
-              <span class="border rounded-1 p-2" style="font-size: 80%">Shift</span>
-              <span class="mx-1">+</span>
-              <span class="border rounded-1 p-2" style="font-size: 80%">Z</span>
-            </div>
-            <div>
-              <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-              <span class="mx-1">+</span>
-              <span class="border rounded-1 p-2" style="font-size: 80%">Y</span>
-            </div>
-          </div>
-          <div class="col-9 fw-medium d-flex align-items-center">Redo</div>
-        </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3" id="delete-key">
-            <span class="border rounded-1 p-2" style="font-size: 80%">Delete</span>
-          </div>
-          <div class="col-9 fw-medium">Delete object</div>
-        </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3">
-            <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-            <span class="mx-1">+</span>
-            <span class="border rounded-1 p-2" style="font-size: 80%">D</span>
-          </div>
-          <div class="col-9 fw-medium">Duplicate object</div>
-        </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3">
-            <span class="border rounded-1 p-2" style="font-size: 80%">Shift</span>
-            <i class="bi bi-hand-index"></i>
-          </div>
-          <div class="col-9 fw-medium">Snap to grid</div>
-        </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3">
-            <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-          </div>
-          <div class="col-9 fw-medium">Add to object selection</div>
-        </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3">
-            <span class="border rounded-1 p-2 keep-ctrl" style="font-size: 80%">Ctrl</span>
-            <span class="mx-1">+</span>
-            <span class="border rounded-1 p-2" style="font-size: 80%">M</span>
-          </div>
-          <div class="col-9 fw-medium">Cycle through modes</div>
-        </div>
-        <hr>
-        <div class="row align-items-center">
-          <div class="col-3">
-            <span class="border rounded-1 p-2 keep-ctrl" style="font-size: 80%">Ctrl</span>
-            <span class="mx-1">+</span>
-            <span class="border rounded-1 p-2" style="font-size: 80%">&#9251;</span>
-          </div>
-          <div class="col-9 fw-medium">Command palette</div>
-        </div>
-      </div>
+    </div class="modal-body gap-1">
+        <div id="clientContent"></div>
     </div>
   </div>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  if (/Mac/i.test(navigator.platform)) {
-    // Delete-Block anpassen: Ersetze "Delete" durch "fn + Backspace"
-    const deleteKeyContainer = document.getElementById("delete-key");
-    if (deleteKeyContainer) {
-      deleteKeyContainer.innerHTML = "";
-      const fnSpan = document.createElement("span");
-      fnSpan.className = "border rounded-1 p-2";
-      fnSpan.style.fontSize = "80%";
-      fnSpan.textContent = "fn";
-      
-      const plusSpan = document.createElement("span");
-      plusSpan.className = "mx-1";
-      plusSpan.textContent = "+";
-      
-      const bsSpan = document.createElement("span");
-      bsSpan.className = "border rounded-1 p-2";
-      bsSpan.style.fontSize = "80%";
-      bsSpan.textContent = "Backspace";
-      
-      deleteKeyContainer.appendChild(fnSpan);
-      deleteKeyContainer.appendChild(plusSpan);
-      deleteKeyContainer.appendChild(bsSpan);
-    }
-    
-    // Ersetze alle Vorkommen von "Ctrl" und "Shift" in den Keybindings,
-    // außer bei Elementen, die die Klasse "keep-ctrl" besitzen
-    document.querySelectorAll('.modal-body span').forEach(function(span) {
-      if (!span.classList.contains("keep-ctrl")) {
-        const text = span.textContent.trim();
-        if (text === "Ctrl") {
-          span.textContent = "⌘";
-        }
-        if (text === "Shift") {
-          span.textContent = "⇧";
-        }
-      }
-    });
-  }
-});
-</script>
 <!-- about modal -->
 <div class="modal fade"
      id="aboutModal"
