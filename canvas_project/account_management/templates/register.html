@@ -1,17 +1,32 @@
-{% extends 'base.html' %} {% load static %} {% block style %} {{ block.super }}
-<link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" />
-{% endblock style %} {% block body %}
-<div class="d-flex flex-row">
-    <div
-        class="min-vh-100 d-inline-flex flex-column justify-content-center align-items-center p-5 gap-2 flex-shrink-0"
-        style="min-width: 30%"
-    >
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    {{ block.super }}
+    <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" />
+    <style>
+        /* right section image with rounded edge */
+        div[style*="background-image"] {
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+        }
+        /* smaller button */
+        button.btn {
+            height: 35px;
+            padding: 0 0px;
+            font-size: 14px;
+        }
+    </style>
+{% endblock style %}
+{% block body %}
+<div style="display: flex; height: 100vh;">
+
+    <!-- Left section (form) -->
+    <div style="flex: 1; min-width: 30%; max-width: 40%; overflow-y: auto; padding: 5%; display: flex; flex-direction: column; justify-content: flex-start;">
         <h1 class="headline text-center mb-4">
-            Join us at
-            <br />
-            Canvas!
+            Join us at <br />Canvas!
         </h1>
-        <!-- Passwort-Anforderungen oben auf der Seite -->
+        
+        <!-- Password requirements -->
         <div id="password-requirements" class="alert alert-info">
             <strong>Password must contain:</strong>
             <ul>
@@ -22,115 +37,66 @@
                 <li id="special">At least one special character (!@#$%^&*)</li>
             </ul>
         </div>
-        <div class="d-flex flex-column gap-1">
-            <hr />
-            <form
-                class="d-flex flex-column"
-                method="POST"
-                action="{% url 'register' %}"
-            >
-                {% csrf_token %} {% if form.errors %}
-                <div class="alert alert-danger">
-                    <ul>
-                        {% for field in form %} {% if field.errors %}
-                        <li>
-                            <strong>{{ field.label }}:</strong>
-                            {% for error in field.errors %}
-                            <p>{{ error }}</p>
-                            {% endfor %}
-                        </li>
-                        {% endif %} {% endfor %}
-                    </ul>
+        
+        <!-- Form -->
+        <form class="d-flex flex-column" method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field in form %}
+                    {% if field.errors %}
+                    <li>
+                        <strong>{{ field.label }}:</strong>
+                        {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            <div class="d-flex gap-2 mb-3">
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control rounded-4" id="floatingFirstName" name="first_name" placeholder="First Name" value="{{ form.first_name.value|default_if_none:'' }}" required />
+                    <label for="floatingFirstName">First Name</label>
                 </div>
-                {% endif %}
+                <div class="form-floating w-50">
+                    <input type="text" class="form-control rounded-4" id="floatingLastName" name="last_name" placeholder="Last Name" value="{{ form.last_name.value|default_if_none:'' }}" required />
+                    <label for="floatingLastName">Last Name</label>
+                </div>
+            </div>
 
-                <div class="d-flex gap-2 mb-3">
-                    <div class="form-floating w-50">
-                        <input
-                            type="text"
-                            class="form-control rounded-4"
-                            id="floatingFirstName"
-                            name="first_name"
-                            placeholder="First Name"
-                            value="{{ form.first_name.value|default_if_none:'' }}"
-                            required
-                        />
-                        <label for="floatingFirstName">First Name</label>
-                    </div>
-                    <div class="form-floating w-50">
-                        <input
-                            type="text"
-                            class="form-control rounded-4"
-                            id="floatingLastName"
-                            name="last_name"
-                            placeholder="Last Name"
-                            value="{{ form.last_name.value|default_if_none:'' }}"
-                            required
-                        />
-                        <label for="floatingLastName">Last Name</label>
-                    </div>
-                </div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control rounded-4" id="floatingEmail" name="email" placeholder="name@example.com" value="{{ form.email.value|default_if_none:'' }}" required />
+                <label for="floatingEmail">E-Mail</label>
+            </div>
 
-                <div class="form-floating mb-3">
-                    <input
-                        type="email"
-                        class="form-control rounded-4"
-                        id="floatingEmail"
-                        name="email"
-                        placeholder="name@example.com"
-                        value="{{ form.email.value|default_if_none:'' }}"
-                        required
-                    />
-                    <label for="floatingEmail">E-Mail</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input
-                        type="password"
-                        class="form-control rounded-4"
-                        id="floatingPassword1"
-                        name="password"
-                        placeholder="Password"
-                        value="{{ form.password.value|default_if_none:'' }}"
-                        required
-                    />
-                    <label for="floatingPassword1">Password</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input
-                        type="password"
-                        class="form-control rounded-4"
-                        id="floatingPassword2"
-                        name="password_confirmation"
-                        placeholder="Repeat Password"
-                        value="{{ form.password_confirmation.value|default_if_none:'' }}"
-                        required
-                    />
-                    <label for="floatingPassword2">Confirm Password</label>
-                </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-4" id="floatingPassword1" name="password" placeholder="Password" value="{{ form.password.value|default_if_none:'' }}" required />
+                <label for="floatingPassword1">Password</label>
+            </div>
 
-                <button type="submit" class="btn btn-primary rounded-5 fw-bold">
-                    Sign up
-                </button>
-            </form>
-        </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-4" id="floatingPassword2" name="password_confirmation" placeholder="Repeat Password" value="{{ form.password_confirmation.value|default_if_none:'' }}" required />
+                <label for="floatingPassword2">Confirm Password</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-5 fw-bold">Sign up</button>
+        </form>
+
         <div class="d-flex justify-content-center mt-2">
-            <p>
-                Already have an account? <a href="{% url 'login' %}">Login</a>
-            </p>
+            <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
         </div>
     </div>
 
-    <!--Placeholder for a 3D scene-->
-    <div
-        id="loginBg"
-        class="w-100 rounded-start-5 overflow-hidden"
-        style="
-            background-image: url('{% static 'img/loginPlaceholder.png' %}');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-        "
-    ></div>
+    <!-- right section with image -->
+    <div style="flex: 1; background-image: url('{% static "img/loginPlaceholder.png" %}'); background-size: cover; background-position: center; height: 100vh;">
+    </div>
+
 </div>
 
 <script>
@@ -157,15 +123,15 @@
 
         function updateRequirement(element, isValid) {
             if (isValid) {
-                // Wenn gültig, das Häkchen setzen (✅) und die Farbe auf grün ändern
+                // If valid, check mark (✅) and change the color to green
                 if (!element.innerHTML.startsWith('✅')) {
-                    element.innerHTML = `✅ ${element.innerHTML.slice(2).trim()}`; // Das ❌ durch ✅ ersetzen
+                    element.innerHTML = `✅ ${element.innerHTML.slice(2).trim()}`; // Replace ❌ with ✅
                     element.style.color = "green";
                 }
             } else {
-                // Wenn ungültig, das X setzen (❌) und die Farbe auf rot ändern
+                // If invalid, X mark (❌) and change the color to red
                 if (!element.innerHTML.startsWith('❌')) {
-                    element.innerHTML = `❌ ${element.innerHTML.slice(2).trim()}`; // Das ✅ durch ❌ ersetzen
+                    element.innerHTML = `❌ ${element.innerHTML.slice(2).trim()}`;; // Replace ✅ with ❌
                     element.style.color = "red";
                 }
             }
