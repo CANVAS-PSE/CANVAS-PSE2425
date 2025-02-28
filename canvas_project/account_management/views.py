@@ -158,7 +158,7 @@ def update_account(request):
             user.email = form.cleaned_data["email"]
             # Set the username to the email for consistency
             user.username = user.email
-            
+
             old_password = form.cleaned_data["old_password"]
             new_password = form.cleaned_data["new_password"]
 
@@ -169,13 +169,21 @@ def update_account(request):
 
             profile, created = UserProfile.objects.get_or_create(user=user)
             if request.POST.get("delete_picture") == "1":
-                if profile.profile_picture and profile.profile_picture.name != "profile_pics/default.jpg":
+                if (
+                    profile.profile_picture
+                    and profile.profile_picture.name != "profile_pics/default.jpg"
+                ):
                     profile.profile_picture.delete()  # delete former profile picture
-                profile.profile_picture = "profile_pics/default.jpg"  # set default profile picture
+                profile.profile_picture = (
+                    "profile_pics/default.jpg"  # set default profile picture
+                )
             # Set profile picture only if a new one is uploaded
             elif form.cleaned_data.get("profile_picture"):
-                 # Check if the current profile picture exists and is not the default picture.
-                if profile.profile_picture and profile.profile_picture.name != "profile_pics/default.jpg":
+                # Check if the current profile picture exists and is not the default picture.
+                if (
+                    profile.profile_picture
+                    and profile.profile_picture.name != "profile_pics/default.jpg"
+                ):
                     profile.profile_picture.delete()
                 profile.profile_picture = form.cleaned_data["profile_picture"]
 
@@ -187,14 +195,14 @@ def update_account(request):
             for field in form:
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
-        return redirect(request.META.get("HTTP_REFERER", "index"))
-    
+        return redirect(request.META.get("HTTP_REFERER", "projects"))
+
 
 @login_required
 def get_user_info(request):
     user = request.user
     is_openid_user = SocialAccount.objects.filter(user=user).exists()
-    return JsonResponse({'is_openid_user': is_openid_user})
+    return JsonResponse({"is_openid_user": is_openid_user})
 
 
 def send_password_change_email(user, request):
@@ -258,7 +266,6 @@ def invalid_link(request):
     return render(request, "invalid_link.html")
 
 
-
 @require_POST
 @login_required
 def delete_account(request):
@@ -276,7 +283,7 @@ def delete_account(request):
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
 
-    return redirect(request.META.get("HTTP_REFERER", "index"))
+    return redirect(request.META.get("HTTP_REFERER", "projects"))
 
 
 def password_forgotten_view(request):
