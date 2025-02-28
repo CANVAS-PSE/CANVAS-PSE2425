@@ -396,6 +396,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
         const buttonIcon = document.createElement("i");
         buttonIcon.title = "Edit Name";
         buttonIcon.classList.add("bi", "bi-pencil-square");
+        buttonIcon.style.height = "40px";
         editButton.appendChild(buttonIcon);
 
         wrapper.appendChild(editButton);
@@ -424,7 +425,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
 
         // duplicate button
         const duplicateButton = document.createElement("button");
-        duplicateButton.classList.add("btn", "btn-outline-primary", "p-1");
+        duplicateButton.classList.add("btn", "p-1");
         duplicateButton.style.height = "40px";
         const duplicateIcon = document.createElement("i");
         duplicateIcon.classList.add("bi", "bi-copy");
@@ -440,7 +441,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
 
         // delete button
         const deleteButton = document.createElement("button");
-        deleteButton.classList.add("btn", "btn-outline-danger", "p-1");
+        deleteButton.classList.add("btn", "p-1");
         deleteButton.style.height = "40px";
         const deleteIcon = document.createElement("i");
         deleteIcon.classList.add("bi", "bi-trash");
