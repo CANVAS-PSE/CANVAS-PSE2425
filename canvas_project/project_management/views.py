@@ -18,7 +18,11 @@ def projects(request):
     form = ProjectForm()
     projectFile = request.FILES.get("file")
     projectName = request.POST.get("name")
+    if projectName != None:
+        projectName = projectName.strip()
     projectDescription = request.POST.get("description")
+    if projectDescription != None:
+        projectDescription = projectDescription.strip()
     if request.method == "GET":
         allProjects = Project.objects.filter(owner=request.user).order_by(
             "-last_edited"
@@ -78,10 +82,10 @@ def projects(request):
 
 @login_required
 def updateProject(request, project_name):
+    project = Project.objects.get(owner=request.user, name=project_name)
+    form = UpdateProjectForm(request.POST, instance=project)
     if request.method == "POST":
-        project = Project.objects.get(owner=request.user, name=project_name)
         if project.owner == request.user:
-            form = UpdateProjectForm(request.POST, instance=project)
             if form.is_valid:
                 allProjects = Project.objects.all()
                 nameUnique = True
