@@ -154,7 +154,7 @@ def duplicateProject(request, project_name):
         while not newNameFound:
             try:
                 Project.objects.get(name=project_name, owner=request.user)
-                project_name = project_name + "copy"
+                project_name = project_name + "_copy"
             except Project.DoesNotExist:
                 project.name = project_name
                 project.save()
