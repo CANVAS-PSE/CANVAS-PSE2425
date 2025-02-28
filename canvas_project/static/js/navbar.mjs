@@ -97,10 +97,6 @@ export class Navbar {
             content.innerHTML = "";
         }
 
-        modal.addEventListener("hidden.bs.modal", function () {
-            resetModalForm();
-        });
-
         window.addEventListener("load", resetModalForm);
 
         select.addEventListener("change", () => {

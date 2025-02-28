@@ -36,7 +36,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     #getFieldValueFunc;
     #saveFunc;
     #hasBorder;
-    #InputLimitButtom;
+    #InputLimitBottom;
 
     /**
      * Creates a new single field component.
@@ -44,14 +44,14 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
      * @param {"text" | "number"} fieldType is the type of the input field
      * @param {Function} getFieldValueFunc is the function to get the field value
      * @param {Function} saveFunc is the function to update the field value
-     * @param {Number} InputLimitButtom is the limit of the input field
+     * @param {Number} InputLimitBottom is the limit of the input field
      */
     constructor(
         fieldName,
         fieldType,
         getFieldValueFunc,
         saveFunc,
-        InputLimitButtom
+        InputLimitBottom
     ) {
         super();
         this.#fieldName = fieldName;
@@ -59,7 +59,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
         this.#getFieldValueFunc = getFieldValueFunc;
         this.#saveFunc = saveFunc;
         this.#hasBorder = true;
-        this.#InputLimitButtom = InputLimitButtom;
+        this.#InputLimitBottom = InputLimitBottom;
     }
 
     render() {
@@ -84,8 +84,8 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
         input.addEventListener("change", () => {
             if (input.value !== this.#getFieldValueFunc().toString()) {
                 // prevents objects from going under the preset limit
-                if (parseFloat(input.value) < this.#InputLimitButtom) {
-                    input.value = this.#InputLimitButtom.toString();
+                if (parseFloat(input.value) < this.#InputLimitBottom) {
+                    input.value = this.#InputLimitBottom.toString();
                 }
 
                 this.#saveFunc(input.value);
