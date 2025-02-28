@@ -380,7 +380,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
 
     render() {
         const wrapper = document.createElement("div");
-        wrapper.classList.add("d-flex", "px-1");
+        wrapper.classList.add("d-flex", "px-1", "gap-1");
 
         const title = document.createElement("div");
         title.classList.add("fw-bolder", "fs-4");
@@ -391,15 +391,27 @@ export class HeaderInspectorComponent extends InspectorComponent {
         title.style.width = "70%";
         wrapper.appendChild(title);
 
-        const editButton = document.createElement("div");
-        editButton.classList.add("btn");
+        const buttonWrapper = document.createElement("div");
+        const buttonBackground = document.createElement("div");
+        buttonBackground.classList.add(
+            "rounded-4",
+            "d-flex",
+            "gap-1",
+            "bg-body",
+            "px-2"
+        );
+        buttonWrapper.appendChild(buttonBackground);
+        wrapper.appendChild(buttonWrapper);
+
+        const editButton = document.createElement("button");
+        editButton.classList.add("btn", "p-1");
         const buttonIcon = document.createElement("i");
         buttonIcon.title = "Edit Name";
         buttonIcon.classList.add("bi", "bi-pencil-square");
         buttonIcon.style.height = "40px";
         editButton.appendChild(buttonIcon);
 
-        wrapper.appendChild(editButton);
+        buttonBackground.appendChild(editButton);
 
         const inputField = document.createElement("input");
         inputField.type = "text";
@@ -429,11 +441,10 @@ export class HeaderInspectorComponent extends InspectorComponent {
         duplicateButton.style.height = "40px";
         const duplicateIcon = document.createElement("i");
         duplicateIcon.classList.add("bi", "bi-copy");
-        duplicateButton.style.marginRight = "5px";
         duplicateButton.title = "Duplicate";
         duplicateButton.appendChild(duplicateIcon);
 
-        wrapper.appendChild(duplicateButton);
+        buttonBackground.appendChild(duplicateButton);
 
         duplicateButton.addEventListener("click", () => {
             this.#selectedObject.duplicate();
@@ -448,7 +459,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
         deleteButton.title = "Delete";
         deleteButton.appendChild(deleteIcon);
 
-        wrapper.appendChild(deleteButton);
+        buttonBackground.appendChild(deleteButton);
 
         deleteButton.addEventListener("click", () => {
             this.#selectedObject.delete();
