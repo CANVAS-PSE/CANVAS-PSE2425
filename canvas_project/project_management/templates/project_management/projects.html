@@ -105,14 +105,16 @@
                                                 <div class="btn btn-primary custom-btn shadow favoriteButton"
                                                      style="border-radius: 0%"
                                                      data-is-favorite="{{ project.favorite }}"
-                                                     data-project-name="{{ project.name }}">
+                                                     data-project-name="{{ project.name }}"
+                                                     title="Mark/Unmark as favorite">
                                                     <i class="bi bi-star-fill text-warning"></i>
                                                 </div>
                                             {% else %}
                                                 <div class="btn btn-primary custom-btn shadow favoriteButton"
                                                      style="border-radius: 0%"
                                                      data-is-favorite="{{ project.favorite }}"
-                                                     data-project-name="{{ project.name }}">
+                                                     data-project-name="{{ project.name }}"
+                                                     title="Mark/Unmark as favorite">
                                                     <i class="bi bi-star"></i>
                                                 </div>
                                             {% endif %}
@@ -134,7 +136,8 @@
                                                     <button type="button"
                                                             class="btn btn-primary custom-btn shadow"
                                                             data-bs-toggle="modal"
-                                                            data-bs-target="#updateModal-{{ project.name }}">
+                                                            data-bs-target="#updateModal-{{ project.name }}"
+                                                            title="Edit project name or description">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </button>
                                                     <div class="modal fade"
@@ -170,13 +173,15 @@
                                                     </div>
                                                     <!-- Duplicate Button -->
                                                     <a href="{% url 'duplicateProject' project_name=project.name %}"
-                                                       class="btn btn-primary custom-btn shadow">
+                                                       class="btn btn-primary custom-btn shadow"
+                                                       title="Duplicate project">
                                                         <i class="bi bi-copy"></i>
                                                     </a>
                                                     <!-- Share Button -->
                                                     <button class="btn btn-primary custom-btn shadow"
                                                             data-bs-toggle="modal"
-                                                            data-bs-target="#shareModal-{{ project.name }}">
+                                                            data-bs-target="#shareModal-{{ project.name }}"
+                                                            title="Share project">
                                                         <i class="bi bi-share"></i>
                                                     </button>
                                                     <div class="modal fade"
@@ -235,7 +240,8 @@
                                                         <button type="button"
                                                                 class="btn btn-outline-danger"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#deleteModal-{{ project.name }}">
+                                                                data-bs-target="#deleteModal-{{ project.name }}"
+                                                                title="Delete project">
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                         <div class="modal fade"
