@@ -366,12 +366,14 @@
                         <div class="shadow-sm bg-body-secondary rounded-4 border d-flex">
                             <button class="btn text-reset rounded-4"
                                     id="undo"
-                                    style="--bs-btn-hover-bg: var(--bs-tertiary-bg)">
+                                    style="--bs-btn-hover-bg: var(--bs-tertiary-bg)"
+                                    title="Undo">
                                 <i class="bi bi-arrow-counterclockwise"></i>
                             </button>
                             <button class="btn text-reset rounded-4"
                                     id="redo"
-                                    style="--bs-btn-hover-bg: var(--bs-tertiary-bg)">
+                                    style="--bs-btn-hover-bg: var(--bs-tertiary-bg)"
+                                    title="Redo">
                                 <i class="bi bi-arrow-clockwise"></i>
                             </button>
                         </div>
@@ -381,7 +383,8 @@
                 <li class="nav-item bg-body-secondary rounded-4 p-0 d-flex justify-content-center border shadow-sm">
                     <button class="btn text-reset rounded-4"
                             id="commandPromptToggle"
-                            style="--bs-btn-hover-bg: var(--bs-tertiary-bg)">
+                            style="--bs-btn-hover-bg: var(--bs-tertiary-bg)"
+                            title="Command prompt">
                         <i class="bi bi-search"></i>
                     </button>
                 </li>
@@ -579,7 +582,8 @@
                                 data-bs-toggle="tab"
                                 type="button"
                                 role="tab"
-                                aria-selected="true">
+                                aria-selected="true"
+                                title = "Mode to look around the scene">
                             <i class="bi bi-cursor"></i>
                         </button>
                     </li>
@@ -589,7 +593,8 @@
                                 data-bs-toggle="tab"
                                 type="button"
                                 role="tab"
-                                aria-selected="false">
+                                aria-selected="false"
+                                title = "Mode to move objects around">
                             <i class="bi bi-arrows-move"></i>
                         </button>
                     </li>
@@ -599,7 +604,8 @@
                                 data-bs-toggle="tab"
                                 type="button"
                                 role="tab"
-                                aria-selected="false">
+                                aria-selected="false"
+                                title = "Mode to rotate objects">
                             <i class="bi bi-arrow-repeat"></i>
                         </button>
                     </li>
@@ -610,20 +616,24 @@
                 <div class="p-2 gap-2 shadow-sm bg-body-secondary bg-opacity-75 rounded-4 border d-flex"
                      style="backdrop-filter: blur(0.7rem)">
                     <button class="btn btn-primary custom-btn d-flex gap-1 text-reset"
-                            id="quickSettingsHeliostat">
+                            id="quickSettingsHeliostat"
+                            title="Add a heliostat">
                         <i class="bi bi-arrow-up-right-square"></i>
                     </button>
                     <button class="btn btn-primary custom-btn d-flex gap-1 text-reset"
-                            id="quickSettingsReceiver">
+                            id="quickSettingsReceiver"
+                            title="Add a receiver">
                         <i class="bi bi-align-bottom"></i>
                     </button>
                     <button class="btn btn-primary custom-btn d-flex gap-1 text-reset"
-                            id="quickSettingsLightsource">
+                            id="quickSettingsLightsource"
+                            title="Add a light source">
                         <i class="bi bi-lightbulb"></i>
                     </button>
                     <button class="btn btn-primary rounded-3 fw-bolder"
                             data-bs-target="#startJobModal"
-                            data-bs-toggle="modal">Render</button>
+                            data-bs-toggle="modal"
+                            title="Render a job">Render</button>
                 </div>
             </div>
         </div>
@@ -790,7 +800,8 @@
                 <button class="btn btn-primary custom-btn text-reset fs-3 position-relative p-0 px-1 rounded-3"
                         data-bs-toggle="modal"
                         data-bs-target="#jobInterface"
-                        id="jobInterfaceToggle">
+                        id="jobInterfaceToggle"
+                        title="Current Jobs">
                     <div id="hasActiveJobsIndicator" class="d-none">
                         <span class="position-absolute top-0 start-100 translate-middle bg-danger bg-opacity-50 rounded-circle"
                               style="padding: 0.7rem">
