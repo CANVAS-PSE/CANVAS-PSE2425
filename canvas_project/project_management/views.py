@@ -89,17 +89,20 @@ def updateProject(request, project_name):
             if form.is_valid:
                 allProjects = Project.objects.all()
                 nameUnique = True
-                nameNotChanged = False
+                nameChanged = True
                 formName = form["name"].value()
                 formName = formName.replace(" ", "_")
+                formDescription = form["description"].value()
                 if project_name == formName:
-                    nameNotChanged = True
+                    nameChanged = False
                 for existingProject in allProjects:
                     if formName == existingProject.name:
                         nameUnique = False
-                if nameUnique or nameNotChanged:
+                if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
-                    form.save()
+                    project.name = formName
+                    project.description = formDescription
+                    project.save()
                     return HttpResponseRedirect(reverse("projects"))
                 return redirect("projects")
     return render(
