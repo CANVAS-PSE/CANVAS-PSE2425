@@ -18,6 +18,8 @@ def projects(request):
     form = ProjectForm()
     projectFile = request.FILES.get("file")
     projectName = request.POST.get("name")
+    if projectName is not None:
+        projectName = projectName.replace(" ", "_")
     projectDescription = request.POST.get("description")
     if request.method == "GET":
         allProjects = Project.objects.filter(owner=request.user).order_by(
