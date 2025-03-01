@@ -384,7 +384,7 @@ class ViewTests(TestCase):
         self.assertEqual(Project.objects.count(), 2)
         self.assertEqual(Project.objects.last().name, self.project.name + "_copy")
         self.assertEqual(Project.objects.last().description, self.project.description)
-        self.assertNotEquals(Project.objects.last().pk, self.project.pk)
+        self.assertNotEqual(Project.objects.last().pk, self.project.pk)
         self.assertEqual(
             Project.objects.last().heliostats.count(), self.project.heliostats.count()
         )
@@ -455,7 +455,7 @@ class ViewTests(TestCase):
         self.assertEqual(Project.objects.count(), 2)
         self.assertEqual(Project.objects.last().name, self.project.name + "_shared")
         self.assertEqual(Project.objects.last().description, self.project.description)
-        self.assertNotEquals(Project.objects.last().pk, self.project.pk)
+        self.assertNotEqual(Project.objects.last().pk, self.project.pk)
         self.assertEqual(
             Project.objects.last().heliostats.count(), self.project.heliostats.count()
         )
