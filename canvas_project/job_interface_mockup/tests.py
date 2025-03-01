@@ -5,7 +5,6 @@ from project_management.models import Project, Heliostat, Receiver, Lightsource
 from django.utils import timezone
 from datetime import timedelta
 from django.urls import reverse
-
 import os
 import datetime
 from django.conf import settings
@@ -98,9 +97,9 @@ class ViewTests(TestCase):
 
         response = self.client.get(self.getJobStatus_url)
 
-        self.assertEquals(response.json()["jobID"], self.job.pk)
-        self.assertEquals(response.json()["status"], "Creating HDF5 file")
-        self.assertEquals(
+        self.assertEqual(response.json()["jobID"], self.job.pk)
+        self.assertEqual(response.json()["status"], "Creating HDF5 file")
+        self.assertEqual(
             response.json()["progress"],
             round(
                 ((timezone.now() - self.job.starting_time).total_seconds() / 60) / 3, 2
@@ -114,9 +113,9 @@ class ViewTests(TestCase):
 
         response = self.client.get(self.getJobStatus_url)
 
-        self.assertEquals(response.json()["jobID"], self.job.pk)
-        self.assertEquals(response.json()["status"], "Aligning Heliostats")
-        self.assertEquals(
+        self.assertEqual(response.json()["jobID"], self.job.pk)
+        self.assertEqual(response.json()["status"], "Aligning Heliostats")
+        self.assertEqual(
             response.json()["progress"],
             round(
                 ((timezone.now() - self.job.starting_time).total_seconds() / 60) / 3, 2
@@ -130,9 +129,9 @@ class ViewTests(TestCase):
 
         response = self.client.get(self.getJobStatus_url)
 
-        self.assertEquals(response.json()["jobID"], self.job.pk)
-        self.assertEquals(response.json()["status"], "Finished")
-        self.assertEquals(
+        self.assertEqual(response.json()["jobID"], self.job.pk)
+        self.assertEqual(response.json()["status"], "Finished")
+        self.assertEqual(
             response.json()["progress"],
             round(
                 ((timezone.now() - self.job.starting_time).total_seconds() / 60) / 3, 2
