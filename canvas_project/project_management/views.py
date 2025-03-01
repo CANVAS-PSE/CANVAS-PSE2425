@@ -41,8 +41,10 @@ def projects(request):
             if form.is_valid():
                 nameUnique = True
                 for existingProject in allProjects:
+                    formName = form["name"].value()
+                    formName = formName.replace(" ", "_")
                     if (
-                        form["name"].value() == existingProject.name
+                        formName == existingProject.name
                         and existingProject.owner == request.user
                     ):
                         nameUnique = False
@@ -88,10 +90,12 @@ def updateProject(request, project_name):
                 allProjects = Project.objects.all()
                 nameUnique = True
                 nameNotChanged = False
-                if project_name == form["name"].value():
+                formName = form["name"].value()
+                formName = formName.replace(" ", "_")
+                if project_name == formName:
                     nameNotChanged = True
                 for existingProject in allProjects:
-                    if form["name"].value() == existingProject.name:
+                    if formName == existingProject.name:
                         nameUnique = False
                 if nameUnique or nameNotChanged:
                     project.last_edited = timezone.now()
