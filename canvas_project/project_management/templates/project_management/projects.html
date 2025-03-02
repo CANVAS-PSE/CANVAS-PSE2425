@@ -145,14 +145,11 @@
                                                          tabindex="-1"
                                                          aria-labelledby="updateModal"
                                                          aria-hidden="true">
-                                                        <div class="modal-dialog">
+                                                        <div class="modal-dialog modal-dialog-centered">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h1 class="modal-title fs-5" id="deleteModalHeader">Edit Project</h1>
-                                                                    <button type="button"
-                                                                            class="btn-close"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <p class="font-italic">
@@ -163,8 +160,12 @@
                                                                     <form action="{% url 'updateProject' project_name=project.name %}"
                                                                           method="POST"
                                                                           class="d-flex flex-column gap-2">
-                                                                        {% csrf_token %} {{ form }}
-                                                                        <br />
+                                                                        {% csrf_token %}
+                                                                        <label for="projectName">Project Name</label>
+                                                                        <input type="text" id="projectName" name="name" class="form-control" value="{{ project.name }}" required>
+
+                                                                        <label for="projectDescription">Description</label>
+                                                                        <textarea id="projectDescription" name="description" class="form-control">{{ project.description }}</textarea>
                                                                         <button class="btn btn-primary rounded-3" type="submit">Save</button>
                                                                     </form>
                                                                 </div>
