@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { SelectableObject } from "objects";
+import { Receiver, SelectableObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 import { ItemCreatedEvent } from "createCommands";
 
@@ -348,6 +348,17 @@ export class Picker {
                         );
                     }
                 }
+                // Prevents an object from being dragged below ground level
+                this.#transformControls.addEventListener('objectChange', () => {
+                    const groundLevel = 0; 
+                    if (this.#selectedObject.position.y < groundLevel) {
+                        this.#selectedObject.position.y = groundLevel;
+                    }
+                    // If the object has a lockPositionY method, call it
+                    if (typeof this.#transformControls.object.lockPositionY === 'function') {
+                        this.#transformControls.object.lockPositionY(groundLevel - this.#transformControls.object.position.y);
+                    }
+                });
             } else {
                 // TODO: Implement multi-selection
                 // hide every control as they will not work properly

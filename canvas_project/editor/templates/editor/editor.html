@@ -143,6 +143,8 @@
 {% include "settings.html" %}
 <!--job interface modal-->
 {% include "editor/jobInterface.html" %}
+<!--keybindings modal-->
+{% include "editor/keybindings.html" %}
 <!-- command prompt modal-->
 <div class="modal" id="commandPrompt">
     <div class="modal-dialog">
@@ -256,101 +258,29 @@
      tabindex="-1"
      aria-labelledby="keyboardModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-            </div>
-            <div class="modal-body gap-1">
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Esc</span>
-                    </div>
-                    <div class="col-9 fw-medium">Close dialogs</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-                        <span class="mx-1">+</span>
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Z</span>
-                    </div>
-                    <div class="col-9 fw-medium">Undo</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <div class="mb-3">
-                            <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-                            <span class="mx-1">+</span>
-                            <span class="border rounded-1 p-2" style="font-size: 80%">Shift</span>
-                            <span class="mx-1">+</span>
-                            <span class="border rounded-1 p-2" style="font-size: 80%">Z</span>
-                        </div>
-                        <div>
-                            <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-                            <span class="mx-1">+</span>
-                            <span class="border rounded-1 p-2" style="font-size: 80%">Y</span>
-                        </div>
-                    </div>
-                    <div class="col-9 fw-medium d-flex align-items-center">Redo</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Delete</span>
-                    </div>
-                    <div class="col-9 fw-medium">Delete object</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Cmd</span>
-                        <span class="mx-1">+</span>
-                        <span class="border rounded-1 p-2" style="font-size: 80%">D</span>
-                    </div>
-                    <div class="col-9 fw-medium">Duplicate object</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Shift</span>
-                        <i class="bi bi-hand-index"></i>
-                    </div>
-                    <div class="col-9 fw-medium">Snap to grid</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-                    </div>
-                    <div class="col-9 fw-medium">Add to object selection</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-                        <span class="mx-1">+</span>
-                        <span class="border rounded-1 p-2" style="font-size: 80%">M</span>
-                    </div>
-                    <div class="col-9 fw-medium">Cycle through modes</div>
-                </div>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-3">
-                        <span class="border rounded-1 p-2" style="font-size: 80%">Ctrl</span>
-                        <span class="mx-1">+</span>
-                        <span class="border rounded-1 p-2" style="font-size: 80%">&#9251;</span>
-                    </div>
-                    <div class="col-9 fw-medium">Command palette</div>
-                </div>
-            </div>
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body gap-1">
+        <div class="row align-items-center">
+          <div class="col-3 fw-medium">
+            Choose your client
+          </div>
+          <div class="col-9">
+            <select id="clientSelect" class="form-select">
+              <option value="">-- Please select --</option>
+              <option value="mac">Mac OS</option>
+              <option value="other">Windows/Others</option>
+            </select>
+          </div>
         </div>
+    </div class="modal-body gap-1">
+        <div id="clientContent"></div>
     </div>
+  </div>
 </div>
 <!-- about modal -->
 <div class="modal fade"

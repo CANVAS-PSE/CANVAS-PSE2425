@@ -171,7 +171,7 @@ export class OverviewHandler {
             "overviewElem",
             selected ? "bg-primary-subtle" : "bg-body-secondary"
         );
-
+    
         const icon = document.createElement("i");
         icon.classList.add(
             "bi-arrow-up-right-square",
@@ -179,27 +179,32 @@ export class OverviewHandler {
             "align-items-center"
         );
         heliostatEntry.appendChild(icon);
-
+    
         const text = document.createElement("div");
         text.classList.add("w-100", "d-flex", "align-items-center");
+        text.style.whiteSpace = "normal";
+        text.style.wordBreak = "break-word";
         text.innerHTML =
             object.objectName !== "" && object.objectName !== ""
                 ? object.objectName
                 : "Heliostat";
         heliostatEntry.appendChild(text);
-
+    
         const button = document.createElement("button");
         button.classList.add("btn", "btn-primary", "custom-btn");
+        button.style.height = "38px"; 
+        button.style.flexShrink = "0";
+        button.style.alignSelf = "center";    
         const buttonIcon = document.createElement("i");
         buttonIcon.classList.add("bi", "bi-pencil-square");
         button.appendChild(buttonIcon);
         heliostatEntry.appendChild(button);
-
+    
         this.#addEditFunctionality(button, object, this.#objectType.HELIOSTAT);
-
+    
         heliostatEntry.dataset.apiId = object.apiID.toString();
         heliostatEntry.dataset.type = this.#objectType.HELIOSTAT;
-
+    
         this.#htmlToObject.set(heliostatEntry, object);
         this.#objectToHtml.set(object, heliostatEntry);
         return heliostatEntry;
@@ -235,6 +240,8 @@ export class OverviewHandler {
 
         const text = document.createElement("div");
         text.classList.add("w-100", "d-flex", "align-items-center");
+        text.style.whiteSpace = "normal";
+        text.style.wordBreak = "break-word";
         text.innerHTML =
             object.objectName !== "" && object.objectName
                 ? object.objectName
@@ -243,6 +250,9 @@ export class OverviewHandler {
 
         const button = document.createElement("button");
         button.classList.add("btn", "btn-primary", "custom-btn");
+        button.style.height = "38px"; 
+        button.style.flexShrink = "0";
+        button.style.alignSelf = "center";  
         const buttonIcon = document.createElement("i");
         buttonIcon.classList.add("bi", "bi-pencil-square");
         button.appendChild(buttonIcon);
@@ -288,6 +298,8 @@ export class OverviewHandler {
 
         const text = document.createElement("div");
         text.classList.add("w-100", "d-flex", "align-items-center");
+        text.style.whiteSpace = "normal";
+        text.style.wordBreak = "break-word";
         text.innerHTML =
             object.objectName !== "" && object.objectName
                 ? object.objectName
@@ -296,6 +308,9 @@ export class OverviewHandler {
 
         const button = document.createElement("button");
         button.classList.add("btn", "btn-primary", "custom-btn");
+        button.style.height = "38px"; 
+        button.style.flexShrink = "0";
+        button.style.alignSelf = "center";  
         const buttonIcon = document.createElement("i");
         buttonIcon.classList.add("bi", "bi-pencil-square");
         button.appendChild(buttonIcon);

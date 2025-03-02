@@ -16,6 +16,7 @@ export class Navbar {
         this.#setupFullscreen();
         this.#setUpObjectPlacement();
         this.#setupFileOptions();
+        this.#setUpKeybindings();
     }
 
     #setupFullscreen() {
@@ -45,11 +46,17 @@ export class Navbar {
     #setupFileOptions() {
         let createNewProject = document.getElementById("createNewProject");
 
-        // ensure that the form is reset when the modal is closed
-        createNewProject.addEventListener("hidden.bs.modal", function () {
+        function resetModalForm() {
             var form = createNewProject.querySelector("form");
             form.reset();
+        }
+
+        // ensure that the form is reset when the modal is closed
+        createNewProject.addEventListener("hidden.bs.modal", function () {
+            resetModalForm();
         });
+
+        window.addEventListener("load", resetModalForm);
     }
 
     /**
@@ -77,5 +84,30 @@ export class Navbar {
         this.#createLightSourceButton.addEventListener("click", () => {
             this.#objectManager.createLightSource();
         });
+    }
+
+    #setUpKeybindings() {
+        const select = document.getElementById("clientSelect");
+        const content = document.getElementById("clientContent");
+        const modal = document.getElementById("keyboardModal");
+
+        function resetModalForm() {
+            var form = modal.querySelector("form");
+            select.value = "";
+            content.innerHTML = "";
+        }
+
+        window.addEventListener("load", resetModalForm);
+
+        select.addEventListener("change", () => {
+            if (select.value === "mac") {
+                content.innerHTML = document.getElementById("macKeybindings").innerHTML;
+            } else if (select.value === "other") {
+                content.innerHTML = document.getElementById("windowsKeybindings").innerHTML;
+            } else {
+                content.innerHTML = "";
+            }
+        });
+
     }
 }
