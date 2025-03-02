@@ -123,7 +123,7 @@ class ViewTests(TestCase):
             username="testuser", password="testpassword"
         )
         self.project = Project.objects.create(
-            name="Test project", description="Test project description", owner=self.user
+            name="Test_project", description="Test project description", owner=self.user
         )
         Heliostat.objects.create(project=self.project)
         Receiver.objects.create(project=self.project)
@@ -173,7 +173,7 @@ class ViewTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, "Test project 2")
+        self.assertEqual(Project.objects.last().name, "Test_project_2")
         self.assertEqual(Project.objects.last().description, "Test project description")
         self.assertEqual(Project.objects.last().owner, self.user)
 
@@ -189,7 +189,7 @@ class ViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Project.objects.count(), 1)
-        self.assertEqual(Project.objects.last().name, "Test project")
+        self.assertEqual(Project.objects.last().name, "Test_project")
         self.assertEqual(Project.objects.last().description, "Test project description")
         self.assertEqual(Project.objects.last().owner, self.user)
 
@@ -211,7 +211,7 @@ class ViewTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, "Test project 2")
+        self.assertEqual(Project.objects.last().name, "Test_project_2")
         self.assertEqual(Project.objects.last().description, "Test project description")
         self.assertEqual(Project.objects.last().owner, self.user)
 
@@ -253,7 +253,7 @@ class ViewTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, "Test project 2")
+        self.assertEqual(Project.objects.last().name, "Test_project_2")
         self.assertEqual(Project.objects.last().description, "Test project description")
         self.assertEqual(Project.objects.last().owner, self.user)
         self.assertEqual(
@@ -292,7 +292,7 @@ class ViewTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Updated Test project")
+        self.assertEqual(Project.objects.first().name, "Updated_Test_project")
         self.assertEqual(
             Project.objects.first().description, "Updated Test project description"
         )
@@ -309,7 +309,7 @@ class ViewTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Test project")
+        self.assertEqual(Project.objects.first().name, "Test_project")
         self.assertEqual(
             Project.objects.first().description, "Updated Test project description"
         )
@@ -320,12 +320,13 @@ class ViewTests(TestCase):
             self.update_project_url,
             {
                 "name": "Updated Test project",
+                "description": "Test project description",
                 "owner": self.user.id,
             },
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Updated Test project")
+        self.assertEqual(Project.objects.first().name, "Updated_Test_project")
         self.assertEqual(
             Project.objects.first().description, "Test project description"
         )
@@ -333,7 +334,7 @@ class ViewTests(TestCase):
 
     def test_update_project_POST_name_duplicate(self):
         Project.objects.create(
-            name="Test project2",
+            name="Test_project_2",
             description="Test project description",
             owner=self.user,
         )
@@ -341,13 +342,13 @@ class ViewTests(TestCase):
         response = self.client.post(
             self.update_project_url,
             {
-                "name": "Test project2",
+                "name": "Test project 2",
                 "owner": self.user.id,
             },
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Test project")
+        self.assertEqual(Project.objects.last().name, "Test_project_2")
         self.assertEqual(
             Project.objects.first().description, "Test project description"
         )

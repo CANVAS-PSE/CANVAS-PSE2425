@@ -19,8 +19,7 @@ def projects(request):
     projectFile = request.FILES.get("file")
     projectName = request.POST.get("name")
     if projectName != None:
-        projectName = projectName.strip()
-        projectName = projectName.replace(" ", "_")
+        projectName = projectName.strip().replace(" ", "_")
     projectDescription = request.POST.get("description")
     if projectDescription != None:
         projectDescription = projectDescription.strip()
@@ -45,7 +44,7 @@ def projects(request):
                 nameUnique = True
                 for existingProject in allProjects:
                     formName = form["name"].value()
-                    formName = formName.replace(" ", "_")
+                    formName = formName.strip().replace(" ", "_")
                     if (
                         formName == existingProject.name
                         and existingProject.owner == request.user
@@ -104,7 +103,10 @@ def updateProject(request, project_name):
                 if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
                     project.name = formName
-                    project.description = formDescription
+                    if formDescription is None:
+                        project.description = ""
+                    else:
+                        project.description = formDescription
                     project.save()
                     return HttpResponseRedirect(reverse("projects"))
                 return redirect("projects")
