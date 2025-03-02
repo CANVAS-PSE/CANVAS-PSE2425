@@ -167,7 +167,7 @@
                         <i class="bi bi-arrow-return-right"></i> To execute
                     </div>
                     <div class="d-flex gap-1">
-                        <div class="key p-0 border px-1">Esc</div>
+                        <div class="key p-0 border px-1 rounded-2">Esc</div>
                         To dismiss
                     </div>
                 </div>
@@ -188,7 +188,10 @@
                     Projects will only be saved if they have a name unique to
                     your already existing projects!
                 </p>
-                <form action="" method="POST" class="d-flex flex-column gap-3" enctype="multipart/form-data">
+                <form action=""
+                      method="POST"
+                      class="d-flex flex-column gap-3"
+                      enctype="multipart/form-data">
                     {% csrf_token %} {{ createProjectForm }}
                     <button class="btn btn-primary rounded-3" type="submit">Create</button>
                 </form>
@@ -258,29 +261,30 @@
      tabindex="-1"
      aria-labelledby="keyboardModalLabel"
      aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body gap-1">
-        <div class="row align-items-center">
-          <div class="col-3 fw-medium">
-            Choose your client
-          </div>
-          <div class="col-9">
-            <select id="clientSelect" class="form-select">
-              <option value="">-- Please select --</option>
-              <option value="mac">Mac OS</option>
-              <option value="other">Windows/Others</option>
-            </select>
-          </div>
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body gap-1">
+                <div class="row align-items-center">
+                    <div class="col-3 fw-medium">Choose your client</div>
+                    <div class="col-9">
+                        <select id="clientSelect" class="form-select">
+                            <option value="">-- Please select --</option>
+                            <option value="mac">Mac OS</option>
+                            <option value="other">Windows/Others</option>
+                        </select>
+                    </div>
+                </div>
+            </div class="modal-body gap-1">
+            <div id="clientContent"></div>
         </div>
-    </div class="modal-body gap-1">
-        <div id="clientContent"></div>
     </div>
-  </div>
 </div>
 <!-- about modal -->
 <div class="modal fade"
@@ -583,7 +587,7 @@
                                 type="button"
                                 role="tab"
                                 aria-selected="true"
-                                title = "Mode to look around the scene">
+                                title="Mode to look around the scene">
                             <i class="bi bi-cursor"></i>
                         </button>
                     </li>
@@ -594,7 +598,7 @@
                                 type="button"
                                 role="tab"
                                 aria-selected="false"
-                                title = "Mode to move objects around">
+                                title="Mode to move objects around">
                             <i class="bi bi-arrows-move"></i>
                         </button>
                     </li>
@@ -605,7 +609,7 @@
                                 type="button"
                                 role="tab"
                                 aria-selected="false"
-                                title = "Mode to rotate objects">
+                                title="Mode to rotate objects">
                             <i class="bi bi-arrow-repeat"></i>
                         </button>
                     </li>
