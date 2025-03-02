@@ -69,8 +69,6 @@ def getJobStatus(request, jobID, project_id):
             result = f"/static/img/render/example_{random.randint(1, 19)}.pdf"
         elif time_diff > 2:
             status = "Aligning Heliostats"
-        elif time_diff > 1:
-            status = "Creating HDF5 file"
         else:
             status = "Creating HDF5 file"
 
@@ -87,6 +85,12 @@ def getJobStatus(request, jobID, project_id):
         job.delete()
 
         return HttpResponse(status=200)
+
+
+def exampleCreateHDF5(request, project_id):
+    project = get_object_or_404(Project, pk=project_id, owner=request.user)
+    createHDF5(project)
+    return HttpResponse(status=200)
 
 
 def createHDF5(project):
