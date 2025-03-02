@@ -20,6 +20,7 @@ def projects(request):
     projectName = request.POST.get("name")
     if projectName != None:
         projectName = projectName.strip()
+        projectName = projectName.replace(" ", "_")
     projectDescription = request.POST.get("description")
     if projectDescription != None:
         projectDescription = projectDescription.strip()
@@ -43,8 +44,10 @@ def projects(request):
             if form.is_valid():
                 nameUnique = True
                 for existingProject in allProjects:
+                    formName = form["name"].value()
+                    formName = formName.replace(" ", "_")
                     if (
-                        form["name"].value() == existingProject.name
+                        formName == existingProject.name
                         and existingProject.owner == request.user
                     ):
                         nameUnique = False
@@ -89,15 +92,20 @@ def updateProject(request, project_name):
             if form.is_valid:
                 allProjects = Project.objects.all()
                 nameUnique = True
-                nameNotChanged = False
-                if project_name == form["name"].value():
-                    nameNotChanged = True
+                nameChanged = True
+                formName = form["name"].value()
+                formName = formName.replace(" ", "_")
+                formDescription = form["description"].value()
+                if project_name == formName:
+                    nameChanged = False
                 for existingProject in allProjects:
-                    if form["name"].value() == existingProject.name:
+                    if formName == existingProject.name:
                         nameUnique = False
-                if nameUnique or nameNotChanged:
+                if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
-                    form.save()
+                    project.name = formName
+                    project.description = formDescription
+                    project.save()
                     return HttpResponseRedirect(reverse("projects"))
                 return redirect("projects")
     return render(

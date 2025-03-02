@@ -52,8 +52,12 @@ def editor(request, project_name):
     """
 
     if request.method == "GET":
-        # Return 404 not found if user has no project with this id
-        project = get_object_or_404(Project, name=project_name, owner=request.user)
+        try:
+            project = Project.objects.get(owner=request.user, name=project_name)
+        except Project.DoesNotExist:
+            messages.error(request, "Project doesn't exist")
+            return redirect("projects")
+
         project.last_edited = timezone.now()
         project.save()
 
@@ -234,7 +238,7 @@ def uploadPreview(request, project_name):
         project.save()
 
         return HttpResponse(status=200)
-    return Http404
+    raise Http404
 
 
 def createHDF5(project):
