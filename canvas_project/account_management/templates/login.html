@@ -4,18 +4,13 @@
 {% block style %}
     {{ block.super }}
     <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" />
-    <style>
-        /* right section image with rounded edge */
-        div[style*="background-image"] {
-            border-top-left-radius: 20px;
-            border-bottom-left-radius: 20px;
-        }
-    </style>
 {% endblock style %}
 {% block body %}
     <div style="display: flex; height: 100vh;">
         <!--Login page-->
-        <div style="flex:1; max-width: 35%; overflow-y: auto; padding: 5%; display: flex; flex-direction: column; justify-content: center; height: 100vh; margin: auto;">
+        <div class="d-flex flex-column justify-content-center"
+             style="padding: 5%;
+                    min-width: 35%">
             <h1 class="headline text-center mb-4">
                 Welcome to
                 <br>
@@ -80,8 +75,12 @@
             </div>
         </div>
         <!--Placeholder for a 3D scene-->
-        <div style="flex: 1; background-image: url('{% static 'img/loginPlaceholder.png' %}'); background-size: cover; background-position: center; height: 100vh;">
-        </div>
+        <div style="flex: 1;
+                    background-image: url('{% static 'img/loginPlaceholder.png' %}');
+                    background-size: cover;
+                    background-position: center;
+                    height: 100vh"
+             class="rounded-start-5"></div>
     </div>
 </div>
 {% endblock body %}
