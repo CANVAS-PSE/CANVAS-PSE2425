@@ -301,6 +301,8 @@ export class ExportProjectPromptCommand extends PromptCommand {
         let modal = new Modal(document.getElementById("loadingModal"));
         modal.show();
 
+        const projectName = window.location.pathname.split("/")[2];
+
         fetch(window.location + "/download", {
             method: "POST",
             headers: {
@@ -316,7 +318,7 @@ export class ExportProjectPromptCommand extends PromptCommand {
                 let link = document.createElement("a");
 
                 link.href = URL.createObjectURL(data);
-                link.download = `{{ project_name }}.h5`;
+                link.download = projectName + `.h5`;
                 link.click();
 
                 // After download, close modal and redirect
