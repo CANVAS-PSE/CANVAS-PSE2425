@@ -6,10 +6,11 @@
     <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" />
 {% endblock style %}
 {% block body %}
-    <div class="d-flex flex-row">
+    <div style="display: flex; height: 100vh;">
         <!--Login page-->
-        <div class="min-vh-100 d-inline-flex flex-column justify-content-center align-items-center p-5 gap-2 flex-shrink-0"
-             style="min-width: 30%">
+        <div class="d-flex flex-column justify-content-center"
+             style="padding: 5%;
+                    min-width: 30%">
             <h1 class="headline text-center mb-4">
                 Welcome to
                 <br>
@@ -47,7 +48,7 @@
                             </ul>
                         </div>
                     {% endif %}
-                    <div class="form-floating mb-3">
+                    <div class="form-floating mb-2">
                         <input type="email"
                                class="form-control rounded-4"
                                id="floatingInput"
@@ -55,7 +56,7 @@
                                placeholder="name@example.com">
                         <label for="floatingInput">Email address</label>
                     </div>
-                    <div class="form-floating mb-3">
+                    <div class="form-floating mb-2">
                         <input type="password"
                                class="form-control rounded-4"
                                id="floatingPassword"
@@ -74,12 +75,12 @@
             </div>
         </div>
         <!--Placeholder for a 3D scene-->
-        <div id="login-bg"
-             class="w-100 rounded-start-5 overflow-hidden"
-             style="background-image: url('{% static 'img/loginPlaceholder.png' %}');
+        <div style="flex: 1;
+                    background-image: url('{% static 'img/loginPlaceholder.png' %}');
                     background-size: cover;
                     background-position: center;
-                    height: 100vh"></div>
+                    height: 100vh"
+             class="rounded-start-5"></div>
     </div>
 </div>
 {% endblock body %}

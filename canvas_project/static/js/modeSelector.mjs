@@ -5,6 +5,7 @@ import * as bootstrap from "bootstrap";
  * Class to handle the mode of the picker
  */
 export class ModeSelector {
+    /** @type {"none" | "rotate" | "move"} */
     #mode = Mode.NONE;
     #picker;
 
@@ -40,6 +41,7 @@ export class ModeSelector {
                 (event.ctrlKey || event.metaKey) &&
                 event.key.toLowerCase() === "m"
             ) {
+                event.preventDefault();
                 //calculate the next mode
                 const modesArray = [Mode.NONE, Mode.MOVE, Mode.ROTATE];
                 let currentModeIndex = modesArray.indexOf(this.#mode);

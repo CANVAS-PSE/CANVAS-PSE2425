@@ -1,3 +1,5 @@
+import { ItemDeletedEvent } from "deleteCommands";
+
 /**
  * Represents a single component of the inspector
  */
@@ -36,6 +38,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     #getFieldValueFunc;
     #saveFunc;
     #hasBorder;
+    #InputLimitBottom;
 
     /**
      * Creates a new single field component.
@@ -43,14 +46,22 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
      * @param {"text" | "number"} fieldType is the type of the input field
      * @param {Function} getFieldValueFunc is the function to get the field value
      * @param {Function} saveFunc is the function to update the field value
+     * @param {Number} InputLimitBottom is the limit of the input field
      */
-    constructor(fieldName, fieldType, getFieldValueFunc, saveFunc) {
+    constructor(
+        fieldName,
+        fieldType,
+        getFieldValueFunc,
+        saveFunc,
+        InputLimitBottom
+    ) {
         super();
         this.#fieldName = fieldName;
         this.#fieldType = fieldType;
         this.#getFieldValueFunc = getFieldValueFunc;
         this.#saveFunc = saveFunc;
         this.#hasBorder = true;
+        this.#InputLimitBottom = InputLimitBottom;
     }
 
     render() {
@@ -74,6 +85,11 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
         // save changes on blur and re-render
         input.addEventListener("change", () => {
             if (input.value !== this.#getFieldValueFunc().toString()) {
+                // prevents objects from going under the preset limit
+                if (parseFloat(input.value) < this.#InputLimitBottom) {
+                    input.value = this.#InputLimitBottom.toString();
+                }
+
                 this.#saveFunc(input.value);
             }
         });
@@ -362,45 +378,105 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
 export class HeaderInspectorComponent extends InspectorComponent {
     #getFieldValueFunc;
     #saveFunc;
+    #selectedObject;
 
     /**
      * Creates a new header component.
      * @param {Function} getFieldValueFunc the function to get the title
      * @param {Function} saveFunc the function to update the title
      */
-    constructor(getFieldValueFunc, saveFunc) {
+    constructor(getFieldValueFunc, saveFunc, selectedObject) {
         super();
         this.#getFieldValueFunc = getFieldValueFunc;
         this.#saveFunc = saveFunc;
+        this.#selectedObject = selectedObject;
     }
 
     render() {
         const wrapper = document.createElement("div");
-        wrapper.classList.add("d-flex", "px-1");
+        wrapper.classList.add("d-flex", "px-1", "gap-1");
 
         const title = document.createElement("div");
         title.classList.add("fw-bolder", "fs-4");
         title.innerHTML = this.#getFieldValueFunc();
+        title.style.whiteSpace = "normal";
+        title.style.wordBreak = "break-word";
+        title.title = "Edit Name";
+        title.style.width = "70%";
         wrapper.appendChild(title);
 
-        const editButton = document.createElement("div");
-        editButton.classList.add("btn");
+        const buttonWrapper = document.createElement("div");
+        const buttonBackground = document.createElement("div");
+        buttonBackground.classList.add(
+            "rounded-4",
+            "d-flex",
+            "gap-1",
+            "bg-body",
+            "px-2"
+        );
+        buttonWrapper.appendChild(buttonBackground);
+        wrapper.appendChild(buttonWrapper);
+
+        const editButton = document.createElement("button");
+        editButton.classList.add("btn", "p-1");
         const buttonIcon = document.createElement("i");
+        buttonIcon.title = "Edit Name";
         buttonIcon.classList.add("bi", "bi-pencil-square");
+        buttonIcon.style.height = "40px";
         editButton.appendChild(buttonIcon);
 
-        wrapper.appendChild(editButton);
+        buttonBackground.appendChild(editButton);
 
         const inputField = document.createElement("input");
         inputField.type = "text";
         inputField.classList.add("form-control", "rounded-1");
 
+        // Event listeners for clicking the title
+        title.addEventListener("click", () => {
+            title.innerHTML = "";
+            inputField.value = this.#getFieldValueFunc();
+            title.appendChild(inputField);
+            inputField.focus();
+            inputField.select();
+        });
+
+        // Event listeners for clicking the edit button
         editButton.addEventListener("click", () => {
             title.innerHTML = "";
             inputField.value = this.#getFieldValueFunc();
             title.appendChild(inputField);
             inputField.focus();
             inputField.select();
+        });
+
+        // duplicate button
+        const duplicateButton = document.createElement("button");
+        duplicateButton.classList.add("btn", "p-1");
+        duplicateButton.style.height = "40px";
+        const duplicateIcon = document.createElement("i");
+        duplicateIcon.classList.add("bi", "bi-copy");
+        duplicateButton.title = "Duplicate";
+        duplicateButton.appendChild(duplicateIcon);
+
+        buttonBackground.appendChild(duplicateButton);
+
+        duplicateButton.addEventListener("click", () => {
+            this.#selectedObject.duplicate();
+        });
+
+        // delete button
+        const deleteButton = document.createElement("button");
+        deleteButton.classList.add("btn", "p-1");
+        deleteButton.style.height = "40px";
+        const deleteIcon = document.createElement("i");
+        deleteIcon.classList.add("bi", "bi-trash");
+        deleteButton.title = "Delete";
+        deleteButton.appendChild(deleteIcon);
+
+        buttonBackground.appendChild(deleteButton);
+
+        deleteButton.addEventListener("click", () => {
+            this.#selectedObject.delete();
         });
 
         inputField.addEventListener("change", () => {

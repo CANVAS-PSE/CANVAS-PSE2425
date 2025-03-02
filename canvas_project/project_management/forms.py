@@ -17,7 +17,7 @@ class UpdateProjectForm(ModelForm):
 
 class ProjectForm(forms.Form):
     name = forms.CharField(max_length=300)
-    description = forms.CharField(max_length=500)
+    description = forms.CharField(max_length=500, required=False)
     file = forms.FileField(
         label="HDF5 import: This field is optional. Add an HDF5 (.h5) file if you wish to import a project.",
         required=False,
