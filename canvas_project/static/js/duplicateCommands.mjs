@@ -22,7 +22,10 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
         super();
         this.#heliostat = heliostat;
         this.#newPosition = this.#heliostat.position.clone();
-        this.#newPosition.add(new THREE.Vector3(0, 0, -3));
+        const x = this.#heliostat.position.x;
+        const y = this.#heliostat.position.y;
+        const z = Number(this.#heliostat.position.z) - 3;
+        this.#newPosition = new THREE.Vector3(x, y, z);
         this.#heliostatCopy = new Heliostat(
             this.#heliostat.objectName == "" || !this.#heliostat.objectName
                 ? "Heliostat_Copy"
@@ -69,8 +72,10 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
     constructor(receiver) {
         super();
         this.#receiver = receiver;
-        this.#newPosition = this.#receiver.getPosition().clone();
-        this.#newPosition.add(new THREE.Vector3(0, 0, -35));
+        const x = Number(this.#receiver.position.x);
+        const y = Number(this.#receiver.position.y);
+        const z = Number(this.#receiver.position.z) - 35;
+        this.#newPosition = new THREE.Vector3(x, y, z);
         this.#receiverCopy = new Receiver(
             this.#receiver.objectName == "" || !this.#receiver.objectName
                 ? "Receiver_Copy"
