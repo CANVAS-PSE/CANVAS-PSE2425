@@ -69,6 +69,7 @@
                                  aria-labelledby="v-pills-general-tab"
                                  tabindex="0">
                                 <form class="d-flex flex-column h-100">
+                                    No settings available.
                                     <div class="flex-grow-1"></div>
                                     <div class="d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary">Save</button>
@@ -168,15 +169,28 @@
                                                 <label for="password_confirmation" class="form-label">Confirm New Password</label>
                                                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" />
                                             </div>
+
+                                            <!-- Password requirements -->
+                                            <div id="password-requirements" class="alert alert-info">
+                                                <strong>Password must contain:</strong>
+                                                <ul>
+                                                    <li id="length">At least 8 characters</li>
+                                                    <li id="uppercase">At least one uppercase letter</li>
+                                                    <li id="lowercase">At least one lowercase letter</li>
+                                                    <li id="number">At least one digit</li>
+                                                    <li id="special">At least one special character (!@#$%^&*)</li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between mt-3">
-                                        <button type="submit" class="btn btn-primary">Save</button>
                                         <!-- Button to trigger Delete Account Modal -->
                                         <button type="button"
-                                                class="btn btn-danger"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteAccountModal">Delete Account</button>
+                                        class="btn btn-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteAccountModal">Delete Account</button>
+                                        <!-- Save Button -->
+                                        <button type="submit" class="btn btn-primary">Save</button>
                                     </div>
                                 </form>
                             </div>
@@ -357,5 +371,46 @@
                     passwordSection.style.display = 'block';
                 }
             });
+    });
+</script>
+
+<!-- JavaScript to handle password requirements -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("new_password");
+
+        const requirements = {
+            length: document.getElementById("length"),
+            uppercase: document.getElementById("uppercase"),
+            lowercase: document.getElementById("lowercase"),
+            number: document.getElementById("number"),
+            special: document.getElementById("special"),
+        };
+
+        passwordInput.addEventListener("input", function () {
+            const password = passwordInput.value;
+
+            updateRequirement(requirements.length, password.length >= 8);
+            updateRequirement(requirements.uppercase, /[A-Z]/.test(password));
+            updateRequirement(requirements.lowercase, /[a-z]/.test(password));
+            updateRequirement(requirements.number, /\d/.test(password));
+            updateRequirement(requirements.special, /[!@#$%^&*()\-_=+<>?/]/.test(password));
+        });
+
+        function updateRequirement(element, isValid) {
+            if (isValid) {
+                // If valid, check mark (✅) and change the color to green
+                if (!element.innerHTML.startsWith('✅')) {
+                    element.innerHTML = `✅ ${element.innerHTML.slice(2).trim()}`; // Replace ❌ with ✅
+                    element.style.color = "green";
+                }
+            } else {
+                // If invalid, X mark (❌) and change the color to red
+                if (!element.innerHTML.startsWith('❌')) {
+                    element.innerHTML = `❌ ${element.innerHTML.slice(2).trim()}`;; // Replace ✅ with ❌
+                    element.style.color = "red";
+                }
+            }
+        }
     });
 </script>
