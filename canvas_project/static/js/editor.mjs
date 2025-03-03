@@ -210,6 +210,19 @@ export class Editor {
         this.#controls.minDistance = 10;
         this.#controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
+        this.#controls.addEventListener("change", () => {
+            const x = this.#controls.target.x;
+            const z = this.#controls.target.z;
+
+            const magnitude = Math.sqrt(x * x + z * z);
+
+            if (magnitude > 500) {
+                const factor = 500 / magnitude;
+                this.#controls.target.x = x * factor;
+                this.#controls.target.z = z * factor;
+            }
+        });
+
         // disable orbit controls while moving object
         this.#transformControls.addEventListener(
             "dragging-changed",
