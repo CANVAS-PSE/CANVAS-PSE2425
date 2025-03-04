@@ -65,9 +65,8 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
                 this.#heliostat.objectName = this.#newParameter;
                 break;
             case "numberOfFacets":
-                if (Number(this.#newParameter) < 1) {
-                    this.#heliostat.numberOfFacets = 1;
-                    break;
+                if (this.#newParameter < 1) {
+                    this.#newParameter = 1;
                 }
                 this.#heliostat.numberOfFacets = parseInt(this.#newParameter);
                 break;
@@ -75,13 +74,31 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
                 this.#heliostat.kinematicType = this.#newParameter;
                 break;
             case "position":
-                if (
-                    this.#newParameter.x > 700 ||
-                    this.#newParameter.y > 300 ||
-                    this.#newParameter.z > 700 ||
-                    this.#newParameter.x < -700 ||
-                    this.#newParameter.z < -700
-                ) {
+                const mapBounderiesXZ = 600;
+                const mapBounderiesY = 300;
+                if (this.#newParameter.x > mapBounderiesXZ) {
+                    this.#newParameter.x = mapBounderiesXZ;
+                    this.#heliostat.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.y > mapBounderiesY) {
+                    this.#newParameter.y = mapBounderiesY;
+                    this.#heliostat.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.z > mapBounderiesXZ) {
+                    this.#newParameter.z = mapBounderiesXZ;
+                    this.#heliostat.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.x < -mapBounderiesXZ) {
+                    this.#newParameter.x = -mapBounderiesXZ;
+                    this.#heliostat.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.z < -mapBounderiesXZ) {
+                    this.#newParameter.z = -mapBounderiesXZ;
+                    this.#heliostat.updatePosition(this.#newParameter);
                     break;
                 }
                 this.#heliostat.updatePosition(this.#newParameter);
