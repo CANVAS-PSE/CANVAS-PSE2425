@@ -1,6 +1,7 @@
 import { SingleObjectCommand } from "singleObjectCommands";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
 import { Heliostat, Receiver, LightSource, SelectableObject } from "objects";
+import * as THREE from "three";
 
 /**
  * Event that signals that an item got updated
@@ -217,7 +218,15 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
                 this.#receiver.updateRotation(this.#newParameter);
                 break;
             case "position":
-                this.#receiver.updatePosition(this.#newParameter);
+                console.log(this.#receiver.position);
+                this.#receiver.updatePosition(
+                    new THREE.Vector3(
+                        parseFloat(this.#newParameter.x),
+                        parseFloat(this.#newParameter.y),
+                        parseFloat(this.#newParameter.z)
+                    )
+                );
+                console.log(this.#receiver.position);
                 break;
             default:
                 throw new Error(`Invalid attribute: ${this.#attribute}`);
