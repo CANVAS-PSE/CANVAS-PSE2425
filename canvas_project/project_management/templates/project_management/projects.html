@@ -5,7 +5,7 @@
     <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block script %}
-    <script src="{% static 'js/darkmode.js' %}"></script>
+    <script src="{% static 'js/darkmode.mjs' %}" type="module"></script>
     <script type="importmap">
         {
             "imports": {
@@ -21,7 +21,6 @@
         </script>
     {% endif %}
     <script type="module">import * as bootstrap from "bootstrap"</script>
-
 {% endblock script %}
 {% block body %}
     <!--create project modal-->
@@ -149,7 +148,10 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h1 class="modal-title fs-5" id="deleteModalHeader">Edit Project</h1>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+                                                                    <button type="button"
+                                                                            class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <p class="font-italic">
@@ -162,8 +164,12 @@
                                                                           class="d-flex flex-column gap-2">
                                                                         {% csrf_token %}
                                                                         <label for="projectName">Project Name</label>
-                                                                        <input type="text" id="projectName" name="name" class="form-control" value="{{ project.name }}" required>
-
+                                                                        <input type="text"
+                                                                               id="projectName"
+                                                                               name="name"
+                                                                               class="form-control"
+                                                                               value="{{ project.name }}"
+                                                                               required>
                                                                         <label for="projectDescription">Description</label>
                                                                         <textarea id="projectDescription" name="description" class="form-control">{{ project.description }}</textarea>
                                                                         <button class="btn btn-primary rounded-3" type="submit">Save</button>

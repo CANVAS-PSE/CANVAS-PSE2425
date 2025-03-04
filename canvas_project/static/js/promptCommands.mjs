@@ -1,6 +1,7 @@
 import { Modal } from "bootstrap";
 import { CommandPrompt } from "commandPrompt";
 import { ObjectManager } from "objectManager";
+import { setTheme } from "./darkmode.mjs";
 
 /**
  * Parent class of all prompt commands
@@ -129,21 +130,16 @@ export class PromptCommand extends HTMLElement {
  * Prompt command to enable light mode
  */
 export class LightModePromptCommand extends PromptCommand {
-    #themeSwitcher;
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
      */
     constructor(commandPrompt) {
         super("Use light mode", commandPrompt);
-        this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
     execute() {
-        document.documentElement.setAttribute("data-bs-theme", "light");
-        localStorage.setItem("theme", "light");
-        this.#themeSwitcher.innerHTML =
-            "<i class='bi bi-brightness-high'></i> light";
+        setTheme("light");
     }
 }
 
@@ -151,20 +147,16 @@ export class LightModePromptCommand extends PromptCommand {
  * Prompt command to enable dark mode
  */
 export class DarkModePromptCommand extends PromptCommand {
-    #themeSwitcher;
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
      */
     constructor(commandPrompt) {
         super("Use dark mode", commandPrompt);
-        this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
     execute() {
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-        localStorage.setItem("theme", "dark");
-        this.#themeSwitcher.innerHTML = "<i class='bi bi-moon-stars'></i> dark";
+        setTheme("dark");
     }
 }
 
@@ -172,26 +164,16 @@ export class DarkModePromptCommand extends PromptCommand {
  * Prompt command to enable auto mode
  */
 export class AutoModePromptCommand extends PromptCommand {
-    #themeSwitcher;
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
      */
     constructor(commandPrompt) {
         super("Use auto mode", commandPrompt);
-        this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
     execute() {
-        document.documentElement.setAttribute(
-            "data-bs-theme",
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light"
-        );
-        localStorage.setItem("theme", "auto");
-        this.#themeSwitcher.innerHTML =
-            "<i class='bi bi-circle-half'></i> auto";
+        setTheme("auto");
     }
 }
 
