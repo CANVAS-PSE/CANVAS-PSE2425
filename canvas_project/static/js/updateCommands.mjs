@@ -230,7 +230,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
                 this.#receiver.updateRotation(this.#newParameter);
                 break;
             case "position":
-                const mapBounderiesXZ = 700;
+                const mapBounderiesXZ = 600;
                 const mapBounderiesY = 300;
                 if (this.#newParameter.x > mapBounderiesXZ) {
                     this.#newParameter.x = mapBounderiesXZ;

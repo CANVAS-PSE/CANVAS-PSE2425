@@ -355,7 +355,7 @@ export class Picker {
                         this.#selectedObject.position.y = groundLevel;
                     }
                     //Prevents an object from being dragged out of the canvas
-                    const canvasWidth = 700;
+                    const canvasWidth = 600;
                     if (this.#selectedObject.position.x > canvasWidth) {
                         this.#selectedObject.position.x = canvasWidth;
                     }
