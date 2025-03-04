@@ -18,7 +18,11 @@ def projects(request):
     form = ProjectForm()
     projectFile = request.FILES.get("file")
     projectName = request.POST.get("name")
+    if projectName != None:
+        projectName = projectName.strip().replace(" ", "_")
     projectDescription = request.POST.get("description")
+    if projectDescription != None:
+        projectDescription = projectDescription.strip()
     if request.method == "GET":
         allProjects = Project.objects.filter(owner=request.user).order_by(
             "-last_edited"
@@ -39,8 +43,10 @@ def projects(request):
             if form.is_valid():
                 nameUnique = True
                 for existingProject in allProjects:
+                    formName = form["name"].value()
+                    formName = formName.strip().replace(" ", "_")
                     if (
-                        form["name"].value() == existingProject.name
+                        formName == existingProject.name
                         and existingProject.owner == request.user
                     ):
                         nameUnique = False
@@ -78,22 +84,30 @@ def projects(request):
 
 @login_required
 def updateProject(request, project_name):
+    project = Project.objects.get(owner=request.user, name=project_name)
+    form = UpdateProjectForm(request.POST, instance=project)
     if request.method == "POST":
-        project = Project.objects.get(owner=request.user, name=project_name)
         if project.owner == request.user:
-            form = UpdateProjectForm(request.POST, instance=project)
             if form.is_valid:
                 allProjects = Project.objects.all()
                 nameUnique = True
-                nameNotChanged = False
-                if project_name == form["name"].value():
-                    nameNotChanged = True
+                nameChanged = True
+                formName = form["name"].value()
+                formName = formName.replace(" ", "_")
+                formDescription = form["description"].value()
+                if project_name == formName:
+                    nameChanged = False
                 for existingProject in allProjects:
-                    if form["name"].value() == existingProject.name:
+                    if formName == existingProject.name:
                         nameUnique = False
-                if nameUnique or nameNotChanged:
+                if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
-                    form.save()
+                    project.name = formName
+                    if formDescription is None:
+                        project.description = ""
+                    else:
+                        project.description = formDescription
+                    project.save()
                     return HttpResponseRedirect(reverse("projects"))
                 return redirect("projects")
     return render(
@@ -150,7 +164,7 @@ def duplicateProject(request, project_name):
         while not newNameFound:
             try:
                 Project.objects.get(name=project_name, owner=request.user)
-                project_name = project_name + "copy"
+                project_name = project_name + "_copy"
             except Project.DoesNotExist:
                 project.name = project_name
                 project.save()

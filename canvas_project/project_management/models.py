@@ -9,7 +9,7 @@ class Project(models.Model):
     """
 
     name = models.CharField(max_length=300)
-    description = models.CharField(max_length=500)
+    description = models.CharField(max_length=500, blank=True, default="")
     last_edited = models.DateTimeField(default=timezone.now)
     last_shared = models.DateTimeField(null=True, blank=True)
     favorite = models.CharField(max_length=5, default="false")
@@ -53,12 +53,11 @@ class Heliostat(models.Model):
 
     # surface config
     number_of_facets = models.IntegerField(default=4)
-    # Sollen die einzelnen Facetten konfigurierbar sein (Nein?)
 
     # kinematic config
     kinematic_type = models.CharField(max_length=300, default="ideal")
 
-    # actuator config -> anhand von kinematic type einfach festgelegt?
+    # actuator config
     def __str__(self) -> str:
         return str(self.project) + " Heliostat " + str(self.pk)
 
