@@ -5,10 +5,11 @@
     <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block script %}
-    <script src="{% static 'js/darkmode.js' %}"></script>
+    <script src="{% static 'js/darkmode.mjs' %}" type="module"></script>
     <script type="importmap">
         {
             "imports": {
+                "darkmode": "{% static 'js/darkmode.mjs' %}",
                 "three": "{% static 'js/three.module.js' %}",
                 "three/addons/": "{% static 'js/three/examples/jsm/' %}",
                 "navbar": "{% static 'js/navbar.mjs' %}",
