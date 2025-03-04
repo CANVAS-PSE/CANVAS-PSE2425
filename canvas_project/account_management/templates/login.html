@@ -6,13 +6,9 @@
     <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" />
 {% endblock style %}
 {% block body %}
-    <div style="display: flex; height: 100vh;">
-        <!--Login page-->
-        <div class="d-flex flex-column justify-content-center"
-             style="padding: 5%;
-                    min-width: 30%;
-                    overflow-y: auto;"
-            >
+    <div class="d-flex vh-100">
+    <!--Login page-->
+        <div class="d-flex flex-column justify-content-center p-5 min-vw-30 overflow-auto">
             <h1 class="headline text-center mb-4">
                 Welcome to
                 <br>
@@ -77,12 +73,9 @@
             </div>
         </div>
         <!--Placeholder for a 3D scene-->
-        <div style="flex: 1;
-                    background-image: url('{% static 'img/loginPlaceholder.png' %}');
-                    background-size: cover;
-                    background-position: center;
-                    height: 100vh"
-             class="rounded-start-5"></div>
+        <div class="flex-grow-1 vh-100 rounded-start-5"
+            style="background: url('{% static 'img/loginPlaceholder.png' %}') center/cover no-repeat;">
+        </div>
     </div>
 </div>
 {% endblock body %}

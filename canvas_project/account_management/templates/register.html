@@ -5,14 +5,14 @@
     <link href="{% static 'css/login.css' %}" rel="stylesheet" type="text/css" />
 {% endblock style %}
 {% block body %}
-<div style="display: flex; height: 100vh; overflow: hidden; align-items: stretch;">
+<div class="d-flex vh-100">
     <!-- Left section (form) -->
-    <div style="flex:1; min-width: 30%; max-width:35%; padding: 4%; display: flex; flex-direction: column; height: 100vh; overflow-y: auto;">
+    <div class="d-flex flex-column p-4 vh-100 overflow-auto" style="max-width: 400px;">
         <h1 class="headline text-center mb-4">
             Join us at <br />Canvas!
         </h1>
         <!-- Password requirements -->
-        <div id="password-requirements" class="alert alert-info">
+        <div id="password-requirements" class="alert alert-info rounded-4">
             <strong>Password must contain:</strong>
             <ul>
                 <li id="length">At least 8 characters</li>
@@ -41,7 +41,7 @@
                     </ul>
                 </div>
             {% endif %}
-            <div class="d-flex gap-2 mb-3">
+            <div class="d-flex gap-2 mb-2">
                 <div class="form-floating w-50">
                     <input type="text"
                             class="form-control rounded-4"
@@ -63,7 +63,7 @@
                     <label for="floatingLastName">Last Name</label>
                 </div>
             </div>
-            <div class="form-floating mb-3">
+            <div class="form-floating mb-2">
                 <input type="email"
                         class="form-control rounded-4"
                         id="floatingEmail"
@@ -73,7 +73,7 @@
                         required />
                 <label for="floatingEmail">E-Mail</label>
             </div>
-            <div class="form-floating mb-3">
+            <div class="form-floating mb-2">
                 <input type="password"
                         class="form-control rounded-4"
                         id="floatingPassword1"
@@ -102,12 +102,9 @@
         </div>
     </div>
     <!-- right section with image -->
-    <div style="flex: 1;
-        background-image: url('{% static "img/loginPlaceholder.png" %}');
-        background-size: cover;
-        background-position: center;
-        height: 100vh"
-    class="rounded-start-5"></div>    
+    <div class="flex-grow-1 vh-100 rounded-start-5"
+        style="background: url('{% static 'img/loginPlaceholder.png' %}') center/cover no-repeat;">
+    </div>  
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
