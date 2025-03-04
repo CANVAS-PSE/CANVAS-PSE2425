@@ -99,6 +99,7 @@ def editor(request, project_name):
                     newProject.owner = request.user
                     newProject.last_edited = timezone.now()
                     newProject.save()
+                    messages.success(request, "Successfully created the new project")
                     return redirect("/editor/" + projectName)
         else:
             if form.is_valid():
