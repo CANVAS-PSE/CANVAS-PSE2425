@@ -72,7 +72,13 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
                 this.#heliostat.kinematicType = this.#newParameter;
                 break;
             case "position":
-                this.#heliostat.updatePosition(this.#newParameter);
+                this.#heliostat.updatePosition(
+                    new THREE.Vector3(
+                        parseFloat(this.#newParameter.x),
+                        parseFloat(this.#newParameter.y),
+                        parseFloat(this.#newParameter.z)
+                    )
+                );
                 break;
             case "aimPoint":
                 this.#heliostat.aimPoint = this.#newParameter;
@@ -218,7 +224,6 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
                 this.#receiver.updateRotation(this.#newParameter);
                 break;
             case "position":
-                console.log(this.#receiver.position);
                 this.#receiver.updatePosition(
                     new THREE.Vector3(
                         parseFloat(this.#newParameter.x),
@@ -226,7 +231,6 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
                         parseFloat(this.#newParameter.z)
                     )
                 );
-                console.log(this.#receiver.position);
                 break;
             default:
                 throw new Error(`Invalid attribute: ${this.#attribute}`);
