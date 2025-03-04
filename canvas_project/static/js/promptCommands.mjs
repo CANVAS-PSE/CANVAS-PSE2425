@@ -1,7 +1,7 @@
 import { Modal } from "bootstrap";
 import { CommandPrompt } from "commandPrompt";
 import { ObjectManager } from "objectManager";
-import { setTheme } from "./darkmode.mjs";
+import { setTheme } from "darkmode";
 
 /**
  * Parent class of all prompt commands

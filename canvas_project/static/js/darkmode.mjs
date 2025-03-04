@@ -52,6 +52,7 @@ const showActiveTheme = (theme) => {
  * @param {string} theme
  */
 export const setTheme = (theme) => {
+    setStoredTheme(theme);
     if (theme === "auto") {
         document.documentElement.setAttribute(
             "data-bs-theme",
@@ -79,16 +80,15 @@ window
 window.addEventListener("DOMContentLoaded", () => {
     showActiveTheme(getPreferredTheme());
 
-    const modeMenu = document.getElementById("theme-select");
+    const themeSelect = document.getElementById("theme-select");
 
-    if (!modeMenu) {
+    if (!themeSelect) {
         return;
     }
 
-    modeMenu.addEventListener("change", () => {
+    themeSelect.addEventListener("change", () => {
         //@ts-ignore
-        var theme = modeMenu.value;
-        setStoredTheme(theme);
+        var theme = themeSelect.value;
         setTheme(theme);
     });
 });
