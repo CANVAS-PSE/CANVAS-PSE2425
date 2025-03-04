@@ -349,14 +349,33 @@ export class Picker {
                     }
                 }
                 // Prevents an object from being dragged below ground level
-                this.#transformControls.addEventListener('objectChange', () => {
-                    const groundLevel = 0; 
+                this.#transformControls.addEventListener("objectChange", () => {
+                    const groundLevel = 0;
                     if (this.#selectedObject.position.y < groundLevel) {
                         this.#selectedObject.position.y = groundLevel;
                     }
+                    //Prevents an object from being dragged out of the canvas
+                    const canvasWidth = 700;
+                    if (this.#selectedObject.position.x > canvasWidth) {
+                        this.#selectedObject.position.x = canvasWidth;
+                    }
+                    if (this.#selectedObject.position.z > canvasWidth) {
+                        this.#selectedObject.position.z = canvasWidth;
+                    }
+                    const hightLimitReceiver = 300;
+                    if (this.#selectedObject.position.y > hightLimitReceiver) {
+                        this.#selectedObject.position.y = hightLimitReceiver;
+                    }
+
                     // If the object has a lockPositionY method, call it
-                    if (typeof this.#transformControls.object.lockPositionY === 'function') {
-                        this.#transformControls.object.lockPositionY(groundLevel - this.#transformControls.object.position.y);
+                    if (
+                        typeof this.#transformControls.object.lockPositionY ===
+                        "function"
+                    ) {
+                        this.#transformControls.object.lockPositionY(
+                            groundLevel -
+                                this.#transformControls.object.position.y
+                        );
                     }
                 });
             } else {

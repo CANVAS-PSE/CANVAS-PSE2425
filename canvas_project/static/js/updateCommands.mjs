@@ -65,12 +65,25 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
                 this.#heliostat.objectName = this.#newParameter;
                 break;
             case "numberOfFacets":
-                this.#heliostat.numberOfFacets = this.#newParameter;
+                if (Number(this.#newParameter) < 1) {
+                    this.#heliostat.numberOfFacets = 1;
+                    break;
+                }
+                this.#heliostat.numberOfFacets = parseInt(this.#newParameter);
                 break;
             case "kinematicType":
                 this.#heliostat.kinematicType = this.#newParameter;
                 break;
             case "position":
+                if (
+                    this.#newParameter.x > 700 ||
+                    this.#newParameter.y > 300 ||
+                    this.#newParameter.z > 700 ||
+                    this.#newParameter.x < -700 ||
+                    this.#newParameter.z < -700
+                ) {
+                    break;
+                }
                 this.#heliostat.updatePosition(this.#newParameter);
                 break;
             case "aimPoint":
@@ -217,6 +230,34 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
                 this.#receiver.updateRotation(this.#newParameter);
                 break;
             case "position":
+                const mapBounderiesXZ = 700;
+                const mapBounderiesY = 300;
+                if (this.#newParameter.x > mapBounderiesXZ) {
+                    this.#newParameter.x = mapBounderiesXZ;
+                    this.#receiver.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.y > mapBounderiesY) {
+                    this.#newParameter.y = mapBounderiesY;
+                    this.#receiver.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.z > mapBounderiesXZ) {
+                    this.#newParameter.z = mapBounderiesXZ;
+                    this.#receiver.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.x < -mapBounderiesXZ) {
+                    this.#newParameter.x = -mapBounderiesXZ;
+                    this.#receiver.updatePosition(this.#newParameter);
+                    break;
+                }
+                if (this.#newParameter.z < -mapBounderiesXZ) {
+                    this.#newParameter.z = -mapBounderiesXZ;
+                    this.#receiver.updatePosition(this.#newParameter);
+                    break;
+                }
+
                 this.#receiver.updatePosition(this.#newParameter);
                 break;
             default:
