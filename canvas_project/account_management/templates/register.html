@@ -140,13 +140,13 @@
             if (isValid) {
                 // If valid, check mark (✅) and change the color to green
                 if (!element.innerHTML.startsWith('✅')) {
-                    element.innerHTML = `✅ ${element.innerHTML.slice(2).trim()}`; // Replace ❌ with ✅
+                    element.innerHTML = `✅ ${element.textContent.replace(/^✅ |^❌ /, "")}`;
                     element.style.color = "green";
                 }
             } else {
                 // If invalid, X mark (❌) and change the color to red
                 if (!element.innerHTML.startsWith('❌')) {
-                    element.innerHTML = `❌ ${element.innerHTML.slice(2).trim()}`;; // Replace ✅ with ❌
+                    element.innerHTML = `❌ ${element.textContent.replace(/^✅ |^❌ /, "")}`;
                     element.style.color = "red";
                 }
             }
