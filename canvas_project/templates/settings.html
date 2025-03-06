@@ -170,24 +170,33 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label for="old_password" class="form-label">Old Password</label>
-                                                <input type="password" class="form-control" id="old_password" name="old_password" />
+                                                <input type="password"
+                                                       class="form-control"
+                                                       id="old_password"
+                                                       name="old_password" />
                                             </div>
                                             <div class="mb-3">
                                                 <label for="new_password" class="form-label">New Password</label>
-                                                <input type="password" class="form-control" id="new_password" name="new_password" />
+                                                <input type="password"
+                                                       class="form-control"
+                                                       id="new_password"
+                                                       name="new_password" />
                                             </div>
                                             <div class="mb-3">
                                                 <label for="password_confirmation" class="form-label">Confirm New Password</label>
-                                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" />
+                                                <input type="password"
+                                                       class="form-control"
+                                                       id="password_confirmation"
+                                                       name="password_confirmation" />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between mt-3">
                                         <!-- Button to trigger Delete Account Modal -->
                                         <button type="button"
-                                        class="btn btn-danger"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteAccountModal">Delete Account</button>
+                                                class="btn btn-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteAccountModal">Delete Account</button>
                                         <!-- Save Button -->
                                         <button type="submit" class="btn btn-primary">Save</button>
                                     </div>
@@ -200,7 +209,11 @@
                                  tabindex="0">
                                 <div class="d-flex align-items-center gap-2">
                                     <div>Theme:</div>
-                                    <button class="btn btn-secondary" id="mode-toggle"></button>
+                                    <select class="form-select" id="theme-select">
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                        <option value="auto">Auto</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -351,7 +364,6 @@
         document.getElementById("previewImage").src = "/media/profile_pics/default.jpg"; 
     });
 </script>
-
 <!-- JavaScript to handle AJAX request when the modal is opened -->
 <script>
     document.getElementById('settings').addEventListener('show.bs.modal', function () {
@@ -371,7 +383,6 @@
                 }
             });
     });
-</script>
 
 <!-- JavaScript to handle password requirements -->
 <script>

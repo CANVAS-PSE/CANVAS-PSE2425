@@ -18,6 +18,7 @@ export class PromptCommand extends HTMLElement {
     /**
      * Creates a new prompt command
      * @param {String} name the name of the command
+     * @param {CommandPrompt} commandPrompt the command prompt in use for this command
      * @param {String} [keybind=null] the keybind of the command
      */
     constructor(name, commandPrompt, keybind = null) {
@@ -53,7 +54,7 @@ export class PromptCommand extends HTMLElement {
         });
 
         // select this element on hover
-        this.addEventListener("mousemove", (event) => {
+        this.addEventListener("mousemove", () => {
             this.#commandPrompt.selectCommand(
                 this.#commandPrompt.currentlyAvailableCommands.indexOf(this)
             );
@@ -125,73 +126,119 @@ export class PromptCommand extends HTMLElement {
     }
 }
 
+export class ThemePromptCommand extends PromptCommand {
+    /**
+     * Create a new theme command
+     * @param {string} description the description of the command
+     * @param {CommandPrompt} commandPrompt the commandprompt in use
+     */
+    constructor(description, commandPrompt) {
+        if (new.target === ThemePromptCommand) {
+            throw new Error(
+                "Cannot instantiate abstract class ThemePromptCommand directly"
+            );
+        }
+        super(description, commandPrompt);
+    }
+
+    execute() {
+        throw new Error(
+            "This method needs to be implemented in all subclasses"
+        );
+    }
+
+    /**
+     * Sets the theme of the application
+     * @param {"light" | "dark" | "auto"} theme
+     */
+    setTheme(theme) {
+        // store the theme
+        localStorage.setItem("theme", theme);
+
+        // update the theme
+        if (theme === "auto") {
+            document.documentElement.setAttribute(
+                "data-bs-theme",
+                window.matchMedia("(prefers-color-scheme: dark)").matches
+                    ? "dark"
+                    : "light"
+            );
+        } else {
+            document.documentElement.setAttribute("data-bs-theme", theme);
+        }
+
+        // update the settings
+        const themeSelect = document.getElementById("theme-select");
+
+        if (!themeSelect) {
+            return;
+        }
+
+        switch (theme) {
+            case "light":
+                //@ts-ignore
+                themeSelect.value = "light";
+                break;
+            case "dark":
+                //@ts-ignore
+                themeSelect.value = "dark";
+                break;
+            default:
+                //@ts-ignore
+                themeSelect.value = "auto";
+                break;
+        }
+    }
+}
+
 /**
  * Prompt command to enable light mode
  */
-export class LightModePromptCommand extends PromptCommand {
-    #themeSwitcher;
+export class LightModePromptCommand extends ThemePromptCommand {
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
      */
     constructor(commandPrompt) {
         super("Use light mode", commandPrompt);
-        this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
     execute() {
-        document.documentElement.setAttribute("data-bs-theme", "light");
-        localStorage.setItem("theme", "light");
-        this.#themeSwitcher.innerHTML =
-            "<i class='bi bi-brightness-high'></i> light";
+        this.setTheme("light");
     }
 }
 
 /**
  * Prompt command to enable dark mode
  */
-export class DarkModePromptCommand extends PromptCommand {
-    #themeSwitcher;
+export class DarkModePromptCommand extends ThemePromptCommand {
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
      */
     constructor(commandPrompt) {
         super("Use dark mode", commandPrompt);
-        this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
     execute() {
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-        localStorage.setItem("theme", "dark");
-        this.#themeSwitcher.innerHTML = "<i class='bi bi-moon-stars'></i> dark";
+        this.setTheme("dark");
     }
 }
 
 /**
  * Prompt command to enable auto mode
  */
-export class AutoModePromptCommand extends PromptCommand {
-    #themeSwitcher;
+export class AutoModePromptCommand extends ThemePromptCommand {
     /**
      * Create this prompt command
      * @param {CommandPrompt} commandPrompt the command prompt that handles this command
      */
     constructor(commandPrompt) {
         super("Use auto mode", commandPrompt);
-        this.#themeSwitcher = document.getElementById("mode-toggle");
     }
 
     execute() {
-        document.documentElement.setAttribute(
-            "data-bs-theme",
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light"
-        );
-        localStorage.setItem("theme", "auto");
-        this.#themeSwitcher.innerHTML =
-            "<i class='bi bi-circle-half'></i> auto";
+        this.setTheme("auto");
     }
 }
 

@@ -37,24 +37,24 @@
     setTheme(getPreferredTheme());
 
     const showActiveTheme = (theme) => {
-        const themeSwitcher = document.getElementById("mode-toggle");
+        const themeSelect = document.getElementById("theme-select");
 
-        if (!themeSwitcher) {
+        if (!themeSelect) {
             return;
         }
 
         switch (theme) {
             case "light":
-                themeSwitcher.innerHTML =
-                    "<i class='bi bi-brightness-high'></i> light";
+                //@ts-ignore
+                themeSelect.value = "light";
                 break;
             case "dark":
-                themeSwitcher.innerHTML =
-                    "<i class='bi bi-moon-stars'></i> dark";
+                //@ts-ignore
+                themeSelect.value = "dark";
                 break;
             default:
-                themeSwitcher.innerHTML =
-                    "<i class='bi bi-circle-half'></i> auto";
+                //@ts-ignore
+                themeSelect.value = "auto";
                 break;
         }
     };
@@ -71,26 +71,15 @@
     window.addEventListener("DOMContentLoaded", () => {
         showActiveTheme(getPreferredTheme());
 
-        const toggle = document.getElementById("mode-toggle");
+        const themeSelect = document.getElementById("theme-select");
 
-        if (!toggle) {
+        if (!themeSelect) {
             return;
         }
 
-        toggle.addEventListener("click", () => {
-            var theme;
-            switch (getStoredTheme()) {
-                case "light":
-                    theme = "dark";
-                    break;
-                case "dark":
-                    theme = "auto";
-                    break;
-                default:
-                    theme = "light";
-                    break;
-            }
-
+        themeSelect.addEventListener("change", () => {
+            //@ts-ignore
+            var theme = themeSelect.value;
             setStoredTheme(theme);
             setTheme(theme);
             showActiveTheme(theme);
