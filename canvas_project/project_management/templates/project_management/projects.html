@@ -122,8 +122,13 @@
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <div class="d-flex gap-1">
-                                                    <div class="d-flex flex-column">
-                                                        <h1 class="fw-bolder">{{ project.name }}</h1>
+                                                    <div class="d-flex flex-column text-wrap text-break mt-2 flex-grow-1"
+                                                        style="word-wrap: break-word; 
+                                                            overflow-wrap: break-word; 
+                                                            white-space: normal;
+                                                            min-width: 200%;
+                                                            max-width: 100%;">
+                                                        <h1 class="fw-bolder">{{ project.name | truncatechars:100}}</h1>
                                                         <p class="fw-light">{{ project.description }}</p>
                                                         <p class="text-start">Last edited: {{ project.last_edited }}</p>
                                                     </div>
