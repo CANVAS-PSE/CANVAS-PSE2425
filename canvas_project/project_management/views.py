@@ -15,71 +15,79 @@ import h5py
 # General project handling
 @login_required
 def projects(request):
-    form = ProjectForm()
-    projectFile = request.FILES.get("file")
-    projectName = request.POST.get("name")
-    if projectName != None:
-        projectName = projectName.strip().replace(" ", "_")
-    projectDescription = request.POST.get("description")
-    if projectDescription != None:
-        projectDescription = projectDescription.strip()
-    if request.method == "GET":
-        allProjects = Project.objects.filter(owner=request.user).order_by(
-            "-last_edited"
-        )
-        for project in allProjects:
-            project.uid = _generate_uid(request)
-            project.token = _generate_token(project.name)
+    if request.method == "POST":
+        # Initialize the form with POST and FILE data
+        form = ProjectForm(request.POST, request.FILES)
 
-        context = {
-            "projects": allProjects,
-            "form": form,
-        }
-        return render(request, "project_management/projects.html", context)
-    elif request.method == "POST":
-        form = ProjectForm(request.POST)
-        if projectFile is None:
-            allProjects = Project.objects.all()
-            if form.is_valid():
-                nameUnique = True
-                for existingProject in allProjects:
-                    formName = form["name"].value()
-                    formName = formName.strip().replace(" ", "_")
-                    if (
-                        formName == existingProject.name
-                        and existingProject.owner == request.user
-                    ):
-                        nameUnique = False
-                if nameUnique:
-                    newProject = Project(
-                        name=projectName, description=projectDescription
-                    )
-                    newProject.owner = request.user
-                    newProject.last_edited = timezone.now()
-                    newProject.save()
-                    return redirect("editor", project_name=projectName)
-        else:
-            if form.is_valid():
+        # Check if form is valid before proceeding
+        if form.is_valid():
+            projectFile = request.FILES.get("file")
+            projectName = form.cleaned_data["name"].strip().replace(" ", "_")
+            projectDescription = (
+                form.cleaned_data["description"].strip()
+                if form.cleaned_data["description"]
+                else ""
+            )
+
+            # If no file is uploaded, handle the project creation without the file
+            if projectFile is None:
                 allProjects = Project.objects.filter(owner=request.user)
                 nameUnique = True
                 for existingProject in allProjects:
-                    if projectName == existingProject.name and str(
-                        (existingProject.owner) == request.user
+                    if (
+                        existingProject.name == projectName
+                        and existingProject.owner == request.user
                     ):
                         nameUnique = False
+                        break
 
                 if nameUnique:
                     newProject = Project(
-                        name=projectName, description=projectDescription
+                        name=projectName,
+                        description=projectDescription,
+                        owner=request.user,
+                        last_edited=timezone.now(),
                     )
-                    newProject.owner = request.user
-                    newProject.last_edited = timezone.now()
+                    newProject.save()
+                    return redirect("editor", project_name=projectName)
+
+            # Handle file upload (e.g., HDF5 file)
+            else:
+                allProjects = Project.objects.filter(owner=request.user)
+                nameUnique = True
+                for existingProject in allProjects:
+                    if (
+                        existingProject.name == projectName
+                        and existingProject.owner == request.user
+                    ):
+                        nameUnique = False
+                        break
+
+                if nameUnique:
+                    newProject = Project(
+                        name=projectName,
+                        description=projectDescription,
+                        owner=request.user,
+                        last_edited=timezone.now(),
+                    )
                     newProject.save()
                     openHDF5_CreateProject(projectFile, newProject)
                     return redirect("editor", project_name=projectName)
 
-        context = {"projects": allProjects, "form": form}
-        return render(request, "project_management/projects.html", context)
+    else:  # GET request
+        form = ProjectForm()
+
+    # Fetch all projects for the current user
+    allProjects = Project.objects.filter(owner=request.user).order_by("-last_edited")
+    for project in allProjects:
+        project.uid = _generate_uid(request)
+        project.token = _generate_token(project.name)
+
+    context = {
+        "projects": allProjects,
+        "form": form,
+    }
+    return render(request, "project_management/projects.html", context)
 
 
 @login_required
