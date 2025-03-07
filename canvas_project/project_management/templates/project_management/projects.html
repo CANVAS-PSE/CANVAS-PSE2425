@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block style %}
     {{ block.super }}
     <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
@@ -128,7 +129,7 @@
                                                             white-space: normal;
                                                             min-width: 200%;
                                                             max-width: 100%;">
-                                                        <h1 class="fw-bolder">{{ project.name | truncatechars:100}}</h1>
+                                                        <h1 class="fw-bolder">{{ project.name | truncate_with_end:100}}</h1>
                                                         <p class="fw-light">{{ project.description }}</p>
                                                         <p class="text-start">Last edited: {{ project.last_edited }}</p>
                                                     </div>
@@ -215,7 +216,7 @@
                                                                     </script>
                                                                     <div>
                                                                         By clicking
-                                                                        <i>Share {{ project.name }}</i>, for the next 72 hours anybody with the link
+                                                                        <i>Share {{ project.name | truncate_with_end:15}}</i>, for the next 72 hours anybody with the link
                                                                         below can get his own
                                                                         copy of this project.
                                                                     </div>
@@ -237,7 +238,7 @@
                                                                         <a href="{% url 'shareProject' project_name=project.name %}"
                                                                            type="button"
                                                                            onclick="handleCancelClick('{{ project.name }}')"
-                                                                           class="btn btn-primary">Share {{ project.name }}</a>
+                                                                           class="btn btn-primary">Share {{ project.name | truncate_with_end:15}}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -266,7 +267,7 @@
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         By clicking
-                                                                        <i>Delete {{ project.name }}</i>,
+                                                                        <i>Delete {{ project.name | truncate_with_end:15}}</i>,
                                                                         this project and all associated
                                                                         data will be irretrievably
                                                                         removed from the database and
@@ -274,7 +275,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                        <a href="{% url 'deleteProject' project.name %}" class="btn btn-danger">Delete {{ project.name }}</a>
+                                                                        <a href="{% url 'deleteProject' project.name %}" class="btn btn-danger">Delete {{ project.name | truncate_with_end:15}}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
