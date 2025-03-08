@@ -298,6 +298,20 @@ class ViewTests(TestCase):
         )
         self.assertEqual(Project.objects.count(), 1)
 
+    def test_update_project_POST_name_description_changed_description_is_empty(self):
+        response = self.client.post(
+            self.update_project_url,
+            {
+                "name": "Updated Test project",
+                "owner": self.user.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Project.objects.first().name, "Updated_Test_project")
+        self.assertEqual(Project.objects.first().description, "")
+        self.assertEqual(Project.objects.count(), 1)
+
     def test_update_project_POST_name_not_changed(self):
         response = self.client.post(
             self.update_project_url,
