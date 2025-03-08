@@ -1,5 +1,3 @@
-import { ItemDeletedEvent } from "deleteCommands";
-
 /**
  * Represents a single component of the inspector
  */

@@ -2,11 +2,6 @@ import { Editor } from "editor";
 import { Heliostat, LightSource, Receiver, SelectableObject } from "objects";
 import { Picker } from "picker";
 import { UndoRedoHandler } from "undoRedoHandler";
-import {
-    UpdateHeliostatCommand,
-    UpdateLightsourceCommand,
-    UpdateReceiverCommand,
-} from "updateCommands";
 
 export class OverviewHandler {
     #editor;
@@ -21,7 +16,6 @@ export class OverviewHandler {
     #lightsourceList;
     #htmlToObject = new Map();
     #objectToHtml = new Map();
-    #undoRedoHandler = new UndoRedoHandler();
 
     #objectType = Object.freeze({
         HELIOSTAT: "heliostat",
