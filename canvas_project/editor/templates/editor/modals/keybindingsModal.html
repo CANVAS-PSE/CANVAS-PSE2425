@@ -5,7 +5,7 @@
      aria-labelledby="keyboardModalLabel"
      aria-hidden="true">
      <div class="modal-dialog">
-        <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content" style="max-height: 90vh;">
             <div class="modal-header">
                 <h5 class="modal-title" id="keyboardModalLabel">Keybindings</h5>
                 <button type="button"
@@ -24,8 +24,10 @@
                         </select>
                     </div>
                 </div>
-            </div class="modal-body gap-1">
-            <div id="clientContent"></div>
+            </div>
+            <div class="modal-body gap-1" style="overflow-y: auto;">
+                <div id="clientContent"></div>
+            </div>
         </div>
     </div>
 </div>
