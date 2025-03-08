@@ -158,6 +158,7 @@ def duplicateProject(request, project_name):
         )
         settings = project.settings
         project.pk = None
+        project.favorite = False
 
         # Finding a new project name unique to user
         newNameFound = False
@@ -324,6 +325,7 @@ def sharedProjects(request, uid, token):
         )
         settings = project.settings
         project.pk = None
+        project.favorite = False
 
         # Finding a new project name unique to user
         newNameFound = False
