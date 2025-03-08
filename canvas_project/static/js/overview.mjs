@@ -2,11 +2,6 @@ import { Editor } from "editor";
 import { Heliostat, LightSource, Receiver, SelectableObject } from "objects";
 import { Picker } from "picker";
 import { UndoRedoHandler } from "undoRedoHandler";
-import {
-    UpdateHeliostatCommand,
-    UpdateLightsourceCommand,
-    UpdateReceiverCommand,
-} from "updateCommands";
 
 export class OverviewHandler {
     #editor;
@@ -21,7 +16,6 @@ export class OverviewHandler {
     #lightsourceList;
     #htmlToObject = new Map();
     #objectToHtml = new Map();
-    #undoRedoHandler = new UndoRedoHandler();
 
     #objectType = Object.freeze({
         HELIOSTAT: "heliostat",
@@ -102,9 +96,9 @@ export class OverviewHandler {
 
     #render() {
         // clear the list
-        this.#heliostatList.innerHTML = "";
-        this.#receiverList.innerHTML = "";
-        this.#lightsourceList.innerHTML = "";
+        this.#heliostatList.innerText = "";
+        this.#receiverList.innerText = "";
+        this.#lightsourceList.innerText = "";
 
         const objects = this.#editor.objects;
         const selectedObjects = this.#picker.getSelectedObjects();
@@ -134,21 +128,21 @@ export class OverviewHandler {
         if (this.#heliostatList.children.length == 0) {
             const text = document.createElement("i");
             text.classList.add("text-secondary");
-            text.innerHTML = "No heliostats in this scene";
+            text.innerText = "No heliostats in this scene";
             this.#heliostatList.appendChild(text);
         }
 
         if (this.#receiverList.children.length == 0) {
             const text = document.createElement("i");
             text.classList.add("text-secondary");
-            text.innerHTML = "No receivers in this scene";
+            text.innerText = "No receivers in this scene";
             this.#receiverList.appendChild(text);
         }
 
         if (this.#lightsourceList.children.length == 0) {
             const text = document.createElement("i");
             text.classList.add("text-secondary");
-            text.innerHTML = "No light sources in this scene";
+            text.innerText = "No light sources in this scene";
             this.#lightsourceList.appendChild(text);
         }
     }
@@ -171,7 +165,7 @@ export class OverviewHandler {
             "overviewElem",
             selected ? "bg-primary-subtle" : "bg-body-secondary"
         );
-    
+
         const icon = document.createElement("i");
         icon.classList.add(
             "bi-arrow-up-right-square",
@@ -179,32 +173,32 @@ export class OverviewHandler {
             "align-items-center"
         );
         heliostatEntry.appendChild(icon);
-    
+
         const text = document.createElement("div");
         text.classList.add("w-100", "d-flex", "align-items-center");
         text.style.whiteSpace = "normal";
         text.style.wordBreak = "break-word";
-        text.innerHTML =
+        text.innerText =
             object.objectName !== "" && object.objectName !== ""
                 ? object.objectName
                 : "Heliostat";
         heliostatEntry.appendChild(text);
-    
+
         const button = document.createElement("button");
         button.classList.add("btn", "btn-primary", "custom-btn");
-        button.style.height = "38px"; 
+        button.style.height = "38px";
         button.style.flexShrink = "0";
-        button.style.alignSelf = "center";    
+        button.style.alignSelf = "center";
         const buttonIcon = document.createElement("i");
         buttonIcon.classList.add("bi", "bi-pencil-square");
         button.appendChild(buttonIcon);
         heliostatEntry.appendChild(button);
-    
+
         this.#addEditFunctionality(button, object, this.#objectType.HELIOSTAT);
-    
+
         heliostatEntry.dataset.apiId = object.apiID.toString();
         heliostatEntry.dataset.type = this.#objectType.HELIOSTAT;
-    
+
         this.#htmlToObject.set(heliostatEntry, object);
         this.#objectToHtml.set(object, heliostatEntry);
         return heliostatEntry;
@@ -242,7 +236,7 @@ export class OverviewHandler {
         text.classList.add("w-100", "d-flex", "align-items-center");
         text.style.whiteSpace = "normal";
         text.style.wordBreak = "break-word";
-        text.innerHTML =
+        text.innerText =
             object.objectName !== "" && object.objectName
                 ? object.objectName
                 : "Receiver";
@@ -250,9 +244,9 @@ export class OverviewHandler {
 
         const button = document.createElement("button");
         button.classList.add("btn", "btn-primary", "custom-btn");
-        button.style.height = "38px"; 
+        button.style.height = "38px";
         button.style.flexShrink = "0";
-        button.style.alignSelf = "center";  
+        button.style.alignSelf = "center";
         const buttonIcon = document.createElement("i");
         buttonIcon.classList.add("bi", "bi-pencil-square");
         button.appendChild(buttonIcon);
@@ -300,7 +294,7 @@ export class OverviewHandler {
         text.classList.add("w-100", "d-flex", "align-items-center");
         text.style.whiteSpace = "normal";
         text.style.wordBreak = "break-word";
-        text.innerHTML =
+        text.innerText =
             object.objectName !== "" && object.objectName
                 ? object.objectName
                 : "Light source";
@@ -308,9 +302,9 @@ export class OverviewHandler {
 
         const button = document.createElement("button");
         button.classList.add("btn", "btn-primary", "custom-btn");
-        button.style.height = "38px"; 
+        button.style.height = "38px";
         button.style.flexShrink = "0";
-        button.style.alignSelf = "center";  
+        button.style.alignSelf = "center";
         const buttonIcon = document.createElement("i");
         buttonIcon.classList.add("bi", "bi-pencil-square");
         button.appendChild(buttonIcon);
@@ -383,7 +377,7 @@ export class OverviewHandler {
             object.objectName != "" && object.objectName
                 ? object.objectName
                 : type.charAt(0).toUpperCase() + type.slice(1, type.length);
-        entry.innerHTML = "";
+        entry.innerText = "";
         entry.appendChild(inputField);
         inputField.focus();
         inputField.select();
@@ -402,9 +396,16 @@ export class OverviewHandler {
         });
 
         inputField.addEventListener("change", () => {
-            if (inputField.value !== object.objectName) {
+            if (
+                inputField.value !== object.objectName &&
+                inputField.value.length < 200
+            ) {
                 object.updateAndSaveObjectName(inputField.value);
             }
+        });
+
+        inputField.addEventListener("blur", () => {
+            this.#render();
         });
     }
 }
