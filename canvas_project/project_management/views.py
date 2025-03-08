@@ -101,7 +101,7 @@ def updateProject(request, project_name):
                 if project_name == formName:
                     nameChanged = False
                 for existingProject in allProjects:
-                    if formName == existingProject.name:
+                    if existingProject.owner == request.user and formName == existingProject.name:
                         nameUnique = False
                 if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
