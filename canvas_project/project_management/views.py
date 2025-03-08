@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 import h5py
 
@@ -77,6 +78,8 @@ def projects(request):
                     newProject.save()
                     openHDF5_CreateProject(projectFile, newProject)
                     return redirect("editor", project_name=projectName)
+                else:
+                    messages.error(request, "Project name already exists.")
 
         context = {"projects": allProjects, "form": form}
         return render(request, "project_management/projects.html", context)
@@ -109,6 +112,8 @@ def updateProject(request, project_name):
                         project.description = formDescription
                     project.save()
                     return HttpResponseRedirect(reverse("projects"))
+                else:
+                    messages.error(request, "Project name already exists.")
                 return redirect("projects")
     return render(
         request,
