@@ -216,11 +216,11 @@ export class Editor {
             const z = pos.z;
             const magnitude = Math.sqrt(x * x + z * z);
         
-            if (magnitude > 1000) {
+            if (magnitude > 900) {
                 const normalizedX = x / magnitude;
                 const normalizedZ = z / magnitude;
-                pos.x = normalizedX * 1000;
-                pos.z = normalizedZ * 1000;
+                pos.x = normalizedX * 900;
+                pos.z = normalizedZ * 900;
             }
         });
 
