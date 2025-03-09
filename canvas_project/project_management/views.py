@@ -100,15 +100,14 @@ def projects(request):
 def updateProject(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     form = UpdateProjectForm(request.POST, instance=project)
+    allProjects = Project.objects.filter(owner=request.user).order_by("-last_edited")
     if request.method == "POST":
         if project.owner == request.user:
-            if form.is_valid:
-                allProjects = Project.objects.all()
+            if form.is_valid():
                 nameUnique = True
                 nameChanged = True
-                formName = form["name"].value()
-                formName = formName.replace(" ", "_")
-                formDescription = form["description"].value()
+                formName = form.cleaned_data["name"].strip().replace(" ", "_")
+                formDescription = form.cleaned_data.get("description", "")
                 if project_name == formName:
                     nameChanged = False
                 for existingProject in allProjects:
@@ -123,12 +122,22 @@ def updateProject(request, project_name):
                         project.description = formDescription
                     project.save()
                     return HttpResponseRedirect(reverse("projects"))
-                return redirect("projects")
-    return render(
-        request,
-        "project_management/projects.html",
-        {"form": form, project_name: project_name},
-    )
+                else:
+                    messages.error(request, "The project name must be unique.")
+
+            else:
+                for field in form:
+                    for error in field.errors:
+                        messages.error(request, f"Error in {field.label}: {error}")
+
+    else:
+        form = UpdateProjectForm(instance=project)
+
+    context = {
+        "projects": allProjects,
+        "form": form,
+    }
+    return HttpResponseRedirect(reverse("projects"))
 
 
 # Deleting a project
