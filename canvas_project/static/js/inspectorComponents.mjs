@@ -1,5 +1,3 @@
-import { ItemDeletedEvent } from "deleteCommands";
-
 /**
  * Represents a single component of the inspector
  */
@@ -73,7 +71,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
 
         const fieldName = document.createElement("div");
         fieldName.classList.add("d-flex", "align-items-center", "text-nowrap");
-        fieldName.innerHTML = this.#fieldName + ":";
+        fieldName.innerText = this.#fieldName + ":";
         wrapper.appendChild(fieldName);
 
         const input = document.createElement("input");
@@ -150,7 +148,7 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
         headerButton.dataset.bsTarget =
             "#" + this.#title.replace(" ", "") + "Collapse";
         headerButton.dataset.bsToggle = "collapse";
-        headerButton.innerHTML = this.#title;
+        headerButton.innerText = this.#title;
         header.appendChild(headerButton);
 
         headerButton.addEventListener("click", () => {
@@ -224,7 +222,7 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
 
         const fieldName = document.createElement("div");
         fieldName.classList.add("d-flex", "align-items-center", "text-nowrap");
-        fieldName.innerHTML = this.#fieldName + ":";
+        fieldName.innerText = this.#fieldName + ":";
         wrapper.appendChild(fieldName);
 
         const select = document.createElement("select");
@@ -315,7 +313,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
 
         const fieldName = document.createElement("div");
         fieldName.classList.add("d-flex", "align-items-center", "text-nowrap");
-        fieldName.innerHTML = this.#fieldName + ":";
+        fieldName.innerText = this.#fieldName + ":";
         header.appendChild(fieldName);
 
         const input = document.createElement("input");
@@ -398,7 +396,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
 
         const title = document.createElement("div");
         title.classList.add("fw-bolder", "fs-4");
-        title.innerHTML = this.#getFieldValueFunc();
+        title.innerText = this.#getFieldValueFunc();
         title.style.whiteSpace = "normal";
         title.style.wordBreak = "break-word";
         title.title = "Edit Name";
@@ -433,7 +431,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
 
         // Event listeners for clicking the title
         title.addEventListener("click", () => {
-            title.innerHTML = "";
+            title.innerText = "";
             inputField.value = this.#getFieldValueFunc();
             title.appendChild(inputField);
             inputField.focus();
@@ -442,7 +440,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
 
         // Event listeners for clicking the edit button
         editButton.addEventListener("click", () => {
-            title.innerHTML = "";
+            title.innerText = "";
             inputField.value = this.#getFieldValueFunc();
             title.appendChild(inputField);
             inputField.focus();
@@ -480,7 +478,10 @@ export class HeaderInspectorComponent extends InspectorComponent {
         });
 
         inputField.addEventListener("change", () => {
-            if (inputField.value !== this.#getFieldValueFunc()) {
+            if (
+                inputField.value !== this.#getFieldValueFunc() &&
+                inputField.value.length < 200
+            ) {
                 this.#saveFunc(inputField.value);
             }
             inputField.blur();
@@ -494,7 +495,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
         });
 
         inputField.addEventListener("blur", () => {
-            title.innerHTML = this.#getFieldValueFunc();
+            title.innerText = this.#getFieldValueFunc();
         });
 
         return wrapper;
