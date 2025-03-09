@@ -16,92 +16,109 @@ import h5py
 # General project handling
 @login_required
 def projects(request):
-    form = ProjectForm()
-    projectFile = request.FILES.get("file")
-    projectName = request.POST.get("name")
-    if projectName != None:
-        projectName = projectName.strip().replace(" ", "_")
-    projectDescription = request.POST.get("description")
-    if projectDescription != None:
-        projectDescription = projectDescription.strip()
-    if request.method == "GET":
-        allProjects = Project.objects.filter(owner=request.user).order_by(
-            "-last_edited"
-        )
-        for project in allProjects:
-            project.uid = _generate_uid(request)
-            project.token = _generate_token(project.name)
+    if request.method == "POST":
+        # Initialize the form with POST and FILE data
+        form = ProjectForm(request.POST, request.FILES)
 
-        context = {
-            "projects": allProjects,
-            "form": form,
-        }
-        return render(request, "project_management/projects.html", context)
-    elif request.method == "POST":
-        form = ProjectForm(request.POST)
-        if projectFile is None:
-            allProjects = Project.objects.all()
-            if form.is_valid():
-                nameUnique = True
-                for existingProject in allProjects:
-                    formName = form["name"].value()
-                    formName = formName.strip().replace(" ", "_")
-                    if (
-                        formName == existingProject.name
-                        and existingProject.owner == request.user
-                    ):
-                        nameUnique = False
-                if nameUnique:
-                    newProject = Project(
-                        name=projectName, description=projectDescription
-                    )
-                    newProject.owner = request.user
-                    newProject.last_edited = timezone.now()
-                    newProject.save()
-                    return redirect("editor", project_name=projectName)
-        else:
-            if form.is_valid():
+        # Check if form is valid before proceeding
+        if form.is_valid():
+            projectFile = request.FILES.get("file")
+            projectName = form.cleaned_data["name"].strip().replace(" ", "_")
+            projectDescription = (
+                form.cleaned_data["description"].strip()
+                if form.cleaned_data["description"]
+                else ""
+            )
+
+            # If no file is uploaded, handle the project creation without the file
+            if projectFile is None:
                 allProjects = Project.objects.filter(owner=request.user)
                 nameUnique = True
                 for existingProject in allProjects:
-                    if projectName == existingProject.name and str(
-                        (existingProject.owner) == request.user
+                    if (
+                        existingProject.name == projectName
+                        and existingProject.owner == request.user
                     ):
                         nameUnique = False
+                        break
 
                 if nameUnique:
                     newProject = Project(
-                        name=projectName, description=projectDescription
+                        name=projectName,
+                        description=projectDescription,
+                        owner=request.user,
+                        last_edited=timezone.now(),
                     )
-                    newProject.owner = request.user
-                    newProject.last_edited = timezone.now()
+                    newProject.save()
+                    return redirect("editor", project_name=projectName)
+                else:
+                    messages.error(request, "The project name must be unique.")
+
+            # Handle file upload
+            else:
+                allProjects = Project.objects.filter(owner=request.user)
+                nameUnique = True
+                for existingProject in allProjects:
+                    if (
+                        existingProject.name == projectName
+                        and existingProject.owner == request.user
+                    ):
+                        nameUnique = False
+                        break
+
+                if nameUnique:
+                    newProject = Project(
+                        name=projectName,
+                        description=projectDescription,
+                        owner=request.user,
+                        last_edited=timezone.now(),
+                    )
                     newProject.save()
                     openHDF5_CreateProject(projectFile, newProject)
                     return redirect("editor", project_name=projectName)
                 else:
-                    messages.error(request, "Project name already exists.")
+                    messages.error(request, "The project name must be unique.")
 
-        context = {"projects": allProjects, "form": form}
-        return render(request, "project_management/projects.html", context)
+        else:
+            for field in form:
+                for error in field.errors:
+                    messages.error(request, f"Error in {field.label}: {error}")
+
+    else:  # GET request
+        form = ProjectForm()
+
+    # Fetch all projects for the current user
+    allProjects = Project.objects.filter(owner=request.user).order_by("-last_edited")
+    for project in allProjects:
+        project.uid = _generate_uid(request)
+        project.token = _generate_token(project.name)
+
+    context = {
+        "projects": allProjects,
+        "form": form,
+    }
+    return render(request, "project_management/projects.html", context)
 
 
 @login_required
 def updateProject(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     form = UpdateProjectForm(request.POST, instance=project)
+    allProjects = Project.objects.filter(owner=request.user).order_by("-last_edited")
     if request.method == "POST":
         if project.owner == request.user:
-            if form.is_valid:
-                allProjects = Project.objects.all()
+            if form.is_valid():
                 nameUnique = True
                 nameChanged = True
-                formName = form["name"].value()
-                formName = formName.replace(" ", "_")
-                formDescription = form["description"].value()
+                formName = form.cleaned_data["name"].strip().replace(" ", "_")
+                formDescription = form.cleaned_data.get("description", "")
                 if project_name == formName:
                     nameChanged = False
                 for existingProject in allProjects:
-                    if existingProject.owner == request.user and formName == existingProject.name:
+                    if (
+                        existingProject.owner == request.user
+                        and formName == existingProject.name
+                    ):
                         nameUnique = False
                 if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
@@ -113,13 +130,17 @@ def updateProject(request, project_name):
                     project.save()
                     return HttpResponseRedirect(reverse("projects"))
                 else:
-                    messages.error(request, "Project name already exists.")
-                return redirect("projects")
-    return render(
-        request,
-        "project_management/projects.html",
-        {"form": form, project_name: project_name},
-    )
+                    messages.error(request, "The project name must be unique.")
+
+            else:
+                for field in form:
+                    for error in field.errors:
+                        messages.error(request, f"Error in {field.label}: {error}")
+
+    else:
+        form = UpdateProjectForm(instance=project)
+
+    return HttpResponseRedirect(reverse("projects"))
 
 
 # Deleting a project

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block style %}
     {{ block.super }}
     <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
@@ -33,14 +34,16 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4">
                 <div class="modal-body">
-                    <p class="font-italic">
-                        Projects will only be saved if they have a name unique to
-                        your already existing projects!
-                    </p>
+                    <style>
+                        ul.errorlist {
+                        display: none;
+                        }
+                    </style>
                     <form action=""
                           method="POST"
                           class="d-flex flex-column gap-2"
                           enctype="multipart/form-data">
+                          
                         {% csrf_token %} {{ form }}
                         <br />
                         <button class="btn btn-primary rounded-3" type="submit">Create</button>
@@ -122,8 +125,13 @@
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <div class="d-flex gap-1">
-                                                    <div class="d-flex flex-column">
-                                                        <h1 class="fw-bolder">{{ project.name }}</h1>
+                                                    <div class="d-flex flex-column text-wrap text-break mt-2 flex-grow-1"
+                                                        style="word-wrap: break-word; 
+                                                            overflow-wrap: break-word; 
+                                                            white-space: normal;
+                                                            min-width: 200%;
+                                                            max-width: 100%;">
+                                                        <h1 class="fw-bolder">{{ project.name | truncate_with_end:100}}</h1>
                                                         <p class="fw-light">{{ project.description }}</p>
                                                         <p class="text-start">Last edited: {{ project.last_edited }}</p>
                                                     </div>
@@ -165,7 +173,7 @@
                                                                         <input type="text" id="projectName_{{ forloop.counter }}" name="name" class="form-control" value="{{ project.name }}" required>
 
                                                                         <label for="projectDescription_{{ forloop.counter }}">Description</label>
-                                                                        <textarea id="projectDescription_{{ forloop.counter }}" name="description" class="form-control">{{ project.description }}</textarea>
+                                                                        <input id="projectDescription_{{ forloop.counter }}" name="description" class="form-control">{{ project.description }}</input>
                                                                         <button class="btn btn-primary rounded-3" type="submit">Save</button>
                                                                     </form>
                                                                 </div>
@@ -210,7 +218,7 @@
                                                                     </script>
                                                                     <div>
                                                                         By clicking
-                                                                        <i>Share {{ project.name }}</i>, for the next 72 hours anybody with the link
+                                                                        <i>Share {{ project.name | truncate_with_end:15}}</i>, for the next 72 hours anybody with the link
                                                                         below can get his own
                                                                         copy of this project.
                                                                     </div>
@@ -232,7 +240,7 @@
                                                                         <a href="{% url 'shareProject' project_name=project.name %}"
                                                                            type="button"
                                                                            onclick="handleCancelClick('{{ project.name }}')"
-                                                                           class="btn btn-primary">Share {{ project.name }}</a>
+                                                                           class="btn btn-primary">Share {{ project.name | truncate_with_end:15}}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -261,7 +269,7 @@
                                                                     </div>
                                                                     <div class="modal-body">
                                                                         By clicking
-                                                                        <i>Delete {{ project.name }}</i>,
+                                                                        <i>Delete {{ project.name | truncate_with_end:15}}</i>,
                                                                         this project and all associated
                                                                         data will be irretrievably
                                                                         removed from the database and
@@ -269,7 +277,7 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                        <a href="{% url 'deleteProject' project.name %}" class="btn btn-danger">Delete {{ project.name }}</a>
+                                                                        <a href="{% url 'deleteProject' project.name %}" class="btn btn-danger">Delete {{ project.name | truncate_with_end:15}}</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
