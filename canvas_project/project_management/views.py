@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 import h5py
 
@@ -51,7 +52,7 @@ def projects(request):
                     newProject.save()
                     return redirect("editor", project_name=projectName)
 
-            # Handle file upload (e.g., HDF5 file)
+            # Handle file upload
             else:
                 allProjects = Project.objects.filter(owner=request.user)
                 nameUnique = True
@@ -73,6 +74,11 @@ def projects(request):
                     newProject.save()
                     openHDF5_CreateProject(projectFile, newProject)
                     return redirect("editor", project_name=projectName)
+
+        else:
+            for field in form:
+                for error in field.errors:
+                    messages.error(request, f"Error in {field.label}: {error}")
 
     else:  # GET request
         form = ProjectForm()

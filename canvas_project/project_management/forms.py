@@ -5,26 +5,28 @@ import re
 from django.core.exceptions import ValidationError
 
 
-def validateSymbols(value):
-    if not re.match(r"^[a-zA-Z0-9_\säöüÄÖÜ-]+$", value):
+def validateSymbols(name):
+    if not re.match(r"^[a-zA-Z0-9_\säöüÄÖÜ-]+$", name):
         raise ValidationError("No special characters allowed.")
 
+    return name
 
-def validateFile(value):
-    # Check if the file is uploaded
-    if not value:
-        return value  # If no file is uploaded, no need for validation.
 
-    # Check file extension (only allow .h5 files for example)
-    if not value.name.endswith(".h5"):
+def validateFile(file):
+    # Check if a file is uploaded
+    if not file:
+        return file
+
+    # Check file extension (only allow .h5 files)
+    if not file.name.endswith(".h5"):
         raise ValidationError("Only HDF5 (.h5) files are allowed.")
 
     # Check file size
     max_size = 1024 * 1024 * 1024  # 1GB
-    if value.size > max_size:
+    if file.size > max_size:
         raise ValidationError("File size should not exceed 1GB.")
 
-    return value
+    return file
 
 
 class UpdateProjectForm(ModelForm):
