@@ -61,7 +61,7 @@
                                 </div>
                             </button>
                         </div>
-                        <div class="tab-content d-flex border-start ps-3 flex-fill"
+                        <div class="tab-content d-flex border-start p-3 flex-fill"
                              id="v-pills-tabContent">
                             <div class="tab-pane fade show active w-100"
                                  id="v-pills-general"
@@ -157,6 +157,17 @@
                                         <div id="passwordSection" style="display: none;">
                                             <hr />
                                             <h5 class="fw-bold">Change Password</h5>
+                                            <!-- Password requirements -->
+                                            <div id="password-requirements" class="alert alert-info">
+                                                <strong>Password must contain:</strong>
+                                                <ul>
+                                                    <li id="length">At least 8 characters</li>
+                                                    <li id="uppercase">At least one uppercase letter</li>
+                                                    <li id="lowercase">At least one lowercase letter</li>
+                                                    <li id="number">At least one digit</li>
+                                                    <li id="special">At least one special character (!@#$%^&*)</li>
+                                                </ul>
+                                            </div>
                                             <div class="mb-3">
                                                 <label for="old_password" class="form-label">Old Password</label>
                                                 <input type="password"
@@ -371,5 +382,45 @@
                     passwordSection.style.display = 'block';
                 }
             });
+    });
+</script>
+<!-- JavaScript to handle password requirements -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("new_password");
+
+        const requirements = {
+            length: document.getElementById("length"),
+            uppercase: document.getElementById("uppercase"),
+            lowercase: document.getElementById("lowercase"),
+            number: document.getElementById("number"),
+            special: document.getElementById("special"),
+        };
+
+        passwordInput.addEventListener("input", function () {
+            const password = passwordInput.value;
+
+            updateRequirement(requirements.length, password.length >= 8);
+            updateRequirement(requirements.uppercase, /[A-Z]/.test(password));
+            updateRequirement(requirements.lowercase, /[a-z]/.test(password));
+            updateRequirement(requirements.number, /\d/.test(password));
+            updateRequirement(requirements.special, /[!@#$%^&*()\-_=+<>?/]/.test(password));
+        });
+
+        function updateRequirement(element, isValid) {
+            if (isValid) {
+                // If valid, check mark (✅) and change the color to green
+                if (!element.innerHTML.startsWith('✅')) {
+                    element.innerHTML = `✅ ${element.textContent.replace(/^✅ |^❌ /, "")}`;
+                    element.style.color = "green";
+                }
+            } else {
+                // If invalid, X mark (❌) and change the color to red
+                if (!element.innerHTML.startsWith('❌')) {
+                    element.innerHTML = `❌ ${element.textContent.replace(/^✅ |^❌ /, "")}`;
+                    element.style.color = "red";
+                }
+            }
+        }
     });
 </script>

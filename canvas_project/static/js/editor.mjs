@@ -211,15 +211,16 @@ export class Editor {
         this.#controls.maxPolarAngle = Math.PI / 2 - 0.02;
 
         this.#controls.addEventListener("change", () => {
-            const x = this.#controls.target.x;
-            const z = this.#controls.target.z;
-
+            const pos = this.#camera.position;
+            const x = pos.x;
+            const z = pos.z;
             const magnitude = Math.sqrt(x * x + z * z);
-
-            if (magnitude > 500) {
-                const factor = 500 / magnitude;
-                this.#controls.target.x = x * factor;
-                this.#controls.target.z = z * factor;
+        
+            if (magnitude > 900) {
+                const normalizedX = x / magnitude;
+                const normalizedZ = z / magnitude;
+                pos.x = normalizedX * 900;
+                pos.z = normalizedZ * 900;
             }
         });
 
