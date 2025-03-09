@@ -51,6 +51,8 @@ def projects(request):
                     )
                     newProject.save()
                     return redirect("editor", project_name=projectName)
+                else:
+                    messages.error(request, "The project name must be unique.")
 
             # Handle file upload
             else:
@@ -74,6 +76,8 @@ def projects(request):
                     newProject.save()
                     openHDF5_CreateProject(projectFile, newProject)
                     return redirect("editor", project_name=projectName)
+                else:
+                    messages.error(request, "The project name must be unique.")
 
         else:
             for field in form:
