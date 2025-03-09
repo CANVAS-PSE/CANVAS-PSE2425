@@ -22,7 +22,7 @@ def validateFile(value):
     # Check file size
     max_size = 1024 * 1024 * 1024  # 1GB
     if value.size > max_size:
-        raise ValidationError("File size should not exceed 10MB.")
+        raise ValidationError("File size should not exceed 1GB.")
 
     return value
 
