@@ -217,7 +217,6 @@ export class Editor {
             const magnitude = Math.sqrt(x * x + z * z);
         
             if (magnitude > 1000) {
-                // Normalize the vector (x, z) and scale it to the circle's radius (500)
                 const normalizedX = x / magnitude;
                 const normalizedZ = z / magnitude;
                 pos.x = normalizedX * 1000;
