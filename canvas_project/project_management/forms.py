@@ -59,7 +59,13 @@ class ProjectForm(forms.Form):
     description = forms.CharField(
         max_length=500, required=False, widget=forms.TextInput()
     )
-    file = forms.FileField(required=False, validators=[validateFile])
+    file = forms.FileField(
+        required=False,
+        validators=[validateFile],
+        widget=forms.ClearableFileInput(
+            attrs={"class": "form-control", "accept": ".h5"}
+        ),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
