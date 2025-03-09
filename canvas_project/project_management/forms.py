@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 
 def validateSymbols(value):
     if not re.match(r"^[a-zA-Z0-9_\säöüÄÖÜ-]+$", value):
-        raise ValidationError("Only letters, numbers, and spaces are allowed.")
+        raise ValidationError("No special characters allowed.")
 
 
 def validateFile(value):
@@ -37,12 +37,18 @@ class UpdateProjectForm(ModelForm):
         validators=[validateSymbols],
     )
 
+    description = forms.CharField(
+        max_length=500, required=False, widget=forms.TextInput()
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["name"].widget.attrs.update(
             {"class": "form-control", "id": "createProjectNameInput"}
         )
-        self.fields["description"].widget.attrs.update({"class": "form-control"})
+        self.fields["description"].widget.attrs.update(
+            {"class": "form-control", "id": "createProjectDescriptionInput"}
+        )
 
 
 class ProjectForm(forms.Form):
@@ -50,7 +56,9 @@ class ProjectForm(forms.Form):
         max_length=100,
         validators=[validateSymbols],
     )
-    description = forms.CharField(max_length=500, required=False)
+    description = forms.CharField(
+        max_length=500, required=False, widget=forms.TextInput()
+    )
     file = forms.FileField(required=False, validators=[validateFile])
 
     def __init__(self, *args, **kwargs):
