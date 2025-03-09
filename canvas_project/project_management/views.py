@@ -77,11 +77,7 @@ def projects(request):
                     openHDF5_CreateProject(projectFile, newProject)
                     return redirect("editor", project_name=projectName)
                 else:
-<<<<<<< HEAD
                     messages.error(request, "The project name must be unique.")
-=======
-                    messages.error(request, "Project name already exists.")
->>>>>>> e0f64c7b521704870ab068f65c0aaaad0982569b
 
         else:
             for field in form:
@@ -119,7 +115,10 @@ def updateProject(request, project_name):
                 if project_name == formName:
                     nameChanged = False
                 for existingProject in allProjects:
-                    if existingProject.owner == request.user and formName == existingProject.name:
+                    if (
+                        existingProject.owner == request.user
+                        and formName == existingProject.name
+                    ):
                         nameUnique = False
                 if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
@@ -142,8 +141,6 @@ def updateProject(request, project_name):
         form = UpdateProjectForm(instance=project)
 
     return HttpResponseRedirect(reverse("projects"))
-
-
 
 
 # Deleting a project
