@@ -52,25 +52,8 @@ export class Picker {
         this.#isDragging = false;
         this.#selectedObject = null;
 
-        // Mouse event listeners on the canvas
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mousedown", (event) => {
-            // @ts-ignore
-            this.#onMouseDown(event);
-        });
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mousemove", (event) => {
-            // @ts-ignore
-            this.#onMouseMove(event);
-        });
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mouseup", (event) => {
-            // @ts-ignore
-            this.#onMouseUp(event);
-        });
+        // Initialize event listeners for the canvas
+        this.#initEventListenersCanvas;
 
         // Keyboard event listeners for snap-to-grid functionality
         window.addEventListener("keydown", (event) => {
@@ -81,6 +64,30 @@ export class Picker {
         });
 
         this.#addEventListenerCustomEvent();
+    }
+
+    #initEventListenersCanvas() {
+        const canvasChild =
+            this.#canvas.children[this.#canvas.children.length - 1];
+
+        const eventHandlers = {
+            mousedown: (event) => {
+                // @ts-ignore
+                this.#onMouseDown(event);
+            },
+            mousemove: (event) => {
+                // @ts-ignore
+                this.#onMouseMove(event);
+            },
+            mouseup: (event) => {
+                // @ts-ignore
+                this.#onMouseUp(event);
+            },
+        };
+
+        Object.keys(eventHandlers).forEach(function (eventName) {
+            canvasChild.addEventListener(eventName, eventHandlers[eventName]);
+        });
     }
 
     /**
@@ -349,14 +356,20 @@ export class Picker {
                     }
                 }
                 // Prevents an object from being dragged below ground level
-                this.#transformControls.addEventListener('objectChange', () => {
-                    const groundLevel = 0; 
+                this.#transformControls.addEventListener("objectChange", () => {
+                    const groundLevel = 0;
                     if (this.#selectedObject.position.y < groundLevel) {
                         this.#selectedObject.position.y = groundLevel;
                     }
                     // If the object has a lockPositionY method, call it
-                    if (typeof this.#transformControls.object.lockPositionY === 'function') {
-                        this.#transformControls.object.lockPositionY(groundLevel - this.#transformControls.object.position.y);
+                    if (
+                        typeof this.#transformControls.object.lockPositionY ===
+                        "function"
+                    ) {
+                        this.#transformControls.object.lockPositionY(
+                            groundLevel -
+                                this.#transformControls.object.position.y
+                        );
                     }
                 });
             } else {

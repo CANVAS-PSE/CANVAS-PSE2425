@@ -79,18 +79,20 @@ export class Navbar {
             ["add-heliostat-nav-bar", this.#objectManager.createHeliostat],
             ["add-receiver-nav-bar", this.#objectManager.createReceiver],
             ["add-lightSource-nav-bar", this.#objectManager.createLightSource],
-        ]
+        ];
 
         buttons.forEach(([id, action]) => {
             // Get the button by its ID and add a click event listener
             // If the button is not found, log a warning
             const btn = document.getElementById(id);
             if (btn) {
-                btn.addEventListener("click", () => action.call(this.#objectManager));
+                btn.addEventListener("click", () =>
+                    action.call(this.#objectManager)
+                );
             } else {
                 console.warn(`Navbar: Button "${id}" not found.`);
             }
-        }
+        });
     }
 
     /**
@@ -113,13 +115,14 @@ export class Navbar {
 
         select.addEventListener("change", () => {
             if (select.value === "mac") {
-                content.innerHTML = document.getElementById("macKeybindings").innerHTML;
+                content.innerHTML =
+                    document.getElementById("macKeybindings").innerHTML;
             } else if (select.value === "other") {
-                content.innerHTML = document.getElementById("windowsKeybindings").innerHTML;
+                content.innerHTML =
+                    document.getElementById("windowsKeybindings").innerHTML;
             } else {
                 content.innerHTML = "";
             }
         });
-
     }
 }
