@@ -66,6 +66,10 @@ export class Picker {
         this.#addEventListenerCustomEvent();
     }
 
+    /**
+     * Initializes event listeners for the canvas.
+     * This method adds mouse event listeners to the last child of the canvas element.
+     */
     #initEventListenersCanvas() {
         const canvasChild =
             this.#canvas.children[this.#canvas.children.length - 1];
