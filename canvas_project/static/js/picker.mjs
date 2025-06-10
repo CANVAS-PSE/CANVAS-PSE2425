@@ -52,8 +52,25 @@ export class Picker {
         this.#isDragging = false;
         this.#selectedObject = null;
 
-        // Initialize event listeners for the canvas
-        this.#initEventListenersCanvas;
+        // Mouse event listeners on the canvas
+        this.#canvas.children[
+            this.#canvas.children.length - 1
+        ].addEventListener("mousedown", (event) => {
+            // @ts-ignore
+            this.#onMouseDown(event);
+        });
+        this.#canvas.children[
+            this.#canvas.children.length - 1
+        ].addEventListener("mousemove", (event) => {
+            // @ts-ignore
+            this.#onMouseMove(event);
+        });
+        this.#canvas.children[
+            this.#canvas.children.length - 1
+        ].addEventListener("mouseup", (event) => {
+            // @ts-ignore
+            this.#onMouseUp(event);
+        });
 
         // Keyboard event listeners for snap-to-grid functionality
         window.addEventListener("keydown", (event) => {
@@ -64,34 +81,6 @@ export class Picker {
         });
 
         this.#addEventListenerCustomEvent();
-    }
-
-    /**
-     * Initializes event listeners for the canvas.
-     * This method adds mouse event listeners to the last child of the canvas element.
-     */
-    #initEventListenersCanvas() {
-        const canvasChild =
-            this.#canvas.children[this.#canvas.children.length - 1];
-
-        const eventHandlers = {
-            mousedown: (event) => {
-                // @ts-ignore
-                this.#onMouseDown(event);
-            },
-            mousemove: (event) => {
-                // @ts-ignore
-                this.#onMouseMove(event);
-            },
-            mouseup: (event) => {
-                // @ts-ignore
-                this.#onMouseUp(event);
-            },
-        };
-
-        Object.keys(eventHandlers).forEach(function (eventName) {
-            canvasChild.addEventListener(eventName, eventHandlers[eventName]);
-        });
     }
 
     /**
