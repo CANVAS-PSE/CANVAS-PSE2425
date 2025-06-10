@@ -1,10 +1,11 @@
 import { ObjectManager } from "objectManager";
+/**
+ * Manages the navigation bar in the editor on the top of the page.
+ * and handles the functionality of the buttons in the navbar.
+ */
 
 export class Navbar {
     #objectManager;
-    #createHeliostatButton;
-    #createReceiverButton;
-    #createLightSourceButton;
 
     /**
      *
@@ -19,6 +20,10 @@ export class Navbar {
         this.#setUpKeybindings();
     }
 
+    /**
+     * Sets up the fullscreen functionality for the navbar.
+     * This method adds an event listener to the fullscreen button
+     */
     #setupFullscreen() {
         let fullscreen = document.getElementById("fullscreen");
 
@@ -43,6 +48,10 @@ export class Navbar {
         };
     }
 
+    /**
+     * Sets up the file options modal functionality.
+     * This method adds an event listener to the create new project modal
+     */
     #setupFileOptions() {
         let createNewProject = document.getElementById("createNewProject");
 
@@ -60,32 +69,35 @@ export class Navbar {
     }
 
     /**
-     * Method to add event listeners to the buttons on the Navbar
+     * Method to add event listeners to the buttons on the bottom bar for object placement.
+     * This method sets up the buttons for creating heliostats, receivers, and light sources.
      */
     #setUpObjectPlacement() {
-        // Buttons on the bottom bar
-        this.#createHeliostatButton = document.getElementById(
-            "add-heliostat-nav-bar"
-        );
-        this.#createReceiverButton = document.getElementById(
-            "add-receiver-nav-bar"
-        );
-        this.#createLightSourceButton = document.getElementById(
-            "add-lightSource-nav-bar"
-        );
+        // Define the buttons and their corresponding actions
+        /** @type {[string, Function][]} */
+        const buttons = [
+            ["add-heliostat-nav-bar", this.#objectManager.createHeliostat],
+            ["add-receiver-nav-bar", this.#objectManager.createReceiver],
+            ["add-lightSource-nav-bar", this.#objectManager.createLightSource],
+        ]
 
-        // Event listeners for the buttons on the bottom bar
-        this.#createHeliostatButton.addEventListener("click", () => {
-            this.#objectManager.createHeliostat();
-        });
-        this.#createReceiverButton.addEventListener("click", () => {
-            this.#objectManager.createReceiver();
-        });
-        this.#createLightSourceButton.addEventListener("click", () => {
-            this.#objectManager.createLightSource();
-        });
+        buttons.forEach(([id, action]) => {
+            // Get the button by its ID and add a click event listener
+            // If the button is not found, log a warning
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.addEventListener("click", () => action.call(this.#objectManager));
+            } else {
+                console.warn(`Navbar: Button "${id}" not found.`);
+            }
+        }
     }
 
+    /**
+     * Sets up the keybindings modal functionality.
+     * This method adds an event listener to the client select dropdown
+     * and updates the content based on the selected client type.
+     */
     #setUpKeybindings() {
         const select = document.getElementById("clientSelect");
         const content = document.getElementById("clientContent");
