@@ -1,9 +1,7 @@
 import * as THREE from "three";
-import { Receiver, SelectableObject } from "objects";
+import { SelectableObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 import { ItemCreatedEvent } from "createCommands";
-
-import * as bootstrap from "bootstrap";
 
 export const Mode = Object.freeze({
     NONE: "none",
@@ -52,35 +50,67 @@ export class Picker {
         this.#isDragging = false;
         this.#selectedObject = null;
 
-        // Mouse event listeners on the canvas
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mousedown", (event) => {
-            // @ts-ignore
-            this.#onMouseDown(event);
-        });
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mousemove", (event) => {
-            // @ts-ignore
-            this.#onMouseMove(event);
-        });
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mouseup", (event) => {
-            // @ts-ignore
-            this.#onMouseUp(event);
-        });
-
-        // Keyboard event listeners for snap-to-grid functionality
-        window.addEventListener("keydown", (event) => {
-            this.#onKeyDown(event);
-        });
-        window.addEventListener("keyup", (event) => {
-            this.#onKeyUp(event);
-        });
-
+        // Set up event listeners for mouse events
+        this.#setUpMouseEvents();
+        // Set up event listeners for keyboard events
+        this.#setUpKeyboardEvents();
+        // Add event listeners for custom events
         this.#addEventListenerCustomEvent();
+    }
+
+    #setUpMouseEvents() {
+        const canvasChild =
+            this.#canvas.children[this.#canvas.children.length - 1];
+
+        /** @type {[string, Function][]} */
+        const mouseEventMapping = [
+            [
+                "mousedown",
+                (event) => {
+                    this.#onMouseDown(event);
+                },
+            ],
+            [
+                "mousemove",
+                (event) => {
+                    this.#onMouseMove(event);
+                },
+            ],
+            [
+                "mouseup",
+                (event) => {
+                    this.#onMouseUp(event);
+                },
+            ],
+        ];
+
+        mouseEventMapping.forEach(([eventName, handler]) => {
+            // @ts-ignore
+            canvasChild.addEventListener(eventName, handler);
+        });
+    }
+
+    #setUpKeyboardEvents() {
+        /** @type {[string, Function][]} */
+        const keyboardEventMapping = [
+            [
+                "keydown",
+                (event) => {
+                    this.#onKeyDown(event);
+                },
+            ],
+            [
+                "keyup",
+                (event) => {
+                    this.#onKeyUp(event);
+                },
+            ],
+        ];
+
+        keyboardEventMapping.forEach(([eventName, handler]) => {
+            // @ts-ignore
+            window.addEventListener(eventName, handler);
+        });
     }
 
     /**
@@ -112,14 +142,21 @@ export class Picker {
      */
     setMode(mode) {
         this.#mode = mode;
-        if (mode === Mode.NONE) {
-            this.#transformControls.detach();
-        } else if (mode === Mode.MOVE) {
-            this.#transformControls.setMode("translate");
-        } else {
-            this.#transformControls.setMode("rotate");
-        }
 
+        switch (mode) {
+            case Mode.NONE:
+                this.#transformControls.detach();
+                break;
+            case Mode.MOVE:
+                this.#transformControls.setMode("translate");
+                break;
+            case Mode.ROTATE:
+                this.#transformControls.setMode("rotate");
+                break;
+            default:
+                console.warn("Picker has no valid mode set:", mode);
+                break;
+        }
         // update the available input methods, depending on the mode
         this.#attachTransform();
         this.#attachSelectionBox();
