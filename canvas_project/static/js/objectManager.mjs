@@ -7,10 +7,11 @@ import {
     CreateHeliostatCommand,
     CreateLightSourceCommand,
 } from "createCommands";
-import * as bootstrap from "bootstrap";
 
 /**
  * Class to manage the objects in the scene
+ * Handles the creation of heliostats, receivers, and light sources
+ * Also manages keyboard shortcuts for deleting and duplicating objects
  */
 
 export class ObjectManager {
@@ -39,7 +40,7 @@ export class ObjectManager {
     createHeliostat() {
         const heliostat = new Heliostat(
             "Heliostat",
-            new Vector3(-15, 0, -15),
+            new Vector3(15, 0, -15),
             new Vector3(0, 0, 0),
             4,
             "ideal"
@@ -47,9 +48,7 @@ export class ObjectManager {
         this.#undoRedoHandler.executeCommand(
             new CreateHeliostatCommand(heliostat)
         );
-        let selectedObject = [heliostat];
-        this.#openInspector();
-        this.#picker.setSelection(selectedObject);
+        this.#picker.setSelection([heliostat]);
     }
 
     /**
@@ -73,9 +72,7 @@ export class ObjectManager {
             new CreateReceiverCommand(receiver)
         );
 
-        let selectedObject = [receiver];
-        this.#openInspector();
-        this.#picker.setSelection(selectedObject);
+        this.#picker.setSelection([receiver]);
     }
 
     /**
@@ -93,9 +90,7 @@ export class ObjectManager {
         this.#undoRedoHandler.executeCommand(
             new CreateLightSourceCommand(lightSource)
         );
-        let selectedObject = [lightSource];
-        this.#openInspector();
-        this.#picker.setSelection(selectedObject);
+        this.#picker.setSelection([lightSource]);
     }
 
     /**
@@ -126,15 +121,5 @@ export class ObjectManager {
                 this.#objectList[0].duplicate();
             }
         });
-    }
-
-    /**
-     * Method to open the inspector pane when an object is added
-     */
-    #openInspector() {
-        const inspectorTabButton = document.querySelector("#object-tab");
-
-        const tabInstance = new bootstrap.Tab(inspectorTabButton);
-        tabInstance.show();
     }
 }
