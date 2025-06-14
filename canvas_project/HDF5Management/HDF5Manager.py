@@ -18,14 +18,14 @@ from artist.util.configuration_classes import (
 )
 from artist.util.scenario_generator import ScenarioGenerator
 from artist.util.surface_converter import SurfaceConverter
-
-from project_management.models import Heliostat, Lightsource, Receiver
+from project_management.models import Heliostat, Lightsource, Project, Receiver
 import h5py
 from django.conf import settings
+from django.contrib.auth.models import User
 
 
 class HDF5Manager:
-    def createHDF5File(self, user, project):
+    def createHDF5File(self, user: User, project: Project):
         """
         Creates the actual HDF5 file
 
@@ -244,9 +244,9 @@ class HDF5Manager:
         )
         scenario_generator.generate_scenario()
 
-    def createProjectFromHDF5File(self, projectFile, newProject):
+    def createProjectFromHDF5File(self, projectFile: str, newProject: Project):
         with h5py.File(projectFile, "r") as f:
-            heliostatsGroup = f.get("heliostats")
+            heliostatsGroup: h5py.Group = f.get("heliostats")
             if heliostatsGroup is not None:
                 for heliostatObject in heliostatsGroup:
                     heliostat = heliostatsGroup[heliostatObject]
@@ -277,17 +277,17 @@ class HDF5Manager:
                         number_of_facets=numberOfFacets,
                     )
 
-            powerplantGroup = f.get("power_plant")
+            powerplantGroup: h5py.Group = f.get("power_plant")
             if powerplantGroup is not None:
                 pass
             # At the moment there is no powerPlant position stored with a scenario in CANVAS
 
-            prototypesGroup = f.get("prototypes")
+            prototypesGroup: h5py.Group = f.get("prototypes")
             if prototypesGroup is not None:
                 pass
                 # Placeholder for when prototypes are effectively used
 
-            lightsourcesGroup = f.get("lightsources")
+            lightsourcesGroup: h5py.Group = f.get("lightsources")
             if lightsourcesGroup is not None:
                 for lightsourceObject in lightsourcesGroup:
                     lightsource = lightsourcesGroup[lightsourceObject]
@@ -309,7 +309,7 @@ class HDF5Manager:
                         mean=mean[()],
                     )
 
-            receiversGroup = f.get("target_areas")
+            receiversGroup: h5py.Group = f.get("target_areas")
             if receiversGroup is not None:
                 for receiverObject in receiversGroup:
                     receiver = receiversGroup[receiverObject]
