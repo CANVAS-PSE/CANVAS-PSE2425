@@ -1,6 +1,6 @@
 django
 djangorestframework
-https://github.com/ARTIST-Association/ARTIST
+git+https://github.com/ARTIST-Association/ARTIST.git
 torch
 django-cleanup
 django-allauth
