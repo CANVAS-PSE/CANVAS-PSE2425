@@ -16,7 +16,7 @@ class Project(models.Model):
     preview = models.ImageField(
         upload_to="project_previews/",
     )
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="projects")
 
     class Meta:
         # Make each combination of owner and project name unique
