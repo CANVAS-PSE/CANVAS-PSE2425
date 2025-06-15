@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib import messages
-
+from HDF5Management.HDF5Manager import HDF5Manager
 import h5py
 
 
@@ -74,7 +74,10 @@ def projects(request):
                         last_edited=timezone.now(),
                     )
                     newProject.save()
-                    openHDF5_CreateProject(projectFile, newProject)
+
+                    hdf5Manager = HDF5Manager()
+                    hdf5Manager.createProjectFromHDF5File(projectFile, newProject)
+
                     return redirect("editor", project_name=projectName)
                 else:
                     messages.error(request, "The project name must be unique.")
@@ -209,103 +212,6 @@ def duplicateProject(request, project_name):
         settings.save()
 
         return redirect("projects")
-
-
-def openHDF5_CreateProject(projectFile, newProject):
-    with h5py.File(projectFile, "r") as f:
-        heliostatsGroup = f.get("heliostats")
-        if heliostatsGroup is not None:
-            for heliostatObject in heliostatsGroup:
-                heliostat = heliostatsGroup[heliostatObject]
-
-                aimpoint = heliostat["aim_point"]
-                aimpoint_x = aimpoint[0]
-                aimpoint_y = aimpoint[1]
-                aimpoint_z = aimpoint[2]
-
-                position = heliostat["position"]
-                position_x = position[0]
-                position_y = position[1]
-                position_z = position[2]
-
-                surface = heliostat["surface"]
-                facets = surface["facets"]
-                numberOfFacets = len(facets.keys())
-
-                Heliostat.objects.create(
-                    project=newProject,
-                    name=str(heliostatObject),
-                    position_x=position_x,
-                    position_y=position_y,
-                    position_z=position_z,
-                    aimpoint_x=aimpoint_x,
-                    aimpoint_y=aimpoint_y,
-                    aimpoint_z=aimpoint_z,
-                    number_of_facets=numberOfFacets,
-                )
-
-        powerplantGroup = f.get("power_plant")
-        if powerplantGroup is not None:
-            pass
-        # At the moment there is no powerPlant position stored with a scenario in CANVAS
-
-        prototypesGroup = f.get("prototypes")
-        if prototypesGroup is not None:
-            pass
-            # Placeholder for when prototypes are effectively used
-
-        lightsourcesGroup = f.get("lightsources")
-        if lightsourcesGroup is not None:
-            for lightsourceObject in lightsourcesGroup:
-                lightsource = lightsourcesGroup[lightsourceObject]
-                numberOfRays = lightsource["number_of_rays"]
-                lightsourceType = lightsource["type"]
-
-                distributionParams = lightsource["distribution_parameters"]
-                covariance = distributionParams["covariance"]
-                distributionType = distributionParams["distribution_type"]
-                mean = distributionParams["mean"]
-
-                Lightsource.objects.create(
-                    project=newProject,
-                    name=str(lightsourceObject),
-                    number_of_rays=numberOfRays[()],
-                    lightsource_type=lightsourceType[()].decode("utf-8"),
-                    covariance=covariance[()],
-                    distribution_type=distributionType[()].decode("utf-8"),
-                    mean=mean[()],
-                )
-
-        receiversGroup = f.get("target_areas")
-        if receiversGroup is not None:
-            for receiverObject in receiversGroup:
-                receiver = receiversGroup[receiverObject]
-
-                position = receiver["position_center"]
-                position_x = position[0]
-                position_y = position[1]
-                position_z = position[2]
-
-                normal = receiver["normal_vector"]
-                normal_x = normal[0]
-                normal_y = normal[1]
-                normal_z = normal[2]
-
-                plane_e = receiver["plane_e"]
-                plane_u = receiver["plane_u"]
-
-                Receiver.objects.create(
-                    project=newProject,
-                    name=str(receiverObject),
-                    position_x=position_x,
-                    position_y=position_y,
-                    position_z=position_z,
-                    normal_x=normal_x,
-                    normal_y=normal_y,
-                    normal_z=normal_z,
-                    plane_e=plane_e[()],
-                    plane_u=plane_u[()],
-                )
 
 
 # Share a project
