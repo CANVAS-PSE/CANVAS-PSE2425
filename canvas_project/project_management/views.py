@@ -32,17 +32,7 @@ def projects(request):
 
             # If no file is uploaded, handle the project creation without the file
             if projectFile is None:
-                allProjects = Project.objects.filter(owner=request.user)
-                nameUnique = True
-                for existingProject in allProjects:
-                    if (
-                        existingProject.name == projectName
-                        and existingProject.owner == request.user
-                    ):
-                        nameUnique = False
-                        break
-
-                if nameUnique:
+                if isNameUnique(request.user, projectName):
                     newProject = Project(
                         name=projectName,
                         description=projectDescription,
@@ -56,17 +46,7 @@ def projects(request):
 
             # Handle file upload
             else:
-                allProjects = Project.objects.filter(owner=request.user)
-                nameUnique = True
-                for existingProject in allProjects:
-                    if (
-                        existingProject.name == projectName
-                        and existingProject.owner == request.user
-                    ):
-                        nameUnique = False
-                        break
-
-                if nameUnique:
+                if isNameUnique(request.user, projectName):
                     newProject = Project(
                         name=projectName,
                         description=projectDescription,
@@ -111,18 +91,12 @@ def updateProject(request, project_name):
     if request.method == "POST":
         if project.owner == request.user:
             if form.is_valid():
-                nameUnique = True
+                nameUnique = isNameUnique(request.user, project_name)
                 nameChanged = True
                 formName = form.cleaned_data["name"].strip().replace(" ", "_")
                 formDescription = form.cleaned_data.get("description", "")
                 if project_name == formName:
                     nameChanged = False
-                for existingProject in allProjects:
-                    if (
-                        existingProject.owner == request.user
-                        and formName == existingProject.name
-                    ):
-                        nameUnique = False
                 if nameUnique or not nameChanged:
                     project.last_edited = timezone.now()
                     project.name = formName
@@ -291,3 +265,12 @@ def _generate_uid(request):
 
 def _generate_token(project_name):
     return urlsafe_base64_encode(str(project_name).encode())
+
+
+def isNameUnique(user: User, projectName: str) -> bool:
+    unique = True
+    for project in user.projects.all():
+        if project.name == projectName:
+            unique = False
+            break
+    return unique
