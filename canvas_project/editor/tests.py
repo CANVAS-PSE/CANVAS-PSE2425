@@ -3,7 +3,6 @@ from django.test import TestCase, Client
 from project_management.models import Project, Heliostat, Receiver, Lightsource
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.contrib.messages import get_messages
 import os
 from django.conf import settings
 import h5py
