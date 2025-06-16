@@ -4,7 +4,6 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
 from HDF5Management.HDF5Manager import HDF5Manager
 from project_management.forms import ProjectForm
 from django.http import FileResponse, HttpResponse, Http404
@@ -45,82 +44,6 @@ def editor(request, project_name):
         createProjectForm = ProjectForm()
         allProjects = Project.objects.filter(owner=request.user).order_by(
             "-last_edited"
-        )
-
-        return render(
-            request,
-            "editor/editor.html",
-            context={
-                "project_id": project.pk,
-                "project_name": project.name,
-                "createProjectForm": createProjectForm,
-                "projects": allProjects,
-            },
-        )
-    elif request.method == "POST":
-        form = ProjectForm()
-        projectFile = request.FILES.get("file")
-        projectName = request.POST.get("name")
-        projectDescription = request.POST.get("description")
-        form = ProjectForm(request.POST)
-        if projectFile is None:
-            allProjects = Project.objects.all()
-            if form.is_valid():
-                nameUnique = True
-                for existingProject in allProjects:
-                    if (
-                        form["name"].value() == existingProject.name
-                        and existingProject.owner == request.user
-                    ):
-                        nameUnique = False
-                if nameUnique:
-                    newProject = Project(
-                        name=projectName, description=projectDescription
-                    )
-                    newProject.owner = request.user
-                    newProject.last_edited = timezone.now()
-                    newProject.save()
-                    messages.success(request, "Successfully created the new project")
-                    return redirect("/editor/" + projectName)
-        else:
-            if form.is_valid():
-                allProjects = Project.objects.filter(owner=request.user)
-                nameUnique = True
-                for existingProject in allProjects:
-                    if projectName == existingProject.name and str(
-                        (existingProject.owner) == request.user
-                    ):
-                        nameUnique = False
-
-                if nameUnique:
-                    newProject = Project(
-                        name=projectName, description=projectDescription
-                    )
-                    newProject.owner = request.user
-                    newProject.last_edited = timezone.now()
-                    newProject.save()
-
-                    hdf5Manager = HDF5Manager()
-                    hdf5Manager.createProjectFromHDF5File(
-                        projectFile=projectFile, newProject=newProject
-                    )
-
-                    messages.success(request, "Successfully created the new project")
-                    return redirect("/editor/" + projectName)
-
-        # if not render error message
-        project = get_object_or_404(Project, name=project_name, owner=request.user)
-        project.last_edited = timezone.now()
-        project.save()
-
-        createProjectForm = ProjectForm()
-        allProjects = Project.objects.filter(owner=request.user).order_by(
-            "-last_edited"
-        )
-
-        messages.error(
-            request,
-            "A project with this name already exists. Please choose a different name.",
         )
 
         return render(
