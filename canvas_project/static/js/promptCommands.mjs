@@ -74,6 +74,8 @@ export class PromptCommand extends HTMLElement {
     }
 
     /**
+     * Returns an array of all indexes of characters that got selected by the searchring algorithm.
+     * Use for hightlighting them.
      * @param {Number[]} chars is an array of char indexes you want to be selected
      */
     set selectedChars(chars) {
