@@ -1,4 +1,5 @@
 import os
+from django.http.response import HttpResponseNotAllowed
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
@@ -56,6 +57,7 @@ def editor(request, project_name):
                 "projects": allProjects,
             },
         )
+    return HttpResponseNotAllowed(["GET"])
 
 
 @login_required
