@@ -171,25 +171,6 @@ def download(request, project_name):
 
 
 @login_required
-def renderHDF5(request, project_name):
-    """
-    Renders the specified project into an hdf5 file and sends it to the JobInterface.
-
-    Parameters
-    ----------
-    request : HttpRequest
-        The request the user send to get here.
-    project_name : str
-        The project_name specified as a url parameter.
-
-    Returns
-    -------
-    HttpResponse
-    """
-    return redirect(reverse("editor", kwargs={"project_name": project_name}))
-
-
-@login_required
 def uploadPreview(request, project_name):
     """
     Updates the preview of the project

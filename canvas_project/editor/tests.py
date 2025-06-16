@@ -184,24 +184,6 @@ class DownloadViewTest(TestCase):
                 self.assertEqual(42, lightsources[lightsource]["number_of_rays"][()])
 
 
-class RenderViewTest(TestCase):
-    def setUp(self):
-        self.render = reverse("renderHDF5", kwargs={"project_name": "testProject"})
-        user = User.objects.create_user(username="testuser", password="testpassword")
-        self.client = Client()
-        self.client.login(username="testuser", password="testpassword")
-
-        project = Project()
-        project.name = "testProject"
-        project.description = "This is a test project."
-        project.owner = user
-        project.save()
-
-    def test_render(self):
-        # TODO: Test when the render view does something
-        self.assertEqual(0, 0)
-
-
 class PreviewViewTest(TestCase):
     def setUp(self):
         self.upload = reverse("upload", kwargs={"project_name": "testProject"})
