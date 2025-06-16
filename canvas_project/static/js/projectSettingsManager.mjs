@@ -1,6 +1,10 @@
 import { Editor } from "editor";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
 
+/**
+ * Class to manage project settings such as environment, graphics, and other settings.
+ * Right now, it only manages graphics settings like shadows and fog.
+ */
 export class ProjectSettingsManager {
     #environmentSettingsEntry;
     #graphicsSettingsEntry;
@@ -47,7 +51,6 @@ export class ProjectSettingsManager {
      */
     async #getPresets() {
         const projectJson = await this.#saveAndLoadHandler.getProjectData();
-
         const settingsList = projectJson["settings"];
         this.#shadowEnabled = settingsList["shadows"];
         this.#fogEnabled = settingsList["fog"];
@@ -55,40 +58,49 @@ export class ProjectSettingsManager {
 
     /**
      * Method to render the graphics settings
+     * This method creates checkboxes for shadow and fog settings,
+     * and applies the settings to the editor.
      */
     #renderUISettings() {
         this.#graphicsSettingsEntry.innerHTML = "";
 
-        //checkbox for shadows
-        const shadowCheckbox = this.#createCheckbox(
-            "Shadow",
-            this.#shadowEnabled,
-            (isChecked) => {
-                this.#shadowEnabled = isChecked;
-                this.#editor.setShadows(isChecked);
-                this.#saveAndLoadHandler.updateSettings(
-                    "shadow",
-                    this.#shadowEnabled
-                );
-            }
-        );
+        const graphicSettings = [
+            {
+                label: "Shadow",
+                key: "shadow",
+                enabled: this.#shadowEnabled,
+                store: (val) => {
+                    this.#shadowEnabled = val;
+                },
+                apply: (val) => {
+                    this.#editor.setShadows(val);
+                },
+            },
+            {
+                label: "Fog",
+                key: "fog",
+                enabled: this.#fogEnabled,
+                store: (val) => {
+                    this.#fogEnabled = val;
+                },
+                apply: (val) => {
+                    this.#editor.setFog(val);
+                },
+            },
+        ];
 
-        //checkbox for fog
-        const fogCheckbox = this.#createCheckbox(
-            "Fog",
-            this.#fogEnabled,
-            (isChecked) => {
-                this.#fogEnabled = isChecked;
-                this.#editor.setFog(isChecked);
-                this.#saveAndLoadHandler.updateSettings(
-                    "fog",
-                    this.#fogEnabled
-                );
-            }
-        );
-
-        this.#graphicsSettingsEntry.appendChild(shadowCheckbox);
-        this.#graphicsSettingsEntry.appendChild(fogCheckbox);
+        graphicSettings.forEach(({ label, key, enabled, store, apply }) => {
+            const checkbox = this.#createCheckbox(
+                label,
+                enabled,
+                (isChecked) => {
+                    store(isChecked);
+                    apply(isChecked);
+                    this.#saveAndLoadHandler.updateSettings(key, enabled);
+                }
+            );
+            this.#graphicsSettingsEntry.appendChild(checkbox);
+        });
     }
 
     /**
