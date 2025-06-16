@@ -55,7 +55,6 @@ export class UndoRedoHandler {
      */
     undo() {
         if (this.#undoStack.length > 0) {
-            /** @type {Command} */
             const command = this.#undoStack.pop();
             command.undo();
             this.#redoStack.push(command);
@@ -71,7 +70,6 @@ export class UndoRedoHandler {
      */
     redo() {
         if (this.#redoStack.length > 0) {
-            /** @type {Command} */
             const command = this.#redoStack.pop();
             command.execute();
             this.#undoStack.push(command);

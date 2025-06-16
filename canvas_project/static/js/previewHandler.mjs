@@ -28,6 +28,9 @@ export class PreviewHandler {
         this.#camera.lookAt(0, 0, 0);
         this.#scene = scene;
 
+        // Save the preview before the user unloads the website
+        window.addEventListener("beforeunload", () => this.#savePreview());
+
         // save preview every 5s for the first 30s and then every 30s
         // using events like 'beforeunload', doesn't really seem to work with the navigation buttons of the browser, and also causes freezing some times
         const shortIntervall = setInterval(() => {

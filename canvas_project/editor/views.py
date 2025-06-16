@@ -1,14 +1,12 @@
 import os
-from django.http.response import HttpResponseNotAllowed
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
 from HDF5Management.HDF5Manager import HDF5Manager
+from django.contrib.auth.models import User
 from project_management.forms import ProjectForm
-from django.http import FileResponse, HttpResponse, Http404
-
+from django.http import FileResponse, HttpResponse, Http404, HttpResponseNotAllowed
 from project_management.models import (
     Project,
 )
@@ -58,6 +56,15 @@ def editor(request, project_name):
             },
         )
     return HttpResponseNotAllowed(["GET"])
+
+
+def isNameUnique(user: User, projectName: str) -> bool:
+    unique = True
+    for project in user.projects.all():
+        if project.name == projectName:
+            unique = False
+            break
+    return unique
 
 
 @login_required

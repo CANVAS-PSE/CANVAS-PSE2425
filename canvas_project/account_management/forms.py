@@ -32,7 +32,7 @@ class RegisterForm(forms.Form):
         """
         Validates the password based on security criteria.
         """
-        password = self.cleaned_data.get("password")
+        password = str(self.cleaned_data.get("password"))
 
         if len(password) < 8:
             self.add_error("password", "Password must be at least 8 characters long.")
@@ -257,7 +257,7 @@ class PasswordResetForm(forms.Form):
         """
         Validates that the new password passes the security criteria.
         """
-        new_password = self.cleaned_data.get("new_password")
+        new_password = str(self.cleaned_data.get("new_password"))
 
         if len(new_password) < 8:
             self.add_error(
@@ -298,7 +298,7 @@ class PasswordResetForm(forms.Form):
 
         return cleaned_data
 
-    
+
 class PasswordForgottenForm(forms.Form):
     """
     A form for resetting the password when the user has forgotten it. It includes
@@ -306,14 +306,12 @@ class PasswordForgottenForm(forms.Form):
     """
 
     email = forms.EmailField(label="Email")
-    
+
     def clean_email(self):
         """
         Checks if the email exists.
         """
         email = self.cleaned_data.get("email")
         if not User.objects.filter(email=email).exists():
-            self.add_error(
-                "email", "This email address is not registered."
-            )
+            self.add_error("email", "This email address is not registered.")
         return email

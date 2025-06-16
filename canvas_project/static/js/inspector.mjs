@@ -33,7 +33,7 @@ export class Inspector {
                 ) {
                     this.#render();
                 }
-            }
+            },
         );
 
         canvas.addEventListener(
@@ -44,7 +44,7 @@ export class Inspector {
                     event.detail.item == this.#objectList[0]
                 )
                     this.#render();
-            }
+            },
         );
 
         this.#render();
@@ -54,26 +54,31 @@ export class Inspector {
         this.#objectList = this.#picker.getSelectedObjects();
         this.#inspectorElem.innerHTML = "";
 
+        // No selection
         if (this.#objectList.length == 0) {
             const wrapper = document.createElement("div");
             wrapper.classList.add(
                 "text-secondary",
                 "d-flex",
-                "justify-content-center"
+                "justify-content-center",
             );
             wrapper.innerHTML = "Select an object by clicking on it";
             this.#inspectorElem.appendChild(wrapper);
-        } else if (this.#objectList.length == 1) {
+        }
+        // Single selection
+        else if (this.#objectList.length == 1) {
             this.#inspectorElem.innerHTML = "";
             this.#objectList[0].inspectorComponents.forEach((component) => {
                 this.#inspectorElem.appendChild(component.render());
             });
-        } else {
+        }
+        // Multiselection
+        else {
             const wrapper = document.createElement("div");
             wrapper.classList.add(
                 "text-secondary",
                 "d-flex",
-                "justify-content-center"
+                "justify-content-center",
             );
             wrapper.innerHTML = "Multi selection is not yet supported :(";
             this.#inspectorElem.appendChild(wrapper);

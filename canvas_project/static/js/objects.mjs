@@ -181,7 +181,7 @@ export class Heliostat extends SelectableObject {
         aimPoint,
         numberOfFacets,
         kinematicType,
-        apiID = null
+        apiID = null,
     ) {
         super(heliostatName);
         this.loader = new GLTFLoader();
@@ -210,7 +210,7 @@ export class Heliostat extends SelectableObject {
                     ? this.objectName
                     : "Heliostat",
             (name) => this.updateAndSaveObjectName(name),
-            this
+            this,
         );
 
         const nCoordinate = new SingleFieldInspectorComponent(
@@ -222,11 +222,11 @@ export class Heliostat extends SelectableObject {
                     new UpdateHeliostatCommand(
                         this,
                         "position",
-                        new Vector3(newValue, this.position.y, this.position.z)
-                    )
+                        new Vector3(newValue, this.position.y, this.position.z),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const uCoordinate = new SingleFieldInspectorComponent(
@@ -238,11 +238,11 @@ export class Heliostat extends SelectableObject {
                     new UpdateHeliostatCommand(
                         this,
                         "position",
-                        new Vector3(this.position.x, newValue, this.position.z)
-                    )
+                        new Vector3(this.position.x, newValue, this.position.z),
+                    ),
                 );
             },
-            0
+            0,
         );
 
         const eCoordinate = new SingleFieldInspectorComponent(
@@ -254,11 +254,11 @@ export class Heliostat extends SelectableObject {
                     new UpdateHeliostatCommand(
                         this,
                         "position",
-                        new Vector3(this.position.x, this.position.y, newValue)
-                    )
+                        new Vector3(this.position.x, this.position.y, newValue),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#positionComponent = new MultiFieldInspectorComponent("Position", [
@@ -279,12 +279,12 @@ export class Heliostat extends SelectableObject {
                         new Vector3(
                             newValue,
                             this.#aimPoint.y,
-                            this.#aimPoint.z
-                        )
-                    )
+                            this.#aimPoint.z,
+                        ),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const uAimpoint = new SingleFieldInspectorComponent(
@@ -299,12 +299,12 @@ export class Heliostat extends SelectableObject {
                         new Vector3(
                             this.#aimPoint.x,
                             newValue,
-                            this.#aimPoint.z
-                        )
-                    )
+                            this.#aimPoint.z,
+                        ),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const eAimpoint = new SingleFieldInspectorComponent(
@@ -319,12 +319,12 @@ export class Heliostat extends SelectableObject {
                         new Vector3(
                             this.#aimPoint.x,
                             this.#aimPoint.y,
-                            newValue
-                        )
-                    )
+                            newValue,
+                        ),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#aimPointComponent = new MultiFieldInspectorComponent("Aimpoint", [
@@ -339,10 +339,14 @@ export class Heliostat extends SelectableObject {
             () => this.#numberOfFacets,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(this, "numberOfFacets", newValue)
+                    new UpdateHeliostatCommand(
+                        this,
+                        "numberOfFacets",
+                        newValue,
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#kinematicTypeComponent = new SelectFieldInspectorComponent(
@@ -351,9 +355,9 @@ export class Heliostat extends SelectableObject {
             () => this.#kinematicType,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(this, "kinematicType", newValue)
+                    new UpdateHeliostatCommand(this, "kinematicType", newValue),
                 );
-            }
+            },
         );
     }
 
@@ -388,13 +392,13 @@ export class Heliostat extends SelectableObject {
      */
     updateAndSaveObjectName(name) {
         this.#undoRedoHandler.executeCommand(
-            new UpdateHeliostatCommand(this, "objectName", name)
+            new UpdateHeliostatCommand(this, "objectName", name),
         );
     }
 
     duplicate() {
         this.#undoRedoHandler.executeCommand(
-            new DuplicateHeliostatCommand(this)
+            new DuplicateHeliostatCommand(this),
         );
     }
 
@@ -408,7 +412,7 @@ export class Heliostat extends SelectableObject {
      */
     updateAndSaveObjectPosition(position) {
         this.#undoRedoHandler.executeCommand(
-            new UpdateHeliostatCommand(this, "position", position)
+            new UpdateHeliostatCommand(this, "position", position),
         );
     }
     /**
@@ -517,7 +521,7 @@ export class Receiver extends SelectableObject {
         resolutionU,
         curvatureE,
         curvatureU,
-        apiID = null
+        apiID = null,
     ) {
         super(receiverName);
         // place the 3D object
@@ -548,7 +552,7 @@ export class Receiver extends SelectableObject {
                     ? this.objectName
                     : "Receiver",
             (name) => this.updateAndSaveObjectName(name),
-            this
+            this,
         );
 
         const nCoordinate = new SingleFieldInspectorComponent(
@@ -560,11 +564,11 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(newValue, this.position.y, this.position.z)
-                    )
+                        new Vector3(newValue, this.position.y, this.position.z),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const uCoordinate = new SingleFieldInspectorComponent(
@@ -576,11 +580,11 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(this.position.x, newValue, this.position.z)
-                    )
+                        new Vector3(this.position.x, newValue, this.position.z),
+                    ),
                 );
             },
-            0
+            0,
         );
 
         const eCoordinate = new SingleFieldInspectorComponent(
@@ -592,11 +596,11 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "position",
-                        new Vector3(this.position.x, this.position.y, newValue)
-                    )
+                        new Vector3(this.position.x, this.position.y, newValue),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#positionComponent = new MultiFieldInspectorComponent("Position", [
@@ -616,11 +620,11 @@ export class Receiver extends SelectableObject {
                     new UpdateReceiverCommand(
                         this,
                         "rotation",
-                        new THREE.Quaternion().copy(newValue)
-                    )
+                        new THREE.Quaternion().copy(newValue),
+                    ),
                 );
             },
-            15
+            15,
         );
 
         const nNormalVector = new SingleFieldInspectorComponent(
@@ -635,12 +639,12 @@ export class Receiver extends SelectableObject {
                         new Vector3(
                             newValue,
                             this.#normalVector.y,
-                            this.#normalVector.z
-                        )
-                    )
+                            this.#normalVector.z,
+                        ),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const uNormalVector = new SingleFieldInspectorComponent(
@@ -655,12 +659,12 @@ export class Receiver extends SelectableObject {
                         new Vector3(
                             this.#normalVector.x,
                             newValue,
-                            this.#normalVector.z
-                        )
-                    )
+                            this.#normalVector.z,
+                        ),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const eNormalVector = new SingleFieldInspectorComponent(
@@ -675,17 +679,17 @@ export class Receiver extends SelectableObject {
                         new Vector3(
                             this.#normalVector.x,
                             this.#normalVector.y,
-                            newValue
-                        )
-                    )
+                            newValue,
+                        ),
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#normalVectorComponent = new MultiFieldInspectorComponent(
             "Normal Vector",
-            [nNormalVector, uNormalVector, eNormalVector]
+            [nNormalVector, uNormalVector, eNormalVector],
         );
 
         this.#towerTypeComponent = new SelectFieldInspectorComponent(
@@ -694,9 +698,9 @@ export class Receiver extends SelectableObject {
             () => this.#towerType,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "type", newValue)
+                    new UpdateReceiverCommand(this, "towerType", newValue),
                 );
-            }
+            },
         );
 
         const eCurvature = new SingleFieldInspectorComponent(
@@ -705,10 +709,10 @@ export class Receiver extends SelectableObject {
             () => this.#curvatureE,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "curvatureE", newValue)
+                    new UpdateReceiverCommand(this, "curvatureE", newValue),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const uCurvature = new SingleFieldInspectorComponent(
@@ -717,15 +721,15 @@ export class Receiver extends SelectableObject {
             () => this.#curvatureU,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "curvatureU", newValue)
+                    new UpdateReceiverCommand(this, "curvatureU", newValue),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#curvatureComponent = new MultiFieldInspectorComponent(
             "Curvature",
-            [eCurvature, uCurvature]
+            [eCurvature, uCurvature],
         );
 
         const ePlane = new SingleFieldInspectorComponent(
@@ -734,10 +738,10 @@ export class Receiver extends SelectableObject {
             () => this.#planeE,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "planeE", newValue)
+                    new UpdateReceiverCommand(this, "planeE", newValue),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const uPlane = new SingleFieldInspectorComponent(
@@ -746,10 +750,10 @@ export class Receiver extends SelectableObject {
             () => this.#planeU,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "planeU", newValue)
+                    new UpdateReceiverCommand(this, "planeU", newValue),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#planeComponent = new MultiFieldInspectorComponent("Plane", [
@@ -763,10 +767,10 @@ export class Receiver extends SelectableObject {
             () => this.#resolutionE,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "resolutionE", newValue)
+                    new UpdateReceiverCommand(this, "resolutionE", newValue),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         const uResolution = new SingleFieldInspectorComponent(
@@ -775,15 +779,15 @@ export class Receiver extends SelectableObject {
             () => this.#resolutionU,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "resolutionU", newValue)
+                    new UpdateReceiverCommand(this, "resolutionU", newValue),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#resolutionComponent = new MultiFieldInspectorComponent(
             "Resolution",
-            [eResolution, uResolution]
+            [eResolution, uResolution],
         );
     }
 
@@ -809,7 +813,7 @@ export class Receiver extends SelectableObject {
             0,
             THREE.MathUtils.degToRad(angle),
             0,
-            "YXZ"
+            "YXZ",
         );
         const quaternion = new THREE.Quaternion().setFromEuler(euler);
         return quaternion;
@@ -846,7 +850,7 @@ export class Receiver extends SelectableObject {
      */
     updateAndSaveObjectPosition(position) {
         this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "position", position)
+            new UpdateReceiverCommand(this, "position", position),
         );
     }
 
@@ -869,7 +873,7 @@ export class Receiver extends SelectableObject {
      */
     updateAndSaveObjectName(name) {
         this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "objectName", name)
+            new UpdateReceiverCommand(this, "objectName", name),
         );
     }
 
@@ -879,7 +883,7 @@ export class Receiver extends SelectableObject {
      */
     updateAndSaveObjectRotation(rotation) {
         this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "rotation", rotation)
+            new UpdateReceiverCommand(this, "rotation", rotation),
         );
     }
 
@@ -888,14 +892,12 @@ export class Receiver extends SelectableObject {
      * @param {THREE.Quaternion} quaternion
      */
     updateRotation(quaternion) {
-        const axis = new THREE.Vector3(0, 1, 0);
-        const angle = Math.PI / 6;
         this.quaternion.copy(quaternion);
         this.#oldQuaternion = new THREE.Quaternion(
             quaternion.x,
             quaternion.y,
             quaternion.z,
-            quaternion.w
+            quaternion.w,
         );
     }
 
@@ -911,7 +913,7 @@ export class Receiver extends SelectableObject {
      */
     duplicate() {
         this.#undoRedoHandler.executeCommand(
-            new DuplicateReceiverCommand(this)
+            new DuplicateReceiverCommand(this),
         );
     }
 
@@ -1077,7 +1079,7 @@ export class LightSource extends SelectableObject {
         distributionType,
         distributionMean,
         distributionCovariance,
-        apiID = null
+        apiID = null,
     ) {
         super(lightsourceName);
         this.#apiID = apiID;
@@ -1093,7 +1095,7 @@ export class LightSource extends SelectableObject {
                     ? this.objectName
                     : "Light source",
             (newValue) => this.updateAndSaveObjectName(newValue),
-            this
+            this,
         );
 
         this.#numberOfRaysComponent = new SingleFieldInspectorComponent(
@@ -1102,10 +1104,14 @@ export class LightSource extends SelectableObject {
             () => this.#numberOfRays,
             (newValue) => {
                 this.#undoRedoHandler.executeCommand(
-                    new UpdateLightsourceCommand(this, "numberOfRays", newValue)
+                    new UpdateLightsourceCommand(
+                        this,
+                        "numberOfRays",
+                        newValue,
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#lightsourceTypeComponent = new SelectFieldInspectorComponent(
@@ -1117,10 +1123,10 @@ export class LightSource extends SelectableObject {
                     new UpdateLightsourceCommand(
                         this,
                         "lightSourceType",
-                        newValue
-                    )
+                        newValue,
+                    ),
                 );
-            }
+            },
         );
 
         this.#distributionTypeComponent = new SelectFieldInspectorComponent(
@@ -1132,10 +1138,10 @@ export class LightSource extends SelectableObject {
                     new UpdateLightsourceCommand(
                         this,
                         "distributionType",
-                        newValue
-                    )
+                        newValue,
+                    ),
                 );
-            }
+            },
         );
 
         this.#distributionMeanComponent = new SingleFieldInspectorComponent(
@@ -1147,11 +1153,11 @@ export class LightSource extends SelectableObject {
                     new UpdateLightsourceCommand(
                         this,
                         "distributionMean",
-                        newValue
-                    )
+                        newValue,
+                    ),
                 );
             },
-            -Infinity
+            -Infinity,
         );
 
         this.#distributionCovarianceComponent =
@@ -1164,11 +1170,11 @@ export class LightSource extends SelectableObject {
                         new UpdateLightsourceCommand(
                             this,
                             "distributionCovariance",
-                            newValue
-                        )
+                            newValue,
+                        ),
                     );
                 },
-                -Infinity
+                -Infinity,
             );
     }
 
@@ -1197,18 +1203,18 @@ export class LightSource extends SelectableObject {
      */
     updateAndSaveObjectName(name) {
         this.#undoRedoHandler.executeCommand(
-            new UpdateLightsourceCommand(this, "objectName", name)
+            new UpdateLightsourceCommand(this, "objectName", name),
         );
     }
 
     duplicate() {
         this.#undoRedoHandler.executeCommand(
-            new DuplicateLightSourceCommand(this)
+            new DuplicateLightSourceCommand(this),
         );
     }
     delete() {
         this.#undoRedoHandler.executeCommand(
-            new DeleteLightSourceCommand(this)
+            new DeleteLightSourceCommand(this),
         );
     }
 
@@ -1287,7 +1293,7 @@ export class Terrain extends Object3D {
             new THREE.CircleGeometry(size / 2),
             new THREE.MeshStandardMaterial({
                 color: 0x5fd159,
-            })
+            }),
         );
         this.terrain.receiveShadow = true;
         this.terrain.rotateX((3 * Math.PI) / 2);
@@ -1300,12 +1306,12 @@ export class Terrain extends Object3D {
                 new THREE.SphereGeometry(THREE.MathUtils.randFloat(20, 100)),
                 new THREE.MeshStandardMaterial({
                     color: 0x50ba78,
-                })
+                }),
             );
             sphere.position.set(
                 (size / 2) * Math.sin((i / 100) * 2 * Math.PI),
                 0,
-                (size / 2) * Math.cos((i / 100) * 2 * Math.PI)
+                (size / 2) * Math.cos((i / 100) * 2 * Math.PI),
             );
             this.mountains.add(sphere);
         }
