@@ -196,7 +196,7 @@ class ViewTests(TestCase):
     def test_projects_POST_with_file(self):
         file_path = (
             pathlib.Path(settings.BASE_DIR)
-            / "hdfCreation/testScenarios/testScenario.h5"
+            / "HDF5Management/testScenarios/testScenario.h5"
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
@@ -218,7 +218,7 @@ class ViewTests(TestCase):
     def test_projects_POST_with_file_name_duplicate(self):
         file_path = (
             pathlib.Path(settings.BASE_DIR)
-            / "hdfCreation/testScenarios/testScenario.h5"
+            / "HDF5Management/testScenarios/testScenario.h5"
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
@@ -238,7 +238,7 @@ class ViewTests(TestCase):
     def test_projects_POST_with_file_space_in_name(self):
         file_path = (
             pathlib.Path(settings.BASE_DIR)
-            / "hdfCreation/testScenarios/testScenario.h5"
+            / "HDF5Management/testScenarios/testScenario.h5"
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
