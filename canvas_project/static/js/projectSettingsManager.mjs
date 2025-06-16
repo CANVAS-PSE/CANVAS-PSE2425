@@ -27,7 +27,7 @@ export class ProjectSettingsManager {
         await this.#getPresets();
 
         this.#environmentSettingsEntry = document.getElementById(
-            "enviroment-settings"
+            "environment-settings"
         );
 
         this.#graphicsSettingsEntry =
