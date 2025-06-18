@@ -6,6 +6,8 @@
 
 [![](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ARTIST-Association_CANVAS&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ARTIST-Association_CANVAS)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ARTIST-Association_CANVAS)](https://sonarcloud.io/summary/new_code?id=ARTIST-Association_CANVAS)
 
 ## Installation
 We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` virtual environment.
