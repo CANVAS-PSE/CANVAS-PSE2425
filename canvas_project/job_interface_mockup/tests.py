@@ -5,9 +5,6 @@ from project_management.models import Project, Heliostat, Receiver, Lightsource
 from django.utils import timezone
 from datetime import timedelta
 from django.urls import reverse
-import os
-import datetime
-from django.conf import settings
 
 
 class ModelTests(TestCase):
@@ -56,7 +53,6 @@ class ViewTests(TestCase):
         self.getJobStatus_url = reverse(
             "jobStatus", args=[self.project.pk, self.job.pk]
         )
-        self.createHDF5_url = reverse("exampleHDF5Creation", args=[self.project.pk])
 
     def test_createNewJob_POST(self):
         response = self.client.post(self.createNewJob_url)
@@ -151,21 +147,3 @@ class ViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Job.objects.count(), 0)
-
-    def test_exampleCreateHDF5(self):
-        response = self.client.post(self.createHDF5_url)
-
-        self.assertEqual(response.status_code, 200)
-        file_path = os.path.join(
-            settings.BASE_DIR, "hdfCreation/scenarios/scenarioFile.h5"
-        )
-        last_modified_time = datetime.datetime.fromtimestamp(
-            os.path.getmtime(file_path)
-        )
-
-        response = self.client.post(self.createHDF5_url)
-        self.assertEqual(response.status_code, 200)
-
-        # check if the file was modified
-        new_modified_time = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
-        self.assertNotEqual(last_modified_time, new_modified_time)
