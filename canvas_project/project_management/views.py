@@ -98,7 +98,6 @@ def updateProject(request, project_name):
                         project.description = ""
                     else:
                         project.description = formDescription
-                    print(project.description)
                     project.save()
                     return HttpResponseRedirect(reverse("projects"))
                 else:
