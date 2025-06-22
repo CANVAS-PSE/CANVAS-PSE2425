@@ -1,6 +1,6 @@
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
-from .models import Project, Heliostat, Lightsource, Receiver
+from .models import Project
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import ProjectForm, UpdateProjectForm
 from django.utils import timezone
@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib import messages
 from HDF5Management.HDF5Manager import HDF5Manager
-import h5py
 
 
 # General project handling
@@ -87,23 +86,19 @@ def projects(request):
 def updateProject(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     form = UpdateProjectForm(request.POST, instance=project)
-    allProjects = Project.objects.filter(owner=request.user).order_by("-last_edited")
     if request.method == "POST":
         if project.owner == request.user:
             if form.is_valid():
-                nameUnique = isNameUnique(request.user, project_name)
-                nameChanged = True
                 formName = form.cleaned_data["name"].strip().replace(" ", "_")
                 formDescription = form.cleaned_data.get("description", "")
-                if project_name == formName:
-                    nameChanged = False
-                if nameUnique or not nameChanged:
+                if isNameUnique(request.user, formName) or formName == project_name:
                     project.last_edited = timezone.now()
                     project.name = formName
                     if formDescription is None:
                         project.description = ""
                     else:
                         project.description = formDescription
+                    print(project.description)
                     project.save()
                     return HttpResponseRedirect(reverse("projects"))
                 else:
@@ -268,9 +263,7 @@ def _generate_token(project_name):
 
 
 def isNameUnique(user: User, projectName: str) -> bool:
-    unique = True
     for project in user.projects.all():
         if project.name == projectName:
-            unique = False
-            break
-    return unique
+            return False
+    return True
