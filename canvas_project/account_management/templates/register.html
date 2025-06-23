@@ -32,7 +32,7 @@
                   action="{% url 'register' %}">
                 {% csrf_token %}
                 {% if form.errors %}
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger rounded-4">
                         <ul>
                             {% for field in form %}
                                 {% if field.errors %}
