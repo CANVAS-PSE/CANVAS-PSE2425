@@ -21,9 +21,8 @@ git clone https://github.com/CANVAS-PSE/CANVAS-PSE2425.git
 cd CANVAS-PSE2425/
 pip install -r requirements.txt
 
-# Installing Pre-commit Hooks and NPM Dependencies
+# Installing Pre-commit Hooks
 pre-commit install
-npm install
 
 # add the .env file to the root of the canvas_project folder
 # containing debug variable, client_id + secret_key for OpenID, email-host password, etc.
@@ -31,6 +30,9 @@ npm install
 # configure the database
 cd canvas_project/
 python manage.py migrate
+
+# Install npm dependencies
+npm install
 
 # start the server
 python manage.py runserver
