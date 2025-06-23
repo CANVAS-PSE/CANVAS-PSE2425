@@ -1,45 +1,45 @@
 {
-    "compilerOptions": {
-        "checkJs": true,
-        "target": "ES2016",
-        "baseUrl": ".",
-        "module": "NodeNext",
-        "moduleResolution": "nodenext",
-        "paths": {
-            "three": ["static/js/three.module.js"],
-            "objects": ["static/js/objects.mjs"],
-            "three/addons/": ["static/js/three/examples/jsm/"],
-            "compass": ["static/js/compass.mjs"],
-            "orbitControls": [
-                "static/js/three/examples/jsm/controls/OrbitControls.js"
-            ],
-            "transformControls": [
-                "static/js/three/examples/jsm/controls/TransformControls.js"
-            ],
-            "command": ["static/js/command.mjs"],
-            "undoRedoHandler": ["static/js/undoRedoHandler.mjs"],
-            "singleObjectCommands": ["static/js/singleObjectCommands.mjs"],
-            "picker": ["static/js/picker.mjs"],
-            "saveAndLoadHandler": ["static/js/saveAndLoadHandler.mjs"],
-            "bulkObjectCommands": ["static/js/bulkObjectCommands.mjs"],
-            "overview": ["static/js/overview.mjs"],
-            "editor": ["static/js/editor.mjs"],
-            "objectManager": ["static/js/objectManager.mjs"],
-            "quickSelector": ["static/js/quickSelector.mjs"],
-            "updateCommands": ["static/js/updateCommands.mjs"],
-            "duplicateCommands": ["static/js/duplicateCommands.mjs"],
-            "deleteCommands": ["static/js/deleteCommands.mjs"],
-            "inspectorComponents": ["static/js/inspectorComponents.mjs"],
-            "inspectorClass": ["static/js/inspector.mjs"],
-            "previewHandler": ["static/js/previewHandler.mjs"],
-            "projectSettingsManager": ["static/js/projectSettingsManager.mjs"],
-            "createCommands": ["static/js/createCommands.mjs"],
-            "jobInterface": ["static/js/jobInterface.mjs"],
-            "navbar": ["static/js/navbar.mjs"],
-            "commandPrompt": ["static/js/commandPrompt.mjs"],
-            "promptCommands": ["static/js/promptCommands.mjs"],
-            "bootstrap": ["static/js/bootstrap.esm.js"],
-            "modeSelector": ["static/js/modeSelector.mjs"]
-        }
+  "compilerOptions": {
+    "checkJs": true,
+    "target": "ES2016",
+    "baseUrl": ".",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "paths": {
+      "three": ["static/js/three/three.module.js"],
+      "objects": ["static/js/editor/objects.mjs"],
+      "three/addons/": ["static/js/three/examples/jsm/"],
+      "compass": ["static/js/three/compass.mjs"],
+      "orbitControls": [
+        "static/js/three/examples/jsm/controls/OrbitControls.js"
+      ],
+      "transformControls": [
+        "static/js/three/examples/jsm/controls/TransformControls.js"
+      ],
+      "command": ["static/js/commands/command.mjs"],
+      "undoRedoHandler": ["static/js/commands/undoRedoHandler.mjs"],
+      "singleObjectCommands": ["static/js/commands/singleObjectCommands.mjs"],
+      "picker": ["static/js/editor/picker.mjs"],
+      "saveAndLoadHandler": ["static/js/editor/saveAndLoadHandler.mjs"],
+      "bulkObjectCommands": ["static/js/commands/bulkObjectCommands.mjs"],
+      "overview": ["static/js/editor/overview.mjs"],
+      "editor": ["static/js/editor/editor.mjs"],
+      "objectManager": ["static/js/editor/objectManager.mjs"],
+      "quickSelector": ["static/js/editor/quickSelector.mjs"],
+      "updateCommands": ["static/js/commands/updateCommands.mjs"],
+      "duplicateCommands": ["static/js/commands/duplicateCommands.mjs"],
+      "deleteCommands": ["static/js/commands/deleteCommands.mjs"],
+      "inspectorComponents": ["static/js/editor/inspectorComponents.mjs"],
+      "inspectorClass": ["static/js/editor/inspector.mjs"],
+      "previewHandler": ["static/js/editor/previewHandler.mjs"],
+      "projectSettingsManager": ["static/js/projectSettingsManager.mjs"],
+      "createCommands": ["static/js/commands/createCommands.mjs"],
+      "jobInterface": ["static/js/editor/jobInterface.mjs"],
+      "navbar": ["static/js/editor/navbar.mjs"],
+      "commandPrompt": ["static/js/editor/commandPrompt.mjs"],
+      "promptCommands": ["static/js/editor/promptCommands.mjs"],
+      "bootstrap": ["static/js/bootstrap/bootstrap.esm.js"],
+      "modeSelector": ["static/js/editor/modeSelector.mjs"]
     }
+  }
 }
