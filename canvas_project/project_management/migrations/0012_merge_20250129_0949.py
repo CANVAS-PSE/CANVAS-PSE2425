@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('project_management', '0010_merge_20250125_1925'),
-        ('project_management', '0011_alter_receiver_curvature_e_and_more'),
+        ("project_management", "0010_merge_20250125_1925"),
+        ("project_management", "0011_alter_receiver_curvature_e_and_more"),
     ]
 
-    operations = [
-    ]
+    operations = []

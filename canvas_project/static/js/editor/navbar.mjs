@@ -5,124 +5,121 @@ import { ObjectManager } from "objectManager";
  */
 
 export class Navbar {
-    #objectManager;
+  #objectManager;
 
-    /**
-     *
-     * @param {ObjectManager} objectManager
-     */
-    constructor(objectManager) {
-        this.#objectManager = objectManager;
+  /**
+   *
+   * @param {ObjectManager} objectManager
+   */
+  constructor(objectManager) {
+    this.#objectManager = objectManager;
 
-        this.#setupFullscreen();
-        this.#setUpObjectPlacement();
-        this.#setupFileOptions();
-        this.#setUpKeybindings();
-    }
+    this.#setupFullscreen();
+    this.#setUpObjectPlacement();
+    this.#setupFileOptions();
+    this.#setUpKeybindings();
+  }
 
-    /**
-     * Sets up the fullscreen functionality for the navbar.
-     * This method adds an event listener to the fullscreen button
-     */
-    #setupFullscreen() {
-        let fullscreen = document.getElementById("fullscreen");
+  /**
+   * Sets up the fullscreen functionality for the navbar.
+   * This method adds an event listener to the fullscreen button
+   */
+  #setupFullscreen() {
+    let fullscreen = document.getElementById("fullscreen");
 
-        // Safari
-        if (navigator.userAgent.indexOf("Safari") > -1) {
-            fullscreen.onclick = (_) => {
-                if (document.webkitFullscreenElement === null) {
-                    document.documentElement.webkitRequestFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-            };
-            return;
+    // Safari
+    if (navigator.userAgent.indexOf("Safari") > -1) {
+      fullscreen.onclick = (_) => {
+        if (document.webkitFullscreenElement === null) {
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
         }
-
-        fullscreen.onclick = (_) => {
-            if (document.fullscreenElement === null) {
-                _ = document.documentElement.requestFullscreen();
-            } else if (document.exitFullscreen) {
-                _ = document.exitFullscreen();
-            }
-        };
+      };
+      return;
     }
 
-    /**
-     * Sets up the file options modal functionality.
-     * This method adds an event listener to the create new project modal
-     */
-    #setupFileOptions() {
-        let createNewProject = document.getElementById("createNewProject");
+    fullscreen.onclick = (_) => {
+      if (document.fullscreenElement === null) {
+        _ = document.documentElement.requestFullscreen();
+      } else if (document.exitFullscreen) {
+        _ = document.exitFullscreen();
+      }
+    };
+  }
 
-        function resetModalForm() {
-            var form = createNewProject.querySelector("form");
-            form.reset();
-        }
+  /**
+   * Sets up the file options modal functionality.
+   * This method adds an event listener to the create new project modal
+   */
+  #setupFileOptions() {
+    let createNewProject = document.getElementById("createNewProject");
 
-        // ensure that the form is reset when the modal is closed
-        createNewProject.addEventListener("hidden.bs.modal", function () {
-            resetModalForm();
-        });
-
-        window.addEventListener("load", resetModalForm);
+    function resetModalForm() {
+      var form = createNewProject.querySelector("form");
+      form.reset();
     }
 
-    /**
-     * Method to add event listeners to the buttons on the bottom bar for object placement.
-     * This method sets up the buttons for creating heliostats, receivers, and light sources.
-     */
-    #setUpObjectPlacement() {
-        // Define the buttons and their corresponding actions
-        /** @type {[string, Function][]} */
-        const buttons = [
-            ["add-heliostat-nav-bar", this.#objectManager.createHeliostat],
-            ["add-receiver-nav-bar", this.#objectManager.createReceiver],
-            ["add-lightSource-nav-bar", this.#objectManager.createLightSource],
-        ];
+    // ensure that the form is reset when the modal is closed
+    createNewProject.addEventListener("hidden.bs.modal", function () {
+      resetModalForm();
+    });
 
-        buttons.forEach(([id, action]) => {
-            // Get the button by its ID and add a click event listener
-            // If the button is not found, log a warning
-            const btn = document.getElementById(id);
-            if (btn) {
-                btn.addEventListener("click", () =>
-                    action.call(this.#objectManager)
-                );
-            } else {
-                console.warn(`Navbar: Button "${id}" not found.`);
-            }
-        });
+    window.addEventListener("load", resetModalForm);
+  }
+
+  /**
+   * Method to add event listeners to the buttons on the bottom bar for object placement.
+   * This method sets up the buttons for creating heliostats, receivers, and light sources.
+   */
+  #setUpObjectPlacement() {
+    // Define the buttons and their corresponding actions
+    /** @type {[string, Function][]} */
+    const buttons = [
+      ["add-heliostat-nav-bar", this.#objectManager.createHeliostat],
+      ["add-receiver-nav-bar", this.#objectManager.createReceiver],
+      ["add-lightSource-nav-bar", this.#objectManager.createLightSource],
+    ];
+
+    buttons.forEach(([id, action]) => {
+      // Get the button by its ID and add a click event listener
+      // If the button is not found, log a warning
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener("click", () => action.call(this.#objectManager));
+      } else {
+        console.warn(`Navbar: Button "${id}" not found.`);
+      }
+    });
+  }
+
+  /**
+   * Sets up the keybindings modal functionality.
+   * This method adds an event listener to the client select dropdown
+   * and updates the content based on the selected client type.
+   */
+  #setUpKeybindings() {
+    const select = document.getElementById("clientSelect");
+    const content = document.getElementById("clientContent");
+    const modal = document.getElementById("keyboardModal");
+
+    function resetModalForm() {
+      var form = modal.querySelector("form");
+      select.value = "";
+      content.innerHTML = "";
     }
 
-    /**
-     * Sets up the keybindings modal functionality.
-     * This method adds an event listener to the client select dropdown
-     * and updates the content based on the selected client type.
-     */
-    #setUpKeybindings() {
-        const select = document.getElementById("clientSelect");
-        const content = document.getElementById("clientContent");
-        const modal = document.getElementById("keyboardModal");
+    window.addEventListener("load", resetModalForm);
 
-        function resetModalForm() {
-            var form = modal.querySelector("form");
-            select.value = "";
-            content.innerHTML = "";
-        }
-
-        window.addEventListener("load", resetModalForm);
-
-        select.addEventListener("change", () => {
-            if (select.value === "mac") {
-                content.innerHTML =
-                    document.getElementById("macKeybindings").innerHTML;
-            } else if (select.value === "other") {
-                content.innerHTML =
-                    document.getElementById("windowsKeybindings").innerHTML;
-            } else {
-                content.innerHTML = "";
-            }
-        });
-    }
+    select.addEventListener("change", () => {
+      if (select.value === "mac") {
+        content.innerHTML = document.getElementById("macKeybindings").innerHTML;
+      } else if (select.value === "other") {
+        content.innerHTML =
+          document.getElementById("windowsKeybindings").innerHTML;
+      } else {
+        content.innerHTML = "";
+      }
+    });
+  }
 }

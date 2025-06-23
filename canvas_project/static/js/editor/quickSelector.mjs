@@ -6,41 +6,39 @@ import { ObjectManager } from "objectManager";
  */
 
 export class QuickSelector {
-    #objectManager;
+  #objectManager;
 
-    /**
-     *
-     * @param {ObjectManager} objectManager
-     */
-    constructor(objectManager) {
-        this.#objectManager = objectManager;
+  /**
+   *
+   * @param {ObjectManager} objectManager
+   */
+  constructor(objectManager) {
+    this.#objectManager = objectManager;
 
-        this.#addEventlisteners();
-    }
+    this.#addEventlisteners();
+  }
 
-    /**
-     * Method to add event listeners to the buttons on the Quick Settings bar on the bottom of the page.
-     */
-    #addEventlisteners() {
-        // Define the buttons and their corresponding actions
-        /** @type {[string, Function][]} */
-        const buttons = [
-            ["quickSettingsHeliostat", this.#objectManager.createHeliostat],
-            ["quickSettingsReceiver", this.#objectManager.createReceiver],
-            ["quickSettingsLightsource", this.#objectManager.createLightSource],
-        ];
+  /**
+   * Method to add event listeners to the buttons on the Quick Settings bar on the bottom of the page.
+   */
+  #addEventlisteners() {
+    // Define the buttons and their corresponding actions
+    /** @type {[string, Function][]} */
+    const buttons = [
+      ["quickSettingsHeliostat", this.#objectManager.createHeliostat],
+      ["quickSettingsReceiver", this.#objectManager.createReceiver],
+      ["quickSettingsLightsource", this.#objectManager.createLightSource],
+    ];
 
-        buttons.forEach(([id, action]) => {
-            // Get the button by its ID and add a click event listener
-            // If the button is not found, log a warning
-            const btn = document.getElementById(id);
-            if (btn) {
-                btn.addEventListener("click", () =>
-                    action.call(this.#objectManager)
-                );
-            } else {
-                console.warn(`QuickSelector: Button "${id}" not found.`);
-            }
-        });
-    }
+    buttons.forEach(([id, action]) => {
+      // Get the button by its ID and add a click event listener
+      // If the button is not found, log a warning
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener("click", () => action.call(this.#objectManager));
+      } else {
+        console.warn(`QuickSelector: Button "${id}" not found.`);
+      }
+    });
+  }
 }

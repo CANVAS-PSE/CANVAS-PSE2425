@@ -285,17 +285,17 @@
     </div>
     {% if messages %}
         <script type="module">
-        import * as bootstrap from "bootstrap"    
+        import * as bootstrap from "bootstrap"
         if (window.location.pathname == '/projects/') {
             console.log(window.location.pathname);
             document.addEventListener("DOMContentLoaded", function () {
                 var messageList = document.getElementById('message-list');
                 var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-        
+
                 {% for message in messages %}
                     var listItem = document.createElement('li');
                     listItem.textContent = "{{ message|escapejs }}";
-        
+
                     {% if message.tags == "success" %}
                         listItem.style.color = "green";
                     {% elif message.tags == "error" %}
@@ -303,10 +303,10 @@
                     {% else %}
                         listItem.style.color = "black";
                     {% endif %}
-        
+
                     messageList.appendChild(listItem);
                 {% endfor %}
-        
+
                     if (messageList.children.length > 0) {
                         messageModal.show();
                     }
@@ -340,16 +340,16 @@
     document
         .getElementById("profile_picture")
         .addEventListener("change", function (event) {
-            let file = event.target.files[0]; 
+            let file = event.target.files[0];
             let fileNameElement = document.getElementById("fileName");
             let previewImage = document.getElementById("previewImage");
 
             if (file) {
-                fileNameElement.textContent = file.name; 
+                fileNameElement.textContent = file.name;
 
                 let reader = new FileReader();
                 reader.onload = function (e) {
-                    previewImage.src = e.target.result; 
+                    previewImage.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             } else {
@@ -361,7 +361,7 @@
 <script>
     document.getElementById("deleteProfilePictureBtn").addEventListener("click", function() {
         document.getElementById("delete_picture").value = "1";
-        document.getElementById("previewImage").src = "/media/profile_pics/default.jpg"; 
+        document.getElementById("previewImage").src = "/media/profile_pics/default.jpg";
     });
 </script>
 <!-- JavaScript to handle AJAX request when the modal is opened -->

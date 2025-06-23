@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("project_management", "0007_alter_project_favorite_alter_project_preview"),
     ]

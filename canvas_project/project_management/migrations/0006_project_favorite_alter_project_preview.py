@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('project_management', '0005_alter_project_preview'),
+        ("project_management", "0005_alter_project_preview"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='favorite',
-            field=models.CharField(default='False', max_length=5),
+            model_name="project",
+            name="favorite",
+            field=models.CharField(default="False", max_length=5),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='preview',
-            field=models.ImageField(default='projectPreviews/logo_canvas.jpg', upload_to='projectPreviews'),
+            model_name="project",
+            name="preview",
+            field=models.ImageField(
+                default="projectPreviews/logo_canvas.jpg", upload_to="projectPreviews"
+            ),
         ),
     ]

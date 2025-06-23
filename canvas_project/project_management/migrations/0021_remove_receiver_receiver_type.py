@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("project_management", "0020_rename_receivertype_receiver_receiver_type"),
     ]
