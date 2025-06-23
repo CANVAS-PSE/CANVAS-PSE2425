@@ -147,7 +147,6 @@ def update_account(request):
     Update the user's account information.
     """
     user = request.user
-    is_openid_user = SocialAccount.objects.filter(user=user).exists()
 
     if request.method == "POST":
         form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
