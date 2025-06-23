@@ -1,6 +1,6 @@
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
-from .models import Project, Heliostat, Lightsource, Receiver
+from .models import Project
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import ProjectForm, UpdateProjectForm
 from django.utils import timezone
@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib import messages
 from HDF5Management.HDF5Manager import HDF5Manager
-import h5py
 
 
 # General project handling
@@ -32,17 +31,7 @@ def projects(request):
 
             # If no file is uploaded, handle the project creation without the file
             if projectFile is None:
-                allProjects = Project.objects.filter(owner=request.user)
-                nameUnique = True
-                for existingProject in allProjects:
-                    if (
-                        existingProject.name == projectName
-                        and existingProject.owner == request.user
-                    ):
-                        nameUnique = False
-                        break
-
-                if nameUnique:
+                if isNameUnique(request.user, projectName):
                     newProject = Project(
                         name=projectName,
                         description=projectDescription,
@@ -56,17 +45,7 @@ def projects(request):
 
             # Handle file upload
             else:
-                allProjects = Project.objects.filter(owner=request.user)
-                nameUnique = True
-                for existingProject in allProjects:
-                    if (
-                        existingProject.name == projectName
-                        and existingProject.owner == request.user
-                    ):
-                        nameUnique = False
-                        break
-
-                if nameUnique:
+                if isNameUnique(request.user, projectName):
                     newProject = Project(
                         name=projectName,
                         description=projectDescription,
@@ -107,23 +86,12 @@ def projects(request):
 def updateProject(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     form = UpdateProjectForm(request.POST, instance=project)
-    allProjects = Project.objects.filter(owner=request.user).order_by("-last_edited")
     if request.method == "POST":
         if project.owner == request.user:
             if form.is_valid():
-                nameUnique = True
-                nameChanged = True
                 formName = form.cleaned_data["name"].strip().replace(" ", "_")
                 formDescription = form.cleaned_data.get("description", "")
-                if project_name == formName:
-                    nameChanged = False
-                for existingProject in allProjects:
-                    if (
-                        existingProject.owner == request.user
-                        and formName == existingProject.name
-                    ):
-                        nameUnique = False
-                if nameUnique or not nameChanged:
+                if isNameUnique(request.user, formName) or formName == project_name:
                     project.last_edited = timezone.now()
                     project.name = formName
                     if formDescription is None:
@@ -291,3 +259,10 @@ def _generate_uid(request):
 
 def _generate_token(project_name):
     return urlsafe_base64_encode(str(project_name).encode())
+
+
+def isNameUnique(user: User, projectName: str) -> bool:
+    for project in user.projects.all():
+        if project.name == projectName:
+            return False
+    return True

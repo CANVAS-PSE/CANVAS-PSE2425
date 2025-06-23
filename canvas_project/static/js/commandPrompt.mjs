@@ -129,7 +129,7 @@ export class CommandPrompt {
         ];
 
         this.#commandList.sort((command1, command2) =>
-            command1.commandName.localeCompare(command2.commandName)
+            command1.commandName.localeCompare(command2.commandName),
         );
     }
 
@@ -138,6 +138,12 @@ export class CommandPrompt {
     }
 
     #openCommandPrompt() {
+        // Prevent that the command prompt closes the loading modal
+        const loadingModal = document.getElementById("loadingModal");
+        if (loadingModal !== null && loadingModal.classList.contains("show")) {
+            return;
+        }
+
         // Close all other modals
         document.querySelectorAll(".modal.show").forEach((modal) => {
             if (modal !== document.getElementById("commandPrompt")) {
@@ -171,7 +177,7 @@ export class CommandPrompt {
         this.#commandInput.classList.add(
             "form-control",
             "border-0",
-            "shadow-none"
+            "shadow-none",
         );
         this.#commandInput.placeholder = "Select a command";
         document.getElementById("commandInput").appendChild(this.#commandInput);
@@ -219,7 +225,7 @@ export class CommandPrompt {
             this.#commandList.forEach((command) => {
                 command.selectedChars = this.#calculateFirstOccuringIntervall(
                     this.#commandInput.value.toLowerCase(),
-                    command.commandName.toLowerCase()
+                    command.commandName.toLowerCase(),
                 );
 
                 if (command.occurenceLength !== null) {
@@ -229,7 +235,7 @@ export class CommandPrompt {
 
             this.#currentlyAvailabeCommands.sort(
                 (command1, command2) =>
-                    command1.occurenceLength - command2.occurenceLength
+                    command1.occurenceLength - command2.occurenceLength,
             );
         }
 

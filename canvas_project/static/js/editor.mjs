@@ -1,21 +1,17 @@
 import * as THREE from "three";
-
 import { ViewHelper } from "compass";
 import { OrbitControls } from "orbitControls";
 import { TransformControls } from "transformControls";
-
 import { UndoRedoHandler } from "undoRedoHandler";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
 import { Navbar } from "navbar";
 import { OverviewHandler } from "overview";
-//import { ModeSelector } from "modeSelector";
 import { Picker } from "picker";
 import { ProjectSettingsManager } from "projectSettingsManager";
 import { ObjectManager } from "objectManager";
 import { QuickSelector } from "quickSelector";
 import { JobInterface } from "jobInterface";
 import { Inspector } from "inspectorClass";
-
 import { Heliostat, Receiver, LightSource, Terrain } from "objects";
 import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
@@ -56,7 +52,7 @@ export class Editor {
     #receiverList = [];
     #lightsourceList = [];
 
-    constructor(projectId) {
+    constructor(/** @type{Number} */ projectId) {
         // singleton
         if (editorInstance) return editorInstance;
         editorInstance = this;
@@ -70,18 +66,17 @@ export class Editor {
 
         // initiate needed classes
         this.#undoRedoHandler = new UndoRedoHandler();
-        //this.#modeSelector = new ModeSelector();
         this.#picker = new Picker(
             this.#camera,
             this.#transformControls,
             this.#selectionBox,
-            this.#selectableGroup
+            this.#selectableGroup,
         );
         this.#overview = new OverviewHandler(this.#picker);
         this.#projectSettingManager = new ProjectSettingsManager();
         this.#objectManager = new ObjectManager(
             this.#picker,
-            this.#undoRedoHandler
+            this.#undoRedoHandler,
         );
         this.#navbar = new Navbar(this.#objectManager);
         this.#quickSelector = new QuickSelector(this.#objectManager);
@@ -118,7 +113,7 @@ export class Editor {
         this.updateAspectRatio();
         this.#renderer.setSize(
             this.#canvas.offsetWidth,
-            this.#canvas.offsetHeight
+            this.#canvas.offsetHeight,
         );
         this.render();
     }
@@ -132,7 +127,7 @@ export class Editor {
             75,
             this.#canvas.clientWidth / this.#canvas.clientHeight,
             0.1,
-            2000
+            2000,
         );
         this.#camera.position.set(130, 50, 0);
 
@@ -146,7 +141,7 @@ export class Editor {
         this.#renderer.shadowMap.enabled = true;
         this.#renderer.setSize(
             this.#canvas.clientWidth,
-            this.#canvas.clientHeight
+            this.#canvas.clientHeight,
         );
         this.#canvas.appendChild(this.#renderer.domElement);
 
@@ -188,7 +183,7 @@ export class Editor {
             this.#camera,
             this.#renderer.domElement,
             200,
-            "circles"
+            "circles",
         );
 
         this.#selectionBox = new THREE.BoxHelper();
@@ -197,13 +192,13 @@ export class Editor {
         // controls
         this.#transformControls = new TransformControls(
             this.#camera,
-            this.#renderer.domElement
+            this.#renderer.domElement,
         );
         this.#scene.add(this.#transformControls.getHelper());
 
         this.#controls = new OrbitControls(
             this.#camera,
-            this.#renderer.domElement
+            this.#renderer.domElement,
         );
         this.#controls.screenSpacePanning = false;
         this.#controls.maxDistance = 500;
@@ -215,7 +210,7 @@ export class Editor {
             const x = pos.x;
             const z = pos.z;
             const magnitude = Math.sqrt(x * x + z * z);
-        
+
             if (magnitude > 900) {
                 const normalizedX = x / magnitude;
                 const normalizedZ = z / magnitude;
@@ -229,7 +224,7 @@ export class Editor {
             "dragging-changed",
             (event) => {
                 this.#controls.enabled = !event.value;
-            }
+            },
         );
 
         this.#selectableGroup.name = "selectableGroup";
@@ -252,16 +247,16 @@ export class Editor {
                 new THREE.Vector3(
                     heliostat.position_x,
                     heliostat.position_y,
-                    heliostat.position_z
+                    heliostat.position_z,
                 ),
                 new THREE.Vector3(
                     heliostat.aimpoint_x,
                     heliostat.aimpoint_y,
-                    heliostat.aimpoint_z
+                    heliostat.aimpoint_z,
                 ),
                 heliostat.number_of_facets,
                 heliostat.kinematic_type,
-                heliostat.id
+                heliostat.id,
             );
             this.#selectableGroup.add(tmp);
             this.#heliostatList.push(tmp);
@@ -273,13 +268,13 @@ export class Editor {
                 new THREE.Vector3(
                     receiver.position_x,
                     receiver.position_y,
-                    receiver.position_z
+                    receiver.position_z,
                 ),
                 receiver.rotation_y,
                 new THREE.Vector3(
                     receiver.normal_x,
                     receiver.normal_y,
-                    receiver.normal_z
+                    receiver.normal_z,
                 ),
                 receiver.towerType,
                 receiver.plane_e,
@@ -288,7 +283,7 @@ export class Editor {
                 receiver.resolution_u,
                 receiver.curvature_e,
                 receiver.curvature_u,
-                receiver.id
+                receiver.id,
             );
             this.#selectableGroup.add(tmp);
             this.#receiverList.push(tmp);
@@ -302,7 +297,7 @@ export class Editor {
                 lightsource.distribution_type,
                 lightsource.mean,
                 lightsource.covariance,
-                lightsource.id
+                lightsource.id,
             );
             this.#selectableGroup.add(tmp);
             this.#lightsourceList.push(tmp);
@@ -402,7 +397,7 @@ export class Editor {
         this.#selectableGroup.remove(lightsource);
         this.#lightsourceList.splice(
             this.#lightsourceList.indexOf(lightsource),
-            1
+            1,
         );
         this.#saveAndLoadHandler.deleteLightsource(lightsource);
     }

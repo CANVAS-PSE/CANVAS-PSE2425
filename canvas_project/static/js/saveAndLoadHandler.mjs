@@ -22,7 +22,7 @@ export class SaveAndLoadHandler {
         }
         if (!projectId) {
             throw new Error(
-                "To initialize the SaveAndLoadHandler an projectID is needed"
+                "To initialize the SaveAndLoadHandler an projectID is needed",
             );
         }
         saveAndLoadHandlerInstance = this;
@@ -37,14 +37,7 @@ export class SaveAndLoadHandler {
      */
     async getProjectData() {
         const url = this.#baseAPIUrl + "projects/" + this.#projectID;
-        return fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "GET");
     }
 
     /**
@@ -68,21 +61,7 @@ export class SaveAndLoadHandler {
             kinematic_type: heliostat.kinematicType,
         };
 
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "POST", body);
     }
 
     /**
@@ -111,21 +90,7 @@ export class SaveAndLoadHandler {
             resolution_u: receiver.resolutionU,
         };
 
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "POST", body);
     }
 
     /**
@@ -146,21 +111,7 @@ export class SaveAndLoadHandler {
             covariance: lightsource.distributionCovariance,
         };
 
-        return fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "POST", body);
     }
 
     // Object deletion
@@ -181,20 +132,7 @@ export class SaveAndLoadHandler {
             heliostat.apiID +
             "/";
 
-        return fetch(url, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return this;
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "DELETE");
     }
 
     // Object deletion
@@ -215,20 +153,7 @@ export class SaveAndLoadHandler {
             receiver.apiID +
             "/";
 
-        return fetch(url, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return this;
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "DELETE");
     }
 
     // Object deletion
@@ -249,20 +174,7 @@ export class SaveAndLoadHandler {
             lightsource.apiID +
             "/";
 
-        return fetch(url, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return this;
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "DELETE");
     }
 
     // Object updating
@@ -297,21 +209,7 @@ export class SaveAndLoadHandler {
             kinematic_type: heliostat.kinematicType,
         };
 
-        return fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "PUT", body);
     }
 
     /**
@@ -351,21 +249,7 @@ export class SaveAndLoadHandler {
             resolution_u: receiver.resolutionU,
         };
 
-        return fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "PUT", body);
     }
 
     /**
@@ -396,21 +280,7 @@ export class SaveAndLoadHandler {
             covariance: lightsource.distributionCovariance,
         };
 
-        return fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "PUT", body);
     }
 
     // Settings updating
@@ -428,21 +298,7 @@ export class SaveAndLoadHandler {
             [attribute]: newValue,
         };
 
-        return fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.#getCookie("csrftoken"),
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .catch((error) => console.log(error.message));
+        return this.#makeApiCall(url, "PUT", body);
     }
 
     /**
@@ -467,5 +323,29 @@ export class SaveAndLoadHandler {
         }
         // return the decoded value of the first cookie found
         return decodeURIComponent(xsrfCookies[0].split("=")[1]);
+    }
+
+    /**
+     * Wrapper function for an standard api call
+     * @param {string} endpoint The endpoint to make the api call to
+     * @param {"PUT" | "POST" | "GET" | "DELETE"} method The method you want to use
+     * @param {any} [body=null] the body for the api call
+     */
+    async #makeApiCall(endpoint, method, body) {
+        return fetch(endpoint, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": this.#getCookie("csrftoken"),
+            },
+            body: JSON.stringify(body),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .catch((error) => console.log(error.message));
     }
 }

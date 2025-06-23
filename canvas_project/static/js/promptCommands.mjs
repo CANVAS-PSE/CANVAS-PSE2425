@@ -31,7 +31,7 @@ export class PromptCommand extends HTMLElement {
             "px-2",
             "d-flex",
             "justify-content-between",
-            "align-items-center"
+            "align-items-center",
         );
         this.style.cursor = "pointer";
 
@@ -56,7 +56,7 @@ export class PromptCommand extends HTMLElement {
         // select this element on hover
         this.addEventListener("mousemove", () => {
             this.#commandPrompt.selectCommand(
-                this.#commandPrompt.currentlyAvailableCommands.indexOf(this)
+                this.#commandPrompt.currentlyAvailableCommands.indexOf(this),
             );
         });
     }
@@ -74,6 +74,8 @@ export class PromptCommand extends HTMLElement {
     }
 
     /**
+     * Returns an array of all indexes of characters that got selected by the searchring algorithm.
+     * Use for hightlighting them.
      * @param {Number[]} chars is an array of char indexes you want to be selected
      */
     set selectedChars(chars) {
@@ -121,7 +123,7 @@ export class PromptCommand extends HTMLElement {
      */
     execute() {
         throw new Error(
-            "This method needs to be implemented in all subclasses"
+            "This method needs to be implemented in all subclasses",
         );
     }
 }
@@ -135,7 +137,7 @@ export class ThemePromptCommand extends PromptCommand {
     constructor(description, commandPrompt) {
         if (new.target === ThemePromptCommand) {
             throw new Error(
-                "Cannot instantiate abstract class ThemePromptCommand directly"
+                "Cannot instantiate abstract class ThemePromptCommand directly",
             );
         }
         super(description, commandPrompt);
@@ -143,7 +145,7 @@ export class ThemePromptCommand extends PromptCommand {
 
     execute() {
         throw new Error(
-            "This method needs to be implemented in all subclasses"
+            "This method needs to be implemented in all subclasses",
         );
     }
 
@@ -161,7 +163,7 @@ export class ThemePromptCommand extends PromptCommand {
                 "data-bs-theme",
                 window.matchMedia("(prefers-color-scheme: dark)").matches
                     ? "dark"
-                    : "light"
+                    : "light",
             );
         } else {
             document.documentElement.setAttribute("data-bs-theme", theme);
@@ -459,7 +461,7 @@ export class OpenJobInterfacePromptCommand extends PromptCommand {
 
     execute() {
         const jobInterfaceModal = new Modal(
-            document.getElementById("jobInterface")
+            document.getElementById("jobInterface"),
         );
         jobInterfaceModal.show();
 
@@ -485,7 +487,7 @@ export class OpenKeybindsPromptCommand extends PromptCommand {
 
     execute() {
         const keybindingsModal = new Modal(
-            document.getElementById("keyboardModal")
+            document.getElementById("keyboardModal"),
         );
         keybindingsModal.show();
     }
@@ -554,7 +556,7 @@ export class NewProjectPromptCommand extends PromptCommand {
 
     execute() {
         const newProjectModal = new Modal(
-            document.getElementById("createNewProject")
+            document.getElementById("createNewProject"),
         );
         newProjectModal.show();
 
@@ -580,7 +582,7 @@ export class OpenProjectPromptCommand extends PromptCommand {
 
     execute() {
         const newProjectModal = new Modal(
-            document.getElementById("openProject")
+            document.getElementById("openProject"),
         );
         newProjectModal.show();
     }
@@ -592,39 +594,39 @@ customElements.define("dark-mode-prompt-command", DarkModePromptCommand);
 customElements.define("auto-mode-prompt-command", AutoModePromptCommand);
 customElements.define(
     "add-heliostat-prompt-command",
-    AddHeliostatPromptCommand
+    AddHeliostatPromptCommand,
 ),
     customElements.define(
         "add-receiver-prompt-command",
-        AddReceiverPromptCommand
+        AddReceiverPromptCommand,
     );
 customElements.define(
     "add-light-source-prompt-command",
-    AddLightSourcePromptCommand
+    AddLightSourcePromptCommand,
 );
 customElements.define(
     "toggle-fullscreen-prompt-command",
-    ToggleFullscreenPromptCommand
+    ToggleFullscreenPromptCommand,
 );
 customElements.define(
     "export-project-prompt-command",
-    ExportProjectPromptCommand
+    ExportProjectPromptCommand,
 );
 customElements.define(
     "render-project-prompt-command",
-    RenderProjectPromptCommand
+    RenderProjectPromptCommand,
 );
 customElements.define(
     "open-settings-prompt-command",
-    OpenSettingsPromptCommand
+    OpenSettingsPromptCommand,
 );
 customElements.define(
     "open-job-interface-prompt-command",
-    OpenJobInterfacePromptCommand
+    OpenJobInterfacePromptCommand,
 );
 customElements.define(
     "open-keybings-prompt-command",
-    OpenKeybindsPromptCommand
+    OpenKeybindsPromptCommand,
 );
 customElements.define("logout-prompt-command", LogoutPromptCommand);
 customElements.define("new-project-prompt-command", NewProjectPromptCommand);

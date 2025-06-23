@@ -10,7 +10,8 @@
     "use strict";
 
     const getStoredTheme = () => localStorage.getItem("theme");
-    const setStoredTheme = (theme) => localStorage.setItem("theme", theme);
+    const setStoredTheme = (/** @type{String} */ theme) =>
+        localStorage.setItem("theme", theme);
 
     const getPreferredTheme = () => {
         const storedTheme = getStoredTheme();
@@ -21,13 +22,13 @@
         return storedTheme;
     };
 
-    const setTheme = (theme) => {
+    const setTheme = (/** @type{String} */ theme) => {
         if (theme === "auto") {
             document.documentElement.setAttribute(
                 "data-bs-theme",
                 window.matchMedia("(prefers-color-scheme: dark)").matches
                     ? "dark"
-                    : "light"
+                    : "light",
             );
         } else {
             document.documentElement.setAttribute("data-bs-theme", theme);
@@ -36,7 +37,7 @@
 
     setTheme(getPreferredTheme());
 
-    const showActiveTheme = (theme) => {
+    const showActiveTheme = (/** @type{String} */ theme) => {
         const themeSelect = document.getElementById("theme-select");
 
         if (!themeSelect) {
