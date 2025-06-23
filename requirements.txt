@@ -10,3 +10,6 @@ python-dotenv
 cryptography
 Pillow
 coverage
+mypy
+pre-commit
+ruff
