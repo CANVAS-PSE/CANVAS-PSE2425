@@ -7,9 +7,11 @@
 [![Django CI](https://github.com/CANVAS-PSE/CANVAS-PSE2425/actions/workflows/django.yml/badge.svg)](https://github.com/CANVAS-PSE/CANVAS-PSE2425/actions/workflows/django.yml)
 
 ## Installation
+
 We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` virtual environment ([click here for the documentation](https://docs.python.org/3/library/venv.html)).
 
-After setting up and activating the virtual environment *(or deciding against it)*, execute the following instructions, to set up the code base
+After setting up and activating the virtual environment _(or deciding against it)_, execute the following instructions, to set up the code base
+
 ```bash
 # You may have to replace python with python3, depending on your operating system.
 # clone the repo
@@ -19,7 +21,11 @@ git clone https://github.com/CANVAS-PSE/CANVAS-PSE2425.git
 cd CANVAS-PSE2425/
 pip install -r requirements.txt
 
-# add the .env file to the root of the canvas_project folder 
+# Installing Pre-commit Hooks and NPM Dependencies
+pre-commit install
+npm install
+
+# add the .env file to the root of the canvas_project folder
 # containing debug variable, client_id + secret_key for OpenID, email-host password, etc.
 
 # configure the database
