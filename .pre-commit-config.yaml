@@ -11,6 +11,7 @@ repos:
                     types-requests,
                     types-waitress,
                 ]
+            exclude: '.*[\\/]migrations[\\/].*'
     - repo: https://github.com/pre-commit/pre-commit-hooks
       rev: v5.0.0
       hooks:
