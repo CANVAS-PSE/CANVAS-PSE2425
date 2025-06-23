@@ -1,10 +1,12 @@
 import { ObjectManager } from "objectManager";
 
+/**
+ * Manages the quick selector menu in the editor on the bottom of the page.
+ * This class handles the creation of objects like heliostats, receivers, and light sources
+ */
+
 export class QuickSelector {
     #objectManager;
-    #createHeliostatButton;
-    #createReceiverButton;
-    #createLightSourceButton;
 
     /**
      *
@@ -20,24 +22,25 @@ export class QuickSelector {
      * Method to add event listeners to the buttons on the Quick Settings bar on the bottom of the page.
      */
     #addEventlisteners() {
-        // Buttons on the bottom bar
-        this.#createHeliostatButton = document.getElementById(
-            "quickSettingsHeliostat"
-        );
-        this.#createReceiverButton = document.getElementById(
-            "quickSettingsReceiver"
-        );
-        this.#createLightSourceButton = this.#createLightSourceButton =
-            document.getElementById("quickSettingsLightsource");
-        // Event listeners for the buttons on the bottom bar
-        this.#createHeliostatButton.addEventListener("click", () => {
-            this.#objectManager.createHeliostat();
-        });
-        this.#createReceiverButton.addEventListener("click", () => {
-            this.#objectManager.createReceiver();
-        });
-        this.#createLightSourceButton.addEventListener("click", () => {
-            this.#objectManager.createLightSource();
+        // Define the buttons and their corresponding actions
+        /** @type {[string, Function][]} */
+        const buttons = [
+            ["quickSettingsHeliostat", this.#objectManager.createHeliostat],
+            ["quickSettingsReceiver", this.#objectManager.createReceiver],
+            ["quickSettingsLightsource", this.#objectManager.createLightSource],
+        ];
+
+        buttons.forEach(([id, action]) => {
+            // Get the button by its ID and add a click event listener
+            // If the button is not found, log a warning
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.addEventListener("click", () =>
+                    action.call(this.#objectManager)
+                );
+            } else {
+                console.warn(`QuickSelector: Button "${id}" not found.`);
+            }
         });
     }
 }

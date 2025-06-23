@@ -1,9 +1,7 @@
 import * as THREE from "three";
-import { Receiver, SelectableObject } from "objects";
+import { SelectableObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 import { ItemCreatedEvent } from "createCommands";
-
-import * as bootstrap from "bootstrap";
 
 export const Mode = Object.freeze({
     NONE: "none",
@@ -52,35 +50,67 @@ export class Picker {
         this.#isDragging = false;
         this.#selectedObject = null;
 
-        // Mouse event listeners on the canvas
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mousedown", (event) => {
-            // @ts-ignore
-            this.#onMouseDown(event);
-        });
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mousemove", (event) => {
-            // @ts-ignore
-            this.#onMouseMove(event);
-        });
-        this.#canvas.children[
-            this.#canvas.children.length - 1
-        ].addEventListener("mouseup", (event) => {
-            // @ts-ignore
-            this.#onMouseUp(event);
-        });
-
-        // Keyboard event listeners for snap-to-grid functionality
-        window.addEventListener("keydown", (event) => {
-            this.#onKeyDown(event);
-        });
-        window.addEventListener("keyup", (event) => {
-            this.#onKeyUp(event);
-        });
-
+        // Set up event listeners for mouse events
+        this.#setUpMouseEvents();
+        // Set up event listeners for keyboard events
+        this.#setUpKeyboardEvents();
+        // Add event listeners for custom events
         this.#addEventListenerCustomEvent();
+    }
+
+    #setUpMouseEvents() {
+        const canvasChild =
+            this.#canvas.children[this.#canvas.children.length - 1];
+
+        /** @type {[string, Function][]} */
+        const mouseEventMapping = [
+            [
+                "mousedown",
+                (event) => {
+                    this.#onMouseDown(event);
+                },
+            ],
+            [
+                "mousemove",
+                (event) => {
+                    this.#onMouseMove(event);
+                },
+            ],
+            [
+                "mouseup",
+                (event) => {
+                    this.#onMouseUp(event);
+                },
+            ],
+        ];
+
+        mouseEventMapping.forEach(([eventName, handler]) => {
+            // @ts-ignore
+            canvasChild.addEventListener(eventName, handler);
+        });
+    }
+
+    #setUpKeyboardEvents() {
+        /** @type {[string, Function][]} */
+        const keyboardEventMapping = [
+            [
+                "keydown",
+                (event) => {
+                    this.#onKeyDown(event);
+                },
+            ],
+            [
+                "keyup",
+                (event) => {
+                    this.#onKeyUp(event);
+                },
+            ],
+        ];
+
+        keyboardEventMapping.forEach(([eventName, handler]) => {
+            // @ts-ignore
+            window.addEventListener(eventName, handler);
+        });
     }
 
     /**
@@ -112,17 +142,24 @@ export class Picker {
      */
     setMode(mode) {
         this.#mode = mode;
-        if (mode === Mode.NONE) {
-            this.#transformControls.detach();
-        } else if (mode === Mode.MOVE) {
-            this.#transformControls.setMode("translate");
-        } else {
-            this.#transformControls.setMode("rotate");
-        }
 
+        switch (mode) {
+            case Mode.NONE:
+                this.#transformControls.detach();
+                break;
+            case Mode.MOVE:
+                this.#transformControls.setMode("translate");
+                break;
+            case Mode.ROTATE:
+                this.#transformControls.setMode("rotate");
+                break;
+            default:
+                console.warn("Picker has no valid mode set:", mode);
+                break;
+        }
         // update the available input methods, depending on the mode
-        this.#attachTransform();
-        this.#attachSelectionBox();
+        this.#updateTransformControls();
+        this.#updateSelectionBox();
     }
 
     /**
@@ -150,8 +187,8 @@ export class Picker {
         this.#selectedObjects = objectList;
         if (objectList) {
             this.#selectedObject = objectList[0];
-            this.#attachTransform();
-            this.#attachSelectionBox();
+            this.#updateTransformControls();
+            this.#updateSelectionBox();
         }
 
         this.#itemSelectedEvent();
@@ -243,6 +280,7 @@ export class Picker {
             true
         );
 
+        // Finds whole SelectableObject from the intersected objects
         if (intersects.length > 0) {
             for (let i = 0; i < intersects.length; i++) {
                 const hit = intersects[i];
@@ -269,9 +307,7 @@ export class Picker {
     #deselectAll() {
         // Detach transformControls
         this.#transformControls.detach();
-        this.#transformControls.showX = true;
-        this.#transformControls.showZ = true;
-        this.#transformControls.showY = true;
+        this.#setTransformControlAxes(true, true, true);
         this.#selectionBox.visible = false;
         this.#selectedObjects = [];
     }
@@ -292,82 +328,125 @@ export class Picker {
         if (ctrlKey) {
             // If object is already in the selection, just attach transformControls
             if (this.#selectedObjects.includes(this.#selectedObject)) {
-                this.#attachTransform();
-                this.#attachSelectionBox();
+                this.#finalizeSelection();
             } else {
                 // Add it to the selection
                 this.#selectedObjects.push(this.#selectedObject);
-                this.#attachTransform();
-                this.#attachSelectionBox();
+                this.#finalizeSelection();
             }
         } else {
             // deselect everything, then select the clicked object
             this.#deselectAll();
             this.#selectedObjects.push(this.#selectedObject);
-            this.#attachTransform();
-            this.#attachSelectionBox();
+            this.#finalizeSelection();
         }
+    }
+
+    /**
+     * Finalizes the selection by updating the transform controls and selection box.
+     */
+    #finalizeSelection() {
+        this.#updateTransformControls();
+        this.#updateSelectionBox();
     }
 
     /**
      * Decides whether to attach transformControls to a single object
      * or a multiSelectionGroup that contains all currently selected objects.
      */
-    #attachTransform() {
+    #updateTransformControls() {
         if (this.#mode !== Mode.NONE) {
             // reset previous available axis
-            this.#transformControls.showX = true;
-            this.#transformControls.showZ = true;
-            this.#transformControls.showY = true;
+            this.#setTransformControlAxes(true, true, true);
 
             if (this.#selectedObjects.length === 0) {
                 this.#deselectAll();
             } else if (this.#selectedObjects.length === 1) {
-                if (this.#transformControls.mode === "rotate") {
-                    this.#transformControls.attach(this.#selectedObjects[0]);
-                    this.#transformControls.showX = false;
-                    this.#transformControls.showZ = false;
-                    this.#transformControls.showY = false;
-                    if (this.#selectedObject.rotatableAxis) {
-                        this.#selectedObject.rotatableAxis.forEach((axis) => {
-                            if (axis === "X") {
-                                this.#transformControls.showX = true;
-                            }
-                            if (axis === "Y") {
-                                this.#transformControls.showY = true;
-                            }
-                            if (axis === "Z") {
-                                this.#transformControls.showZ = true;
-                            }
-                        });
-                    }
-                } else if (this.#transformControls.mode === "translate") {
-                    if (this.#selectedObject.isMovable) {
-                        this.#transformControls.attach(
-                            this.#selectedObjects[0]
-                        );
-                    }
-                }
-                // Prevents an object from being dragged below ground level
-                this.#transformControls.addEventListener('objectChange', () => {
-                    const groundLevel = 0; 
-                    if (this.#selectedObject.position.y < groundLevel) {
-                        this.#selectedObject.position.y = groundLevel;
-                    }
-                    // If the object has a lockPositionY method, call it
-                    if (typeof this.#transformControls.object.lockPositionY === 'function') {
-                        this.#transformControls.object.lockPositionY(groundLevel - this.#transformControls.object.position.y);
-                    }
-                });
+                this.#attachSingleTransformControl();
             } else {
                 // TODO: Implement multi-selection
                 // hide every control as they will not work properly
                 this.#transformControls.detach();
+                this.#updateSelectionBox();
             }
         }
     }
 
-    #attachSelectionBox() {
+    /**
+     * Attaches the transform controls to a single object
+     */
+    #attachSingleTransformControl() {
+        switch (this.#transformControls.mode) {
+            case "rotate":
+                this.#transformControls.attach(this.#selectedObjects[0]);
+                this.#setTransformControlAxes(false, false, false);
+                if (this.#selectedObject.rotatableAxis) {
+                    this.#selectedObject.rotatableAxis.forEach((axis) => {
+                        let showX = false;
+                        let showY = false;
+                        let showZ = false;
+                        if (axis === "X") {
+                            showX = true;
+                        }
+                        if (axis === "Y") {
+                            showY = true;
+                        }
+                        if (axis === "Z") {
+                            showZ = true;
+                        }
+                        this.#setTransformControlAxes(showX, showY, showZ);
+                    });
+                }
+                break;
+            case "translate":
+                if (this.#selectedObject.isMovable) {
+                    this.#transformControls.attach(this.#selectedObjects[0]);
+                }
+                this.#enforceGroundLevel();
+                break;
+        }
+    }
+
+    /**
+     * Enforces that the selected object cannot be dragged below ground level.
+     */
+    #enforceGroundLevel() {
+        // Prevents an object from being dragged below ground level
+        this.#transformControls.addEventListener("objectChange", () => {
+            const groundLevel = 0;
+            if (this.#selectedObject.position.y < groundLevel) {
+                this.#selectedObject.position.y = groundLevel;
+            }
+            // If the object has a lockPositionY method, call it
+            if (
+                typeof this.#transformControls.object.lockPositionY ===
+                "function"
+            ) {
+                this.#transformControls.object.lockPositionY(
+                    groundLevel - this.#transformControls.object.position.y
+                );
+            }
+        });
+    }
+
+    /**
+     * Adds or removes axes from the transform controls based on the provided parameters.
+     * @param {boolean} showX
+     * @param {boolean} showY
+     * @param {boolean} showZ
+     */
+    #setTransformControlAxes(showX, showY, showZ) {
+        this.#transformControls.showX = showX;
+        this.#transformControls.showY = showY;
+        this.#transformControls.showZ = showZ;
+    }
+
+    /**
+     * Updates the selection box based on the currently selected objects.
+     * If only one object is selected, it will set the selection box to that object.
+     * As multi selection is not implemented yet, it will hide the selection box in any other case.
+     */
+    #updateSelectionBox() {
         if (this.#selectedObjects.length == 1) {
             if (this.#selectedObjects[0].isSelectable) {
                 //@ts-ignore
@@ -376,6 +455,8 @@ export class Picker {
             } else {
                 this.#selectionBox.visible = false;
             }
+        } else {
+            this.#selectionBox.visible = false;
         }
     }
 
