@@ -34,5 +34,5 @@ repos:
         name: lint-staged
         entry: npx lint-staged
         language: "system"
-        pass_files: false
+        pass_filnames: false
         require_serial: true
