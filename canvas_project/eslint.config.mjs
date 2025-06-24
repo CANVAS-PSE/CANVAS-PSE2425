@@ -4,15 +4,25 @@ import jsdoc from "eslint-plugin-jsdoc";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { languageOptions: { globals: globals.browser } },
+  {
+    ignores: [
+      "**/three.module.js",
+      "**/three/examples/",
+      "**/*min.js",
+      "**/bootstrap/",
+    ],
+  },
+  {
+    languageOptions: { globals: globals.browser },
+  },
   pluginJs.configs.recommended,
 
   // Add the JSDoc plugin configuration
   {
-    files: ["**/*.js", "**/*.mjs", "**/*.cjs"], // Apply to JavaScript files
     plugins: {
-      jsdoc: jsdoc, // Register the plugin with a name (e.g., 'jsdoc')
+      jsdoc: jsdoc,
     },
+
     rules: {
       "jsdoc/check-access": 1, // Recommended
       "jsdoc/check-alignment": 1, // Recommended
@@ -68,4 +78,3 @@ export default [
     },
   },
 ];
-
