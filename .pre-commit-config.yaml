@@ -28,12 +28,11 @@ repos:
         additional_dependencies: ["prettier@3.2.5"]
         files: \.(js|mjs|json|css)$
         require_serial: true
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: "v9.29.0"
+  - repo: local
     hooks:
-      - id: eslint
-        files: \.(mjs|js)$
-        exclude: 'canvas_project/static/js/(bootstrap/bootstrap.*|three/three.*)\.js'
-        args: [-c canvas_project/eslint.config.mjs]
-        types: [file]
+      - id: lint-staged
+        name: lint-staged
+        entry: npx lint-staged
+        language: "system"
+        pass_files: false
         require_serial: true
