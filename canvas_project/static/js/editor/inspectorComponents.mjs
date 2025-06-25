@@ -1,3 +1,4 @@
+import { SelectableObject } from "objects";
 /**
  * Represents a single component of the inspector
  */
@@ -10,17 +11,17 @@ export class InspectorComponent {
 
   /**
    * Renders the component and also adds the necessary logic to updating and saving.
-   * @returns {HTMLElement}
+   * @throws {Error} if this method is not implemented in a subclass
    */
   render() {
     throw new Error(
-      "This method must be implemented in every subclass of InspectorComponent",
+      "This method must be implemented in every subclass of InspectorComponent"
     );
   }
 
   disableBorder() {
     throw new Error(
-      "This method must be implemented in every subclass of InspectorComponent",
+      "This method must be implemented in every subclass of InspectorComponent"
     );
   }
 }
@@ -49,7 +50,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     fieldType,
     getFieldValueFunc,
     saveFunc,
-    InputLimitBottom,
+    InputLimitBottom
   ) {
     super();
     this.#fieldName = fieldName;
@@ -172,7 +173,7 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
       "bg-body",
       "rounded-3",
       "gap-2",
-      "accordion-body",
+      "accordion-body"
     );
     bodyWrapper.appendChild(body);
 
@@ -279,7 +280,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
     max,
     getFieldValueFunc,
     saveFunc,
-    step = undefined,
+    step = undefined
   ) {
     super();
     this.#fieldName = fieldName;
@@ -299,7 +300,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
       "p-2",
       "bg-body",
       "rounded-3",
-      "gap-2",
+      "gap-2"
     );
     if (this.#hasBorder) {
       wrapper.classList.add("border");
@@ -380,7 +381,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
    * Creates a new header component.
    * @param {Function} getFieldValueFunc the function to get the title
    * @param {Function} saveFunc the function to update the title
-   * @param selectedObject
+   * @param {SelectableObject} selectedObject - the currently selected object in the inspector
    */
   constructor(getFieldValueFunc, saveFunc, selectedObject) {
     super();
@@ -409,7 +410,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
       "d-flex",
       "gap-1",
       "bg-body",
-      "px-2",
+      "px-2"
     );
     buttonWrapper.appendChild(buttonBackground);
     wrapper.appendChild(buttonWrapper);

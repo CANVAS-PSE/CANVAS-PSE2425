@@ -122,7 +122,7 @@ export class CommandPrompt {
     ];
 
     this.#commandList.sort((command1, command2) =>
-      command1.commandName.localeCompare(command2.commandName),
+      command1.commandName.localeCompare(command2.commandName)
     );
   }
 
@@ -172,7 +172,7 @@ export class CommandPrompt {
 
   /**
    * Selects the command specified by the selectedIndex
-   * @param selectedIndex
+   * @param {number} selectedIndex - the index of the command to select
    */
   selectCommand(selectedIndex = this.#selectedIndex) {
     if (this.#selectedCommand) {
@@ -212,7 +212,7 @@ export class CommandPrompt {
       this.#commandList.forEach((command) => {
         command.selectedChars = this.#calculateFirstOccuringIntervall(
           this.#commandInput.value.toLowerCase(),
-          command.commandName.toLowerCase(),
+          command.commandName.toLowerCase()
         );
 
         if (command.occurenceLength !== null) {
@@ -222,7 +222,7 @@ export class CommandPrompt {
 
       this.#currentlyAvailabeCommands.sort(
         (command1, command2) =>
-          command1.occurenceLength - command2.occurenceLength,
+          command1.occurenceLength - command2.occurenceLength
       );
     }
 

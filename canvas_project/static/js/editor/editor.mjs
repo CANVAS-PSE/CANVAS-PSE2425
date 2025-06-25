@@ -52,7 +52,11 @@ export class Editor {
   #receiverList = [];
   #lightsourceList = [];
 
-  constructor(/** @type{Number} */ projectId) {
+  constructor(
+    /**
+     * @type {number}
+     */ projectId
+  ) {
     // singleton
     if (editorInstance) return editorInstance;
     editorInstance = this;
@@ -70,13 +74,13 @@ export class Editor {
       this.#camera,
       this.#transformControls,
       this.#selectionBox,
-      this.#selectableGroup,
+      this.#selectableGroup
     );
     this.#overview = new OverviewHandler(this.#picker);
     this.#projectSettingManager = new ProjectSettingsManager();
     this.#objectManager = new ObjectManager(
       this.#picker,
-      this.#undoRedoHandler,
+      this.#undoRedoHandler
     );
     this.#navbar = new Navbar(this.#objectManager);
     this.#quickSelector = new QuickSelector(this.#objectManager);
@@ -123,7 +127,7 @@ export class Editor {
       75,
       this.#canvas.clientWidth / this.#canvas.clientHeight,
       0.1,
-      2000,
+      2000
     );
     this.#camera.position.set(130, 50, 0);
 
@@ -176,7 +180,7 @@ export class Editor {
       this.#camera,
       this.#renderer.domElement,
       200,
-      "circles",
+      "circles"
     );
 
     this.#selectionBox = new THREE.BoxHelper();
@@ -185,7 +189,7 @@ export class Editor {
     // controls
     this.#transformControls = new TransformControls(
       this.#camera,
-      this.#renderer.domElement,
+      this.#renderer.domElement
     );
     this.#scene.add(this.#transformControls.getHelper());
 
@@ -234,16 +238,16 @@ export class Editor {
         new THREE.Vector3(
           heliostat.position_x,
           heliostat.position_y,
-          heliostat.position_z,
+          heliostat.position_z
         ),
         new THREE.Vector3(
           heliostat.aimpoint_x,
           heliostat.aimpoint_y,
-          heliostat.aimpoint_z,
+          heliostat.aimpoint_z
         ),
         heliostat.number_of_facets,
         heliostat.kinematic_type,
-        heliostat.id,
+        heliostat.id
       );
       this.#selectableGroup.add(tmp);
       this.#heliostatList.push(tmp);
@@ -255,13 +259,13 @@ export class Editor {
         new THREE.Vector3(
           receiver.position_x,
           receiver.position_y,
-          receiver.position_z,
+          receiver.position_z
         ),
         receiver.rotation_y,
         new THREE.Vector3(
           receiver.normal_x,
           receiver.normal_y,
-          receiver.normal_z,
+          receiver.normal_z
         ),
         receiver.towerType,
         receiver.plane_e,
@@ -270,7 +274,7 @@ export class Editor {
         receiver.resolution_u,
         receiver.curvature_e,
         receiver.curvature_u,
-        receiver.id,
+        receiver.id
       );
       this.#selectableGroup.add(tmp);
       this.#receiverList.push(tmp);
@@ -284,7 +288,7 @@ export class Editor {
         lightsource.distribution_type,
         lightsource.mean,
         lightsource.covariance,
-        lightsource.id,
+        lightsource.id
       );
       this.#selectableGroup.add(tmp);
       this.#lightsourceList.push(tmp);
@@ -302,6 +306,7 @@ export class Editor {
   /**
    * Enables or disables the shadows
    * @param {boolean} mode is the mode you want to use
+   * @returns {Editor} returns the editor instance for chaining
    */
   setShadows(mode) {
     this.#renderer.shadowMap.enabled = mode;
@@ -313,6 +318,7 @@ export class Editor {
   /**
    * Enables or disables the fog
    * @param {boolean} mode is the mode you want to use
+   * @returns {Editor} returns the editor instance for chaining
    */
   setFog(mode) {
     this.#scene.fog = mode ? new THREE.Fog(0xdde0e0, 100, 2200) : null;
