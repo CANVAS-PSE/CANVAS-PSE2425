@@ -10,7 +10,7 @@ export class JobInterface {
 
   /**
    *
-   * @param {number} projectID
+   * @param {number} projectID - The ID of the project for which jobs are being managed.
    */
   constructor(projectID) {
     this.#jobInterfaceBody = document.getElementById("jobInterfaceBody");
@@ -116,7 +116,7 @@ export class JobInterface {
   /**
    * Gets the cookie specified by the name
    * @param {string} name The name of the cookie you want to get.
-   * @returns the cookie or null if it couldn't be found.
+   * @returns {null} the cookie or null if it couldn't be found.
    */
   #getCookie(name) {
     if (!document.cookie) {
@@ -165,7 +165,7 @@ export class Job extends HTMLElement {
       "d-flex",
       "p-2",
       "gap-2",
-      "align-items-center",
+      "align-items-center"
     );
 
     const jobName = document.createElement("div");
@@ -186,7 +186,7 @@ export class Job extends HTMLElement {
     this.#progressElem.setAttribute("role", "progressbar");
     this.#progressElem.setAttribute(
       "aria-valuenow",
-      (this.#progress * 100).toString(),
+      (this.#progress * 100).toString()
     );
     this.#progressElem.setAttribute("aria-valuemin", "0");
     this.#progressElem.setAttribute("aria-valuemax", "100");
@@ -199,7 +199,7 @@ export class Job extends HTMLElement {
       "btn",
       "btn-primary",
       "text-nowrap",
-      "rouned-3",
+      "rouned-3"
     );
     this.#resultButton.innerHTML = "View Result";
     this.#resultButton.classList.add("d-none");
@@ -222,7 +222,7 @@ export class Job extends HTMLElement {
           this.#statusElem.innerHTML = "Status: " + data["status"];
           this.#progressElem.setAttribute(
             "aria-valuenow",
-            (data["progress"] * 100).toString(),
+            (data["progress"] * 100).toString()
           );
           this.#progressElem.style.width = data["progress"] * 100 + "%";
           if (data["progress"] >= 1) {
