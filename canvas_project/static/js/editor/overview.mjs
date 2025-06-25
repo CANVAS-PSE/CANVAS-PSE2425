@@ -98,21 +98,21 @@ export class OverviewHandler {
     objects.heliostatList.forEach((heliostat) => {
       const selected = selectedObjects.includes(heliostat);
       this.#heliostatList.appendChild(
-        this.#createHeliostatEntry(heliostat, selected),
+        this.#createHeliostatEntry(heliostat, selected)
       );
     });
 
     objects.receiverList.forEach((receiver) => {
       const selected = selectedObjects.includes(receiver);
       this.#receiverList.appendChild(
-        this.#createReceiverEntry(receiver, selected),
+        this.#createReceiverEntry(receiver, selected)
       );
     });
 
     objects.lightsourceList.forEach((lightsource) => {
       const selected = selectedObjects.includes(lightsource);
       this.#lightsourceList.appendChild(
-        this.#createLightsourceEntry(lightsource, selected),
+        this.#createLightsourceEntry(lightsource, selected)
       );
     });
 
@@ -142,7 +142,7 @@ export class OverviewHandler {
    * Creates an entry for the given heliostat
    * @param {Heliostat} object the heliostat you want to create an entry for
    * @param {boolean} selected if the object is selected or not
-   * @returns the html element
+   * @returns {HTMLElement} heliostatEntry - the html element for the heliostat
    */
   #createHeliostatEntry(object, selected) {
     // create the html element to render
@@ -154,14 +154,14 @@ export class OverviewHandler {
       "p-2",
       "rounded-2",
       "overviewElem",
-      selected ? "bg-primary-subtle" : "bg-body-secondary",
+      selected ? "bg-primary-subtle" : "bg-body-secondary"
     );
 
     const icon = document.createElement("i");
     icon.classList.add(
       "bi-arrow-up-right-square",
       "d-flex",
-      "align-items-center",
+      "align-items-center"
     );
     heliostatEntry.appendChild(icon);
 
@@ -199,7 +199,7 @@ export class OverviewHandler {
    * Creates an entry for the given receiver
    * @param {Receiver} object the receiver you want to create an entry for
    * @param {boolean} selected determines if the object is selected or not
-   * @returns {HTMLElement}
+   * @returns {HTMLElement} receiverEntry - the html element for the receiver
    */
   #createReceiverEntry(object, selected) {
     // create the html element to render
@@ -211,7 +211,7 @@ export class OverviewHandler {
       "p-2",
       "rounded-2",
       "overviewElem",
-      selected ? "bg-primary-subtle" : "bg-body-secondary",
+      selected ? "bg-primary-subtle" : "bg-body-secondary"
     );
 
     const icon = document.createElement("i");
@@ -252,7 +252,7 @@ export class OverviewHandler {
    * Creates an entry for the given light source
    * @param {LightSource} object the light source you want to create an entry for
    * @param {boolean} selected determines if the object is selected or not
-   * @returns {HTMLElement}
+   * @returns {HTMLElement} lightsourceEntry - the html element for the light source
    */
   #createLightsourceEntry(object, selected) {
     // create the html element to render
@@ -264,7 +264,7 @@ export class OverviewHandler {
       "p-2",
       "rounded-2",
       "overviewElem",
-      selected ? "bg-primary-subtle" : "bg-body-secondary",
+      selected ? "bg-primary-subtle" : "bg-body-secondary"
     );
 
     const icon = document.createElement("i");
@@ -313,7 +313,7 @@ export class OverviewHandler {
             if (this.#selectedObjects.includes(object)) {
               this.#selectedObjects.splice(
                 this.#selectedObjects.indexOf(object),
-                1,
+                1
               );
             } else {
               this.#selectedObjects.push(object);

@@ -22,8 +22,8 @@ export class ObjectManager {
   /**
    * Constructor for the object manager
    * Event listener for keyboard shortcuts
-   * @param {Picker} picker
-   * @param {UndoRedoHandler} undoRedoHandler
+   * @param {Picker} picker - The picker instance to manage object selection
+   * @param {UndoRedoHandler} undoRedoHandler - The undo/redo handler to manage commands
    */
   constructor(picker, undoRedoHandler) {
     this.#picker = picker;
@@ -41,7 +41,7 @@ export class ObjectManager {
       new Vector3(15, 0, -15),
       new Vector3(0, 0, 0),
       4,
-      "ideal",
+      "ideal"
     );
     this.#undoRedoHandler.executeCommand(new CreateHeliostatCommand(heliostat));
     this.#picker.setSelection([heliostat]);
@@ -62,7 +62,7 @@ export class ObjectManager {
       0,
       0,
       0,
-      0,
+      0
     );
     this.#undoRedoHandler.executeCommand(new CreateReceiverCommand(receiver));
 
@@ -79,10 +79,10 @@ export class ObjectManager {
       "sun",
       "normal",
       1,
-      1,
+      1
     );
     this.#undoRedoHandler.executeCommand(
-      new CreateLightSourceCommand(lightSource),
+      new CreateLightSourceCommand(lightSource)
     );
     this.#picker.setSelection([lightSource]);
   }

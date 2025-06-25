@@ -9,7 +9,7 @@ export class Navbar {
 
   /**
    *
-   * @param {ObjectManager} objectManager
+   * @param {ObjectManager} objectManager - The ObjectManager instance that manages the objects in the scene.
    */
   constructor(objectManager) {
     this.#objectManager = objectManager;

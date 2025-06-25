@@ -118,20 +118,30 @@ export class Picker {
   #addEventListenerCustomEvent() {
     this.#canvas.addEventListener(
       "itemDeleted",
-      (/**  @type {ItemDeletedEvent} */ event) => {
+      (
+        /**
+         * @type {ItemDeletedEvent}
+         */
+        event
+      ) => {
         if (event.detail.item == this.#selectedObjects[0]) {
           this.#deselectAll();
           this.#itemSelectedEvent();
         }
-      },
+      }
     );
 
     this.#canvas.addEventListener(
       "itemCreated",
-      (/**  @type {ItemCreatedEvent} */ event) => {
+      (
+        /**
+         * @type {ItemCreatedEvent}
+         */
+        event
+      ) => {
         const createdItem = event.detail.item;
         this.setSelection([createdItem]);
-      },
+      }
     );
   }
 
@@ -171,7 +181,7 @@ export class Picker {
 
   /**
    * Returns the list of selected objects
-   * @returns List of selected objects
+   * @returns {Array<THREE.Object3D>} List of selected objects
    */
   getSelectedObjects() {
     return this.#selectedObjects;
@@ -179,7 +189,7 @@ export class Picker {
 
   /**
    * Sets the list of selected objects
-   * @param {Array<THREE.Object3D>} objectList
+   * @param {Array<THREE.Object3D>} objectList - The list of objects to select
    */
   setSelection(objectList) {
     this.#deselectAll();
@@ -194,7 +204,7 @@ export class Picker {
   }
 
   /**
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - The mouse down event
    */
   #onMouseDown(event) {
     this.#isDragging = false;
@@ -203,7 +213,7 @@ export class Picker {
   }
 
   /**
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - The mouse move event
    */
   #onMouseMove(event) {
     if (event.buttons !== 0) {
@@ -216,7 +226,7 @@ export class Picker {
   }
 
   /**
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - The mouse up event
    */
   #onMouseUp(event) {
     // Only calls onClick if it was a real click  and not a drag
@@ -227,21 +237,21 @@ export class Picker {
       if (
         this.#transformControls.mode === "translate" &&
         !this.#transformControls.object.position.equals(
-          this.#selectedObject.oldPosition,
+          this.#selectedObject.oldPosition
         )
       ) {
         this.#selectedObject.updateAndSaveObjectPosition(
-          this.#transformControls.object.position.clone(),
+          this.#transformControls.object.position.clone()
         );
         this.#itemSelectedEvent();
       } else if (this.#transformControls.mode === "rotate") {
         if (
           !this.#transformControls.object.quaternion.equals(
-            this.#selectedObject.oldQuaternion,
+            this.#selectedObject.oldQuaternion
           )
         ) {
           this.#selectedObject.updateAndSaveObjectRotation(
-            this.#transformControls.object.quaternion.clone(),
+            this.#transformControls.object.quaternion.clone()
           );
           this.#itemSelectedEvent();
         }
@@ -251,12 +261,12 @@ export class Picker {
 
   /**
    * Handles the click event on the canvas
-   * @param {MouseEvent} event
+   * @param {MouseEvent} event - The mouse click event
    */
   #onClick(event) {
     // Get normalized mouse position
     this.#mouse = this.#mouseposition(
-      new THREE.Vector2(event.clientX, event.clientY),
+      new THREE.Vector2(event.clientX, event.clientY)
     );
 
     // Raycast to find the clicked object
@@ -270,15 +280,16 @@ export class Picker {
 
   /**
    * Selects an object based on the mouse position and camera
-   * @param mouse
-   * @param camera
+   * @param {THREE.Vector2} mouse - The normalized mouse position
+   * @param {THREE.Camera} camera - The camera used for raycasting
+   * @returns {SelectableObject|null} The selected object or null if no object was selected
    */
   #select(mouse, camera) {
     // Raycast from the camera through the mouse position
     this.#raycaster.setFromCamera(mouse, camera);
     const intersects = this.#raycaster.intersectObjects(
       this.#selectableGroup.children,
-      true,
+      true
     );
 
     // Finds whole SelectableObject from the intersected objects
@@ -421,7 +432,7 @@ export class Picker {
       // If the object has a lockPositionY method, call it
       if (typeof this.#transformControls.object.lockPositionY === "function") {
         this.#transformControls.object.lockPositionY(
-          groundLevel - this.#transformControls.object.position.y,
+          groundLevel - this.#transformControls.object.position.y
         );
       }
     });
@@ -429,9 +440,9 @@ export class Picker {
 
   /**
    * Adds or removes axes from the transform controls based on the provided parameters.
-   * @param {boolean} showX
-   * @param {boolean} showY
-   * @param {boolean} showZ
+   * @param {boolean} showX - Whether to show the X axis.
+   * @param {boolean} showY - Whether to show the Y axis.
+   * @param {boolean} showZ - Whether to show the Z axis.
    */
   #setTransformControlAxes(showX, showY, showZ) {
     this.#transformControls.showX = showX;
@@ -467,7 +478,7 @@ export class Picker {
     const rect = this.#canvas.getBoundingClientRect();
     return new THREE.Vector2(
       ((position.x - rect.left) / rect.width) * 2 - 1,
-      -((position.y - rect.top) / rect.height) * 2 + 1,
+      -((position.y - rect.top) / rect.height) * 2 + 1
     );
   }
 

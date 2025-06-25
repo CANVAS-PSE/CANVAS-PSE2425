@@ -17,7 +17,7 @@ export class ProjectOverviewManager {
 
   /**
    * Toggles the favorite setting for the given button
-   * @param {HTMLElement} favoriteButton
+   * @param {HTMLElement} favoriteButton - The button that was clicked to toggle the favorite state
    */
   #toggleFavorite(favoriteButton) {
     const projectName = favoriteButton.dataset.projectName;
@@ -29,7 +29,7 @@ export class ProjectOverviewManager {
       projectElement.dataset.isFavorite = "false";
       favoriteButton.children[0].classList.remove(
         "bi-star-fill",
-        "text-warning",
+        "text-warning"
       );
       favoriteButton.children[0].classList.add("bi-star");
       fetch(window.location + "defavorProject/" + projectName);
@@ -51,7 +51,7 @@ export class ProjectOverviewManager {
       "form-check",
       "form-switch",
       "position-relative",
-      "mx-auto",
+      "mx-auto"
     );
     const favoriteSwitch = document.createElement("input");
     favoriteSwitch.classList.add("form-check-input");
@@ -71,7 +71,7 @@ export class ProjectOverviewManager {
       .getElementById("projectList")
       .insertBefore(
         favoriteSwitchWrapper,
-        document.getElementById("projectList").children[0],
+        document.getElementById("projectList").children[0]
       );
 
     favoriteSwitch.addEventListener("change", () => {

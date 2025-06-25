@@ -76,7 +76,7 @@ export class PreviewHandler {
   /**
    * Gets the cookie specified by the name
    * @param {string} name The name of the cookie you want to get.
-   * @returns the cookie or null if it couldn't be found.
+   * @returns {string|null} the cookie or null if it couldn't be found.
    */
   #getCookie(name) {
     if (!document.cookie) {
