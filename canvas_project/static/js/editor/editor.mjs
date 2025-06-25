@@ -21,17 +21,17 @@ let editorInstance = null;
 export class Editor {
   #undoRedoHandler;
   #saveAndLoadHandler;
-  #navbar;
+  #navbar; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
   #picker;
-  #overview;
-  #modeSelector;
-  #projectSettingManager;
+  #overview; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
+  #modeSelector; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
+  #projectSettingManager; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
   #objectManager;
-  #quickSelector;
-  #jobInterface;
-  #inspector;
-  #commandPrompt;
-  #previewHandler;
+  #quickSelector; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
+  #jobInterface; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
+  #inspector; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
+  #commandPrompt; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
+  #previewHandler; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
 
   #projectId;
   #canvas;
