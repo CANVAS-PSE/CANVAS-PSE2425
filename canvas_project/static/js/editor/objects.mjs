@@ -26,7 +26,6 @@ import {
   DeleteLightSourceCommand,
   DeleteReceiverCommand,
 } from "deleteCommands";
-import { ItemDeletedEvent } from "deleteCommands";
 
 export class SelectableObject extends Object3D {
   #objectName;
@@ -54,7 +53,7 @@ export class SelectableObject extends Object3D {
   }
 
   /**
-   * @returns {InspectorComponent[]}
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
    */
   get inspectorComponents() {
     throw new Error("This method must be implemented in all subclasses");
@@ -70,16 +69,18 @@ export class SelectableObject extends Object3D {
 
   /**
    * Updates and saves the new position through a command
-   * @param {Vector3} position
+   * @param {Vector3} position - the new position you want to save and update
    */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateAndSaveObjectPosition(position) {
     throw new Error("This method must be implemented in all subclasses");
   }
 
   /**
    * Updates and saves the new rotation through a command
-   * @param rotation
+   * @param rotation - the new rotation you want to save and update
    */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateAndSaveObjectRotation(rotation) {
     throw new Error("This method must be implemented in all subclasses");
   }
@@ -99,23 +100,25 @@ export class SelectableObject extends Object3D {
 
   /**
    * Updates the position of the object
-   * @param {THREE.Vector3} position
+   * @param {THREE.Vector3} position - the new position of the object
    */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updatePosition(position) {
     throw new Error("This method must be implemented in all subclasses");
   }
 
   /**
    * Updates the rotation of the object
-   * @param {THREE.Quaternion} rotation
+   * @param {THREE.Quaternion} rotation - the new rotation of the object
    */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateRotation(rotation) {
     throw new Error("This method must be implemented in all subclasses");
   }
 
   /**
    * Returns the axis on which the object is rotatable
-   * @returns {string[]} - an array containing all rotable axis
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
    */
   get rotatableAxis() {
     throw new Error("This method must be implemented in all subclasses");
@@ -123,7 +126,7 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns whether the object is movable or not
-   * @returns {boolean}
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
    */
   get isMovable() {
     throw new Error("This method must be implemented in all subclasses");
@@ -131,7 +134,7 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns whether an object is selectable or not
-   * @returns {boolean}
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
    */
   get isSelectable() {
     throw new Error("This method must be implemented in all subclasses");
@@ -139,7 +142,7 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns the old position of the heliostat
-   * @returns {THREE.Vector3} the old position of the heliostat
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
    */
   get oldPosition() {
     throw new Error("This method must be implemented in all subclasses");
@@ -147,7 +150,7 @@ export class SelectableObject extends Object3D {
 }
 
 /**
- *  Class that represents the Heliostat object
+ * Class that represents the Heliostat object
  */
 export class Heliostat extends SelectableObject {
   #apiID;
@@ -392,7 +395,7 @@ export class Heliostat extends SelectableObject {
 
   /**
    * Updates the position of the heliostat
-   * @param {Vector3} position
+   * @param {Vector3} position - the new position of the heliostat
    */
   updateAndSaveObjectPosition(position) {
     this.#undoRedoHandler.executeCommand(
@@ -401,7 +404,7 @@ export class Heliostat extends SelectableObject {
   }
   /**
    * Updates the aimPoint of the Heliostat and updates rotation of the Heliostat accordingly
-   * @param {THREE.Vector3} aimPoint
+   * @param {THREE.Vector3} aimPoint - the new aimPoint of the Heliostat
    */
   set aimPoint(aimPoint) {
     this.#aimPoint = aimPoint;
@@ -480,7 +483,6 @@ export class Receiver extends SelectableObject {
 
   /**
    * Creates a Receiver object
-   * @param {number} [apiID=null] The id for api usage
    * @param {string} receiverName the name of the receiver
    * @param {THREE.Vector3} position Is the position of the receiver
    * @param {number} rotationY the rotation Y of the receiver
@@ -492,6 +494,7 @@ export class Receiver extends SelectableObject {
    * @param {number} resolutionU the resolution U of the receiver
    * @param {number} curvatureE the curvature E of the receiver
    * @param {number} curvatureU the curvature U of the receiver
+   * @param {number} [apiID=null] The id for api usage
    */
   constructor(
     receiverName,
@@ -765,8 +768,8 @@ export class Receiver extends SelectableObject {
 
   /**
    * Converts a quaternion to a y degree (a number from 0 to 360)
-   * @param {THREE.Quaternion} quaternion
-   * @returns
+   * @param {THREE.Quaternion} quaternion - the quaternion to convert
+   * @returns {number} - the y degree of the quaternion, a number from 0 to 360
    */
   quaternionToYDegree(quaternion) {
     const euler = new THREE.Euler();
@@ -777,8 +780,8 @@ export class Receiver extends SelectableObject {
 
   /**
    * Converts a y degree (a number from 0 to 360) to a quaternion
-   * @param {number} angle
-   * @returns
+   * @param {number} angle - the angle in degrees to convert
+   * @returns {THREE.Quaternion} - the quaternion representing the rotation around the y-axis
    */
   yDegreeToQuaternion(angle) {
     const euler = new THREE.Euler(0, THREE.MathUtils.degToRad(angle), 0, "YXZ");
@@ -813,7 +816,7 @@ export class Receiver extends SelectableObject {
 
   /**
    * Updates the position of the receiver
-   * @param {Vector3} position
+   * @param {Vector3} position - the new position of the receiver
    */
   updateAndSaveObjectPosition(position) {
     this.#undoRedoHandler.executeCommand(
@@ -846,7 +849,7 @@ export class Receiver extends SelectableObject {
 
   /**
    * Updates the rotation of the receiver
-   * @param {THREE.Quaternion} rotation
+   * @param {THREE.Quaternion} rotation - the new rotation of the receiver
    */
   updateAndSaveObjectRotation(rotation) {
     this.#undoRedoHandler.executeCommand(
@@ -856,7 +859,7 @@ export class Receiver extends SelectableObject {
 
   /**
    * Updates the quaternion of the receiver, and indirectly updates the rotation of the receiver
-   * @param {THREE.Quaternion} quaternion
+   * @param {THREE.Quaternion} quaternion - the new quaternion of the receiver
    */
   updateRotation(quaternion) {
     this.quaternion.copy(quaternion);
@@ -1029,13 +1032,13 @@ export class LightSource extends SelectableObject {
   #rotatableAxis = null;
 
   /**
-   * @param {number} [apiID=null] the id for api usage
    * @param {string} lightsourceName the name of the lightsource
    * @param {number} numberOfRays the number of rays the light source has
    * @param {string} lightSourceType the type of the light source
    * @param {string} distributionType the type of the distribution
    * @param {number} distributionMean the mean of the distribution
    * @param {number} distributionCovariance the covariance of the distribution
+   * @param {number} [apiID=null] the id for api usage
    */
   constructor(
     lightsourceName,
