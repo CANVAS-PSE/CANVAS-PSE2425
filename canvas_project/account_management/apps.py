@@ -6,5 +6,4 @@ class AccountManagementConfig(AppConfig):
     name = "account_management"
 
     def ready(self):
-        import account_management.signals
-
+        pass

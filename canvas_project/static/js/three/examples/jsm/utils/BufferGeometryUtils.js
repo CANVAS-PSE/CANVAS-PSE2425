@@ -14,7 +14,7 @@ import {
 function computeMikkTSpaceTangents(geometry, MikkTSpace, negateSign = true) {
   if (!MikkTSpace || !MikkTSpace.isReady) {
     throw new Error(
-      "BufferGeometryUtils: Initialized MikkTSpace library required."
+      "BufferGeometryUtils: Initialized MikkTSpace library required.",
     );
   }
 
@@ -24,7 +24,7 @@ function computeMikkTSpaceTangents(geometry, MikkTSpace, negateSign = true) {
     !geometry.hasAttribute("uv")
   ) {
     throw new Error(
-      'BufferGeometryUtils: Tangents require "position", "normal", and "uv" attributes.'
+      'BufferGeometryUtils: Tangents require "position", "normal", and "uv" attributes.',
     );
   }
 
@@ -63,7 +63,7 @@ function computeMikkTSpaceTangents(geometry, MikkTSpace, negateSign = true) {
 
     getAttributeArray(_geometry.attributes.normal),
 
-    getAttributeArray(_geometry.attributes.uv)
+    getAttributeArray(_geometry.attributes.uv),
   );
 
   // Texture coordinate convention of glTF differs from the apparent
@@ -103,7 +103,7 @@ function mergeGeometries(geometries, useGroups = false) {
   const attributesUsed = new Set(Object.keys(geometries[0].attributes));
 
   const morphAttributesUsed = new Set(
-    Object.keys(geometries[0].morphAttributes)
+    Object.keys(geometries[0].morphAttributes),
   );
 
   const attributes = {};
@@ -127,7 +127,7 @@ function mergeGeometries(geometries, useGroups = false) {
       console.error(
         "THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index " +
           i +
-          ". All geometries must have compatible attributes; make sure index attribute exists among all geometries, or in none of them."
+          ". All geometries must have compatible attributes; make sure index attribute exists among all geometries, or in none of them.",
       );
 
       return null;
@@ -142,7 +142,7 @@ function mergeGeometries(geometries, useGroups = false) {
             i +
             '. All geometries must have compatible attributes; make sure "' +
             name +
-            '" attribute exists among all geometries, or in none of them.'
+            '" attribute exists among all geometries, or in none of them.',
         );
 
         return null;
@@ -161,7 +161,7 @@ function mergeGeometries(geometries, useGroups = false) {
       console.error(
         "THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index " +
           i +
-          ". Make sure all geometries have the same number of attributes."
+          ". Make sure all geometries have the same number of attributes.",
       );
 
       return null;
@@ -173,7 +173,7 @@ function mergeGeometries(geometries, useGroups = false) {
       console.error(
         "THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index " +
           i +
-          ". .morphTargetsRelative must be consistent throughout all geometries."
+          ". .morphTargetsRelative must be consistent throughout all geometries.",
       );
 
       return null;
@@ -184,7 +184,7 @@ function mergeGeometries(geometries, useGroups = false) {
         console.error(
           "THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index " +
             i +
-            ".  .morphAttributes must be consistent throughout all geometries."
+            ".  .morphAttributes must be consistent throughout all geometries.",
         );
 
         return null;
@@ -206,7 +206,7 @@ function mergeGeometries(geometries, useGroups = false) {
         console.error(
           "THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index " +
             i +
-            ". The geometry must have either an index or a position attribute"
+            ". The geometry must have either an index or a position attribute",
         );
 
         return null;
@@ -247,7 +247,7 @@ function mergeGeometries(geometries, useGroups = false) {
       console.error(
         "THREE.BufferGeometryUtils: .mergeGeometries() failed while trying to merge the " +
           name +
-          " attribute."
+          " attribute.",
       );
 
       return null;
@@ -280,7 +280,7 @@ function mergeGeometries(geometries, useGroups = false) {
         console.error(
           "THREE.BufferGeometryUtils: .mergeGeometries() failed while trying to merge the " +
             name +
-            " morphAttribute."
+            " morphAttribute.",
         );
 
         return null;
@@ -319,7 +319,7 @@ function mergeAttributes(attributes) {
 
     if (TypedArray !== attribute.array.constructor) {
       console.error(
-        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.array must be of consistent array types across matching attributes."
+        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.array must be of consistent array types across matching attributes.",
       );
 
       return null;
@@ -329,7 +329,7 @@ function mergeAttributes(attributes) {
 
     if (itemSize !== attribute.itemSize) {
       console.error(
-        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.itemSize must be consistent across matching attributes."
+        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.itemSize must be consistent across matching attributes.",
       );
 
       return null;
@@ -339,7 +339,7 @@ function mergeAttributes(attributes) {
 
     if (normalized !== attribute.normalized) {
       console.error(
-        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.normalized must be consistent across matching attributes."
+        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.normalized must be consistent across matching attributes.",
       );
 
       return null;
@@ -349,7 +349,7 @@ function mergeAttributes(attributes) {
 
     if (gpuType !== attribute.gpuType) {
       console.error(
-        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.gpuType must be consistent across matching attributes."
+        "THREE.BufferGeometryUtils: .mergeAttributes() failed. BufferAttribute.gpuType must be consistent across matching attributes.",
       );
 
       return null;
@@ -442,7 +442,7 @@ function interleaveAttributes(attributes) {
 
     if (TypedArray !== attribute.array.constructor) {
       console.error(
-        "AttributeBuffers of different types cannot be interleaved"
+        "AttributeBuffers of different types cannot be interleaved",
       );
 
       return null;
@@ -457,7 +457,7 @@ function interleaveAttributes(attributes) {
 
   const interleavedBuffer = new InterleavedBuffer(
     new TypedArray(arrayLength),
-    stride
+    stride,
   );
 
   let offset = 0;
@@ -479,7 +479,7 @@ function interleaveAttributes(attributes) {
       interleavedBuffer,
       itemSize,
       offset,
-      attribute.normalized
+      attribute.normalized,
     );
 
     res.push(iba);
@@ -520,7 +520,7 @@ export function deinterleaveAttribute(attribute) {
       array,
       itemSize,
       normalized,
-      attribute.meshPerAttribute
+      attribute.meshPerAttribute,
     );
   } else {
     newAttribute = new BufferAttribute(array, itemSize, normalized);
@@ -668,7 +668,7 @@ function mergeVertices(geometry, tolerance = 1e-4) {
 
       attr.itemSize,
 
-      attr.normalized
+      attr.normalized,
     );
 
     const morphAttributes = geometry.morphAttributes[name];
@@ -678,13 +678,13 @@ function mergeVertices(geometry, tolerance = 1e-4) {
 
       morphAttributes.forEach((morphAttr, i) => {
         const array = new morphAttr.array.constructor(
-          morphAttr.count * morphAttr.itemSize
+          morphAttr.count * morphAttr.itemSize,
         );
 
         tmpMorphAttributes[name][i] = new morphAttr.constructor(
           array,
           morphAttr.itemSize,
-          morphAttr.normalized
+          morphAttr.normalized,
         );
       });
     }
@@ -757,7 +757,7 @@ function mergeVertices(geometry, tolerance = 1e-4) {
             for (let m = 0, ml = morphAttributes.length; m < ml; m++) {
               newMorphArrays[m][setterFunc](
                 nextIndex,
-                morphAttributes[m][getterFunc](index)
+                morphAttributes[m][getterFunc](index),
               );
             }
           }
@@ -786,8 +786,8 @@ function mergeVertices(geometry, tolerance = 1e-4) {
 
         tmpAttribute.itemSize,
 
-        tmpAttribute.normalized
-      )
+        tmpAttribute.normalized,
+      ),
     );
 
     if (!(name in tmpMorphAttributes)) continue;
@@ -798,12 +798,12 @@ function mergeVertices(geometry, tolerance = 1e-4) {
       result.morphAttributes[name][j] = new tmpMorphAttribute.constructor(
         tmpMorphAttribute.array.slice(
           0,
-          nextIndex * tmpMorphAttribute.itemSize
+          nextIndex * tmpMorphAttribute.itemSize,
         ),
 
         tmpMorphAttribute.itemSize,
 
-        tmpMorphAttribute.normalized
+        tmpMorphAttribute.normalized,
       );
     }
   }
@@ -828,7 +828,7 @@ function mergeVertices(geometry, tolerance = 1e-4) {
 function toTrianglesDrawMode(geometry, drawMode) {
   if (drawMode === TrianglesDrawMode) {
     console.warn(
-      "THREE.BufferGeometryUtils.toTrianglesDrawMode(): Geometry already defined as triangles."
+      "THREE.BufferGeometryUtils.toTrianglesDrawMode(): Geometry already defined as triangles.",
     );
 
     return geometry;
@@ -854,7 +854,7 @@ function toTrianglesDrawMode(geometry, drawMode) {
         index = geometry.getIndex();
       } else {
         console.error(
-          "THREE.BufferGeometryUtils.toTrianglesDrawMode(): Undefined position attribute. Processing not possible."
+          "THREE.BufferGeometryUtils.toTrianglesDrawMode(): Undefined position attribute. Processing not possible.",
         );
 
         return geometry;
@@ -899,7 +899,7 @@ function toTrianglesDrawMode(geometry, drawMode) {
 
     if (newIndices.length / 3 !== numberOfTriangles) {
       console.error(
-        "THREE.BufferGeometryUtils.toTrianglesDrawMode(): Unable to generate correct amount of triangles."
+        "THREE.BufferGeometryUtils.toTrianglesDrawMode(): Unable to generate correct amount of triangles.",
       );
     }
 
@@ -915,7 +915,7 @@ function toTrianglesDrawMode(geometry, drawMode) {
   } else {
     console.error(
       "THREE.BufferGeometryUtils.toTrianglesDrawMode(): Unknown draw mode:",
-      drawMode
+      drawMode,
     );
 
     return geometry;
@@ -968,7 +968,7 @@ function computeMorphedAttributes(object) {
 
     c,
 
-    modifiedAttributeArray
+    modifiedAttributeArray,
   ) {
     _vA.fromBufferAttribute(attribute, a);
 
@@ -1076,11 +1076,11 @@ function computeMorphedAttributes(object) {
   let start, end;
 
   const modifiedPosition = new Float32Array(
-    positionAttribute.count * positionAttribute.itemSize
+    positionAttribute.count * positionAttribute.itemSize,
   );
 
   const modifiedNormal = new Float32Array(
-    normalAttribute.count * normalAttribute.itemSize
+    normalAttribute.count * normalAttribute.itemSize,
   );
 
   if (index !== null) {
@@ -1094,7 +1094,7 @@ function computeMorphedAttributes(object) {
 
         end = Math.min(
           group.start + group.count,
-          drawRange.start + drawRange.count
+          drawRange.start + drawRange.count,
         );
 
         for (j = start, jl = end; j < jl; j += 3) {
@@ -1117,7 +1117,7 @@ function computeMorphedAttributes(object) {
             b,
             c,
 
-            modifiedPosition
+            modifiedPosition,
           );
 
           _calculateMorphedAttributeData(
@@ -1133,7 +1133,7 @@ function computeMorphedAttributes(object) {
             b,
             c,
 
-            modifiedNormal
+            modifiedNormal,
           );
         }
       }
@@ -1162,7 +1162,7 @@ function computeMorphedAttributes(object) {
           b,
           c,
 
-          modifiedPosition
+          modifiedPosition,
         );
 
         _calculateMorphedAttributeData(
@@ -1178,7 +1178,7 @@ function computeMorphedAttributes(object) {
           b,
           c,
 
-          modifiedNormal
+          modifiedNormal,
         );
       }
     }
@@ -1193,7 +1193,7 @@ function computeMorphedAttributes(object) {
 
         end = Math.min(
           group.start + group.count,
-          drawRange.start + drawRange.count
+          drawRange.start + drawRange.count,
         );
 
         for (j = start, jl = end; j < jl; j += 3) {
@@ -1216,7 +1216,7 @@ function computeMorphedAttributes(object) {
             b,
             c,
 
-            modifiedPosition
+            modifiedPosition,
           );
 
           _calculateMorphedAttributeData(
@@ -1232,7 +1232,7 @@ function computeMorphedAttributes(object) {
             b,
             c,
 
-            modifiedNormal
+            modifiedNormal,
           );
         }
       }
@@ -1241,7 +1241,7 @@ function computeMorphedAttributes(object) {
 
       end = Math.min(
         positionAttribute.count,
-        drawRange.start + drawRange.count
+        drawRange.start + drawRange.count,
       );
 
       for (i = start, il = end; i < il; i += 3) {
@@ -1264,7 +1264,7 @@ function computeMorphedAttributes(object) {
           b,
           c,
 
-          modifiedPosition
+          modifiedPosition,
         );
 
         _calculateMorphedAttributeData(
@@ -1280,7 +1280,7 @@ function computeMorphedAttributes(object) {
           b,
           c,
 
-          modifiedNormal
+          modifiedNormal,
         );
       }
     }
@@ -1288,7 +1288,7 @@ function computeMorphedAttributes(object) {
 
   const morphedPositionAttribute = new Float32BufferAttribute(
     modifiedPosition,
-    3
+    3,
   );
 
   const morphedNormalAttribute = new Float32BufferAttribute(modifiedNormal, 3);
@@ -1307,7 +1307,7 @@ function computeMorphedAttributes(object) {
 function mergeGroups(geometry) {
   if (geometry.groups.length === 0) {
     console.warn(
-      "THREE.BufferGeometryUtils.mergeGroups(): No groups are defined. Nothing to merge."
+      "THREE.BufferGeometryUtils.mergeGroups(): No groups are defined. Nothing to merge.",
     );
 
     return geometry;
@@ -1413,7 +1413,7 @@ function mergeGroups(geometry) {
 
 function toCreasedNormals(
   geometry,
-  creaseAngle = Math.PI / 3 /* 60 degrees */
+  creaseAngle = Math.PI / 3 /* 60 degrees */,
 ) {
   const creaseDot = Math.cos(creaseAngle);
 

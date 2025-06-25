@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('project_management', '0013_merge_20250202_1011'),
+        ("project_management", "0013_merge_20250202_1011"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='heliostat',
-            name='name',
-            field=models.CharField(blank=True, default='Heliostat', max_length=200),
+            model_name="heliostat",
+            name="name",
+            field=models.CharField(blank=True, default="Heliostat", max_length=200),
         ),
         migrations.AlterField(
-            model_name='lightsource',
-            name='name',
-            field=models.CharField(blank=True, default='Light source', max_length=200),
+            model_name="lightsource",
+            name="name",
+            field=models.CharField(blank=True, default="Light source", max_length=200),
         ),
         migrations.AlterField(
-            model_name='receiver',
-            name='name',
-            field=models.CharField(blank=True, default='Receiver', max_length=200),
+            model_name="receiver",
+            name="name",
+            field=models.CharField(blank=True, default="Receiver", max_length=200),
         ),
     ]

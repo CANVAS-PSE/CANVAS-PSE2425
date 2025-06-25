@@ -12,7 +12,6 @@ from allauth.socialaccount.models import SocialAccount
 
 
 class RegisterFormTest(TestCase):
-
     def test_register_form_valid_data(self):
         # Test case for valid data submission in RegisterForm
         form = RegisterForm(
@@ -161,7 +160,6 @@ class RegisterFormTest(TestCase):
 
 
 class LoginFormTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(
             username="test@mail.de",
@@ -217,7 +215,6 @@ class LoginFormTest(TestCase):
 
 
 class UpdateAccountFormTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(
             username="test@mail.de",
@@ -463,9 +460,7 @@ class UpdateAccountFormTest(TestCase):
 
 
 class DeleteAccountFormTest(TestCase):
-
     def setUp(self):
-
         self.user = User.objects.create_user(
             username="test@mail.de",
             first_name="test_first_name",
@@ -505,7 +500,6 @@ class DeleteAccountFormTest(TestCase):
 
 
 class PasswordResetFormTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(
             username="test@mail.de",
@@ -618,7 +612,6 @@ class PasswordResetFormTest(TestCase):
 
 
 class PasswordForgottenFormTest(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(
             username="test@mail.de",

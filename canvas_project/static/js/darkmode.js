@@ -7,83 +7,95 @@
  */
 
 (() => {
-    "use strict";
+  "use strict";
 
-    const getStoredTheme = () => localStorage.getItem("theme");
-    const setStoredTheme = (/** @type{String} */ theme) =>
-        localStorage.setItem("theme", theme);
+  const getStoredTheme = () => localStorage.getItem("theme");
+  /**
+   * Stores the selected theme in localStorage.
+   * @param {string} theme - The theme to be stored ("light", "dark", or "auto").
+   * @returns {void} This function does not return a value.
+   */
+  const setStoredTheme = (theme) => localStorage.setItem("theme", theme);
 
-    const getPreferredTheme = () => {
-        const storedTheme = getStoredTheme();
-        if (!storedTheme) {
-            return "auto";
-        }
+  const getPreferredTheme = () => {
+    const storedTheme = getStoredTheme();
+    if (!storedTheme) {
+      return "auto";
+    }
 
-        return storedTheme;
-    };
+    return storedTheme;
+  };
 
-    const setTheme = (/** @type{String} */ theme) => {
-        if (theme === "auto") {
-            document.documentElement.setAttribute(
-                "data-bs-theme",
-                window.matchMedia("(prefers-color-scheme: dark)").matches
-                    ? "dark"
-                    : "light",
-            );
-        } else {
-            document.documentElement.setAttribute("data-bs-theme", theme);
-        }
-    };
+  /**
+   * Sets the theme on the document.
+   * @param {string} theme - The theme to set ("light", "dark", or "auto").
+   */
+  const setTheme = (theme) => {
+    if (theme === "auto") {
+      document.documentElement.setAttribute(
+        "data-bs-theme",
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
+      );
+    } else {
+      document.documentElement.setAttribute("data-bs-theme", theme);
+    }
+  };
 
-    setTheme(getPreferredTheme());
+  setTheme(getPreferredTheme());
 
-    const showActiveTheme = (/** @type{String} */ theme) => {
-        const themeSelect = document.getElementById("theme-select");
+  /**
+   * Updates the theme select dropdown to reflect the active theme.
+   * @param {string} theme - The current theme ("light", "dark", or "auto").
+   */
+  const showActiveTheme = (theme) => {
+    const themeSelect = document.getElementById("theme-select");
 
-        if (!themeSelect) {
-            return;
-        }
+    if (!themeSelect) {
+      return;
+    }
 
-        switch (theme) {
-            case "light":
-                //@ts-ignore
-                themeSelect.value = "light";
-                break;
-            case "dark":
-                //@ts-ignore
-                themeSelect.value = "dark";
-                break;
-            default:
-                //@ts-ignore
-                themeSelect.value = "auto";
-                break;
-        }
-    };
+    switch (theme) {
+      case "light":
+        //@ts-ignore
+        themeSelect.value = "light";
+        break;
+      case "dark":
+        //@ts-ignore
+        themeSelect.value = "dark";
+        break;
+      default:
+        //@ts-ignore
+        themeSelect.value = "auto";
+        break;
+    }
+  };
 
-    window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .addEventListener("change", () => {
-            const storedTheme = getStoredTheme();
-            if (storedTheme !== "light" && storedTheme !== "dark") {
-                setTheme(getPreferredTheme());
-            }
-        });
-
-    window.addEventListener("DOMContentLoaded", () => {
-        showActiveTheme(getPreferredTheme());
-
-        const themeSelect = document.getElementById("theme-select");
-
-        if (!themeSelect) {
-            return;
-        }
-
-        themeSelect.addEventListener("change", () => {
-            //@ts-ignore
-            var theme = themeSelect.value;
-            setStoredTheme(theme);
-            setTheme(theme);
-            showActiveTheme(theme);
-        });
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", () => {
+      const storedTheme = getStoredTheme();
+      if (storedTheme !== "light" && storedTheme !== "dark") {
+        setTheme(getPreferredTheme());
+      }
     });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    showActiveTheme(getPreferredTheme());
+
+    const themeSelect = document.getElementById("theme-select");
+
+    if (!themeSelect) {
+      return;
+    }
+
+    themeSelect.addEventListener("change", () => {
+      //@ts-ignore
+      var theme = themeSelect.value;
+      setStoredTheme(theme);
+      setTheme(theme);
+      showActiveTheme(theme);
+    });
+  });
 })();
