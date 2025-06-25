@@ -63,6 +63,7 @@ export class SelectableObject extends Object3D {
    * Updates and saves the new name through a command
    * @param {string} name the new name you want to save and update
    */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateAndSaveObjectName(name) {
     throw new Error("This method must be implemented in all subclasses");
   }
