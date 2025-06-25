@@ -37,7 +37,7 @@ export class SelectableObject extends Object3D {
   /**
    * Creates a new selectable object
    * @param {string} name the name of the object
-   * @param Inspe
+   * @param Inspe - The inspector component for the object, if any.
    */
   constructor(name, Inspe) {
     super();
@@ -78,7 +78,7 @@ export class SelectableObject extends Object3D {
 
   /**
    * Updates and saves the new rotation through a command
-   * @param rotation - the new rotation you want to save and update
+   * @param {THREE.Quaternion} rotation - the new rotation you want to save and update
    */
   // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateAndSaveObjectRotation(rotation) {

@@ -30,7 +30,7 @@ export class Navbar {
     // Safari
     if (navigator.userAgent.indexOf("Safari") > -1) {
       fullscreen.onclick = (_) => {
-        // eslint-disable-line no-unused-vars -- disabling unused variable warning
+         
         if (document.webkitFullscreenElement === null) {
           document.documentElement.webkitRequestFullscreen();
         } else if (document.webkitExitFullscreen) {
