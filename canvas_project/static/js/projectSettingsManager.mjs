@@ -31,7 +31,7 @@ export class ProjectSettingsManager {
     await this.#getPresets();
 
     this.#environmentSettingsEntry = document.getElementById(
-      "environment-settings",
+      "environment-settings"
     );
 
     this.#graphicsSettingsEntry = document.getElementById("graphic-settings");
@@ -100,9 +100,9 @@ export class ProjectSettingsManager {
 
   /**
    * Method to create a checkbox
-   * @param {string} label
-   * @param {boolean} isChecked
-   * @param {*} onChange
+   * @param {string} label - The label for the checkbox
+   * @param {boolean} isChecked - Whether the checkbox is checked or not
+   * @param {*} onChange - Callback function to handle changes in the checkbox state
    * @returns {HTMLDivElement} Wrapper for the checkbox
    */
   #createCheckbox(label, isChecked, onChange) {

@@ -10,7 +10,7 @@ export class QuickSelector {
 
   /**
    *
-   * @param {ObjectManager} objectManager
+   * @param {ObjectManager} objectManager - The ObjectManager instance to manage the creation of objects.
    */
   constructor(objectManager) {
     this.#objectManager = objectManager;

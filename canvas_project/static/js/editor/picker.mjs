@@ -484,7 +484,7 @@ export class Picker {
 
   /**
    * Enables grid snapping when the Shift key is pressed.
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - The keyboard event
    */
   #onKeyDown(event) {
     if (event.key === "Shift") {
@@ -499,7 +499,7 @@ export class Picker {
 
   /**
    * Disables grid snapping when the Shift key is released.
-   * @param {KeyboardEvent} event
+   * @param {KeyboardEvent} event - The keyboard event
    */
   #onKeyUp(event) {
     if (event.key === "Shift") {

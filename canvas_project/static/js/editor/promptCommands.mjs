@@ -147,7 +147,7 @@ export class ThemePromptCommand extends PromptCommand {
 
   /**
    * Sets the theme of the application
-   * @param {"light" | "dark" | "auto"} theme
+   * @param {"light" | "dark" | "auto"} theme - The theme to set. Can be "light", "dark", or "auto".
    */
   setTheme(theme) {
     // store the theme
@@ -248,7 +248,7 @@ export class AddHeliostatPromptCommand extends PromptCommand {
   /**
    * Create this prompt command
    * @param {CommandPrompt} commandPrompt the command prompt that handles this command
-   * @param {ObjectManager} objectManager
+   * @param {ObjectManager} objectManager - The ObjectManager instance to manage the creation of objects.
    */
   constructor(commandPrompt, objectManager) {
     super("Add heliostat", commandPrompt);
@@ -268,7 +268,7 @@ export class AddReceiverPromptCommand extends PromptCommand {
   /**
    * Create this prompt command
    * @param {CommandPrompt} commandPrompt the command prompt that handles this command
-   * @param {ObjectManager} objectManager
+   * @param {ObjectManager} objectManager - The ObjectManager instance to manage the creation of objects.
    */
   constructor(commandPrompt, objectManager) {
     super("Add receiver", commandPrompt);
@@ -288,7 +288,7 @@ export class AddLightSourcePromptCommand extends PromptCommand {
   /**
    * Create this prompt command
    * @param {CommandPrompt} commandPrompt the command prompt that handles this command
-   * @param {ObjectManager} objectManager
+   * @param {ObjectManager} objectManager - The ObjectManager instance to manage the creation of objects.
    */
   constructor(commandPrompt, objectManager) {
     super("Add light source", commandPrompt);
@@ -379,7 +379,7 @@ export class ExportProjectPromptCommand extends PromptCommand {
   /**
    * Gets the cookie specified by the name
    * @param {string} name The name of the cookie you want to get.
-   * @returns the cookie or null if it couldn't be found.
+   * @returns {string|null} the cookie or null if it couldn't be found.
    */
   #getCookie(name) {
     if (!document.cookie) {
