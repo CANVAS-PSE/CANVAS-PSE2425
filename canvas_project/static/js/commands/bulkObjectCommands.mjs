@@ -10,7 +10,7 @@ export class BulkObjectCommand extends Command {
    * An array of objects on which the command operates.
    * @type {Array<SelectableObject>}
    */
-  #objects;
+  #objects; // eslint-disable-line no-unused-private-class-members -- required for future implementations
 
   /**
    * Initializes a new BulkObjectCommand with the specified 'SelectableObject' instances.
@@ -24,14 +24,5 @@ export class BulkObjectCommand extends Command {
         "Cannot instantiate abstract class BulkObjectCommand directly"
       );
     }
-  }
-  /**
-   * Getter for the objects property.
-   * Temporary getter to avoid ESLint warnings for unused private field.
-   * Will be used properly in future subclasses.
-   * @returns {Array<SelectableObject>} - Returns the array of 'SelectableObject' instances that this command operates on.
-   */
-  getObjects() {
-    return this.#objects;
   }
 }
