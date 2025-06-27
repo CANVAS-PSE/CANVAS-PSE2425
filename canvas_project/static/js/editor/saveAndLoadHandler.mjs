@@ -22,7 +22,7 @@ export class SaveAndLoadHandler {
     }
     if (!projectId) {
       throw new Error(
-        "To initialize the SaveAndLoadHandler an projectID is needed"
+        "To initialize the SaveAndLoadHandler an projectID is needed",
       );
     }
     saveAndLoadHandlerInstance = this;
