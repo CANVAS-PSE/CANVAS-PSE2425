@@ -107,7 +107,6 @@ export class Navbar {
   #setUpKeybindings() {
     const select = document.getElementById("clientSelect");
     const content = document.getElementById("clientContent");
-    const modal = document.getElementById("keyboardModal");
 
     /**
      *

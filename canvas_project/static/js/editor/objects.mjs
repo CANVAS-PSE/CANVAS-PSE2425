@@ -1,6 +1,5 @@
 import {
   HeaderInspectorComponent,
-  InspectorComponent,
   MultiFieldInspectorComponent,
   SelectFieldInspectorComponent,
   SingleFieldInspectorComponent,
