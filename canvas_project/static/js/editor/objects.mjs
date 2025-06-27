@@ -29,17 +29,12 @@ import {
 
 export class SelectableObject extends Object3D {
   #objectName;
-  /**
-   * @type {InspectorComponent[]}
-   */
-  #inspectorComponents;
 
   /**
    * Creates a new selectable object
    * @param {string} name the name of the object
-   * @param Inspe - The inspector component for the object, if any.
    */
-  constructor(name, Inspe) {
+  constructor(name) {
     super();
     this.#objectName = name;
   }

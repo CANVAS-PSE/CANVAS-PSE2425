@@ -29,8 +29,10 @@ export class Navbar {
 
     // Safari
     if (navigator.userAgent.indexOf("Safari") > -1) {
-      fullscreen.onclick = (_) => {
-         
+      fullscreen.onclick = (
+        /* eslint-disable-next-line no-unused-vars */
+        _
+      ) => {
         if (document.webkitFullscreenElement === null) {
           document.documentElement.webkitRequestFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -111,7 +113,6 @@ export class Navbar {
      *
      */
     function resetModalForm() {
-      var form = modal.querySelector("form");
       select.value = "";
       content.innerHTML = "";
     }
