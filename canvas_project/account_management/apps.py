@@ -7,4 +7,4 @@ class AccountManagementConfig(AppConfig):
 
     def ready(self):
         # Import signals to ensure they are registered
-        pass
+        import account_management.signals  # noqa: F401
