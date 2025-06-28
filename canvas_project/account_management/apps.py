@@ -6,4 +6,5 @@ class AccountManagementConfig(AppConfig):
     name = "account_management"
 
     def ready(self):
+        # Import signals to ensure they are registered
         pass
