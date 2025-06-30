@@ -482,7 +482,7 @@ class PasswordForgottenViewTest(TestCase):
             {"email": "test2@mail.de"},
         )
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         assert len(mail.outbox) == 0
 
 
