@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('project_management', '0023_receiver_receiver_type'),
+        ("project_management", "0023_receiver_receiver_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='description',
-            field=models.CharField(blank=True, default='', max_length=500),
+            model_name="project",
+            name="description",
+            field=models.CharField(blank=True, default="", max_length=500),
         ),
     ]

@@ -14,7 +14,6 @@ from account_management.views import (
 
 
 class TestUrls(SimpleTestCase):
-
     def test_login_url_resolves(self):
         url = reverse("login")
         self.assertEqual(resolve(url).func, login_view)

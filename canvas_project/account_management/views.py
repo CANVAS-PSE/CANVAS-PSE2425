@@ -36,7 +36,6 @@ def register_view(request):
         return redirect(REDIRECT_PROJECTS_URL)
 
     if request.method == "POST":
-
         form = RegisterForm(request.POST)
         if form.is_valid():
             first_name = form.cleaned_data.get("first_name")
