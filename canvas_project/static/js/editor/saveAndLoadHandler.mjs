@@ -14,7 +14,6 @@ export class SaveAndLoadHandler {
   /**
    * Creates a saveAndLoadHandler or returns the existing one
    * @param {number} [projectId=null] the projectID for api requests.
-   * @returns {SaveAndLoadHandler} a new saveAndLoadHandler instance or the existing one.
    */
   constructor(projectId = null) {
     if (saveAndLoadHandlerInstance) {
@@ -22,7 +21,7 @@ export class SaveAndLoadHandler {
     }
     if (!projectId) {
       throw new Error(
-        "To initialize the SaveAndLoadHandler an projectID is needed"
+        "To initialize the SaveAndLoadHandler an projectID is needed",
       );
     }
     saveAndLoadHandlerInstance = this;
@@ -118,7 +117,7 @@ export class SaveAndLoadHandler {
   /**
    * Deletes the given heliostat from the backend
    * @param {Heliostat} heliostat Is the heliostat you want to delete
-   * @returns {Promise<void>} Resolves when the heliostat is deleted
+   * @returns {Promise<JSON>} Resolves when the heliostat is deleted
    */
   async deleteHeliostat(heliostat) {
     if (!heliostat.apiID) {
@@ -140,7 +139,7 @@ export class SaveAndLoadHandler {
   /**
    * Deletes the given receiver from the backend
    * @param {Receiver} receiver Is the receiver you want to delete
-   * @returns {Promise<void>} Resolves when the receiver is deleted
+   * @returns {Promise<JSON>} Resolves when the receiver is deleted
    */
   async deleteReceiver(receiver) {
     if (!receiver.apiID) {
@@ -162,7 +161,7 @@ export class SaveAndLoadHandler {
   /**
    * Deletes the given lightsource from the backend
    * @param {LightSource} lightsource Is the lightsource you want to delete
-   * @returns {Promise<void>} Resolves when the lightsource is deleted
+   * @returns {Promise<JSON>} Resolves when the lightsource is deleted
    */
   async deleteLightsource(lightsource) {
     if (!lightsource.apiID) {

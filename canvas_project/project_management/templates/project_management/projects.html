@@ -17,7 +17,7 @@
     </script>
     {% if projects %}
         <script type="module">
-        import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
+        import { ProjectOverviewManager } from "{% static 'js/editor/projectOverviewManager.mjs' %}";
         const manager = new ProjectOverviewManager();
         </script>
     {% endif %}

@@ -39,7 +39,8 @@
       "commandPrompt": ["static/js/editor/commandPrompt.mjs"],
       "promptCommands": ["static/js/editor/promptCommands.mjs"],
       "bootstrap": ["static/js/bootstrap/bootstrap.esm.js"],
-      "modeSelector": ["static/js/editor/modeSelector.mjs"]
+      "modeSelector": ["static/js/editor/modeSelector.mjs"],
+      "projectOverviewHandler": ["static/js/editor/projectOverviewHandler.mjs"]
     }
   }
 }
