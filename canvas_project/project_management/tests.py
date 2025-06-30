@@ -45,9 +45,9 @@ class ModelTests(TestCase):
                 owner=self.user,
             )
         except IntegrityError as e:
-            duplicateException = e
+            duplicate_exception = e
         self.assertEqual(
-            str(duplicateException),
+            str(duplicate_exception),
             "UNIQUE constraint failed: project_management_project.name, project_management_project.owner_id",
         )
 

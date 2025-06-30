@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from .models import Project
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import ProjectForm, UpdateProjectForm
@@ -11,9 +12,12 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from HDF5Management.HDF5Manager import HDF5Manager
 
+PROJECT_NAME_MUST_BE_UNIQUE_WARNING = "The project name must be unique"
+
 
 # General project handling
 @login_required
+@require_http_methods(["POST", "GET"])
 def projects(request):
     if request.method == "POST":
         # Initialize the form with POST and FILE data
@@ -21,45 +25,31 @@ def projects(request):
 
         # Check if form is valid before proceeding
         if form.is_valid():
-            projectFile = request.FILES.get("file")
-            projectName = form.cleaned_data["name"].strip().replace(" ", "_")
-            projectDescription = (
+            project_file = request.FILES.get("file")
+            project_name = form.cleaned_data["name"].strip().replace(" ", "_")
+            project_description = (
                 form.cleaned_data["description"].strip()
                 if form.cleaned_data["description"]
                 else ""
             )
 
-            # If no file is uploaded, handle the project creation without the file
-            if projectFile is None:
-                if isNameUnique(request.user, projectName):
-                    newProject = Project(
-                        name=projectName,
-                        description=projectDescription,
-                        owner=request.user,
-                        last_edited=timezone.now(),
+            if is_name_unique(request.user, project_name):
+                new_project = Project(
+                    name=project_name,
+                    description=project_description,
+                    owner=request.user,
+                    last_edited=timezone.now(),
+                )
+                new_project.save()
+                if project_file is not None:
+                    hdf5_manager = HDF5Manager()
+                    hdf5_manager.create_project_from_hdf5_file(
+                        project_file, new_project
                     )
-                    newProject.save()
-                    return redirect("editor", project_name=projectName)
-                else:
-                    messages.error(request, "The project name must be unique.")
 
-            # Handle file upload
+                return redirect("editor", project_name=project_name)
             else:
-                if isNameUnique(request.user, projectName):
-                    newProject = Project(
-                        name=projectName,
-                        description=projectDescription,
-                        owner=request.user,
-                        last_edited=timezone.now(),
-                    )
-                    newProject.save()
-
-                    hdf5Manager = HDF5Manager()
-                    hdf5Manager.create_project_from_hdf5_file(projectFile, newProject)
-
-                    return redirect("editor", project_name=projectName)
-                else:
-                    messages.error(request, "The project name must be unique.")
+                messages.error(request, PROJECT_NAME_MUST_BE_UNIQUE_WARNING)
 
         else:
             for field in form:
@@ -70,53 +60,47 @@ def projects(request):
         form = ProjectForm()
 
     # Fetch all projects for the current user
-    allProjects = Project.objects.filter(owner=request.user).order_by("-last_edited")
-    for project in allProjects:
+    all_projects = Project.objects.filter(owner=request.user).order_by("-last_edited")
+    for project in all_projects:
         project.uid = _generate_uid(request)
         project.token = _generate_token(project.name)
 
     context = {
-        "projects": allProjects,
+        "projects": all_projects,
         "form": form,
     }
     return render(request, "project_management/projects.html", context)
 
 
 @login_required
-def updateProject(request, project_name):
+def update_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     form = UpdateProjectForm(request.POST, instance=project)
-    if request.method == "POST":
-        if project.owner == request.user:
-            if form.is_valid():
-                formName = form.cleaned_data["name"].strip().replace(" ", "_")
-                formDescription = form.cleaned_data.get("description", "")
-                if isNameUnique(request.user, formName) or formName == project_name:
-                    project.last_edited = timezone.now()
-                    project.name = formName
-                    if formDescription is None:
-                        project.description = ""
-                    else:
-                        project.description = formDescription
-                    project.save()
-                    return HttpResponseRedirect(reverse("projects"))
-                else:
-                    messages.error(request, "The project name must be unique.")
 
+    if request.method == "POST" and project.owner == request.user:
+        if form.is_valid():
+            form_name = form.cleaned_data["name"].strip().replace(" ", "_")
+            form_description = form.cleaned_data.get("description", "")
+            if is_name_unique(request.user, form_name) or form_name == project_name:
+                project.last_edited = timezone.now()
+                project.name = form_name
+                project.description = form_description if form_description else ""
+                project.save()
+                return HttpResponseRedirect(reverse("projects"))
             else:
-                for field in form:
-                    for error in field.errors:
-                        messages.error(request, f"Error in {field.label}: {error}")
+                messages.error(request, PROJECT_NAME_MUST_BE_UNIQUE_WARNING)
 
-    else:
-        form = UpdateProjectForm(instance=project)
+        else:
+            for field in form:
+                for error in field.errors:
+                    messages.error(request, f"Error in {field.label}: {error}")
 
     return HttpResponseRedirect(reverse("projects"))
 
 
 # Deleting a project
 @login_required
-def deleteProject(request, project_name):
+def delete_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
         project.delete()
@@ -125,7 +109,7 @@ def deleteProject(request, project_name):
 
 # Set project to favorite
 @login_required
-def favorProject(request, project_name):
+def favor_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
         project.favorite = "true"
@@ -135,7 +119,7 @@ def favorProject(request, project_name):
 
 # Set project to not favorite
 @login_required
-def defavorProject(request, project_name):
+def defavor_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
         project.favorite = "false"
@@ -145,7 +129,7 @@ def defavorProject(request, project_name):
 
 # Duplicate a project
 @login_required
-def duplicateProject(request, project_name):
+def duplicate_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
         fks_to_copy = (
@@ -158,15 +142,15 @@ def duplicateProject(request, project_name):
         project.favorite = False
 
         # Finding a new project name unique to user
-        newNameFound = False
-        while not newNameFound:
+        new_name_found = False
+        while not new_name_found:
             try:
                 Project.objects.get(name=project_name, owner=request.user)
                 project_name = project_name + "_copy"
             except Project.DoesNotExist:
                 project.name = project_name
                 project.save()
-                newNameFound = True
+                new_name_found = True
 
         # Copy all objects associated to the project via foreign keys
         for assoc_object in fks_to_copy:
@@ -184,7 +168,7 @@ def duplicateProject(request, project_name):
 
 # Share a project
 @login_required
-def shareProject(request, project_name):
+def share_project(request, project_name):
     # create new sharedProject model
     project = get_object_or_404(Project, owner=request.user, name=project_name)
     project.last_shared = timezone.now()
@@ -193,11 +177,11 @@ def shareProject(request, project_name):
 
 
 @login_required
-def sharedProjects(request, uid, token):
+def shared_project(request, uid, token):
     # get the shared project
     try:
-        userID = urlsafe_base64_decode(uid).decode()
-        user = get_user_model().objects.get(pk=userID)
+        user_id = urlsafe_base64_decode(uid).decode()
+        user = get_user_model().objects.get(pk=user_id)
         project_name = urlsafe_base64_decode(token).decode()
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         raise Http404
@@ -228,15 +212,15 @@ def sharedProjects(request, uid, token):
         project.favorite = False
 
         # Finding a new project name unique to user
-        newNameFound = False
-        while not newNameFound:
+        new_name_found = False
+        while not new_name_found:
             try:
                 project.name = project.name + "_shared"
                 Project.objects.get(name=project.name, owner=request.user)
             except Project.DoesNotExist:
                 project.owner = request.user
                 project.save()
-                newNameFound = True
+                new_name_found = True
 
         # Copy all objects associated to the project via foreign keys
         for assoc_object in fks_to_copy:
@@ -260,8 +244,8 @@ def _generate_token(project_name):
     return urlsafe_base64_encode(str(project_name).encode())
 
 
-def isNameUnique(user: User, projectName: str) -> bool:
+def is_name_unique(user: User, project_name: str) -> bool:
     for project in user.projects.all():
-        if project.name == projectName:
+        if project.name == project_name:
             return False
     return True
