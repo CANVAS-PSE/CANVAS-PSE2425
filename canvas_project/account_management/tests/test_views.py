@@ -482,13 +482,8 @@ class PasswordForgottenViewTest(TestCase):
             {"email": "test2@mail.de"},
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_forgotten.html")
-        self.assertTrue(response.context["form"].errors)
-        self.assertContains(
-            response,
-            "This email address is not registered.",
-        )
+        self.assertEqual(response.status_code, 302)
+        assert len(mail.outbox) == 0
 
 
 class SendPasswordForgottenMailTest(TestCase):
@@ -532,7 +527,7 @@ class UpdateAccountTest(TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
         )
-        self.profile, created = UserProfile.objects.get_or_create(user=self.user)
+        self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
         self.update_account_url = reverse("update_account")
 
     def test_GET(self):

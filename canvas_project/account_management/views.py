@@ -24,6 +24,7 @@ from django.http import JsonResponse
 
 REDIRECT_PROJECTS_URL = "projects"
 REDIRECT_LOGIN_URL = "login"
+DEFAULT_PROFIL_PIC = "profile_pics/default.jpg"
 
 
 def register_view(request):
@@ -122,10 +123,7 @@ def login_view(request):
             user = form.get_user()
             user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
-            next_url = request.POST.get("next") or request.GET.get(
-                "next", REDIRECT_PROJECTS_URL
-            )
-            return redirect(next_url)
+            return redirect(REDIRECT_PROJECTS_URL)
     else:
         form = LoginForm()
     return render(request, "login.html", {"form": form})
@@ -147,54 +145,53 @@ def update_account(request):
     Update the user's account information.
     """
     user = request.user
-    is_openid_user = SocialAccount.objects.filter(user=user).exists()
 
-    if request.method == "POST":
-        form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
-        if form.is_valid():
-            user.first_name = form.cleaned_data["first_name"]
-            user.last_name = form.cleaned_data["last_name"]
-            user.email = form.cleaned_data["email"]
-            # Set the username to the email for consistency
-            user.username = user.email
+    form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
 
-            old_password = form.cleaned_data["old_password"]
-            new_password = form.cleaned_data["new_password"]
+    if form.is_valid():
+        user.first_name = form.cleaned_data["first_name"]
+        user.last_name = form.cleaned_data["last_name"]
+        user.email = form.cleaned_data["email"]
+        # Set the username to the email for consistency
+        user.username = user.email
 
-            if old_password and new_password:
-                user.set_password(new_password)
-                update_session_auth_hash(request, user)
-                send_password_change_email(user, request)
+        old_password = form.cleaned_data["old_password"]
+        new_password = form.cleaned_data["new_password"]
 
-            profile, created = UserProfile.objects.get_or_create(user=user)
-            if request.POST.get("delete_picture") == "1":
-                if (
-                    profile.profile_picture
-                    and profile.profile_picture.name != "profile_pics/default.jpg"
-                ):
-                    profile.profile_picture.delete()  # delete former profile picture
-                profile.profile_picture = (
-                    "profile_pics/default.jpg"  # set default profile picture
-                )
-            # Set profile picture only if a new one is uploaded
-            elif form.cleaned_data.get("profile_picture"):
-                # Check if the current profile picture exists and is not the default picture.
-                if (
-                    profile.profile_picture
-                    and profile.profile_picture.name != "profile_pics/default.jpg"
-                ):
-                    profile.profile_picture.delete()
-                profile.profile_picture = form.cleaned_data["profile_picture"]
+        if old_password and new_password:
+            user.set_password(new_password)
+            update_session_auth_hash(request, user)
+            send_password_change_email(user, request)
 
-            user.save()
-            profile.save()
+        profile, _ = UserProfile.objects.get_or_create(user=user)
 
-            messages.success(request, "Your account has been updated successfully.")
-        else:
-            for field in form:
-                for error in field.errors:
-                    messages.error(request, f"Error in {field.label}: {error}")
-        return redirect(request.META.get("HTTP_REFERER", "projects"))
+        if request.POST.get("delete_picture") == "1":
+            if (
+                profile.profile_picture
+                and profile.profile_picture.name != "profile_pics/default.jpg"
+            ):
+                profile.profile_picture.delete()  # delete former profile picture
+            profile.profile_picture = (
+                "profile_pics/default.jpg"  # set default profile picture
+            )
+        # Set profile picture only if a new one is uploaded
+        elif form.cleaned_data.get("profile_picture"):
+            # Check if the current profile picture exists and is not the default picture.
+            if (
+                profile.profile_picture
+                and profile.profile_picture.name != "profile_pics/default.jpg"
+            ):
+                profile.profile_picture.delete()
+            profile.profile_picture = form.cleaned_data["profile_picture"]
+        user.save()
+        profile.save()
+
+        messages.success(request, "Your account has been updated successfully.")
+    else:
+        for field in form:
+            for error in field.errors:
+                messages.error(request, f"Error in {field.label}: {error}")
+    return redirect(request.META.get("HTTP_REFERER", "projects"))
 
 
 @login_required
@@ -295,7 +292,7 @@ def password_forgotten_view(request):
             email = form.cleaned_data["email"]
             user = User.objects.get(email=email)
             send_password_forgotten_email(user, request)
-            return redirect("login")
+        return redirect("login")
     else:
         form = PasswordForgottenForm()
 

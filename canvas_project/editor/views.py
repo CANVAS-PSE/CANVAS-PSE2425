@@ -40,8 +40,8 @@ def editor(request, project_name):
         project.last_edited = timezone.now()
         project.save()
 
-        createProjectForm = ProjectForm()
-        allProjects = Project.objects.filter(owner=request.user).order_by(
+        create_project_form = ProjectForm()
+        all_projects = Project.objects.filter(owner=request.user).order_by(
             "-last_edited"
         )
 
@@ -51,17 +51,17 @@ def editor(request, project_name):
             context={
                 "project_id": project.pk,
                 "project_name": project.name,
-                "createProjectForm": createProjectForm,
-                "projects": allProjects,
+                "createProjectForm": create_project_form,
+                "projects": all_projects,
             },
         )
     return HttpResponseNotAllowed(["GET"])
 
 
-def isNameUnique(user: User, projectName: str) -> bool:
+def is_name_unique(user: User, project_name: str) -> bool:
     unique = True
     for project in user.projects.all():
-        if project.name == projectName:
+        if project.name == project_name:
             unique = False
             break
     return unique
@@ -87,11 +87,11 @@ def download(request, project_name):
 
     project = get_object_or_404(Project, name=project_name, owner=request.user)
 
-    hdf5Manager = HDF5Manager()
-    hdf5Manager.createHDF5File(request.user, project)
+    hdf5_manager = HDF5Manager()
+    hdf5_manager.create_hdf5_file(request.user, project)
 
     # Set CANVAS_ROOT
-    path = f"./HDF5Management/scenarios/{request.user.id}{project_name}ScenarioFile.h5"
+    path = f"./HDF5Management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
 
     response = FileResponse(
         open(path, "rb"), as_attachment=True, filename=project_name + ".h5"
@@ -103,7 +103,7 @@ def download(request, project_name):
 
 
 @login_required
-def uploadPreview(request, project_name):
+def upload_preview(request, project_name):
     """
     Updates the preview of the project
 

@@ -5,14 +5,14 @@ import re
 from django.core.exceptions import ValidationError
 
 
-def validateSymbols(name):
+def validate_symbols(name):
     if not re.match(r"^[a-zA-Z0-9_\säöüÄÖÜ-]+$", name):
         raise ValidationError("No special characters allowed.")
 
     return name
 
 
-def validateFile(file):
+def validate_file(file):
     # Check if a file is uploaded
     if not file:
         return file
@@ -36,7 +36,7 @@ class UpdateProjectForm(ModelForm):
 
     name = forms.CharField(
         max_length=100,
-        validators=[validateSymbols],
+        validators=[validate_symbols],
     )
 
     description = forms.CharField(
@@ -56,14 +56,14 @@ class UpdateProjectForm(ModelForm):
 class ProjectForm(forms.Form):
     name = forms.CharField(
         max_length=100,
-        validators=[validateSymbols],
+        validators=[validate_symbols],
     )
     description = forms.CharField(
         max_length=500, required=False, widget=forms.TextInput()
     )
     file = forms.FileField(
         required=False,
-        validators=[validateFile],
+        validators=[validate_file],
         widget=forms.ClearableFileInput(
             attrs={"class": "form-control", "accept": ".h5"}
         ),

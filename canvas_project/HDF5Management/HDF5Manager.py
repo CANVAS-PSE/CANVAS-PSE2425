@@ -29,7 +29,7 @@ from django.contrib.auth.models import User
 
 
 class HDF5Manager:
-    def createHDF5File(self, user: User, project: Project):
+    def create_hdf5_file(self, user: User, project: Project):
         """
         Creates the actual HDF5 file
 
@@ -58,7 +58,7 @@ class HDF5Manager:
 
         # The following parameter is the name of the scenario.
         scenario_path = pathlib.Path(
-            f"./HDF5Management/scenarios/{user.id}{project.name}ScenarioFile"
+            f"./HDF5Management/scenarios/{user.id}_{project.name}ScenarioFile"
         )
 
         # This checks to make sure the path you defined is valid and a scenario HDF5 can be saved there.
@@ -119,14 +119,14 @@ class HDF5Manager:
         light_source_list = []
 
         # Add all light sources to list
-        for lightSource in project.lightsources.all():
+        for light_source in project.lightsources.all():
             light_source_config = LightSourceConfig(
-                light_source_key=str(lightSource),
-                light_source_type=lightSource.lightsource_type,
-                number_of_rays=lightSource.number_of_rays,
-                distribution_type=lightSource.distribution_type,
-                mean=lightSource.mean,
-                covariance=lightSource.covariance,
+                light_source_key=str(light_source),
+                light_source_type=light_source.lightsource_type,
+                number_of_rays=light_source.number_of_rays,
+                distribution_type=light_source.distribution_type,
+                mean=light_source.mean,
+                covariance=light_source.covariance,
             )
             light_source_list.append(light_source_config)
 
@@ -255,12 +255,12 @@ class HDF5Manager:
         )
         scenario_generator.generate_scenario()
 
-    def createProjectFromHDF5File(self, projectFile: str, newProject: Project):
-        with h5py.File(projectFile, "r") as f:
-            heliostatsGroup: h5py.Group = f.get("heliostats")
-            if heliostatsGroup is not None:
-                for heliostatObject in heliostatsGroup:
-                    heliostat = heliostatsGroup[heliostatObject]
+    def create_project_from_hdf5_file(self, project_file: str, new_project: Project):
+        with h5py.File(project_file, "r") as f:
+            heliostats_group: h5py.Group = f.get("heliostats")
+            if heliostats_group is not None:
+                for heliostat_object in heliostats_group:
+                    heliostat = heliostats_group[heliostat_object]
 
                     aimpoint = heliostat["aim_point"]
                     aimpoint_x = aimpoint[0]
@@ -274,56 +274,56 @@ class HDF5Manager:
 
                     surface = heliostat["surface"]
                     facets = surface["facets"]
-                    numberOfFacets = len(facets.keys())
+                    number_of_facets = len(facets.keys())
 
                     Heliostat.objects.create(
-                        project=newProject,
-                        name=str(heliostatObject),
+                        project=new_project,
+                        name=str(heliostat_object),
                         position_x=position_x,
                         position_y=position_y,
                         position_z=position_z,
                         aimpoint_x=aimpoint_x,
                         aimpoint_y=aimpoint_y,
                         aimpoint_z=aimpoint_z,
-                        number_of_facets=numberOfFacets,
+                        number_of_facets=number_of_facets,
                     )
 
-            powerplantGroup: h5py.Group = f.get("power_plant")
-            if powerplantGroup is not None:
-                pass
-            # At the moment there is no powerPlant position stored with a scenario in CANVAS
+            # powerplant_group: h5py.Group = f.get("power_plant")
+            # if powerplant_group is not None:
+            #     pass
+            # # At the moment there is no powerPlant position stored with a scenario in CANVAS
+            #
+            # prototypes_group: h5py.Group = f.get("prototypes")
+            # if prototypes_group is not None:
+            #     pass
+            #     # Placeholder for when prototypes are effectively used
 
-            prototypesGroup: h5py.Group = f.get("prototypes")
-            if prototypesGroup is not None:
-                pass
-                # Placeholder for when prototypes are effectively used
+            lightsources_group: h5py.Group = f.get("lightsources")
+            if lightsources_group is not None:
+                for lightsource_object in lightsources_group:
+                    lightsource = lightsources_group[lightsource_object]
+                    number_of_rays = lightsource["number_of_rays"]
+                    lightsource_type = lightsource["type"]
 
-            lightsourcesGroup: h5py.Group = f.get("lightsources")
-            if lightsourcesGroup is not None:
-                for lightsourceObject in lightsourcesGroup:
-                    lightsource = lightsourcesGroup[lightsourceObject]
-                    numberOfRays = lightsource["number_of_rays"]
-                    lightsourceType = lightsource["type"]
-
-                    distributionParams = lightsource["distribution_parameters"]
-                    covariance = distributionParams["covariance"]
-                    distributionType = distributionParams["distribution_type"]
-                    mean = distributionParams["mean"]
+                    distribution_params = lightsource["distribution_parameters"]
+                    covariance = distribution_params["covariance"]
+                    distribution_type = distribution_params["distribution_type"]
+                    mean = distribution_params["mean"]
 
                     Lightsource.objects.create(
-                        project=newProject,
-                        name=str(lightsourceObject),
-                        number_of_rays=numberOfRays[()],
-                        lightsource_type=lightsourceType[()].decode("utf-8"),
+                        project=new_project,
+                        name=str(lightsource_object),
+                        number_of_rays=number_of_rays[()],
+                        lightsource_type=lightsource_type[()].decode("utf-8"),
                         covariance=covariance[()],
-                        distribution_type=distributionType[()].decode("utf-8"),
+                        distribution_type=distribution_type[()].decode("utf-8"),
                         mean=mean[()],
                     )
 
-            receiversGroup: h5py.Group = f.get("target_areas")
-            if receiversGroup is not None:
-                for receiverObject in receiversGroup:
-                    receiver = receiversGroup[receiverObject]
+            receivers_group: h5py.Group = f.get("target_areas")
+            if receivers_group is not None:
+                for receiver_object in receivers_group:
+                    receiver = receivers_group[receiver_object]
 
                     position = receiver["position_center"]
                     position_x = position[0]
@@ -339,8 +339,8 @@ class HDF5Manager:
                     plane_u = receiver["plane_u"]
 
                     Receiver.objects.create(
-                        project=newProject,
-                        name=str(receiverObject),
+                        project=new_project,
+                        name=str(receiver_object),
                         position_x=position_x,
                         position_y=position_y,
                         position_z=position_z,
