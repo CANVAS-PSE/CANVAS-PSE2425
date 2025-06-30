@@ -2,6 +2,22 @@ from django import forms
 from django.contrib.auth.models import User
 from allauth.socialaccount.models import SocialAccount
 
+PASSWORD_LENGTH_CRITERIUM_TEXT = "Password must be at least 8 characters long."
+PASSWORD_DIGIT_CRITERIUM_TEXT = "Password must contain at least one digit."
+PASSWORD_UPPERCASE_CRITERIUM_TEXT = (
+    "Password must contain at least one uppercase letter."
+)
+PASSWORD_LOWERCASE_CRITERIUM_TEXT = (
+    "Password must contain at least one lowercase letter."
+)
+PASSWORD_MATCH_CRITERIUM_TEXT = (
+    "The passwords you entered do not match. Please try again."
+)
+PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT = (
+    "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
+)
+PASSWORD_SPECIAL_CHARACTERS = "!@#$%^&*()-_+=<>?/"
+
 
 class RegisterForm(forms.Form):
     """
@@ -32,26 +48,7 @@ class RegisterForm(forms.Form):
         """
         Validates the password based on security criteria.
         """
-        password = str(self.cleaned_data.get("password"))
-
-        if len(password) < 8:
-            self.add_error("password", "Password must be at least 8 characters long.")
-        if not any(char.isdigit() for char in password):
-            self.add_error("password", "Password must contain at least one digit.")
-        if not any(char.isupper() for char in password):
-            self.add_error(
-                "password", "Password must contain at least one uppercase letter."
-            )
-        if not any(char.islower() for char in password):
-            self.add_error(
-                "password", "Password must contain at least one lowercase letter."
-            )
-        if not any(char in "!@#$%^&*()-_+=<>?/" for char in password):
-            self.add_error(
-                "password",
-                "Password must contain at least one special character (!@#$%^&*()-_+=<>?/).",
-            )
-        return password
+        return validatePassword(self)
 
     def clean(self):
         """
@@ -63,9 +60,7 @@ class RegisterForm(forms.Form):
         password_confirmation = self.cleaned_data.get("password_confirmation")
 
         if password != password_confirmation:
-            self.add_error(
-                "password", "The passwords you entered do not match. Please try again."
-            )
+            self.add_error("password", PASSWORD_MATCH_CRITERIUM_TEXT)
 
         return cleaned_data
 
@@ -166,27 +161,23 @@ class UpdateAccountForm(forms.ModelForm):
 
         if new_password:
             if len(new_password) < 8:
-                self.add_error(
-                    "new_password", "Password must be at least 8 characters long."
-                )
+                self.add_error("new_password", PASSWORD_LENGTH_CRITERIUM_TEXT)
             if not any(char.isdigit() for char in new_password):
-                self.add_error(
-                    "new_password", "Password must contain at least one digit."
-                )
+                self.add_error("new_password", PASSWORD_DIGIT_CRITERIUM_TEXT)
             if not any(char.isupper() for char in new_password):
                 self.add_error(
                     "new_password",
-                    "Password must contain at least one uppercase letter.",
+                    PASSWORD_UPPERCASE_CRITERIUM_TEXT,
                 )
             if not any(char.islower() for char in new_password):
                 self.add_error(
                     "new_password",
-                    "Password must contain at least one lowercase letter.",
+                    PASSWORD_LOWERCASE_CRITERIUM_TEXT,
                 )
             if not any(char in "!@#$%^&*()-_+=<>?/" for char in new_password):
                 self.add_error(
                     "new_password",
-                    "Password must contain at least one special character (!@#$%^&*()-_+=<>?/).",
+                    PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT,
                 )
         return new_password
 
@@ -201,7 +192,7 @@ class UpdateAccountForm(forms.ModelForm):
         if new_password and new_password != password_confirmation:
             self.add_error(
                 "password_confirmation",
-                "The passwords you entered do not match. Please try again.",
+                PASSWORD_MATCH_CRITERIUM_TEXT,
             )
 
         return password_confirmation
@@ -315,3 +306,22 @@ class PasswordForgottenForm(forms.Form):
         if not User.objects.filter(email=email).exists():
             self.add_error("email", "This email address is not registered.")
         return email
+
+
+def validatePassword(self: forms.Form) -> str:
+    password = str(self.cleaned_data.get("password"))
+
+    if len(password) < 8:
+        self.add_error("password", PASSWORD_LENGTH_CRITERIUM_TEXT)
+    if not any(char.isdigit() for char in password):
+        self.add_error("password", PASSWORD_DIGIT_CRITERIUM_TEXT)
+    if not any(char.isupper() for char in password):
+        self.add_error("password", PASSWORD_UPPERCASE_CRITERIUM_TEXT)
+    if not any(char.islower() for char in password):
+        self.add_error("password", PASSWORD_LOWERCASE_CRITERIUM_TEXT)
+    if not any(char in PASSWORD_SPECIAL_CHARACTERS for char in password):
+        self.add_error(
+            "password",
+            PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT,
+        )
+    return password

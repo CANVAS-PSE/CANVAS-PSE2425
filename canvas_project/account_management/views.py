@@ -24,6 +24,7 @@ from django.http import JsonResponse
 
 REDIRECT_PROJECTS_URL = "projects"
 REDIRECT_LOGIN_URL = "login"
+DEFAULT_PROFIL_PIC = "profile_pics/default.jpg"
 
 
 def register_view(request):
@@ -162,22 +163,22 @@ def update_account(request):
                 update_session_auth_hash(request, user)
                 send_password_change_email(user, request)
 
-            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile, _ = UserProfile.objects.get_or_create(user=user)
             if request.POST.get("delete_picture") == "1":
                 if (
                     profile.profile_picture
-                    and profile.profile_picture.name != "profile_pics/default.jpg"
+                    and profile.profile_picture.name != DEFAULT_PROFIL_PIC
                 ):
                     profile.profile_picture.delete()  # delete former profile picture
-                profile.profile_picture = (
-                    "profile_pics/default.jpg"  # set default profile picture
-                )
+                    profile.profile_picture = (
+                        DEFAULT_PROFIL_PIC  # set default profile picture
+                    )
             # Set profile picture only if a new one is uploaded
             elif form.cleaned_data.get("profile_picture"):
                 # Check if the current profile picture exists and is not the default picture.
                 if (
                     profile.profile_picture
-                    and profile.profile_picture.name != "profile_pics/default.jpg"
+                    and profile.profile_picture.name != DEFAULT_PROFIL_PIC
                 ):
                     profile.profile_picture.delete()
                 profile.profile_picture = form.cleaned_data["profile_picture"]
@@ -291,11 +292,8 @@ def password_forgotten_view(request):
             email = form.cleaned_data["email"]
             user = User.objects.get(email=email)
             send_password_forgotten_email(user, request)
-            return redirect("login")
-    else:
-        form = PasswordForgottenForm()
 
-    return render(request, "password_forgotten.html", {"form": form})
+    return redirect("login")
 
 
 def send_password_forgotten_email(user, request):

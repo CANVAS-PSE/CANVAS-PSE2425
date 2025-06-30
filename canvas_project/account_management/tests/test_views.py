@@ -532,7 +532,7 @@ class UpdateAccountTest(TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
         )
-        self.profile, created = UserProfile.objects.get_or_create(user=self.user)
+        self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
         self.update_account_url = reverse("update_account")
 
     def test_GET(self):
