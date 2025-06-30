@@ -234,7 +234,6 @@ def sharedProjects(request, uid, token):
                 project.name = project.name + "_shared"
                 Project.objects.get(name=project.name, owner=request.user)
             except Project.DoesNotExist:
-                project.name = project.name
                 project.owner = request.user
                 project.save()
                 newNameFound = True
