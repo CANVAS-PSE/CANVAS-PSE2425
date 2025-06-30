@@ -146,52 +146,50 @@ def update_account(request):
     """
     user = request.user
 
-    if request.method == "POST":
-        form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
-        if form.is_valid():
-            user.first_name = form.cleaned_data["first_name"]
-            user.last_name = form.cleaned_data["last_name"]
-            user.email = form.cleaned_data["email"]
-            # Set the username to the email for consistency
-            user.username = user.email
+    form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
 
-            old_password = form.cleaned_data["old_password"]
-            new_password = form.cleaned_data["new_password"]
+    if form.is_valid():
+        user.first_name = form.cleaned_data["first_name"]
+        user.last_name = form.cleaned_data["last_name"]
+        user.email = form.cleaned_data["email"]
+        # Set the username to the email for consistency
+        user.username = user.email
 
-            if old_password and new_password:
-                user.set_password(new_password)
-                update_session_auth_hash(request, user)
-                send_password_change_email(user, request)
+        old_password = form.cleaned_data["old_password"]
+        new_password = form.cleaned_data["new_password"]
 
-            profile, _ = UserProfile.objects.get_or_create(user=user)
-            if request.POST.get("delete_picture") == "1":
-                if (
-                    profile.profile_picture
-                    and profile.profile_picture.name != DEFAULT_PROFIL_PIC
-                ):
-                    profile.profile_picture.delete()  # delete former profile picture
-                    profile.profile_picture = (
-                        DEFAULT_PROFIL_PIC  # set default profile picture
-                    )
-            # Set profile picture only if a new one is uploaded
-            elif form.cleaned_data.get("profile_picture"):
-                # Check if the current profile picture exists and is not the default picture.
-                if (
-                    profile.profile_picture
-                    and profile.profile_picture.name != DEFAULT_PROFIL_PIC
-                ):
-                    profile.profile_picture.delete()
-                profile.profile_picture = form.cleaned_data["profile_picture"]
+        if old_password and new_password:
+            user.set_password(new_password)
+            update_session_auth_hash(request, user)
+            send_password_change_email(user, request)
 
-            user.save()
-            profile.save()
+        profile, _ = UserProfile.objects.get_or_create(user=user)
 
-            messages.success(request, "Your account has been updated successfully.")
-        else:
-            for field in form:
-                for error in field.errors:
-                    messages.error(request, f"Error in {field.label}: {error}")
-        return redirect(request.META.get("HTTP_REFERER", "projects"))
+        if (
+            request.POST.get("delete_picture") == "1"
+            and profile.profile_picture
+            and profile.profile_picture.name != DEFAULT_PROFIL_PIC
+        ):
+            profile.profile_picture.delete()  # delete former profile picture
+            profile.profile_picture = DEFAULT_PROFIL_PIC  # set default profile picture
+        # Set profile picture only if a new one is uploaded
+        elif (
+            form.cleaned_data.get("profile_picture")
+            and profile.profile_picture
+            and profile.profile_picture.name != DEFAULT_PROFIL_PIC
+        ):
+            profile.profile_picture.delete()
+            profile.profile_picture = form.cleaned_data["profile_picture"]
+
+        user.save()
+        profile.save()
+
+        messages.success(request, "Your account has been updated successfully.")
+    else:
+        for field in form:
+            for error in field.errors:
+                messages.error(request, f"Error in {field.label}: {error}")
+    return redirect(request.META.get("HTTP_REFERER", "projects"))
 
 
 @login_required

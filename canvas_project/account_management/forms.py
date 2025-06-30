@@ -17,6 +17,8 @@ PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT = (
     "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
 )
 PASSWORD_SPECIAL_CHARACTERS = "!@#$%^&*()-_+=<>?/"
+INCORRECT_PASSWORD_TEXT = "The password you entered is incorrect."
+EMAIL_ALREADY_IN_USE_TEXT = "This email address is already in use. Please try another."
 
 
 class RegisterForm(forms.Form):
@@ -40,7 +42,8 @@ class RegisterForm(forms.Form):
         email = self.cleaned_data.get("email")
         if User.objects.filter(email=email).exists():
             self.add_error(
-                "email", "This email address is already in use. Please try another."
+                "email",
+                EMAIL_ALREADY_IN_USE_TEXT,
             )
         return email
 
@@ -48,7 +51,22 @@ class RegisterForm(forms.Form):
         """
         Validates the password based on security criteria.
         """
-        return validatePassword(self)
+        password = str(self.cleaned_data.get("password"))
+
+        if len(password) < 8:
+            self.add_error("password", PASSWORD_LENGTH_CRITERIUM_TEXT)
+        if not any(char.isdigit() for char in password):
+            self.add_error("password", PASSWORD_DIGIT_CRITERIUM_TEXT)
+        if not any(char.isupper() for char in password):
+            self.add_error("password", PASSWORD_UPPERCASE_CRITERIUM_TEXT)
+        if not any(char.islower() for char in password):
+            self.add_error("password", PASSWORD_LOWERCASE_CRITERIUM_TEXT)
+        if not any(char in PASSWORD_SPECIAL_CHARACTERS for char in password):
+            self.add_error(
+                "password",
+                PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT,
+            )
+        return password
 
     def clean(self):
         """
@@ -87,9 +105,9 @@ class LoginForm(forms.Form):
 
         # Check if the user with this email exists and the password is correct.
         if not user:
-            self.add_error("email", "This email address is not registered.")
+            self.add_error("email", EMAIL_ALREADY_IN_USE_TEXT)
         elif not user.check_password(password):
-            self.add_error("password", "The password you entered is incorrect.")
+            self.add_error("password", INCORRECT_PASSWORD_TEXT)
         else:
             self.user = user
 
@@ -139,9 +157,7 @@ class UpdateAccountForm(forms.ModelForm):
         if SocialAccount.objects.filter(user=self.instance).exists():
             return self.instance.email
         if User.objects.filter(email=email).exclude(id=self.instance.id).exists():
-            self.add_error(
-                "email", "This email address is already in use. Please try another."
-            )
+            self.add_error("email", EMAIL_ALREADY_IN_USE_TEXT)
         return email
 
     def clean_old_password(self):
@@ -150,7 +166,7 @@ class UpdateAccountForm(forms.ModelForm):
         """
         old_password = self.cleaned_data.get("old_password")
         if old_password and not self.instance.check_password(old_password):
-            self.add_error("old_password", "The password you entered is incorrect.")
+            self.add_error("old_password", INCORRECT_PASSWORD_TEXT)
         return old_password
 
     def clean_new_password(self):
@@ -174,7 +190,7 @@ class UpdateAccountForm(forms.ModelForm):
                     "new_password",
                     PASSWORD_LOWERCASE_CRITERIUM_TEXT,
                 )
-            if not any(char in "!@#$%^&*()-_+=<>?/" for char in new_password):
+            if not any(char in PASSWORD_SPECIAL_CHARACTERS for char in new_password):
                 self.add_error(
                     "new_password",
                     PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT,
@@ -229,7 +245,7 @@ class DeleteAccountForm(forms.Form):
         """
         password = self.cleaned_data.get("password")
         if not self.user.check_password(password):
-            self.add_error("password", "The password you entered is incorrect.")
+            self.add_error("password", INCORRECT_PASSWORD_TEXT)
         return password
 
 
@@ -251,23 +267,17 @@ class PasswordResetForm(forms.Form):
         new_password = str(self.cleaned_data.get("new_password"))
 
         if len(new_password) < 8:
-            self.add_error(
-                "new_password", "Password must be at least 8 characters long."
-            )
+            self.add_error("new_password", PASSWORD_LENGTH_CRITERIUM_TEXT)
         if not any(char.isdigit() for char in new_password):
-            self.add_error("new_password", "Password must contain at least one digit.")
+            self.add_error("new_password", PASSWORD_DIGIT_CRITERIUM_TEXT)
         if not any(char.isupper() for char in new_password):
-            self.add_error(
-                "new_password", "Password must contain at least one uppercase letter."
-            )
+            self.add_error("new_password", PASSWORD_UPPERCASE_CRITERIUM_TEXT)
         if not any(char.islower() for char in new_password):
-            self.add_error(
-                "new_password", "Password must contain at least one lowercase letter."
-            )
-        if not any(char in "!@#$%^&*()-_+=<>?/" for char in new_password):
+            self.add_error("new_password", PASSWORD_LOWERCASE_CRITERIUM_TEXT)
+        if not any(char in PASSWORD_SPECIAL_CHARACTERS for char in new_password):
             self.add_error(
                 "new_password",
-                "Password must contain at least one special character (!@#$%^&*()-_+=<>?/).",
+                PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT,
             )
 
         return new_password
@@ -284,7 +294,7 @@ class PasswordResetForm(forms.Form):
         if new_password != password_confirmation:
             self.add_error(
                 "password_confirmation",
-                "The passwords you entered do not match. Please try again.",
+                PASSWORD_MATCH_CRITERIUM_TEXT,
             )
 
         return cleaned_data
@@ -306,22 +316,3 @@ class PasswordForgottenForm(forms.Form):
         if not User.objects.filter(email=email).exists():
             self.add_error("email", "This email address is not registered.")
         return email
-
-
-def validatePassword(self: forms.Form) -> str:
-    password = str(self.cleaned_data.get("password"))
-
-    if len(password) < 8:
-        self.add_error("password", PASSWORD_LENGTH_CRITERIUM_TEXT)
-    if not any(char.isdigit() for char in password):
-        self.add_error("password", PASSWORD_DIGIT_CRITERIUM_TEXT)
-    if not any(char.isupper() for char in password):
-        self.add_error("password", PASSWORD_UPPERCASE_CRITERIUM_TEXT)
-    if not any(char.islower() for char in password):
-        self.add_error("password", PASSWORD_LOWERCASE_CRITERIUM_TEXT)
-    if not any(char in PASSWORD_SPECIAL_CHARACTERS for char in password):
-        self.add_error(
-            "password",
-            PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT,
-        )
-    return password
