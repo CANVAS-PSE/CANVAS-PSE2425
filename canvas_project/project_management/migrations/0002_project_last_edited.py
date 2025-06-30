@@ -5,16 +5,17 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('project_management', '0001_initial'),
+        ("project_management", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='last_edited',
-            field=models.DateTimeField(default=django.utils.timezone.now, verbose_name='date edited'),
+            model_name="project",
+            name="last_edited",
+            field=models.DateTimeField(
+                default=django.utils.timezone.now, verbose_name="date edited"
+            ),
             preserve_default=False,
         ),
     ]

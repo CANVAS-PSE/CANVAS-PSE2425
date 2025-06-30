@@ -1,10 +1,9 @@
 import {
-    HeaderInspectorComponent,
-    InspectorComponent,
-    MultiFieldInspectorComponent,
-    SelectFieldInspectorComponent,
-    SingleFieldInspectorComponent,
-    SliderFieldInspectorComponent,
+  HeaderInspectorComponent,
+  MultiFieldInspectorComponent,
+  SelectFieldInspectorComponent,
+  SingleFieldInspectorComponent,
+  SliderFieldInspectorComponent,
 } from "inspectorComponents";
 import * as THREE from "three";
 import { Vector3 } from "three";
@@ -12,1308 +11,1247 @@ import { Object3D } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { UndoRedoHandler } from "undoRedoHandler";
 import {
-    UpdateHeliostatCommand,
-    UpdateLightsourceCommand,
-    UpdateReceiverCommand,
+  UpdateHeliostatCommand,
+  UpdateLightsourceCommand,
+  UpdateReceiverCommand,
 } from "updateCommands";
 import {
-    DuplicateHeliostatCommand,
-    DuplicateReceiverCommand,
-    DuplicateLightSourceCommand,
+  DuplicateHeliostatCommand,
+  DuplicateReceiverCommand,
+  DuplicateLightSourceCommand,
 } from "duplicateCommands";
 import {
-    DeleteHeliostatCommand,
-    DeleteLightSourceCommand,
-    DeleteReceiverCommand,
+  DeleteHeliostatCommand,
+  DeleteLightSourceCommand,
+  DeleteReceiverCommand,
 } from "deleteCommands";
-import { ItemDeletedEvent } from "deleteCommands";
 
 export class SelectableObject extends Object3D {
-    #objectName;
-    /**
-     * @type {InspectorComponent[]}
-     */
-    #inspectorComponents;
+  #objectName;
 
-    /**
-     * Creates a new selectable object
-     * @param {String} name the name of the object
-     */
-    constructor(name, Inspe) {
-        super();
-        this.#objectName = name;
-    }
+  /**
+   * Creates a new selectable object
+   * @param {string} name the name of the object
+   */
+  constructor(name) {
+    super();
+    this.#objectName = name;
+  }
 
-    get objectName() {
-        return this.#objectName;
-    }
+  get objectName() {
+    return this.#objectName;
+  }
 
-    set objectName(name) {
-        this.#objectName = name;
-    }
+  set objectName(name) {
+    this.#objectName = name;
+  }
 
-    /**
-     * @returns {InspectorComponent[]}
-     */
-    get inspectorComponents() {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   */
+  get inspectorComponents() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Updates and saves the new name through a command
-     * @param {String} name the new name you want to save and update
-     */
-    updateAndSaveObjectName(name) {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Updates and saves the new name through a command
+   * @param {string} name the new name you want to save and update
+   */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
+  updateAndSaveObjectName(name) {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Updates and saves the new position through a command
-     * @param {Vector3} position
-     */
-    updateAndSaveObjectPosition(position) {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Updates and saves the new position through a command
+   * @param {Vector3} position - the new position you want to save and update
+   */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
+  updateAndSaveObjectPosition(position) {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Updates and saves the new rotation through a command
-     */
-    updateAndSaveObjectRotation(rotation) {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Updates and saves the new rotation through a command
+   * @param {THREE.Quaternion} rotation - the new rotation you want to save and update
+   */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
+  updateAndSaveObjectRotation(rotation) {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Duplicates the object
-     */
-    duplicate() {
-        throw new Error("This method must be implemented in all subclasses");
-    }
-    /**
-     * Deletes the object
-     */
-    delete() {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Duplicates the object
+   */
+  duplicate() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
+  /**
+   * Deletes the object
+   */
+  delete() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Updates the position of the object
-     * @param {THREE.Vector3} position
-     */
-    updatePosition(position) {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Updates the position of the object
+   * @param {THREE.Vector3} position - the new position of the object
+   */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
+  updatePosition(position) {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Updates the rotation of the object
-     * @param {THREE.Quaternion} rotation
-     */
-    updateRotation(rotation) {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Updates the rotation of the object
+   * @param {THREE.Quaternion} rotation - the new rotation of the object
+   */
+  // eslint-disable-next-line no-unused-vars -- required for interface compatibility
+  updateRotation(rotation) {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Returns the axis on which the object is rotatable
-     * @returns {string[]} - an array containing all rotable axis
-     */
-    get rotatableAxis() {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Returns the axis on which the object is rotatable
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   */
+  get rotatableAxis() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Returns whether the object is movable or not
-     * @returns {Boolean}
-     */
-    get isMovable() {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Returns whether the object is movable or not
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   */
+  get isMovable() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Returns whether an object is selectable or not
-     * @returns {boolean}
-     */
-    get isSelectable() {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Returns whether an object is selectable or not
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   */
+  get isSelectable() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 
-    /**
-     * Returns the old position of the heliostat
-     * @returns {THREE.Vector3} the old position of the heliostat
-     */
-    get oldPosition() {
-        throw new Error("This method must be implemented in all subclasses");
-    }
+  /**
+   * Returns the old position of the heliostat
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   */
+  get oldPosition() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
 }
 
 /**
- *  Class that represents the Heliostat object
+ * Class that represents the Heliostat object
  */
 export class Heliostat extends SelectableObject {
-    #apiID;
-    #aimPoint;
-    #numberOfFacets;
-    #kinematicType;
-    #headerComponent;
-    #positionComponent;
-    #aimPointComponent;
-    #numberOfFacetsComponent;
-    #kinematicTypeComponent;
-    #undoRedoHandler = new UndoRedoHandler();
-    #isMovable = true;
-    /**
-     * @type { string[] }
-     */
-    #rotatableAxis = null;
-    #oldPosition;
+  #apiID;
+  #aimPoint;
+  #numberOfFacets;
+  #kinematicType;
+  #headerComponent;
+  #positionComponent;
+  #aimPointComponent;
+  #numberOfFacetsComponent;
+  #kinematicTypeComponent;
+  #undoRedoHandler = new UndoRedoHandler();
+  #isMovable = true;
+  /**
+   * @type { string[] }
+   */
+  #rotatableAxis = null;
+  #oldPosition;
 
-    /**
-     * Creates a Heliostat object
-     * @param {Number} [apiID=null] The id for api usage
-     * @param {String} heliostatName the name of the heliostat
-     * @param {THREE.Vector3} position The position of the heliostat.
-     * @param {THREE.Vector3} aimPoint The Point the Heliostat is aiming at.
-     * @param {Number} numberOfFacets Number of Facets the Heliostat has.
-     * @param {String} kinematicType The type of kinematic the Heliostat has.
-     */
+  /**
+   * Creates a Heliostat object
+   * @param {number} [apiID=null] The id for api usage
+   * @param {string} heliostatName the name of the heliostat
+   * @param {THREE.Vector3} position The position of the heliostat.
+   * @param {THREE.Vector3} aimPoint The Point the Heliostat is aiming at.
+   * @param {number} numberOfFacets Number of Facets the Heliostat has.
+   * @param {string} kinematicType The type of kinematic the Heliostat has.
+   */
 
-    constructor(
-        heliostatName,
-        position,
-        aimPoint,
-        numberOfFacets,
-        kinematicType,
-        apiID = null,
-    ) {
-        super(heliostatName);
-        this.loader = new GLTFLoader();
-        this.mesh;
-        this.loader.load("/static/models/heliostat.glb", (gltf) => {
-            this.mesh = gltf.scene;
-            this.mesh.traverse((child) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                }
-            });
-            this.add(this.mesh);
-        });
-        this.position.copy(position);
-        this.#oldPosition = new Vector3(position.x, position.y, position.z);
-        this.#apiID = apiID;
-        this.#aimPoint = aimPoint;
-        this.#numberOfFacets = numberOfFacets;
-        this.#kinematicType = kinematicType;
-        this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
+  constructor(
+    heliostatName,
+    position,
+    aimPoint,
+    numberOfFacets,
+    kinematicType,
+    apiID = null
+  ) {
+    super(heliostatName);
+    this.loader = new GLTFLoader();
+    this.mesh;
+    this.loader.load("/static/models/heliostat.glb", (gltf) => {
+      this.mesh = gltf.scene;
+      this.mesh.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+        }
+      });
+      this.add(this.mesh);
+    });
+    this.position.copy(position);
+    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#apiID = apiID;
+    this.#aimPoint = aimPoint;
+    this.#numberOfFacets = numberOfFacets;
+    this.#kinematicType = kinematicType;
+    this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
 
-        // create components for inspector
-        this.#headerComponent = new HeaderInspectorComponent(
-            () =>
-                this.objectName !== "" && this.objectName
-                    ? this.objectName
-                    : "Heliostat",
-            (name) => this.updateAndSaveObjectName(name),
+    // create components for inspector
+    this.#headerComponent = new HeaderInspectorComponent(
+      () =>
+        this.objectName !== "" && this.objectName
+          ? this.objectName
+          : "Heliostat",
+      (name) => this.updateAndSaveObjectName(name),
+      this
+    );
+
+    const nCoordinate = new SingleFieldInspectorComponent(
+      "N",
+      "number",
+      () => this.position.x,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateHeliostatCommand(
             this,
+            "position",
+            new Vector3(newValue, this.position.y, this.position.z)
+          )
         );
+      },
+      -Infinity
+    );
 
-        const nCoordinate = new SingleFieldInspectorComponent(
-            "N",
-            "number",
-            () => this.position.x,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(
-                        this,
-                        "position",
-                        new Vector3(newValue, this.position.y, this.position.z),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        const uCoordinate = new SingleFieldInspectorComponent(
-            "U",
-            "number",
-            () => this.position.y,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(
-                        this,
-                        "position",
-                        new Vector3(this.position.x, newValue, this.position.z),
-                    ),
-                );
-            },
-            0,
-        );
-
-        const eCoordinate = new SingleFieldInspectorComponent(
-            "E",
-            "number",
-            () => this.position.z,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(
-                        this,
-                        "position",
-                        new Vector3(this.position.x, this.position.y, newValue),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#positionComponent = new MultiFieldInspectorComponent("Position", [
-            nCoordinate,
-            uCoordinate,
-            eCoordinate,
-        ]);
-
-        const nAimpoint = new SingleFieldInspectorComponent(
-            "N",
-            "number",
-            () => this.#aimPoint.x,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(
-                        this,
-                        "aimPoint",
-                        new Vector3(
-                            newValue,
-                            this.#aimPoint.y,
-                            this.#aimPoint.z,
-                        ),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        const uAimpoint = new SingleFieldInspectorComponent(
-            "U",
-            "number",
-            () => this.#aimPoint.y,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(
-                        this,
-                        "aimPoint",
-                        new Vector3(
-                            this.#aimPoint.x,
-                            newValue,
-                            this.#aimPoint.z,
-                        ),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        const eAimpoint = new SingleFieldInspectorComponent(
-            "E",
-            "number",
-            () => this.#aimPoint.z,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(
-                        this,
-                        "aimPoint",
-                        new Vector3(
-                            this.#aimPoint.x,
-                            this.#aimPoint.y,
-                            newValue,
-                        ),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#aimPointComponent = new MultiFieldInspectorComponent("Aimpoint", [
-            nAimpoint,
-            uAimpoint,
-            eAimpoint,
-        ]);
-
-        this.#numberOfFacetsComponent = new SingleFieldInspectorComponent(
-            "Number of facets",
-            "number",
-            () => this.#numberOfFacets,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(
-                        this,
-                        "numberOfFacets",
-                        newValue,
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#kinematicTypeComponent = new SelectFieldInspectorComponent(
-            "Kinematic type",
-            [{ label: "ideal", value: "ideal" }],
-            () => this.#kinematicType,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateHeliostatCommand(this, "kinematicType", newValue),
-                );
-            },
-        );
-    }
-
-    get rotatableAxis() {
-        return this.#rotatableAxis;
-    }
-
-    get isMovable() {
-        return this.#isMovable;
-    }
-
-    get isSelectable() {
-        return true;
-    }
-
-    get oldPosition() {
-        return this.#oldPosition;
-    }
-
-    /**
-     * Updates the position of the heliostat
-     * @param {THREE.Vector3} position the new position
-     */
-    updatePosition(position) {
-        this.position.copy(position);
-        this.#oldPosition = new Vector3(position.x, position.y, position.z);
-        this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
-    }
-
-    /**
-     * @param {String} name the new name for the object
-     */
-    updateAndSaveObjectName(name) {
+    const uCoordinate = new SingleFieldInspectorComponent(
+      "U",
+      "number",
+      () => this.position.y,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new UpdateHeliostatCommand(this, "objectName", name),
+          new UpdateHeliostatCommand(
+            this,
+            "position",
+            new Vector3(this.position.x, newValue, this.position.z)
+          )
         );
-    }
+      },
+      0
+    );
 
-    duplicate() {
+    const eCoordinate = new SingleFieldInspectorComponent(
+      "E",
+      "number",
+      () => this.position.z,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new DuplicateHeliostatCommand(this),
+          new UpdateHeliostatCommand(
+            this,
+            "position",
+            new Vector3(this.position.x, this.position.y, newValue)
+          )
         );
-    }
+      },
+      -Infinity
+    );
 
-    delete() {
-        this.#undoRedoHandler.executeCommand(new DeleteHeliostatCommand(this));
-    }
+    this.#positionComponent = new MultiFieldInspectorComponent("Position", [
+      nCoordinate,
+      uCoordinate,
+      eCoordinate,
+    ]);
 
-    /**
-     * Updates the position of the heliostat
-     * @param {Vector3} position
-     */
-    updateAndSaveObjectPosition(position) {
+    const nAimpoint = new SingleFieldInspectorComponent(
+      "N",
+      "number",
+      () => this.#aimPoint.x,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new UpdateHeliostatCommand(this, "position", position),
+          new UpdateHeliostatCommand(
+            this,
+            "aimPoint",
+            new Vector3(newValue, this.#aimPoint.y, this.#aimPoint.z)
+          )
         );
-    }
-    /**
-     * Updates the aimPoint of the Heliostat and updates rotation of the Heliostat accordingly
-     * @param {THREE.Vector3} aimPoint
-     */
-    set aimPoint(aimPoint) {
-        this.#aimPoint = aimPoint;
-        this.lookAt(aimPoint.x, this.oldPosition.y, aimPoint.z);
-    }
+      },
+      -Infinity
+    );
 
-    get aimPoint() {
-        return this.#aimPoint;
-    }
+    const uAimpoint = new SingleFieldInspectorComponent(
+      "U",
+      "number",
+      () => this.#aimPoint.y,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateHeliostatCommand(
+            this,
+            "aimPoint",
+            new Vector3(this.#aimPoint.x, newValue, this.#aimPoint.z)
+          )
+        );
+      },
+      -Infinity
+    );
 
-    get apiID() {
-        return this.#apiID;
-    }
+    const eAimpoint = new SingleFieldInspectorComponent(
+      "E",
+      "number",
+      () => this.#aimPoint.z,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateHeliostatCommand(
+            this,
+            "aimPoint",
+            new Vector3(this.#aimPoint.x, this.#aimPoint.y, newValue)
+          )
+        );
+      },
+      -Infinity
+    );
 
-    set apiID(value) {
-        this.#apiID = value;
-    }
+    this.#aimPointComponent = new MultiFieldInspectorComponent("Aimpoint", [
+      nAimpoint,
+      uAimpoint,
+      eAimpoint,
+    ]);
 
-    get numberOfFacets() {
-        return this.#numberOfFacets;
-    }
+    this.#numberOfFacetsComponent = new SingleFieldInspectorComponent(
+      "Number of facets",
+      "number",
+      () => this.#numberOfFacets,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateHeliostatCommand(this, "numberOfFacets", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    set numberOfFacets(numberOfFacets) {
-        this.#numberOfFacets = numberOfFacets;
-    }
+    this.#kinematicTypeComponent = new SelectFieldInspectorComponent(
+      "Kinematic type",
+      [{ label: "ideal", value: "ideal" }],
+      () => this.#kinematicType,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateHeliostatCommand(this, "kinematicType", newValue)
+        );
+      }
+    );
+  }
 
-    get kinematicType() {
-        return this.#kinematicType;
-    }
+  get rotatableAxis() {
+    return this.#rotatableAxis;
+  }
 
-    set kinematicType(kinematicType) {
-        this.#kinematicType = kinematicType;
-    }
+  get isMovable() {
+    return this.#isMovable;
+  }
 
-    get inspectorComponents() {
-        return [
-            this.#headerComponent,
-            this.#positionComponent,
-            this.#aimPointComponent,
-            this.#numberOfFacetsComponent,
-            this.#kinematicTypeComponent,
-        ];
-    }
+  get isSelectable() {
+    return true;
+  }
+
+  get oldPosition() {
+    return this.#oldPosition;
+  }
+
+  /**
+   * Updates the position of the heliostat
+   * @param {THREE.Vector3} position the new position
+   */
+  updatePosition(position) {
+    this.position.copy(position);
+    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
+  }
+
+  /**
+   * @param {string} name the new name for the object
+   */
+  updateAndSaveObjectName(name) {
+    this.#undoRedoHandler.executeCommand(
+      new UpdateHeliostatCommand(this, "objectName", name)
+    );
+  }
+
+  duplicate() {
+    this.#undoRedoHandler.executeCommand(new DuplicateHeliostatCommand(this));
+  }
+
+  delete() {
+    this.#undoRedoHandler.executeCommand(new DeleteHeliostatCommand(this));
+  }
+
+  /**
+   * Updates the position of the heliostat
+   * @param {Vector3} position - the new position of the heliostat
+   */
+  updateAndSaveObjectPosition(position) {
+    this.#undoRedoHandler.executeCommand(
+      new UpdateHeliostatCommand(this, "position", position)
+    );
+  }
+  /**
+   * Updates the aimPoint of the Heliostat and updates rotation of the Heliostat accordingly
+   * @param {THREE.Vector3} aimPoint - the new aimPoint of the Heliostat
+   */
+  set aimPoint(aimPoint) {
+    this.#aimPoint = aimPoint;
+    this.lookAt(aimPoint.x, this.oldPosition.y, aimPoint.z);
+  }
+
+  get aimPoint() {
+    return this.#aimPoint;
+  }
+
+  get apiID() {
+    return this.#apiID;
+  }
+
+  set apiID(value) {
+    this.#apiID = value;
+  }
+
+  get numberOfFacets() {
+    return this.#numberOfFacets;
+  }
+
+  set numberOfFacets(numberOfFacets) {
+    this.#numberOfFacets = numberOfFacets;
+  }
+
+  get kinematicType() {
+    return this.#kinematicType;
+  }
+
+  set kinematicType(kinematicType) {
+    this.#kinematicType = kinematicType;
+  }
+
+  get inspectorComponents() {
+    return [
+      this.#headerComponent,
+      this.#positionComponent,
+      this.#aimPointComponent,
+      this.#numberOfFacetsComponent,
+      this.#kinematicTypeComponent,
+    ];
+  }
 }
 
 /**
  * Class that represents the receiver object
  */
 export class Receiver extends SelectableObject {
-    #apiID;
-    #towerType;
-    #normalVector;
-    #planeE;
-    #planeU;
-    #resolutionE;
-    #resolutionU;
-    #curvatureE;
-    #curvatureU;
-    #undoRedoHandler = new UndoRedoHandler();
+  #apiID;
+  #towerType;
+  #normalVector;
+  #planeE;
+  #planeU;
+  #resolutionE;
+  #resolutionU;
+  #curvatureE;
+  #curvatureU;
+  #undoRedoHandler = new UndoRedoHandler();
 
-    #top;
-    #base;
+  #top;
+  #base;
 
-    #headerComponent;
-    #positionComponent;
-    #rotationUComponent;
-    #normalVectorComponent;
-    #towerTypeComponent;
-    #curvatureComponent;
-    #planeComponent;
-    #resolutionComponent;
-    #isMovable = true;
-    #rotatableAxis = ["Y"];
-    #oldPosition;
-    #oldQuaternion;
+  #headerComponent;
+  #positionComponent;
+  #rotationUComponent;
+  #normalVectorComponent;
+  #towerTypeComponent;
+  #curvatureComponent;
+  #planeComponent;
+  #resolutionComponent;
+  #isMovable = true;
+  #rotatableAxis = ["Y"];
+  #oldPosition;
+  #oldQuaternion;
 
-    /**
-     * Creates a Receiver object
-     * @param {Number} [apiID=null] The id for api usage
-     * @param {String} receiverName the name of the receiver
-     * @param {THREE.Vector3} position Is the position of the receiver
-     * @param {Number} rotationY the rotation Y of the receiver
-     * @param {THREE.Vector3} normalVector the normal vector of the receiver
-     * @param {String} towerType the type of the tower
-     * @param {Number} planeE the plane E of the receiver
-     * @param {Number} planeU the plane U of the receiver
-     * @param {Number} resolutionE the resolution E of the receiver
-     * @param {Number} resolutionU the resolution U of the receiver
-     * @param {Number} curvatureE the curvature E of the receiver
-     * @param {Number} curvatureU the curvature U of the receiver
-     */
-    constructor(
-        receiverName,
-        position,
-        rotationY,
-        normalVector,
-        towerType,
-        planeE,
-        planeU,
-        resolutionE,
-        resolutionU,
-        curvatureE,
-        curvatureU,
-        apiID = null,
-    ) {
-        super(receiverName);
-        // place the 3D object
-        this.#base = new ReceiverBase();
-        this.add(this.#base);
+  /**
+   * Creates a Receiver object
+   * @param {string} receiverName the name of the receiver
+   * @param {THREE.Vector3} position Is the position of the receiver
+   * @param {number} rotationY the rotation Y of the receiver
+   * @param {THREE.Vector3} normalVector the normal vector of the receiver
+   * @param {string} towerType the type of the tower
+   * @param {number} planeE the plane E of the receiver
+   * @param {number} planeU the plane U of the receiver
+   * @param {number} resolutionE the resolution E of the receiver
+   * @param {number} resolutionU the resolution U of the receiver
+   * @param {number} curvatureE the curvature E of the receiver
+   * @param {number} curvatureU the curvature U of the receiver
+   * @param {number} [apiID=null] The id for api usage
+   */
+  constructor(
+    receiverName,
+    position,
+    rotationY,
+    normalVector,
+    towerType,
+    planeE,
+    planeU,
+    resolutionE,
+    resolutionU,
+    curvatureE,
+    curvatureU,
+    apiID = null
+  ) {
+    super(receiverName);
+    // place the 3D object
+    this.#base = new ReceiverBase();
+    this.add(this.#base);
 
-        this.#top = new ReceiverTop();
-        this.add(this.#top);
+    this.#top = new ReceiverTop();
+    this.add(this.#top);
 
-        this.updatePosition(position);
-        this.updateRotation(this.yDegreeToQuaternion(rotationY));
+    this.updatePosition(position);
+    this.updateRotation(this.yDegreeToQuaternion(rotationY));
 
-        this.#apiID = apiID;
-        this.#towerType = towerType;
-        this.#normalVector = normalVector;
-        this.#planeE = planeE;
-        this.#planeU = planeU;
-        this.#resolutionE = resolutionE;
-        this.#resolutionU = resolutionU;
-        this.#curvatureE = curvatureE;
-        this.#curvatureU = curvatureU;
-        this.#oldQuaternion = new THREE.Quaternion(0, rotationY, 0);
+    this.#apiID = apiID;
+    this.#towerType = towerType;
+    this.#normalVector = normalVector;
+    this.#planeE = planeE;
+    this.#planeU = planeU;
+    this.#resolutionE = resolutionE;
+    this.#resolutionU = resolutionU;
+    this.#curvatureE = curvatureE;
+    this.#curvatureU = curvatureU;
+    this.#oldQuaternion = new THREE.Quaternion(0, rotationY, 0);
 
-        // create components for the inspector
-        this.#headerComponent = new HeaderInspectorComponent(
-            () =>
-                this.objectName !== "" && this.objectName
-                    ? this.objectName
-                    : "Receiver",
-            (name) => this.updateAndSaveObjectName(name),
+    // create components for the inspector
+    this.#headerComponent = new HeaderInspectorComponent(
+      () =>
+        this.objectName !== "" && this.objectName
+          ? this.objectName
+          : "Receiver",
+      (name) => this.updateAndSaveObjectName(name),
+      this
+    );
+
+    const nCoordinate = new SingleFieldInspectorComponent(
+      "N",
+      "number",
+      () => this.getPosition().x,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(
             this,
+            "position",
+            new Vector3(newValue, this.position.y, this.position.z)
+          )
         );
+      },
+      -Infinity
+    );
 
-        const nCoordinate = new SingleFieldInspectorComponent(
-            "N",
-            "number",
-            () => this.getPosition().x,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(
-                        this,
-                        "position",
-                        new Vector3(newValue, this.position.y, this.position.z),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        const uCoordinate = new SingleFieldInspectorComponent(
-            "U",
-            "number",
-            () => this.getPosition().y,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(
-                        this,
-                        "position",
-                        new Vector3(this.position.x, newValue, this.position.z),
-                    ),
-                );
-            },
-            0,
-        );
-
-        const eCoordinate = new SingleFieldInspectorComponent(
-            "E",
-            "number",
-            () => this.getPosition().z,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(
-                        this,
-                        "position",
-                        new Vector3(this.position.x, this.position.y, newValue),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#positionComponent = new MultiFieldInspectorComponent("Position", [
-            nCoordinate,
-            uCoordinate,
-            eCoordinate,
-        ]);
-
-        this.#rotationUComponent = new SliderFieldInspectorComponent(
-            "Rotation U",
-            0,
-            360,
-            () => this.quaternionToYDegree(this.#oldQuaternion),
-            (newValue) => {
-                newValue = this.yDegreeToQuaternion(newValue);
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(
-                        this,
-                        "rotation",
-                        new THREE.Quaternion().copy(newValue),
-                    ),
-                );
-            },
-            15,
-        );
-
-        const nNormalVector = new SingleFieldInspectorComponent(
-            "N",
-            "number",
-            () => this.#normalVector.x,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(
-                        this,
-                        "normalVector",
-                        new Vector3(
-                            newValue,
-                            this.#normalVector.y,
-                            this.#normalVector.z,
-                        ),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        const uNormalVector = new SingleFieldInspectorComponent(
-            "U",
-            "number",
-            () => this.#normalVector.y,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(
-                        this,
-                        "normalVector",
-                        new Vector3(
-                            this.#normalVector.x,
-                            newValue,
-                            this.#normalVector.z,
-                        ),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        const eNormalVector = new SingleFieldInspectorComponent(
-            "E",
-            "number",
-            () => this.#normalVector.z,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(
-                        this,
-                        "normalVector",
-                        new Vector3(
-                            this.#normalVector.x,
-                            this.#normalVector.y,
-                            newValue,
-                        ),
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#normalVectorComponent = new MultiFieldInspectorComponent(
-            "Normal Vector",
-            [nNormalVector, uNormalVector, eNormalVector],
-        );
-
-        this.#towerTypeComponent = new SelectFieldInspectorComponent(
-            "Type",
-            [{ label: "planar", value: "planar" }],
-            () => this.#towerType,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "towerType", newValue),
-                );
-            },
-        );
-
-        const eCurvature = new SingleFieldInspectorComponent(
-            "E",
-            "number",
-            () => this.#curvatureE,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "curvatureE", newValue),
-                );
-            },
-            -Infinity,
-        );
-
-        const uCurvature = new SingleFieldInspectorComponent(
-            "U",
-            "number",
-            () => this.#curvatureU,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "curvatureU", newValue),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#curvatureComponent = new MultiFieldInspectorComponent(
-            "Curvature",
-            [eCurvature, uCurvature],
-        );
-
-        const ePlane = new SingleFieldInspectorComponent(
-            "E",
-            "number",
-            () => this.#planeE,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "planeE", newValue),
-                );
-            },
-            -Infinity,
-        );
-
-        const uPlane = new SingleFieldInspectorComponent(
-            "U",
-            "number",
-            () => this.#planeU,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "planeU", newValue),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#planeComponent = new MultiFieldInspectorComponent("Plane", [
-            ePlane,
-            uPlane,
-        ]);
-
-        const eResolution = new SingleFieldInspectorComponent(
-            "E",
-            "number",
-            () => this.#resolutionE,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "resolutionE", newValue),
-                );
-            },
-            -Infinity,
-        );
-
-        const uResolution = new SingleFieldInspectorComponent(
-            "U",
-            "number",
-            () => this.#resolutionU,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateReceiverCommand(this, "resolutionU", newValue),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#resolutionComponent = new MultiFieldInspectorComponent(
-            "Resolution",
-            [eResolution, uResolution],
-        );
-    }
-
-    /**
-     * Converts a quaternion to a y degree (a number from 0 to 360)
-     * @param {THREE.Quaternion} quaternion
-     * @returns
-     */
-    quaternionToYDegree(quaternion) {
-        const euler = new THREE.Euler();
-        euler.setFromQuaternion(quaternion, "YXZ");
-        let angle = THREE.MathUtils.radToDeg(euler.y);
-        return (angle + 360) % 360;
-    }
-
-    /**
-     * Converts a y degree (a number from 0 to 360) to a quaternion
-     * @param {Number} angle
-     * @returns
-     */
-    yDegreeToQuaternion(angle) {
-        const euler = new THREE.Euler(
-            0,
-            THREE.MathUtils.degToRad(angle),
-            0,
-            "YXZ",
-        );
-        const quaternion = new THREE.Quaternion().setFromEuler(euler);
-        return quaternion;
-    }
-
-    //
-    lockPositionY(y) {
-        this.#base.position.y = y;
-    }
-
-    get rotatableAxis() {
-        return this.#rotatableAxis;
-    }
-
-    get isMovable() {
-        return this.#isMovable;
-    }
-
-    get isSelectable() {
-        return true;
-    }
-
-    get oldPosition() {
-        return this.#oldPosition;
-    }
-
-    get oldQuaternion() {
-        return this.#oldQuaternion;
-    }
-
-    /**
-     * Updates the position of the receiver
-     * @param {Vector3} position
-     */
-    updateAndSaveObjectPosition(position) {
+    const uCoordinate = new SingleFieldInspectorComponent(
+      "U",
+      "number",
+      () => this.getPosition().y,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "position", position),
+          new UpdateReceiverCommand(
+            this,
+            "position",
+            new Vector3(this.position.x, newValue, this.position.z)
+          )
         );
-    }
+      },
+      0
+    );
 
-    /**
-     * Updates the receiver’s position by adjusting both the base and the top, ensuring that the base remains on the ground.
-     * @param {THREE.Vector3} position the new position of the receiver
-     */
-    updatePosition(position) {
-        this.position.copy(position);
-        this.#oldPosition = new Vector3(position.x, position.y, position.z);
-        this.#base.position.y = -position.y;
-    }
-
-    getPosition() {
-        return this.position;
-    }
-
-    /**
-     * @param {String} name the new name
-     */
-    updateAndSaveObjectName(name) {
+    const eCoordinate = new SingleFieldInspectorComponent(
+      "E",
+      "number",
+      () => this.getPosition().z,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "objectName", name),
+          new UpdateReceiverCommand(
+            this,
+            "position",
+            new Vector3(this.position.x, this.position.y, newValue)
+          )
         );
-    }
+      },
+      -Infinity
+    );
 
-    /**
-     * Updates the rotation of the receiver
-     * @param {THREE.Quaternion} rotation
-     */
-    updateAndSaveObjectRotation(rotation) {
+    this.#positionComponent = new MultiFieldInspectorComponent("Position", [
+      nCoordinate,
+      uCoordinate,
+      eCoordinate,
+    ]);
+
+    this.#rotationUComponent = new SliderFieldInspectorComponent(
+      "Rotation U",
+      0,
+      360,
+      () => this.quaternionToYDegree(this.#oldQuaternion),
+      (newValue) => {
+        newValue = this.yDegreeToQuaternion(newValue);
         this.#undoRedoHandler.executeCommand(
-            new UpdateReceiverCommand(this, "rotation", rotation),
+          new UpdateReceiverCommand(
+            this,
+            "rotation",
+            new THREE.Quaternion().copy(newValue)
+          )
         );
-    }
+      },
+      15
+    );
 
-    /**
-     * Updates the quaternion of the receiver, and indirectly updates the rotation of the receiver
-     * @param {THREE.Quaternion} quaternion
-     */
-    updateRotation(quaternion) {
-        this.quaternion.copy(quaternion);
-        this.#oldQuaternion = new THREE.Quaternion(
-            quaternion.x,
-            quaternion.y,
-            quaternion.z,
-            quaternion.w,
-        );
-    }
-
-    /**
-     * Deletes the receiver
-     */
-    delete() {
-        this.#undoRedoHandler.executeCommand(new DeleteReceiverCommand(this));
-    }
-
-    /**
-     * Duplicates the receiver
-     */
-    duplicate() {
+    const nNormalVector = new SingleFieldInspectorComponent(
+      "N",
+      "number",
+      () => this.#normalVector.x,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new DuplicateReceiverCommand(this),
+          new UpdateReceiverCommand(
+            this,
+            "normalVector",
+            new Vector3(newValue, this.#normalVector.y, this.#normalVector.z)
+          )
         );
-    }
+      },
+      -Infinity
+    );
 
-    get apiID() {
-        return this.#apiID;
-    }
+    const uNormalVector = new SingleFieldInspectorComponent(
+      "U",
+      "number",
+      () => this.#normalVector.y,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(
+            this,
+            "normalVector",
+            new Vector3(this.#normalVector.x, newValue, this.#normalVector.z)
+          )
+        );
+      },
+      -Infinity
+    );
 
-    set apiID(value) {
-        this.#apiID = value;
-    }
+    const eNormalVector = new SingleFieldInspectorComponent(
+      "E",
+      "number",
+      () => this.#normalVector.z,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(
+            this,
+            "normalVector",
+            new Vector3(this.#normalVector.x, this.#normalVector.y, newValue)
+          )
+        );
+      },
+      -Infinity
+    );
 
-    get towerType() {
-        return this.#towerType;
-    }
+    this.#normalVectorComponent = new MultiFieldInspectorComponent(
+      "Normal Vector",
+      [nNormalVector, uNormalVector, eNormalVector]
+    );
 
-    set towerType(value) {
-        this.#towerType = value;
-    }
+    this.#towerTypeComponent = new SelectFieldInspectorComponent(
+      "Type",
+      [{ label: "planar", value: "planar" }],
+      () => this.#towerType,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(this, "towerType", newValue)
+        );
+      }
+    );
 
-    get normalVector() {
-        return this.#normalVector;
-    }
+    const eCurvature = new SingleFieldInspectorComponent(
+      "E",
+      "number",
+      () => this.#curvatureE,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(this, "curvatureE", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    set normalVector(value) {
-        this.#normalVector = value;
-    }
+    const uCurvature = new SingleFieldInspectorComponent(
+      "U",
+      "number",
+      () => this.#curvatureU,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(this, "curvatureU", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    get planeE() {
-        return this.#planeE;
-    }
+    this.#curvatureComponent = new MultiFieldInspectorComponent("Curvature", [
+      eCurvature,
+      uCurvature,
+    ]);
 
-    set planeE(value) {
-        this.#planeE = value;
-    }
+    const ePlane = new SingleFieldInspectorComponent(
+      "E",
+      "number",
+      () => this.#planeE,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(this, "planeE", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    get planeU() {
-        return this.#planeU;
-    }
+    const uPlane = new SingleFieldInspectorComponent(
+      "U",
+      "number",
+      () => this.#planeU,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(this, "planeU", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    set planeU(value) {
-        this.#planeU = value;
-    }
+    this.#planeComponent = new MultiFieldInspectorComponent("Plane", [
+      ePlane,
+      uPlane,
+    ]);
 
-    get resolutionE() {
-        return this.#resolutionE;
-    }
+    const eResolution = new SingleFieldInspectorComponent(
+      "E",
+      "number",
+      () => this.#resolutionE,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(this, "resolutionE", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    set resolutionE(value) {
-        this.#resolutionE = value;
-    }
+    const uResolution = new SingleFieldInspectorComponent(
+      "U",
+      "number",
+      () => this.#resolutionU,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateReceiverCommand(this, "resolutionU", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    get resolutionU() {
-        return this.#resolutionU;
-    }
+    this.#resolutionComponent = new MultiFieldInspectorComponent("Resolution", [
+      eResolution,
+      uResolution,
+    ]);
+  }
 
-    set resolutionU(value) {
-        this.#resolutionU = value;
-    }
+  /**
+   * Converts a quaternion to a y degree (a number from 0 to 360)
+   * @param {THREE.Quaternion} quaternion - the quaternion to convert
+   * @returns {number} - the y degree of the quaternion, a number from 0 to 360
+   */
+  quaternionToYDegree(quaternion) {
+    const euler = new THREE.Euler();
+    euler.setFromQuaternion(quaternion, "YXZ");
+    let angle = THREE.MathUtils.radToDeg(euler.y);
+    return (angle + 360) % 360;
+  }
 
-    get curvatureE() {
-        return this.#curvatureE;
-    }
+  /**
+   * Converts a y degree (a number from 0 to 360) to a quaternion
+   * @param {number} angle - the angle in degrees to convert
+   * @returns {THREE.Quaternion} - the quaternion representing the rotation around the y-axis
+   */
+  yDegreeToQuaternion(angle) {
+    const euler = new THREE.Euler(0, THREE.MathUtils.degToRad(angle), 0, "YXZ");
+    const quaternion = new THREE.Quaternion().setFromEuler(euler);
+    return quaternion;
+  }
 
-    set curvatureE(value) {
-        this.#curvatureE = value;
-    }
+  //
+  lockPositionY(y) {
+    this.#base.position.y = y;
+  }
 
-    get curvatureU() {
-        return this.#curvatureU;
-    }
+  get rotatableAxis() {
+    return this.#rotatableAxis;
+  }
 
-    set curvatureU(value) {
-        this.#curvatureU = value;
-    }
+  get isMovable() {
+    return this.#isMovable;
+  }
 
-    get inspectorComponents() {
-        return [
-            this.#headerComponent,
-            this.#positionComponent,
-            this.#rotationUComponent,
-            this.#normalVectorComponent,
-            this.#towerTypeComponent,
-            this.#curvatureComponent,
-            this.#planeComponent,
-            this.#resolutionComponent,
-        ];
-    }
+  get isSelectable() {
+    return true;
+  }
+
+  get oldPosition() {
+    return this.#oldPosition;
+  }
+
+  get oldQuaternion() {
+    return this.#oldQuaternion;
+  }
+
+  /**
+   * Updates the position of the receiver
+   * @param {Vector3} position - the new position of the receiver
+   */
+  updateAndSaveObjectPosition(position) {
+    this.#undoRedoHandler.executeCommand(
+      new UpdateReceiverCommand(this, "position", position)
+    );
+  }
+
+  /**
+   * Updates the receiver’s position by adjusting both the base and the top, ensuring that the base remains on the ground.
+   * @param {THREE.Vector3} position the new position of the receiver
+   */
+  updatePosition(position) {
+    this.position.copy(position);
+    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#base.position.y = -position.y;
+  }
+
+  getPosition() {
+    return this.position;
+  }
+
+  /**
+   * @param {string} name the new name
+   */
+  updateAndSaveObjectName(name) {
+    this.#undoRedoHandler.executeCommand(
+      new UpdateReceiverCommand(this, "objectName", name)
+    );
+  }
+
+  /**
+   * Updates the rotation of the receiver
+   * @param {THREE.Quaternion} rotation - the new rotation of the receiver
+   */
+  updateAndSaveObjectRotation(rotation) {
+    this.#undoRedoHandler.executeCommand(
+      new UpdateReceiverCommand(this, "rotation", rotation)
+    );
+  }
+
+  /**
+   * Updates the quaternion of the receiver, and indirectly updates the rotation of the receiver
+   * @param {THREE.Quaternion} quaternion - the new quaternion of the receiver
+   */
+  updateRotation(quaternion) {
+    this.quaternion.copy(quaternion);
+    this.#oldQuaternion = new THREE.Quaternion(
+      quaternion.x,
+      quaternion.y,
+      quaternion.z,
+      quaternion.w
+    );
+  }
+
+  /**
+   * Deletes the receiver
+   */
+  delete() {
+    this.#undoRedoHandler.executeCommand(new DeleteReceiverCommand(this));
+  }
+
+  /**
+   * Duplicates the receiver
+   */
+  duplicate() {
+    this.#undoRedoHandler.executeCommand(new DuplicateReceiverCommand(this));
+  }
+
+  get apiID() {
+    return this.#apiID;
+  }
+
+  set apiID(value) {
+    this.#apiID = value;
+  }
+
+  get towerType() {
+    return this.#towerType;
+  }
+
+  set towerType(value) {
+    this.#towerType = value;
+  }
+
+  get normalVector() {
+    return this.#normalVector;
+  }
+
+  set normalVector(value) {
+    this.#normalVector = value;
+  }
+
+  get planeE() {
+    return this.#planeE;
+  }
+
+  set planeE(value) {
+    this.#planeE = value;
+  }
+
+  get planeU() {
+    return this.#planeU;
+  }
+
+  set planeU(value) {
+    this.#planeU = value;
+  }
+
+  get resolutionE() {
+    return this.#resolutionE;
+  }
+
+  set resolutionE(value) {
+    this.#resolutionE = value;
+  }
+
+  get resolutionU() {
+    return this.#resolutionU;
+  }
+
+  set resolutionU(value) {
+    this.#resolutionU = value;
+  }
+
+  get curvatureE() {
+    return this.#curvatureE;
+  }
+
+  set curvatureE(value) {
+    this.#curvatureE = value;
+  }
+
+  get curvatureU() {
+    return this.#curvatureU;
+  }
+
+  set curvatureU(value) {
+    this.#curvatureU = value;
+  }
+
+  get inspectorComponents() {
+    return [
+      this.#headerComponent,
+      this.#positionComponent,
+      this.#rotationUComponent,
+      this.#normalVectorComponent,
+      this.#towerTypeComponent,
+      this.#curvatureComponent,
+      this.#planeComponent,
+      this.#resolutionComponent,
+    ];
+  }
 }
 
 /**
  * Class that builds the base of the receiver
  */
 export class ReceiverBase extends Object3D {
-    constructor() {
-        super();
-        this.loader = new GLTFLoader();
-        this.loader.load("/static/models/towerBase.glb", (gltf) => {
-            this.base = gltf.scene;
-            this.add(this.base);
-            this.base.traverse((child) => {
-                if (child.type == "Mesh") {
-                    child.castShadow = true;
-                }
-            });
-        });
-    }
+  constructor() {
+    super();
+    this.loader = new GLTFLoader();
+    this.loader.load("/static/models/towerBase.glb", (gltf) => {
+      this.base = gltf.scene;
+      this.add(this.base);
+      this.base.traverse((child) => {
+        if (child.type == "Mesh") {
+          child.castShadow = true;
+        }
+      });
+    });
+  }
 }
 
 /**
  * Class that builds the top of the receiver
  */
 export class ReceiverTop extends Object3D {
-    constructor() {
-        super();
-        this.loader = new GLTFLoader();
-        this.loader.load("/static/models/towerTop.glb", (gltf) => {
-            this.top = gltf.scene;
-            this.add(this.top);
-            this.top.traverse((child) => {
-                if (child.type == "Mesh") {
-                    child.castShadow = true;
-                }
-            });
-        });
-    }
+  constructor() {
+    super();
+    this.loader = new GLTFLoader();
+    this.loader.load("/static/models/towerTop.glb", (gltf) => {
+      this.top = gltf.scene;
+      this.add(this.top);
+      this.top.traverse((child) => {
+        if (child.type == "Mesh") {
+          child.castShadow = true;
+        }
+      });
+    });
+  }
 }
 
 /**
  * Class that represents the light source object
  */
 export class LightSource extends SelectableObject {
-    #apiID;
-    #numberOfRays;
-    #lightSourceType;
-    #distributionType;
-    #distributionMean;
-    #distributionCovariance;
+  #apiID;
+  #numberOfRays;
+  #lightSourceType;
+  #distributionType;
+  #distributionMean;
+  #distributionCovariance;
 
-    #header;
-    #numberOfRaysComponent;
-    #lightsourceTypeComponent;
-    #distributionTypeComponent;
-    #distributionMeanComponent;
-    #distributionCovarianceComponent;
+  #header;
+  #numberOfRaysComponent;
+  #lightsourceTypeComponent;
+  #distributionTypeComponent;
+  #distributionMeanComponent;
+  #distributionCovarianceComponent;
 
-    #undoRedoHandler = new UndoRedoHandler();
-    #isMovable = false;
-    #rotatableAxis = null;
+  #undoRedoHandler = new UndoRedoHandler();
+  #isMovable = false;
+  #rotatableAxis = null;
 
-    /**
-     * @param {Number} [apiID=null] the id for api usage
-     * @param {String} lightsourceName the name of the lightsource
-     * @param {Number} numberOfRays the number of rays the light source has
-     * @param {String} lightSourceType the type of the light source
-     * @param {String} distributionType the type of the distribution
-     * @param {Number} distributionMean the mean of the distribution
-     * @param {Number} distributionCovariance the covariance of the distribution
-     */
-    constructor(
-        lightsourceName,
-        numberOfRays,
-        lightSourceType,
-        distributionType,
-        distributionMean,
-        distributionCovariance,
-        apiID = null,
-    ) {
-        super(lightsourceName);
-        this.#apiID = apiID;
-        this.#numberOfRays = numberOfRays;
-        this.#lightSourceType = lightSourceType;
-        this.#distributionType = distributionType;
-        this.#distributionMean = distributionMean;
-        this.#distributionCovariance = distributionCovariance;
+  /**
+   * @param {string} lightsourceName the name of the lightsource
+   * @param {number} numberOfRays the number of rays the light source has
+   * @param {string} lightSourceType the type of the light source
+   * @param {string} distributionType the type of the distribution
+   * @param {number} distributionMean the mean of the distribution
+   * @param {number} distributionCovariance the covariance of the distribution
+   * @param {number} [apiID=null] the id for api usage
+   */
+  constructor(
+    lightsourceName,
+    numberOfRays,
+    lightSourceType,
+    distributionType,
+    distributionMean,
+    distributionCovariance,
+    apiID = null
+  ) {
+    super(lightsourceName);
+    this.#apiID = apiID;
+    this.#numberOfRays = numberOfRays;
+    this.#lightSourceType = lightSourceType;
+    this.#distributionType = distributionType;
+    this.#distributionMean = distributionMean;
+    this.#distributionCovariance = distributionCovariance;
 
-        this.#header = new HeaderInspectorComponent(
-            () =>
-                this.objectName !== "" && this.objectName
-                    ? this.objectName
-                    : "Light source",
-            (newValue) => this.updateAndSaveObjectName(newValue),
-            this,
-        );
+    this.#header = new HeaderInspectorComponent(
+      () =>
+        this.objectName !== "" && this.objectName
+          ? this.objectName
+          : "Light source",
+      (newValue) => this.updateAndSaveObjectName(newValue),
+      this
+    );
 
-        this.#numberOfRaysComponent = new SingleFieldInspectorComponent(
-            "Number of rays",
-            "number",
-            () => this.#numberOfRays,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateLightsourceCommand(
-                        this,
-                        "numberOfRays",
-                        newValue,
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#lightsourceTypeComponent = new SelectFieldInspectorComponent(
-            "Lightsource Type",
-            [{ label: "sun", value: "sun" }],
-            () => this.#lightSourceType,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateLightsourceCommand(
-                        this,
-                        "lightSourceType",
-                        newValue,
-                    ),
-                );
-            },
-        );
-
-        this.#distributionTypeComponent = new SelectFieldInspectorComponent(
-            "Distribution Type",
-            [{ label: "normal", value: "normal" }],
-            () => this.#distributionType,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateLightsourceCommand(
-                        this,
-                        "distributionType",
-                        newValue,
-                    ),
-                );
-            },
-        );
-
-        this.#distributionMeanComponent = new SingleFieldInspectorComponent(
-            "Mean",
-            "number",
-            () => this.#distributionMean,
-            (newValue) => {
-                this.#undoRedoHandler.executeCommand(
-                    new UpdateLightsourceCommand(
-                        this,
-                        "distributionMean",
-                        newValue,
-                    ),
-                );
-            },
-            -Infinity,
-        );
-
-        this.#distributionCovarianceComponent =
-            new SingleFieldInspectorComponent(
-                "Covariance",
-                "number",
-                () => this.#distributionCovariance,
-                (newValue) => {
-                    this.#undoRedoHandler.executeCommand(
-                        new UpdateLightsourceCommand(
-                            this,
-                            "distributionCovariance",
-                            newValue,
-                        ),
-                    );
-                },
-                -Infinity,
-            );
-    }
-
-    /**
-     * Returns whether the lightsource is rotatable or not
-     * @returns {string[]} false, as the lightsource is not rotatable
-     */
-    get rotatableAxis() {
-        return this.#rotatableAxis;
-    }
-
-    /**
-     * Returns whether the lightsource is movable or not
-     * @returns {Boolean} false, as the lightsource is movable
-     */
-    get isMovable() {
-        return this.#isMovable;
-    }
-
-    get isSelectable() {
-        return false;
-    }
-
-    /**
-     * @param {String} name the new name
-     */
-    updateAndSaveObjectName(name) {
+    this.#numberOfRaysComponent = new SingleFieldInspectorComponent(
+      "Number of rays",
+      "number",
+      () => this.#numberOfRays,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new UpdateLightsourceCommand(this, "objectName", name),
+          new UpdateLightsourceCommand(this, "numberOfRays", newValue)
         );
-    }
+      },
+      -Infinity
+    );
 
-    duplicate() {
+    this.#lightsourceTypeComponent = new SelectFieldInspectorComponent(
+      "Lightsource Type",
+      [{ label: "sun", value: "sun" }],
+      () => this.#lightSourceType,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new DuplicateLightSourceCommand(this),
+          new UpdateLightsourceCommand(this, "lightSourceType", newValue)
         );
-    }
-    delete() {
+      }
+    );
+
+    this.#distributionTypeComponent = new SelectFieldInspectorComponent(
+      "Distribution Type",
+      [{ label: "normal", value: "normal" }],
+      () => this.#distributionType,
+      (newValue) => {
         this.#undoRedoHandler.executeCommand(
-            new DeleteLightSourceCommand(this),
+          new UpdateLightsourceCommand(this, "distributionType", newValue)
         );
-    }
+      }
+    );
 
-    get apiID() {
-        return this.#apiID;
-    }
+    this.#distributionMeanComponent = new SingleFieldInspectorComponent(
+      "Mean",
+      "number",
+      () => this.#distributionMean,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateLightsourceCommand(this, "distributionMean", newValue)
+        );
+      },
+      -Infinity
+    );
 
-    set apiID(id) {
-        this.#apiID = id;
-    }
+    this.#distributionCovarianceComponent = new SingleFieldInspectorComponent(
+      "Covariance",
+      "number",
+      () => this.#distributionCovariance,
+      (newValue) => {
+        this.#undoRedoHandler.executeCommand(
+          new UpdateLightsourceCommand(this, "distributionCovariance", newValue)
+        );
+      },
+      -Infinity
+    );
+  }
 
-    get numberOfRays() {
-        return this.#numberOfRays;
-    }
+  /**
+   * Returns whether the lightsource is rotatable or not
+   * @returns {string[]} false, as the lightsource is not rotatable
+   */
+  get rotatableAxis() {
+    return this.#rotatableAxis;
+  }
 
-    set numberOfRays(number) {
-        this.#numberOfRays = number;
-    }
+  /**
+   * Returns whether the lightsource is movable or not
+   * @returns {boolean} false, as the lightsource is movable
+   */
+  get isMovable() {
+    return this.#isMovable;
+  }
 
-    get lightSourceType() {
-        return this.#lightSourceType;
-    }
+  get isSelectable() {
+    return false;
+  }
 
-    set lightSourceType(type) {
-        this.#lightSourceType = type;
-    }
+  /**
+   * @param {string} name the new name
+   */
+  updateAndSaveObjectName(name) {
+    this.#undoRedoHandler.executeCommand(
+      new UpdateLightsourceCommand(this, "objectName", name)
+    );
+  }
 
-    get distributionType() {
-        return this.#distributionType;
-    }
+  duplicate() {
+    this.#undoRedoHandler.executeCommand(new DuplicateLightSourceCommand(this));
+  }
+  delete() {
+    this.#undoRedoHandler.executeCommand(new DeleteLightSourceCommand(this));
+  }
 
-    set distributionType(type) {
-        this.#distributionType = type;
-    }
+  get apiID() {
+    return this.#apiID;
+  }
 
-    get distributionMean() {
-        return this.#distributionMean;
-    }
+  set apiID(id) {
+    this.#apiID = id;
+  }
 
-    set distributionMean(number) {
-        this.#distributionMean = number;
-    }
+  get numberOfRays() {
+    return this.#numberOfRays;
+  }
 
-    get distributionCovariance() {
-        return this.#distributionCovariance;
-    }
+  set numberOfRays(number) {
+    this.#numberOfRays = number;
+  }
 
-    set distributionCovariance(number) {
-        this.#distributionCovariance = number;
-    }
+  get lightSourceType() {
+    return this.#lightSourceType;
+  }
 
-    get inspectorComponents() {
-        return [
-            this.#header,
-            this.#numberOfRaysComponent,
-            this.#lightsourceTypeComponent,
-            this.#distributionTypeComponent,
-            this.#distributionMeanComponent,
-            this.#distributionCovarianceComponent,
-        ];
-    }
+  set lightSourceType(type) {
+    this.#lightSourceType = type;
+  }
+
+  get distributionType() {
+    return this.#distributionType;
+  }
+
+  set distributionType(type) {
+    this.#distributionType = type;
+  }
+
+  get distributionMean() {
+    return this.#distributionMean;
+  }
+
+  set distributionMean(number) {
+    this.#distributionMean = number;
+  }
+
+  get distributionCovariance() {
+    return this.#distributionCovariance;
+  }
+
+  set distributionCovariance(number) {
+    this.#distributionCovariance = number;
+  }
+
+  get inspectorComponents() {
+    return [
+      this.#header,
+      this.#numberOfRaysComponent,
+      this.#lightsourceTypeComponent,
+      this.#distributionTypeComponent,
+      this.#distributionMeanComponent,
+      this.#distributionCovarianceComponent,
+    ];
+  }
 }
 
 /**
  * Creates the terrain for the scene
  */
 export class Terrain extends Object3D {
-    /**
-     * Creates a new terrain.
-     * @param {Number} size the size of the terrain.
-     */
-    constructor(size) {
-        super();
+  /**
+   * Creates a new terrain.
+   * @param {number} size the size of the terrain.
+   */
+  constructor(size) {
+    super();
 
-        this.terrain = new THREE.Mesh(
-            new THREE.CircleGeometry(size / 2),
-            new THREE.MeshStandardMaterial({
-                color: 0x5fd159,
-            }),
-        );
-        this.terrain.receiveShadow = true;
-        this.terrain.rotateX((3 * Math.PI) / 2);
-        this.add(this.terrain);
+    this.terrain = new THREE.Mesh(
+      new THREE.CircleGeometry(size / 2),
+      new THREE.MeshStandardMaterial({
+        color: 0x5fd159,
+      })
+    );
+    this.terrain.receiveShadow = true;
+    this.terrain.rotateX((3 * Math.PI) / 2);
+    this.add(this.terrain);
 
-        this.mountains = new THREE.Group();
-        this.add(this.mountains);
-        for (let i = 0; i < 100; i++) {
-            const sphere = new THREE.Mesh(
-                new THREE.SphereGeometry(THREE.MathUtils.randFloat(20, 100)),
-                new THREE.MeshStandardMaterial({
-                    color: 0x50ba78,
-                }),
-            );
-            sphere.position.set(
-                (size / 2) * Math.sin((i / 100) * 2 * Math.PI),
-                0,
-                (size / 2) * Math.cos((i / 100) * 2 * Math.PI),
-            );
-            this.mountains.add(sphere);
-        }
+    this.mountains = new THREE.Group();
+    this.add(this.mountains);
+    for (let i = 0; i < 100; i++) {
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(THREE.MathUtils.randFloat(20, 100)),
+        new THREE.MeshStandardMaterial({
+          color: 0x50ba78,
+        })
+      );
+      sphere.position.set(
+        (size / 2) * Math.sin((i / 100) * 2 * Math.PI),
+        0,
+        (size / 2) * Math.cos((i / 100) * 2 * Math.PI)
+      );
+      this.mountains.add(sphere);
     }
+  }
 }

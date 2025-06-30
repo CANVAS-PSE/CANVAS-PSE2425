@@ -5,21 +5,24 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('project_management', '0002_project_last_edited'),
+        ("project_management", "0002_project_last_edited"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='preview',
-            field=models.ImageField(default=django.utils.timezone.now, upload_to='', verbose_name='/img/logo_canvas.jpg'),
+            model_name="project",
+            name="preview",
+            field=models.ImageField(
+                default=django.utils.timezone.now,
+                upload_to="",
+                verbose_name="/img/logo_canvas.jpg",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='project',
-            name='last_edited',
-            field=models.DateTimeField(verbose_name='timezone.now'),
+            model_name="project",
+            name="last_edited",
+            field=models.DateTimeField(verbose_name="timezone.now"),
         ),
     ]

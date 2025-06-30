@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("project_management", "0008_alter_project_preview"),
         ("project_management", "0009_alter_receiver_position_y"),

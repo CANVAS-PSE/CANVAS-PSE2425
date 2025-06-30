@@ -16,7 +16,11 @@ from artist.util.configuration_classes import (
     TargetAreaConfig,
     TargetAreaListConfig,
 )
-from artist.util.scenario_generator import ScenarioGenerator
+from artist.util.scenario_generator import (
+    ActuatorListConfig,
+    KinematicConfig,
+    ScenarioGenerator,
+)
 from artist.util.surface_converter import SurfaceConverter
 from project_management.models import Heliostat, Lightsource, Project, Receiver
 import h5py
@@ -224,6 +228,13 @@ class HDF5Manager:
                     device=device,
                 ),
                 surface=surface_config,
+                kinematic=KinematicConfig(
+                    type=config_dictionary.rigid_body_key,
+                    initial_orientation=torch.tensor(
+                        [0.0, 0.0, 1.0, 0.0], device=device
+                    ),
+                ),
+                actuators=ActuatorListConfig(actuator_list=actuator_prototype_list),
             )
             heliostat_list.append(heliostat_config)
 
