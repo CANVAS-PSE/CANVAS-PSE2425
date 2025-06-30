@@ -122,10 +122,7 @@ def login_view(request):
             user = form.get_user()
             user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
-            next_url = request.POST.get("next") or request.GET.get(
-                "next", REDIRECT_PROJECTS_URL
-            )
-            return redirect(next_url)
+            return redirect(REDIRECT_PROJECTS_URL)
     else:
         form = LoginForm()
     return render(request, "login.html", {"form": form})
@@ -147,7 +144,6 @@ def update_account(request):
     Update the user's account information.
     """
     user = request.user
-    is_openid_user = SocialAccount.objects.filter(user=user).exists()
 
     if request.method == "POST":
         form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
