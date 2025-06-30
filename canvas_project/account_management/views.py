@@ -163,28 +163,11 @@ def update_account(request):
             update_session_auth_hash(request, user)
             send_password_change_email(user, request)
 
-        profile, _ = UserProfile.objects.get_or_create(user=user)
-
-        if request.POST.get("delete_picture") == "1":
-            if (
-                profile.profile_picture
-                and profile.profile_picture.name != "profile_pics/default.jpg"
-            ):
-                profile.profile_picture.delete()  # delete former profile picture
-            profile.profile_picture = (
-                "profile_pics/default.jpg"  # set default profile picture
-            )
-        # Set profile picture only if a new one is uploaded
-        elif form.cleaned_data.get("profile_picture"):
-            # Check if the current profile picture exists and is not the default picture.
-            if (
-                profile.profile_picture
-                and profile.profile_picture.name != "profile_pics/default.jpg"
-            ):
-                profile.profile_picture.delete()
-            profile.profile_picture = form.cleaned_data["profile_picture"]
-        user.save()
-        profile.save()
+        _update_profile_picture(
+            user=user,
+            delete_picture=request.POST.get("delete_picture") == "1",
+            new_profile_picture=form.cleaned_data["profile_picture"],
+        )
 
         messages.success(request, "Your account has been updated successfully.")
     else:
@@ -192,6 +175,20 @@ def update_account(request):
             for error in field.errors:
                 messages.error(request, f"Error in {field.label}: {error}")
     return redirect(request.META.get("HTTP_REFERER", "projects"))
+
+
+def _update_profile_picture(user: User, delete_picture: bool, new_profile_picture):
+    profile, _ = UserProfile.objects.get_or_create(user=user)
+
+    if delete_picture and profile.profile_picture:
+        profile.profile_picture.delete()
+        profile.profile_picture = DEFAULT_PROFIL_PIC
+    elif new_profile_picture:
+        profile.profile_picture.delete()
+        profile.profile_picture = new_profile_picture
+
+    user.save()
+    profile.save()
 
 
 @login_required
