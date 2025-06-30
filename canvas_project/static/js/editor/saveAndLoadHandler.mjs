@@ -13,8 +13,7 @@ export class SaveAndLoadHandler {
 
   /**
    * Creates a saveAndLoadHandler or returns the existing one
-   * @param {Number} [projectId=null] the projectID for api requests.
-   * @returns a new saveAndLoadHandler instance or the existing one.
+   * @param {number} [projectId=null] the projectID for api requests.
    */
   constructor(projectId = null) {
     if (saveAndLoadHandlerInstance) {
@@ -118,6 +117,7 @@ export class SaveAndLoadHandler {
   /**
    * Deletes the given heliostat from the backend
    * @param {Heliostat} heliostat Is the heliostat you want to delete
+   * @returns {Promise<JSON>} Resolves when the heliostat is deleted
    */
   async deleteHeliostat(heliostat) {
     if (!heliostat.apiID) {
@@ -139,6 +139,7 @@ export class SaveAndLoadHandler {
   /**
    * Deletes the given receiver from the backend
    * @param {Receiver} receiver Is the receiver you want to delete
+   * @returns {Promise<JSON>} Resolves when the receiver is deleted
    */
   async deleteReceiver(receiver) {
     if (!receiver.apiID) {
@@ -160,6 +161,7 @@ export class SaveAndLoadHandler {
   /**
    * Deletes the given lightsource from the backend
    * @param {LightSource} lightsource Is the lightsource you want to delete
+   * @returns {Promise<JSON>} Resolves when the lightsource is deleted
    */
   async deleteLightsource(lightsource) {
     if (!lightsource.apiID) {
@@ -286,7 +288,7 @@ export class SaveAndLoadHandler {
   // Settings updating
   /**
    * Updates the settings accroding to the given changes
-   * @param {String} attribute the attribute you want to change
+   * @param {string} attribute the attribute you want to change
    * @param {any} newValue the new value of the attribute
    * @returns {Promise<JSON>} JSON of all the project settings
    */
@@ -302,8 +304,8 @@ export class SaveAndLoadHandler {
 
   /**
    * Gets the cookie specified by the name
-   * @param {String} name The name of the cookie you want to get.
-   * @returns the cookie or null if it couldn't be found.
+   * @param {string} name The name of the cookie you want to get.
+   * @returns {string|null} the cookie or null if it couldn't be found.
    */
   #getCookie(name) {
     if (!document.cookie) {
@@ -329,40 +331,23 @@ export class SaveAndLoadHandler {
    * @param {string} endpoint The endpoint to make the api call to
    * @param {"PUT" | "POST" | "GET" | "DELETE"} method The method you want to use
    * @param {any} [body=null] the body for the api call
+   * @returns {Promise<JSON>} the response of the api call as JSON
    */
   async #makeApiCall(endpoint, method, body) {
-    const options = {
+    return fetch(endpoint, {
       method: method,
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": this.#getCookie("csrftoken"),
       },
-    };
-
-    if (body !== null && method !== "GET") {
-      options.body = JSON.stringify(body);
-    }
-
-    try {
-      const response = await fetch(endpoint, options);
-
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-
-      if (method === "DELETE") {
-        return this;
-      }
-
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        return await response.json();
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.log(error.message);
-      return null;
-    }
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .catch((error) => console.log(error.message));
   }
 }
