@@ -482,13 +482,8 @@ class PasswordForgottenViewTest(TestCase):
             {"email": "test2@mail.de"},
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_forgotten.html")
-        self.assertTrue(response.context["form"].errors)
-        self.assertContains(
-            response,
-            "This email address is not registered.",
-        )
+        self.assertEqual(response.status_code, 302)
+        assert len(mail.outbox) == 0
 
 
 class SendPasswordForgottenMailTest(TestCase):

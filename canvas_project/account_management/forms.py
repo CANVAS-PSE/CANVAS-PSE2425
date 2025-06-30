@@ -19,6 +19,7 @@ PASSWORD_SPECIAL_CHAR_CRITERIUM_TEXT = (
 PASSWORD_SPECIAL_CHARACTERS = "!@#$%^&*()-_+=<>?/"
 INCORRECT_PASSWORD_TEXT = "The password you entered is incorrect."
 EMAIL_ALREADY_IN_USE_TEXT = "This email address is already in use. Please try another."
+EMAIL_NOT_REGISTERED_TEXT = "This email address is not registered."
 
 
 class RegisterForm(forms.Form):
@@ -105,7 +106,7 @@ class LoginForm(forms.Form):
 
         # Check if the user with this email exists and the password is correct.
         if not user:
-            self.add_error("email", EMAIL_ALREADY_IN_USE_TEXT)
+            self.add_error("email", EMAIL_NOT_REGISTERED_TEXT)
         elif not user.check_password(password):
             self.add_error("password", INCORRECT_PASSWORD_TEXT)
         else:
@@ -314,5 +315,5 @@ class PasswordForgottenForm(forms.Form):
         """
         email = self.cleaned_data.get("email")
         if not User.objects.filter(email=email).exists():
-            self.add_error("email", "This email address is not registered.")
+            self.add_error("email", EMAIL_NOT_REGISTERED_TEXT)
         return email
