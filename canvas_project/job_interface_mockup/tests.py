@@ -74,7 +74,6 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_createNewJob_GET(self):
-        response = self.client.post(self.createNewJob_url)
         response = self.client.get(self.createNewJob_url)
 
         self.assertEqual(response.status_code, 200)

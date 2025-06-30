@@ -12,11 +12,11 @@ import random
 # Create your views here.
 @login_required
 @require_http_methods(["POST", "GET"])
-def createNewJob(request, project_id):
+def create_new_job(request, project_id):
     project = get_object_or_404(Project, owner=request.user, pk=project_id)
     if request.method == "POST":
-        newJob = Job.objects.create(owner=request.user, project=project)
-        return JsonResponse({"jobID": newJob.pk})
+        new_job = Job.objects.create(owner=request.user, project=project)
+        return JsonResponse({"jobID": new_job.pk})
     if request.method == "GET":
         jobs = Job.objects.filter(owner=request.user, project=project).order_by(
             "starting_time"
@@ -27,10 +27,10 @@ def createNewJob(request, project_id):
 
 @login_required
 @require_http_methods(["DELETE", "GET"])
-def getJobStatus(request, jobID, project_id):
+def get_job_status(request, job_id, project_id):
     project = get_object_or_404(Project, owner=request.user, pk=project_id)
     if request.method == "GET":
-        job = get_object_or_404(Job, pk=jobID, owner=request.user, project=project)
+        job = get_object_or_404(Job, pk=job_id, owner=request.user, project=project)
 
         starting_time = job.starting_time
 
@@ -59,7 +59,7 @@ def getJobStatus(request, jobID, project_id):
             }
         )
     if request.method == "DELETE":
-        job = get_object_or_404(Job, pk=jobID, owner=request.user, project=project)
+        job = get_object_or_404(Job, pk=job_id, owner=request.user, project=project)
         job.delete()
 
         return HttpResponse(status=200)
