@@ -19,45 +19,31 @@ PROJECT_NAME_MUST_BE_UNIQUE_WARNING = "The project name must be unique"
 @login_required
 @require_http_methods(["POST", "GET"])
 def projects(request):
+    form = ProjectForm()
+
     if request.method == "POST":
         # Initialize the form with POST and FILE data
         form = ProjectForm(request.POST, request.FILES)
 
         # Check if form is valid before proceeding
-        if form.is_valid():
-            project_file = request.FILES.get("file")
+        if form.is_valid() and is_name_unique(
+            request.user, form.cleaned_data["name"].strip().replace(" ", "_")
+        ):
             project_name = form.cleaned_data["name"].strip().replace(" ", "_")
-            project_description = (
-                form.cleaned_data["description"].strip()
-                if form.cleaned_data["description"]
-                else ""
+            project_file = request.FILES.get("file")
+            project_description = form.cleaned_data.get("description", "").strip()
+
+            _create_project(
+                request.user, project_name, project_description, project_file
             )
 
-            if is_name_unique(request.user, project_name):
-                new_project = Project(
-                    name=project_name,
-                    description=project_description,
-                    owner=request.user,
-                    last_edited=timezone.now(),
-                )
-                new_project.save()
-                if project_file is not None:
-                    hdf5_manager = HDF5Manager()
-                    hdf5_manager.create_project_from_hdf5_file(
-                        project_file, new_project
-                    )
-
-                return redirect("editor", project_name=project_name)
-            else:
-                messages.error(request, PROJECT_NAME_MUST_BE_UNIQUE_WARNING)
+            return redirect("editor", project_name=project_name)
 
         else:
+            messages.error(request, PROJECT_NAME_MUST_BE_UNIQUE_WARNING)
             for field in form:
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
-
-    else:  # GET request
-        form = ProjectForm()
 
     # Fetch all projects for the current user
     all_projects = Project.objects.filter(owner=request.user).order_by("-last_edited")
@@ -72,28 +58,44 @@ def projects(request):
     return render(request, "project_management/projects.html", context)
 
 
+def _create_project(
+    user: User, project_name: str, project_description: str, project_file
+):
+    new_project = Project(
+        name=project_name,
+        description=project_description,
+        owner=user,
+        last_edited=timezone.now(),
+    )
+    new_project.save()
+
+    if project_file is not None:
+        hdf5_manager = HDF5Manager()
+        hdf5_manager.create_project_from_hdf5_file(project_file, new_project)
+
+
 @login_required
+@require_http_methods(["POST"])
 def update_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     form = UpdateProjectForm(request.POST, instance=project)
 
-    if request.method == "POST" and project.owner == request.user:
-        if form.is_valid():
-            form_name = form.cleaned_data["name"].strip().replace(" ", "_")
-            form_description = form.cleaned_data.get("description", "")
-            if is_name_unique(request.user, form_name) or form_name == project_name:
-                project.last_edited = timezone.now()
-                project.name = form_name
-                project.description = form_description if form_description else ""
-                project.save()
-                return HttpResponseRedirect(reverse("projects"))
-            else:
-                messages.error(request, PROJECT_NAME_MUST_BE_UNIQUE_WARNING)
-
+    if project.owner == request.user and form.is_valid():
+        form_name = form.cleaned_data["name"].strip().replace(" ", "_")
+        form_description = form.cleaned_data.get("description", "")
+        if is_name_unique(request.user, form_name) or form_name == project_name:
+            project.last_edited = timezone.now()
+            project.name = form_name
+            project.description = form_description if form_description else ""
+            project.save()
+            return HttpResponseRedirect(reverse("projects"))
         else:
-            for field in form:
-                for error in field.errors:
-                    messages.error(request, f"Error in {field.label}: {error}")
+            messages.error(request, PROJECT_NAME_MUST_BE_UNIQUE_WARNING)
+
+    else:
+        for field in form:
+            for error in field.errors:
+                messages.error(request, f"Error in {field.label}: {error}")
 
     return HttpResponseRedirect(reverse("projects"))
 

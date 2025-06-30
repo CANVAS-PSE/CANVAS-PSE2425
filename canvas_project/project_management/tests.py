@@ -371,7 +371,7 @@ class ViewTests(TestCase):
     def test_update_project_GET(self):
         response = self.client.get(self.update_project_url)
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 405)
 
     def test_delete_project_DELETE(self):
         response = self.client.delete(self.delete_project_url)
