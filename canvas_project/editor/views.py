@@ -88,7 +88,7 @@ def download(request, project_name):
     project = get_object_or_404(Project, name=project_name, owner=request.user)
 
     hdf5Manager = HDF5Manager()
-    hdf5Manager.createHDF5File(request.user, project)
+    hdf5Manager.create_hdf5_file(request.user, project)
 
     # Set CANVAS_ROOT
     path = f"./HDF5Management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"

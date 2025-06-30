@@ -55,7 +55,7 @@ def projects(request):
                     newProject.save()
 
                     hdf5Manager = HDF5Manager()
-                    hdf5Manager.createProjectFromHDF5File(projectFile, newProject)
+                    hdf5Manager.create_project_from_hdf5_file(projectFile, newProject)
 
                     return redirect("editor", project_name=projectName)
                 else:
