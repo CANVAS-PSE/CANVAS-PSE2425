@@ -58,7 +58,7 @@ class HDF5Manager:
 
         # The following parameter is the name of the scenario.
         scenario_path = pathlib.Path(
-            f"./HDF5Management/scenarios/{user.id}{project.name}ScenarioFile"
+            f"./HDF5Management/scenarios/{user.id}_{project.name}ScenarioFile"
         )
 
         # This checks to make sure the path you defined is valid and a scenario HDF5 can be saved there.
