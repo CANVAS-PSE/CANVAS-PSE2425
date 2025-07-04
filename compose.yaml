@@ -1,0 +1,18 @@
+services:
+  canvas:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: canvas
+    env_file:
+      - canvas_project/.env
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - canvas

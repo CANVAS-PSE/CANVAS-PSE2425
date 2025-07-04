@@ -1,7 +1,7 @@
 import pathlib
 import torch
 from artist.util import config_dictionary, set_logger_config
-from artist.util.configuration_classes import (
+from artist.scenario.configuration_classes import (
     ActuatorConfig,
     ActuatorPrototypeConfig,
     SurfaceConfig,
@@ -16,12 +16,12 @@ from artist.util.configuration_classes import (
     TargetAreaConfig,
     TargetAreaListConfig,
 )
-from artist.util.scenario_generator import (
+from artist.scenario.scenario_generator import (
     ActuatorListConfig,
     KinematicConfig,
     ScenarioGenerator,
 )
-from artist.util.surface_converter import SurfaceConverter
+from artist.scenario.surface_converter import SurfaceConverter
 from project_management.models import Heliostat, Lightsource, Project, Receiver
 import h5py
 from django.conf import settings
