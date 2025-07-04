@@ -54,6 +54,11 @@ COPY --from=canvas canvas/collected_static_files /usr/share/nginx/html/static
 # Copy the media directory into for the nginx server
 COPY --from=canvas canvas/media /usr/share/nginx/html/media
 
+RUN mkdir /usr/share/nginx/ssl && chmod 700 /usr/share/nginx/ssl
+# Copy the test ssl keys and certificate
+COPY test.crt /usr/share/nginx/ssl
+COPY test.key /usr/share/nginx/ssl
+
 # Expose port 80 for incoming HTTP requests
 EXPOSE 80
 

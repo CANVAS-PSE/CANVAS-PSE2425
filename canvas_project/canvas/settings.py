@@ -26,7 +26,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = str(os.environ.get("DEBUG")) == "1"
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "canvas"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+]
+
+# SECURITY WARNING: change for production
+CSRF_TRUSTED_ORIGINS = ["https://localhost"]
 
 # Application definition
 
