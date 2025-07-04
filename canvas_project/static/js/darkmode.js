@@ -36,7 +36,7 @@
         "data-bs-theme",
         window.matchMedia("(prefers-color-scheme: dark)").matches
           ? "dark"
-          : "light"
+          : "light",
       );
     } else {
       document.documentElement.setAttribute("data-bs-theme", theme);
@@ -92,7 +92,7 @@
 
     themeSelect.addEventListener("change", () => {
       //@ts-ignore
-      var theme = themeSelect.value;
+      let theme = themeSelect.value;
       setStoredTheme(theme);
       setTheme(theme);
       showActiveTheme(theme);
