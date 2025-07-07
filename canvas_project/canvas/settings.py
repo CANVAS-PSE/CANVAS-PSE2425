@@ -173,7 +173,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "collected_static_files")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = "/canvas/media"
 MEDIA_URL = "/media/"
 
 # Allauth settings

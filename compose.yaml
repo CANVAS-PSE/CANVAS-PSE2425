@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: canvas
+    volumes:
+      - media_volume:/canvas/media
     env_file:
       - canvas_project/.env
 
@@ -12,8 +14,13 @@ services:
       context: .
       dockerfile: Dockerfile
       target: nginx
+    volumes:
+      - media_volume:/usr/share/nginx/html/media
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - canvas
+
+volumes:
+  media_volume:

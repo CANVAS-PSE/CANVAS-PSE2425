@@ -1,5 +1,5 @@
 #   ▗▄▄▖ ▗▄▖ ▗▖  ▗▖▗▖  ▗▖ ▗▄▖  ▗▄▄▖
-#  ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌  ▐▌▐▌ ▐▌▐▌   
+#  ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌  ▐▌▐▌ ▐▌▐▌
 #  ▐▌   ▐▛▀▜▌▐▌ ▝▜▌▐▌  ▐▌▐▛▀▜▌ ▝▀▚▖
 #  ▝▚▄▄▖▐▌ ▐▌▐▌  ▐▌ ▝▚▞▘ ▐▌ ▐▌▗▄▄▞▘
 
@@ -35,8 +35,8 @@ EXPOSE 8000
 CMD [ "daphne", "-b", "0.0.0.0", "-p", "8000", "canvas.asgi:application" ]
 
 #  ▗▖  ▗▖ ▗▄▄▖▗▄▄▄▖▗▖  ▗▖▗▖  ▗▖
-#  ▐▛▚▖▐▌▐▌     █  ▐▛▚▖▐▌ ▝▚▞▘ 
-#  ▐▌ ▝▜▌▐▌▝▜▌  █  ▐▌ ▝▜▌  ▐▌  
+#  ▐▛▚▖▐▌▐▌     █  ▐▛▚▖▐▌ ▝▚▞▘
+#  ▐▌ ▝▜▌▐▌▝▜▌  █  ▐▌ ▝▜▌  ▐▌
 #  ▐▌  ▐▌▝▚▄▞▘▗▄█▄▖▐▌  ▐▌▗▞▘▝▚▖
 
 FROM nginx:alpine AS nginx
@@ -50,9 +50,6 @@ COPY nginx.conf /etc/nginx/conf.d/nginx.conf
 
 # Copy collected static files from the django_build stage
 COPY --from=canvas canvas/collected_static_files /usr/share/nginx/html/static
-
-# Copy the media directory into for the nginx server
-COPY --from=canvas canvas/media /usr/share/nginx/html/media
 
 RUN mkdir /usr/share/nginx/ssl && chmod 700 /usr/share/nginx/ssl
 
