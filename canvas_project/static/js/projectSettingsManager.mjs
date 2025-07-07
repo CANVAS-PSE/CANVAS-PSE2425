@@ -21,7 +21,7 @@ export class ProjectSettingsManager {
   constructor() {
     this.#editor = new Editor();
     this.#saveAndLoadHandler = new SaveAndLoadHandler();
-    this.initialize();
+    //this.initialize();
   }
 
   /**
@@ -31,7 +31,7 @@ export class ProjectSettingsManager {
     await this.#getPresets();
 
     this.#environmentSettingsEntry = document.getElementById(
-      "environment-settings"
+      "environment-settings",
     );
 
     this.#graphicsSettingsEntry = document.getElementById("graphic-settings");

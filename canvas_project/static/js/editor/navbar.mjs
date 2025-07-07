@@ -31,7 +31,7 @@ export class Navbar {
     if (navigator.userAgent.indexOf("Safari") > -1) {
       fullscreen.onclick = (
         /* eslint-disable-next-line no-unused-vars */
-        _
+        _,
       ) => {
         if (document.webkitFullscreenElement === null) {
           document.documentElement.webkitRequestFullscreen();
@@ -62,7 +62,7 @@ export class Navbar {
      *
      */
     function resetModalForm() {
-      var form = createNewProject.querySelector("form");
+      const form = createNewProject.querySelector("form");
       form.reset();
     }
 

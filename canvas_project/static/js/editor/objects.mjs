@@ -6,8 +6,7 @@ import {
   SliderFieldInspectorComponent,
 } from "inspectorComponents";
 import * as THREE from "three";
-import { Vector3 } from "three";
-import { Object3D } from "three";
+import { Vector3, Object3D } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { UndoRedoHandler } from "undoRedoHandler";
 import {
