@@ -51,6 +51,9 @@ Please also carefully check our [code of conduct](CODE_OF_CONDUCT.md) :blue_hear
 
 Liberally licensed under MIT.
 
+## Acknowledgments
+This work is supported by the [Helmholtz AI](https://www.helmholtz.ai/) platform grant.
+
 ---
 
 <div align="center">
