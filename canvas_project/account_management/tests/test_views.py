@@ -21,7 +21,7 @@ import json
 from allauth.socialaccount.models import SocialAccount
 from test_constants import (
     SECURE_PASSWORD,
-    MISMATCHED_PASSWORD,
+    MISMATCHED_BUT_CORRECT_PASSWORD,
     UPDATED_PASSWORD,
     RESET_PASSWORD,
     NO_SPECIAL_CHAR_PASSWORD,
@@ -85,7 +85,7 @@ class RegisterViewTests(TestCase):
                 "last_name": "test_last_name",
                 "email": "test@mail.de",
                 "password": SECURE_PASSWORD,
-                "password_confirmation": MISMATCHED_PASSWORD,
+                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
             },
         )
 
@@ -344,7 +344,7 @@ class PasswordResetViewTest(TestCase):
             self.password_reset_url,
             {
                 "new_password": RESET_PASSWORD,
-                "password_confirmation": NO_SPECIAL_CHAR_PASSWORD,
+                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
             },
         )
 
