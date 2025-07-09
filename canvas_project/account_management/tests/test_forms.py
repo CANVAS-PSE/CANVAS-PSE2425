@@ -9,6 +9,7 @@ from account_management.forms import (
 )
 from account_management.models import User
 from allauth.socialaccount.models import SocialAccount
+from test_constants import SHORT_PASSWORD
 
 
 class RegisterFormTest(TestCase):
@@ -78,8 +79,8 @@ class RegisterFormTest(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "email": "test@mail.de",
-                "password": "Save-1",
-                "password_confirmation": "Save-1",
+                "password": SHORT_PASSWORD,
+                "password_confirmation": SHORT_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -317,8 +318,8 @@ class UpdateAccountFormTest(TestCase):
                 "last_name": "test_last_name",
                 "email": "test@mail.de",
                 "old_password": "SecurePassword123!",
-                "new_password": "Save-1",
-                "password_confirmation": "Save-1",
+                "new_password": SHORT_PASSWORD,
+                "password_confirmation": SHORT_PASSWORD,
             },
         )
         self.assertFalse(form.is_valid())
@@ -542,8 +543,8 @@ class PasswordResetFormTest(TestCase):
         # Test case for PasswordResetForm where password is too short
         form = PasswordResetForm(
             data={
-                "new_password": "Save-1",
-                "password_confirmation": "Save-1",
+                "new_password": SHORT_PASSWORD,
+                "password_confirmation": SHORT_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())

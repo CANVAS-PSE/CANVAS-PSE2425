@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from account_management.models import UserProfile
+from test_constants import TEST_PASSWORD
 
 
 class TestSignals(TestCase):
@@ -10,7 +11,7 @@ class TestSignals(TestCase):
             first_name="first_name",
             last_name="last_name",
             email="test@mail.de",
-            password="test",
+            password=TEST_PASSWORD,
         )
         self.assertTrue(UserProfile.objects.filter(user=user).exists())
         user_profile = UserProfile.objects.get(user=user)
@@ -22,7 +23,7 @@ class TestSignals(TestCase):
             first_name="first_name",
             last_name="last_name",
             email="test@mail.de",
-            password="test",
+            password=TEST_PASSWORD,
         )
         user_profile = user.userprofile
         user_profile.profile_picture = "users/1/custom.jpg"
