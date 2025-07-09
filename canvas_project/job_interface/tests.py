@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from job_interface_mockup.models import Job
+from job_interface.models import Job
 from project_management.models import Project, Heliostat, Receiver, Lightsource
 from django.utils import timezone
 from datetime import timedelta
