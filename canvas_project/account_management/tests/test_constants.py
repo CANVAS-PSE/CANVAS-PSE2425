@@ -1,7 +1,7 @@
 # Constants for testing account management features in a Canvas project
 
 SECURE_PASSWORD = "SecurePass123!"
-SHORT_PASSWORD = "Save-1"
+TOO_SHORT_PASSWORD = "Save-1"
 TEST_PASSWORD = "test"
 UPDATED_PASSWORD = "NewSecurePassword123!"
 RESET_PASSWORD = "SecurePass1234!"
