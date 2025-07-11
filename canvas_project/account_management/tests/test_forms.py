@@ -9,7 +9,7 @@ from account_management.forms import (
 )
 from account_management.models import User
 from allauth.socialaccount.models import SocialAccount
-from test_constants import (
+from account_management.tests.test_constants import (
     TOO_SHORT_PASSWORD,
     SECURE_PASSWORD,
     NO_UPPERCASE_PASSWORD,

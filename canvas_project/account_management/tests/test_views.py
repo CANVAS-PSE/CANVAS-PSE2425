@@ -19,7 +19,7 @@ import io
 import os
 import json
 from allauth.socialaccount.models import SocialAccount
-from test_constants import (
+from account_management.tests.test_constants import (
     SECURE_PASSWORD,
     MISMATCHED_BUT_CORRECT_PASSWORD,
     UPDATED_PASSWORD,
