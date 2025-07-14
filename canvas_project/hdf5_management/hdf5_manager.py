@@ -58,7 +58,7 @@ class HDF5Manager:
 
         # The following parameter is the name of the scenario.
         scenario_path = pathlib.Path(
-            f"./HDF5Management/scenarios/{user.id}_{project.name}ScenarioFile"
+            f"./hdf5_management/scenarios/{user.id}_{project.name}ScenarioFile"
         )
 
         # This checks to make sure the path you defined is valid and a scenario HDF5 can be saved there.
@@ -70,7 +70,7 @@ class HDF5Manager:
 
         # The path to the stral file containing heliostat and deflectometry data.
         stral_file_path = (
-            pathlib.Path(CANVAS_ROOT) / "HDF5Management/data/test_stral_data.binp"
+            pathlib.Path(CANVAS_ROOT) / "hdf5_management/data/test_stral_data.binp"
         )
 
         # Include the power plant configuration.

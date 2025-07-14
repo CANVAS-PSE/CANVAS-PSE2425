@@ -45,7 +45,7 @@ class RegisterViewTests(TestCase):
         # Test if the register page is accessible via GET request
         response = self.client.get(self.register_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "register.html")
+        self.assertTemplateUsed(response, "account_management/register.html")
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the register page
@@ -82,7 +82,7 @@ class RegisterViewTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "register.html")
+        self.assertTemplateUsed(response, "account_management/register.html")
         self.assertContains(
             response, "The passwords you entered do not match. Please try again."
         )
@@ -107,7 +107,7 @@ class LoginViewTest(TestCase):
         response = self.client.get(self.login_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "login.html")
+        self.assertTemplateUsed(response, "account_management/login.html")
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the login page
@@ -145,7 +145,7 @@ class LoginViewTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "login.html")
+        self.assertTemplateUsed(response, "account_management/login.html")
         self.assertTrue(response.context["form"].errors)
         self.assertContains(response, "This email address is not registered.")
 
@@ -233,7 +233,7 @@ class ConfirmDeletionTest(TestCase):
         response = self.client.get(self.confirm_deletion_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "confirm_deletion.html")
+        self.assertTemplateUsed(response, "account_management/confirm_deletion.html")
 
     def test_POST(self):
         # Test if a valid POST request deletes the user and redirects to login page
@@ -312,7 +312,7 @@ class PasswordResetViewTest(TestCase):
         response = self.client.get(self.password_reset_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_reset.html")
+        self.assertTemplateUsed(response, "account_management/password_reset.html")
 
     def test_POST_valid_data(self):
         # Test if a valid password reset request updates the password and logs the user out
@@ -341,7 +341,7 @@ class PasswordResetViewTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_reset.html")
+        self.assertTemplateUsed(response, "account_management/password_reset.html")
         self.assertTrue(response.context["form"].errors)
         self.assertContains(
             response, "The passwords you entered do not match. Please try again."
@@ -376,14 +376,14 @@ class InvalidLinkTest(TestCase):
         response = self.client.get(self.invalid_link_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "invalid_link.html")
+        self.assertTemplateUsed(response, "account_management/invalid_link.html")
 
     def test_POST(self):
         # Test if the invalid link page is accessible via POST
         response = self.client.post(self.invalid_link_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "invalid_link.html")
+        self.assertTemplateUsed(response, "account_management/invalid_link.html")
 
 
 class DeleteAccountTest(TestCase):
@@ -463,7 +463,7 @@ class PasswordForgottenViewTest(TestCase):
         response = self.client.get(self.password_forgotten_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_forgotten.html")
+        self.assertTemplateUsed(response, "account_management/password_forgotten.html")
 
     def test_POST_valid_data(self):
         # Test if a valid email submission redirects to login page

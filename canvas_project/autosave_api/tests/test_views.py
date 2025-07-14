@@ -9,7 +9,11 @@ from project_management.models import (
     Lightsource,
     Settings,
 )
-from .serializers import ReceiverSerializer, HeliostatSerializer, LightsourceSerializer
+from autosave_api.serializers import (
+    ReceiverSerializer,
+    HeliostatSerializer,
+    LightsourceSerializer,
+)
 from django.contrib.auth.models import User
 
 

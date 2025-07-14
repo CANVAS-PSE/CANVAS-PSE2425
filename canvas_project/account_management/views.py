@@ -75,7 +75,7 @@ def send_register_email(user, request):
     delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
 
     message = render_to_string(
-        "accounts/account_creation_confirmation_email.html",
+        "account_management/accounts/account_creation_confirmation_email.html",
         {
             "user": user,
             "delete_account_url": delete_account_url,

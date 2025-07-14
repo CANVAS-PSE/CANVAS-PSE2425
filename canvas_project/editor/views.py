@@ -91,7 +91,9 @@ def download(request, project_name):
     hdf5_manager.create_hdf5_file(request.user, project)
 
     # Set CANVAS_ROOT
-    path = f"./HDF5Management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
+    path = (
+        f"./hdf5_management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
+    )
 
     response = FileResponse(
         open(path, "rb"), as_attachment=True, filename=project_name + ".h5"
