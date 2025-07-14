@@ -57,7 +57,7 @@ def register_view(request):
             return redirect(REDIRECT_PROJECTS_URL)
     else:
         form = RegisterForm()
-    return render(request, "register.html", {"form": form})
+    return render(request, "account_management/register.html", {"form": form})
 
 
 def send_register_email(user, request):
@@ -103,7 +103,7 @@ def confirm_deletion(request, uidb64, token):
             user.delete()
             return redirect("login")
         else:
-            return render(request, "confirm_deletion.html")
+            return render(request, "account_management/confirm_deletion.html")
     else:
         return redirect("invalid_link")
 
@@ -126,7 +126,7 @@ def login_view(request):
             return redirect(REDIRECT_PROJECTS_URL)
     else:
         form = LoginForm()
-    return render(request, "login.html", {"form": form})
+    return render(request, "account_management/login.html", {"form": form})
 
 
 @require_POST
@@ -213,7 +213,7 @@ def send_password_change_email(user, request):
     password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
 
     message = render_to_string(
-        "accounts/password_change_confirmation_email.html",
+        "account_management/accounts/password_change_confirmation_email.html",
         {
             "user": user,
             "password_reset_url": password_reset_url,
@@ -250,13 +250,13 @@ def password_reset_view(request, uidb64, token):
         else:
             form = PasswordResetForm()
 
-        return render(request, "password_reset.html", {"form": form})
+        return render(request, "account_management/password_reset.html", {"form": form})
     else:
         return redirect("invalid_link")
 
 
 def invalid_link(request):
-    return render(request, "invalid_link.html")
+    return render(request, "account_management/invalid_link.html")
 
 
 @require_POST
@@ -293,7 +293,7 @@ def password_forgotten_view(request):
     else:
         form = PasswordForgottenForm()
 
-    return render(request, "password_forgotten.html", {"form": form})
+    return render(request, "account_management/password_forgotten.html", {"form": form})
 
 
 def send_password_forgotten_email(user, request):
@@ -311,7 +311,7 @@ def send_password_forgotten_email(user, request):
     password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
 
     message = render_to_string(
-        "accounts/password_forgotten_email.html",
+        "account_management/accounts/password_forgotten_email.html",
         {
             "user": user,
             "password_reset_url": password_reset_url,
