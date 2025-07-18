@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "editor",
     "autosave_api",
-    "job_interface_mockup",
+    "job_interface",
     "project_management",
     "account_management",
     "rest_framework",

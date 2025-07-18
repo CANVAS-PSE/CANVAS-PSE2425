@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.templatetags.static import static
+import os
 
 
 def user_directory_path(instance, filename):
@@ -17,7 +19,9 @@ class UserProfile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(
-        upload_to=user_directory_path, default="profile_pics/default.jpg"
+        upload_to=user_directory_path,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -25,3 +29,13 @@ class UserProfile(models.Model):
         Return user's email.
         """
         return self.user.email
+
+    @property
+    def image_url(self):
+        if self.profile_picture and os.path.isfile(self.profile_picture.path):
+            return self.profile_picture.url
+        return static("img/profile_pics/default.jpg")
+
+    @staticmethod
+    def default_picture_url():
+        return static("img/profile_pics/default.jpg")

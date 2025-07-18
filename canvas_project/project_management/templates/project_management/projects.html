@@ -297,22 +297,13 @@
                     <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
                        data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        {% if request.user.userprofile.profile_picture %}
-                            <img src="{{ request.user.userprofile.profile_picture.url }}"
-                                 alt="Profile Picture"
-                                 class="rounded-circle me-2"
-                                 style="width: 32px;
-                                        height: 32px;
-                                        object-fit: cover">
-                        {% else %}
-                            <!-- If the user doesn't have a profile picture -->
-                            <img src="/media/profile_pics/default.jpg"
-                                 alt="Default Profile Picture"
-                                 class="rounded-circle me-2"
-                                 style="width: 32px;
-                                        height: 32px;
-                                        object-fit: cover">
-                        {% endif %}
+                       <img
+                       src="{{ request.user.userprofile.image_url }}"
+                       alt="Profile Picture"
+                       class="rounded-circle me-2"
+                       style="width: 32px; height: 32px; object-fit: cover"
+                       />
+
                         <strong class="me-2">{{ request.user.first_name }}</strong>
                     </a>
                     <ul class="dropdown-menu text-small">
