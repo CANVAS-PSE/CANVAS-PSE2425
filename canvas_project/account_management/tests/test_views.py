@@ -19,6 +19,14 @@ import io
 import os
 import json
 from allauth.socialaccount.models import SocialAccount
+from account_management.tests.test_constants import (
+    SECURE_PASSWORD,
+    MISMATCHED_BUT_CORRECT_PASSWORD,
+    UPDATED_PASSWORD,
+    RESET_PASSWORD,
+    NO_SPECIAL_CHAR_PASSWORD,
+    COMPLETELY_WRONG_PASSWORD,
+)
 
 
 class RegisterViewTests(TestCase):
@@ -30,26 +38,26 @@ class RegisterViewTests(TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             username="test@mail.de",
         )
         self.valid_user_data = {
             "first_name": "test2_first_name",
             "last_name": "test2_last_name",
             "email": "test2@mail.de",
-            "password": "SecurePass123!",
-            "password_confirmation": "SecurePass123!",
+            "password": SECURE_PASSWORD,
+            "password_confirmation": SECURE_PASSWORD,
         }
 
     def test_GET(self):
         # Test if the register page is accessible via GET request
         response = self.client.get(self.register_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "register.html")
+        self.assertTemplateUsed(response, "account_management/register.html")
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the register page
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         response = self.client.get(self.register_url)
 
@@ -76,13 +84,13 @@ class RegisterViewTests(TestCase):
                 "first_name": "test_first_name",
                 "last_name": "test_last_name",
                 "email": "test@mail.de",
-                "password": "SecurePass123!",
-                "password_confirmation": "SecurePass",
+                "password": SECURE_PASSWORD,
+                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "register.html")
+        self.assertTemplateUsed(response, "account_management/register.html")
         self.assertContains(
             response, "The passwords you entered do not match. Please try again."
         )
@@ -98,7 +106,7 @@ class LoginViewTest(TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             username="test@mail.de",
         )
 
@@ -107,11 +115,11 @@ class LoginViewTest(TestCase):
         response = self.client.get(self.login_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "login.html")
+        self.assertTemplateUsed(response, "account_management/login.html")
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the login page
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         response = self.client.get(self.login_url)
 
@@ -124,7 +132,7 @@ class LoginViewTest(TestCase):
             self.login_url,
             {
                 "email": "test@mail.de",
-                "password": "SecurePass123!",
+                "password": SECURE_PASSWORD,
             },
         )
 
@@ -140,12 +148,12 @@ class LoginViewTest(TestCase):
             self.login_url,
             {
                 "email": "max@mail.de",
-                "password": "SecurePass123!",
+                "password": SECURE_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "login.html")
+        self.assertTemplateUsed(response, "account_management/login.html")
         self.assertTrue(response.context["form"].errors)
         self.assertContains(response, "This email address is not registered.")
 
@@ -159,10 +167,10 @@ class LogoutViewTest(TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             username="test@mail.de",
         )
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
     def test_GET(self):
         # Test if a GET request to the logout endpoint returns a 405 (Method Not Allowed) as it should only accept POST requests
@@ -185,7 +193,7 @@ class SendRegisterMailTest(TestCase):
         user = User.objects.create_user(
             username="testuser",
             email="test@example.com",
-            password="securepassword",
+            password=COMPLETELY_WRONG_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -218,7 +226,7 @@ class ConfirmDeletionTest(TestCase):
         self.user = User.objects.create_user(
             username="testuser",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -233,7 +241,7 @@ class ConfirmDeletionTest(TestCase):
         response = self.client.get(self.confirm_deletion_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "confirm_deletion.html")
+        self.assertTemplateUsed(response, "account_management/confirm_deletion.html")
 
     def test_POST(self):
         # Test if a valid POST request deletes the user and redirects to login page
@@ -268,7 +276,7 @@ class SendPasswordChangeMailTest(TestCase):
         user = User.objects.create_user(
             username="testuser",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -299,7 +307,7 @@ class PasswordResetViewTest(TestCase):
         self.user = User.objects.create_user(
             username="testuser",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -312,22 +320,22 @@ class PasswordResetViewTest(TestCase):
         response = self.client.get(self.password_reset_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_reset.html")
+        self.assertTemplateUsed(response, "account_management/password_reset.html")
 
     def test_POST_valid_data(self):
         # Test if a valid password reset request updates the password and logs the user out
         response = self.client.post(
             self.password_reset_url,
             {
-                "new_password": "SecurePass1234!",
-                "password_confirmation": "SecurePass1234!",
+                "new_password": RESET_PASSWORD,
+                "password_confirmation": RESET_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("login"))
         self.user.refresh_from_db()
-        self.assertTrue(self.user.check_password("SecurePass1234!"))
+        self.assertTrue(self.user.check_password(RESET_PASSWORD))
         self.assertNotIn("_auth_user_id", self.client.session)
 
     def test_POST_invalid_data(self):
@@ -335,13 +343,13 @@ class PasswordResetViewTest(TestCase):
         response = self.client.post(
             self.password_reset_url,
             {
-                "new_password": "SecurePass1234!",
-                "password_confirmation": "SecurePass123",
+                "new_password": RESET_PASSWORD,
+                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_reset.html")
+        self.assertTemplateUsed(response, "account_management/password_reset.html")
         self.assertTrue(response.context["form"].errors)
         self.assertContains(
             response, "The passwords you entered do not match. Please try again."
@@ -376,14 +384,14 @@ class InvalidLinkTest(TestCase):
         response = self.client.get(self.invalid_link_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "invalid_link.html")
+        self.assertTemplateUsed(response, "account_management/invalid_link.html")
 
     def test_POST(self):
         # Test if the invalid link page is accessible via POST
         response = self.client.post(self.invalid_link_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "invalid_link.html")
+        self.assertTemplateUsed(response, "account_management/invalid_link.html")
 
 
 class DeleteAccountTest(TestCase):
@@ -392,7 +400,7 @@ class DeleteAccountTest(TestCase):
         self.user = User.objects.create_user(
             username="test@mail.de",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -400,17 +408,17 @@ class DeleteAccountTest(TestCase):
 
     def test_GET(self):
         # Test if a GET request to the delete account endpoint returns a 405 (Method Not Allowed), as it should only accept POST requests
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
         response = self.client.get(self.delete_account_url)
 
         self.assertEqual(response.status_code, 405)
 
     def test_POST_valid_data(self):
         # Test if a valid delete account request removes the user and redirects to login page
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
-            {"password": "SecurePass123!"},
+            {"password": SECURE_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -420,10 +428,10 @@ class DeleteAccountTest(TestCase):
 
     def test_POST_invalid_data(self):
         # Test if an incorrect password prevents account deletion
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
-            {"password": "SecurePass123"},
+            {"password": NO_SPECIAL_CHAR_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -439,7 +447,7 @@ class DeleteAccountTest(TestCase):
         # Test if an unauthenticated user is redirected to the login page
         response = self.client.post(
             self.delete_account_url,
-            {"password": "SecurePass123!"},
+            {"password": SECURE_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -452,7 +460,7 @@ class PasswordForgottenViewTest(TestCase):
         self.user = User.objects.create_user(
             username="test@mail.de",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -463,7 +471,7 @@ class PasswordForgottenViewTest(TestCase):
         response = self.client.get(self.password_forgotten_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "password_forgotten.html")
+        self.assertTemplateUsed(response, "account_management/password_forgotten.html")
 
     def test_POST_valid_data(self):
         # Test if a valid email submission redirects to login page
@@ -492,7 +500,7 @@ class SendPasswordForgottenMailTest(TestCase):
         user = User.objects.create_user(
             username="test@mail.de",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -523,7 +531,7 @@ class UpdateAccountTest(TestCase):
         self.user = User.objects.create_user(
             username="test@mail.de",
             email="test@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test_first_name",
             last_name="test_last_name",
         )
@@ -544,9 +552,9 @@ class UpdateAccountTest(TestCase):
                 "first_name": "new_first_name",
                 "last_name": "new_last_name",
                 "email": "new_test@mail.de",
-                "old_password": "SecurePass123!",
-                "new_password": "NewSecurePassword123!",
-                "password_confirmation": "NewSecurePassword123!",
+                "old_password": SECURE_PASSWORD,
+                "new_password": UPDATED_PASSWORD,
+                "password_confirmation": UPDATED_PASSWORD,
             },
         )
 
@@ -555,7 +563,7 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_valid_data_without_profile(self):
         # Test if a user can successfully update their account information
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
@@ -563,9 +571,9 @@ class UpdateAccountTest(TestCase):
                 "first_name": "new_first_name",
                 "last_name": "new_last_name",
                 "email": "new_test@mail.de",
-                "old_password": "SecurePass123!",
-                "new_password": "NewSecurePassword123!",
-                "password_confirmation": "NewSecurePassword123!",
+                "old_password": SECURE_PASSWORD,
+                "new_password": UPDATED_PASSWORD,
+                "password_confirmation": UPDATED_PASSWORD,
             },
         )
 
@@ -573,7 +581,7 @@ class UpdateAccountTest(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, "new_first_name")
         self.assertEqual(self.user.last_name, "new_last_name")
-        self.assertTrue(self.user.check_password("NewSecurePassword123!"))
+        self.assertTrue(self.user.check_password(UPDATED_PASSWORD))
         self.assertEqual(self.user.email, "new_test@mail.de")
         self.assertEqual(self.user.username, "new_test@mail.de")
 
@@ -582,11 +590,11 @@ class UpdateAccountTest(TestCase):
         User.objects.create_user(
             username="test2@mail.de",
             email="test2@mail.de",
-            password="SecurePass123!",
+            password=SECURE_PASSWORD,
             first_name="test2_first_name",
             last_name="test2_last_name",
         )
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
@@ -612,7 +620,7 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_From_projects_page(self):
         # Ensuring the user is redirected back to the projects page after updating their account
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
@@ -630,11 +638,11 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(self.user.first_name, "new_first_name")
         self.assertEqual(self.user.last_name, "new_last_name")
         self.assertEqual(self.user.email, "test@mail.de")
-        self.assertTrue(self.user.check_password("SecurePass123!"))
+        self.assertTrue(self.user.check_password(SECURE_PASSWORD))
 
     def test_POST_from_editor_page(self):
         # Ensuring the user is redirected back to the editor page after updating their account
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         project = Project.objects.create(
             name="test_project",
@@ -661,7 +669,7 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_upload_profile_picture(self):
         # Uploading a profile picture and verifying that it is saved correctly
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         # create example picture
         image = Image.new("RGB", (100, 100), color="blue")
@@ -678,9 +686,9 @@ class UpdateAccountTest(TestCase):
                 "first_name": "new_first_name",
                 "last_name": "new_last_name",
                 "email": "test@mail.de",
-                "old_password": "SecurePass123!",
-                "new_password": "NewSecurePassword123!",
-                "password_confirmation": "NewSecurePassword123!",
+                "old_password": SECURE_PASSWORD,
+                "new_password": UPDATED_PASSWORD,
+                "password_confirmation": UPDATED_PASSWORD,
                 "profile_picture": profile_picture,
             },
         )
@@ -695,7 +703,7 @@ class UpdateAccountTest(TestCase):
 
     def test_update_profile_picture_replaces_old_one(self):
         # Test if the old profile picture is deleted when a new one is uploaded
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         # First profile picture upload
         image1 = Image.new("RGB", (100, 100), color="blue")
@@ -743,7 +751,7 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_delete_profile_picture(self):
         # Test if a user can delete their profile picture
-        self.client.login(username="test@mail.de", password="SecurePass123!")
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
         image = Image.new("RGB", (100, 100), color="blue")
         image_file = io.BytesIO()
@@ -780,7 +788,7 @@ class GetUserInfoTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", email="test@mail.de", password="SecurePass123!"
+            username="testuser", email="test@mail.de", password=SECURE_PASSWORD
         )
         self.get_user_info_url = reverse("get_user_info")
 
@@ -792,7 +800,7 @@ class GetUserInfoTest(TestCase):
 
     def test_get_user_info_authenticated_without_socialaccount(self):
         # A regular authenticated user without a SocialAccount should receive `is_openid_user: False`.
-        self.client.login(username="testuser", password="SecurePass123!")
+        self.client.login(username="testuser", password=SECURE_PASSWORD)
         response = self.client.get(self.get_user_info_url)
 
         self.assertEqual(response.status_code, 200)
@@ -801,7 +809,7 @@ class GetUserInfoTest(TestCase):
 
     def test_get_user_info_authenticated_with_socialaccount(self):
         # A user with a SocialAccount should receive `is_openid_user: True`.
-        self.client.login(username="testuser", password="SecurePass123!")
+        self.client.login(username="testuser", password=SECURE_PASSWORD)
         SocialAccount.objects.create(user=self.user, provider="google")
 
         response = self.client.get(self.get_user_info_url)

@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("job_interface_mockup", "0002_job_project"),
+        ("job_interface", "0002_job_project"),
         ("project_management", "0023_receiver_receiver_type"),
     ]
 

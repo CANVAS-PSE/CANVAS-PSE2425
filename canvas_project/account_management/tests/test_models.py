@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from account_management.models import UserProfile
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.templatetags.static import static
 
 
 class UserProfileModelTest(TestCase):
@@ -16,7 +17,8 @@ class UserProfileModelTest(TestCase):
 
     def test_user_profile_creation(self):
         self.assertEqual(self.profile.user, self.user)
-        self.assertEqual(self.profile.profile_picture.name, "profile_pics/default.jpg")
+        self.assertFalse(bool(self.profile.profile_picture))
+        self.assertEqual(self.profile.image_url, static("img/profile_pics/default.jpg"))
 
     def test_user_profile_str(self):
         self.assertEqual(str(self.profile), self.user.email)
