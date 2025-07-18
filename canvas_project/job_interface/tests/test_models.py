@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from job_interface_mockup.models import Job
+from job_interface.models import Job
 from project_management.models import Project
 from django.utils import timezone
 
