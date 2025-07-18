@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from account_management.models import UserProfile
 from django.core.files.uploadedfile import SimpleUploadedFile
-import static
+from django.templatetags.static import static
 
 
 class UserProfileModelTest(TestCase):
