@@ -35,6 +35,9 @@ export class Editor {
 
   #projectId;
   #canvas;
+  /**
+   * @type {TransformControls}
+   */
   #transformControls;
   #controls;
   #compass;
@@ -191,6 +194,12 @@ export class Editor {
     this.#transformControls = new TransformControls(
       this.#camera,
       this.#renderer.domElement,
+    );
+    this.#transformControls.setColors(
+      new THREE.Color("#ff7f9a"),
+      new THREE.Color("#c2ee00"),
+      new THREE.Color("#73c5ff"),
+      THREE.SRGBColorSpace,
     );
     this.#scene.add(this.#transformControls.getHelper());
 
