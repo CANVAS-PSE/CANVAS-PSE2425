@@ -375,7 +375,7 @@ export class Picker {
       } else if (this.#selectedObjects.length === 1) {
         this.#attachSingleTransformControl();
       } else {
-        // TODO: Implement multi-selection
+        // Implement multi-selection
         // hide every control as they will not work properly
         this.#transformControls.detach();
         this.#updateSelectionBox();

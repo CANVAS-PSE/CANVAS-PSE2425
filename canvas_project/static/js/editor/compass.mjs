@@ -44,9 +44,6 @@ class CompassAxisArrow extends Object3D {
     this.add(this.label);
   }
 
-  /* eslint-disable-next-line no-unused-vars */
-  update(point) {}
-
   dispose() {
     this.arrow.dispose();
     this.label.material.map.dispose();
