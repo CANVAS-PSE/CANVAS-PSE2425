@@ -69,7 +69,7 @@ export class Editor {
     this.#saveAndLoadHandler = new SaveAndLoadHandler(this.#projectId);
 
     // initate ThreeJs scene
-    this.#setUpScene().#loadProject();
+    this.#setUpScene();
 
     // initiate needed classes
     this.#undoRedoHandler = new UndoRedoHandler();
@@ -199,7 +199,7 @@ export class Editor {
       new THREE.Color("#ff7f9a"),
       new THREE.Color("#c2ee00"),
       new THREE.Color("#73c5ff"),
-      THREE.SRGBColorSpace,
+      new THREE.Color("#FFFF00"),
     );
     this.#scene.add(this.#transformControls.getHelper());
 
@@ -233,8 +233,11 @@ export class Editor {
 
     return this;
   }
-
-  async #loadProject() {
+  /**
+   * Loads all the project data. Gets called after the editor is createCommands
+   * @returns { Promise<Editor> } the editor in use
+   */
+  async loadProject() {
     const projectJson = await this.#saveAndLoadHandler.getProjectData();
 
     const heliostatList = projectJson["heliostats"];
