@@ -1,3 +1,4 @@
+import os
 import pathlib
 import torch
 from artist.util import config_dictionary, set_logger_config
@@ -55,6 +56,9 @@ class HDF5Manager:
 
         # Set the device.
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Check if scenario folder exists
+        os.makedirs("./hdf5_management/scenarios", exist_ok=True)
 
         # The following parameter is the name of the scenario.
         scenario_path = pathlib.Path(
