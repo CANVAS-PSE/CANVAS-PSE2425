@@ -102,7 +102,7 @@ def update_project(request, project_name):
 
 # Deleting a project
 @login_required
-@require_http_methods("DELETE")
+@require_POST
 def delete_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:

@@ -270,8 +270,8 @@ class ViewTests(TestCase):
 
         self.assertEqual(response.status_code, 405)
 
-    def test_delete_project_DELETE(self):
-        response = self.client.delete(self.delete_project_url)
+    def test_delete_project_POST(self):
+        response = self.client.post(self.delete_project_url)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 0)

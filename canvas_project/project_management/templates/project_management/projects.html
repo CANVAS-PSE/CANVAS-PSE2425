@@ -182,12 +182,16 @@
                                                         </div>
                                                     </div>
                                                     <!-- Duplicate Button -->
-                                                    <a href="{% url 'duplicateProject' project_name=project.name %}"
-                                                       class="btn btn-primary custom-btn shadow"
-                                                       title="Duplicate project">
-                                                        <i class="bi bi-copy"></i>
-                                                    </a>
-                                                    <!-- Share Button -->
+                                                  <form action="{% url 'duplicateProject' project_name=project.name %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button
+                                                      type="submit"
+                                                      class="btn btn-primary custom-btn shadow"
+                                                      title="Duplicate project">
+                                                      <i class="bi bi-copy"></i>
+                                                    </button>
+                                                  </form>
+                                                                                                       <!-- Share Button -->
                                                     <button class="btn btn-primary custom-btn shadow"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#shareModal-{{ project.name }}"
@@ -278,7 +282,10 @@
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                        <a href="{% url 'deleteProject' project.name %}" class="btn btn-danger">Delete {{ project.name | truncate_with_end:15}}</a>
+                                                                        <form action="{% url 'deleteProject' project.name %}" method="POST">
+                                                                          {% csrf_token %}
+                                                                          <button class="btn btn-danger" type="submit">Delete {{ project.name | truncate_with_end:15}}</button>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
