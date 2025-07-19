@@ -390,8 +390,7 @@ class InvalidLinkTest(TestCase):
         # Test if the invalid link page is accessible via POST
         response = self.client.post(self.invalid_link_url)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/invalid_link.html")
+        self.assertEqual(response.status_code, 405)
 
 
 class DeleteAccountTest(TestCase):

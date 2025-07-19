@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
-from django.views.decorators.http import require_POST, require_http_methods, require_GET
+from django.views.decorators.http import require_POST, require_http_methods
 from .models import Project
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import ProjectForm, UpdateProjectForm
@@ -174,7 +174,7 @@ def duplicate_project(request, project_name):
 
 # Share a project
 @login_required
-@require_GET
+@require_POST
 def share_project(request, project_name):
     # create new sharedProject model
     project = get_object_or_404(Project, owner=request.user, name=project_name)
@@ -184,7 +184,7 @@ def share_project(request, project_name):
 
 
 @login_required
-@require_GET
+@require_http_methods(["GET", "POST"])
 def shared_project(request, uid, token):
     # get the shared project
     try:

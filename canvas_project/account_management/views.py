@@ -61,7 +61,6 @@ def register_view(request):
     return render(request, "account_management/register.html", {"form": form})
 
 
-@require_GET
 def send_register_email(user, request):
     """
     Send an email to the user to confirm that their account has been created.
@@ -203,7 +202,6 @@ def get_user_info(request):
     return JsonResponse({"is_openid_user": is_openid_user})
 
 
-@require_GET
 def send_password_change_email(user, request):
     """
     Send an email to the user to confirm that their password has been changed.
@@ -305,7 +303,6 @@ def password_forgotten_view(request):
     return render(request, "account_management/password_forgotten.html", {"form": form})
 
 
-@require_GET
 def send_password_forgotten_email(user, request):
     """
     Send an email to the user to reset their password.

@@ -141,4 +141,4 @@ class PreviewViewTest(TestCase):
 
     def test_wrong_method(self):
         response = self.client.get(self.upload)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 405)
