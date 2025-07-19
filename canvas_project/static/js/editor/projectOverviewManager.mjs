@@ -29,17 +29,29 @@ export class ProjectOverviewManager {
       projectElement.dataset.isFavorite = "false";
       favoriteButton.children[0].classList.remove(
         "bi-star-fill",
-        "text-warning"
+        "text-warning",
       );
       favoriteButton.children[0].classList.add("bi-star");
-      fetch(window.location + "defavorProject/" + projectName);
+      fetch(window.location + "defavorProject/" + projectName, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": this.#getCookie("csrftoken"),
+        },
+      });
     } else if (isFavorite == "false") {
       favoriteButton.dataset.isFavorite = "true";
       const projectElement = favoriteButton.closest(".project");
       projectElement.dataset.isFavorite = "true";
       favoriteButton.children[0].classList.remove("bi-star");
       favoriteButton.children[0].classList.add("bi-star-fill", "text-warning");
-      fetch(window.location + "favorProject/" + projectName);
+      fetch(window.location + "favorProject/" + projectName, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": this.#getCookie("csrftoken"),
+        },
+      });
     } else {
       throw new Error(`invalid favorite state for project ${projectName}`);
     }
@@ -51,7 +63,7 @@ export class ProjectOverviewManager {
       "form-check",
       "form-switch",
       "position-relative",
-      "mx-auto"
+      "mx-auto",
     );
     const favoriteSwitch = document.createElement("input");
     favoriteSwitch.classList.add("form-check-input");
@@ -71,7 +83,7 @@ export class ProjectOverviewManager {
       .getElementById("projectList")
       .insertBefore(
         favoriteSwitchWrapper,
-        document.getElementById("projectList").children[0]
+        document.getElementById("projectList").children[0],
       );
 
     favoriteSwitch.addEventListener("change", () => {
@@ -90,5 +102,29 @@ export class ProjectOverviewManager {
         }
       });
     });
+  }
+
+  /**
+   * Gets the cookie specified by the name
+   * @param {string} name The name of the cookie you want to get.
+   * @returns {string|null} the cookie or null if it couldn't be found.
+   */
+  #getCookie(name) {
+    if (!document.cookie) {
+      return null;
+    }
+
+    // document.cookie is a key=value list separated by ';'
+    const xsrfCookies = document.cookie
+      .split(";")
+      .map((c) => c.trim())
+      //filter the right cookie name
+      .filter((c) => c.startsWith(name + "="));
+
+    if (xsrfCookies.length === 0) {
+      return null;
+    }
+    // return the decoded value of the first cookie found
+    return decodeURIComponent(xsrfCookies[0].split("=")[1]);
   }
 }
