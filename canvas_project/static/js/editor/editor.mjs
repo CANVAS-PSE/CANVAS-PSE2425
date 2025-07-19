@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { ViewHelper } from "compass";
-import { OrbitControls } from "orbitControls";
-import { TransformControls } from "transformControls";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { TransformControls } from "three/addons/controls/TransformControls.js";
 import { UndoRedoHandler } from "undoRedoHandler";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
 import { Navbar } from "navbar";
@@ -35,6 +35,9 @@ export class Editor {
 
   #projectId;
   #canvas;
+  /**
+   * @type {TransformControls}
+   */
   #transformControls;
   #controls;
   #compass;
@@ -191,6 +194,12 @@ export class Editor {
     this.#transformControls = new TransformControls(
       this.#camera,
       this.#renderer.domElement,
+    );
+    this.#transformControls.setColors(
+      new THREE.Color("#ff7f9a"),
+      new THREE.Color("#c2ee00"),
+      new THREE.Color("#73c5ff"),
+      THREE.SRGBColorSpace,
     );
     this.#scene.add(this.#transformControls.getHelper());
 

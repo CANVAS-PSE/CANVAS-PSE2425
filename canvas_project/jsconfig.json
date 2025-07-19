@@ -6,16 +6,8 @@
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "paths": {
-      "three": ["static/js/three/three.module.js"],
       "objects": ["static/js/editor/objects.mjs"],
-      "three/addons/": ["static/js/three/examples/jsm/"],
-      "compass": ["static/js/three/compass.mjs"],
-      "orbitControls": [
-        "static/js/three/examples/jsm/controls/OrbitControls.js"
-      ],
-      "transformControls": [
-        "static/js/three/examples/jsm/controls/TransformControls.js"
-      ],
+      "compass": ["static/js/editor/compass.mjs"],
       "command": ["static/js/commands/command.mjs"],
       "undoRedoHandler": ["static/js/commands/undoRedoHandler.mjs"],
       "singleObjectCommands": ["static/js/commands/singleObjectCommands.mjs"],

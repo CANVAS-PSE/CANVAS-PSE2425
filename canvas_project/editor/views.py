@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from HDF5Management.HDF5Manager import HDF5Manager
+from hdf5_management.hdf5_manager import HDF5Manager
 from django.contrib.auth.models import User
 from project_management.forms import ProjectForm
 from django.http import FileResponse, HttpResponse, Http404, HttpResponseNotAllowed
@@ -91,7 +91,9 @@ def download(request, project_name):
     hdf5_manager.create_hdf5_file(request.user, project)
 
     # Set CANVAS_ROOT
-    path = f"./HDF5Management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
+    path = (
+        f"./hdf5_management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
+    )
 
     response = FileResponse(
         open(path, "rb"), as_attachment=True, filename=project_name + ".h5"

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "editor",
-    "api",
+    "autosave_api",
     "job_interface",
     "project_management",
     "account_management",

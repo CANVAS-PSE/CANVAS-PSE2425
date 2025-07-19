@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib import messages
-from HDF5Management.HDF5Manager import HDF5Manager
+from hdf5_management.hdf5_manager import HDF5Manager
 
 PROJECT_NAME_MUST_BE_UNIQUE_WARNING = "The project name must be unique"
 
