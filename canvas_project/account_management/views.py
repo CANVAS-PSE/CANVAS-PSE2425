@@ -10,7 +10,7 @@ from .forms import (
     PasswordResetForm,
     PasswordForgottenForm,
 )
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods, require_GET
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -27,6 +27,7 @@ REDIRECT_LOGIN_URL = "login"
 DEFAULT_PROFIL_PIC = "profile_pics/default.jpg"
 
 
+@require_http_methods(["GET", "POST"])
 def register_view(request):
     """
     Register a new user and redirect to the login page upon success.
@@ -60,6 +61,7 @@ def register_view(request):
     return render(request, "account_management/register.html", {"form": form})
 
 
+@require_GET
 def send_register_email(user, request):
     """
     Send an email to the user to confirm that their account has been created.
@@ -87,6 +89,7 @@ def send_register_email(user, request):
     email.send()
 
 
+@require_http_methods(["GET", "POST"])
 def confirm_deletion(request, uidb64, token):
     """
     Confirm the deletion of the user's account.
@@ -108,6 +111,7 @@ def confirm_deletion(request, uidb64, token):
         return redirect("invalid_link")
 
 
+@require_http_methods(["GET", "POST"])
 def login_view(request):
     """
     Log in the user and redirect to the projects page upon success.
@@ -192,12 +196,14 @@ def _update_profile_picture(user: User, delete_picture: bool, new_profile_pictur
 
 
 @login_required
+@require_GET
 def get_user_info(request):
     user = request.user
     is_openid_user = SocialAccount.objects.filter(user=user).exists()
     return JsonResponse({"is_openid_user": is_openid_user})
 
 
+@require_GET
 def send_password_change_email(user, request):
     """
     Send an email to the user to confirm that their password has been changed.
@@ -225,6 +231,7 @@ def send_password_change_email(user, request):
     email.send()
 
 
+@require_http_methods(["GET", "POST"])
 def password_reset_view(request, uidb64, token):
     """
     View to reset the password and log the user out from all sessions.
@@ -255,6 +262,7 @@ def password_reset_view(request, uidb64, token):
         return redirect("invalid_link")
 
 
+@require_GET
 def invalid_link(request):
     return render(request, "account_management/invalid_link.html")
 
@@ -279,6 +287,7 @@ def delete_account(request):
     return redirect(request.META.get("HTTP_REFERER", "projects"))
 
 
+@require_http_methods(["GET", "POST"])
 def password_forgotten_view(request):
     """
     View if a user doesn't remember its password and wants to reset it.
@@ -296,6 +305,7 @@ def password_forgotten_view(request):
     return render(request, "account_management/password_forgotten.html", {"form": form})
 
 
+@require_GET
 def send_password_forgotten_email(user, request):
     """
     Send an email to the user to reset their password.
