@@ -129,8 +129,6 @@ class PreviewViewTest(TestCase):
         project.save()
 
     def test_upload(self):
-        project = Project.objects.get(name="testProject")
-
         test_file_path = os.path.join(settings.BASE_DIR, "static/img/emptyEditor.png")
         with open(test_file_path, "rb") as hdf5_file:
             data = {

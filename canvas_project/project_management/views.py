@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_POST, require_http_methods, require_GET
 from .models import Project
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import ProjectForm, UpdateProjectForm
@@ -75,7 +75,7 @@ def _create_project(
 
 
 @login_required
-@require_http_methods(["POST"])
+@require_POST
 def update_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     form = UpdateProjectForm(request.POST, instance=project)
@@ -102,6 +102,7 @@ def update_project(request, project_name):
 
 # Deleting a project
 @login_required
+@require_http_methods("DELETE")
 def delete_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
@@ -111,6 +112,7 @@ def delete_project(request, project_name):
 
 # Set project to favorite
 @login_required
+@require_POST
 def favor_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
@@ -121,6 +123,7 @@ def favor_project(request, project_name):
 
 # Set project to not favorite
 @login_required
+@require_POST
 def defavor_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
@@ -131,6 +134,7 @@ def defavor_project(request, project_name):
 
 # Duplicate a project
 @login_required
+@require_POST
 def duplicate_project(request, project_name):
     project = Project.objects.get(owner=request.user, name=project_name)
     if project.owner == request.user:
@@ -170,6 +174,7 @@ def duplicate_project(request, project_name):
 
 # Share a project
 @login_required
+@require_GET
 def share_project(request, project_name):
     # create new sharedProject model
     project = get_object_or_404(Project, owner=request.user, name=project_name)
@@ -179,6 +184,7 @@ def share_project(request, project_name):
 
 
 @login_required
+@require_GET
 def shared_project(request, uid, token):
     # get the shared project
     try:

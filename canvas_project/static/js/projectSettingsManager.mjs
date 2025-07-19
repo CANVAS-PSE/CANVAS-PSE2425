@@ -21,7 +21,6 @@ export class ProjectSettingsManager {
   constructor() {
     this.#editor = new Editor();
     this.#saveAndLoadHandler = new SaveAndLoadHandler();
-    //this.initialize();
   }
 
   /**
