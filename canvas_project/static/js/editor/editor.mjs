@@ -17,8 +17,8 @@ import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
 import { ModeSelector } from "modeSelector";
 
-let editorInstance = null;
 export class Editor {
+  static #instance;
   #undoRedoHandler;
   #saveAndLoadHandler;
   #navbar; // eslint-disable-line no-unused-private-class-members -- for structural consistency, not used yet
@@ -55,18 +55,15 @@ export class Editor {
   #receiverList = [];
   #lightsourceList = [];
 
-  constructor(
-    /**
-     * @type {number}
-     */ projectId,
-  ) {
-    // singleton
-    if (editorInstance) return editorInstance;
-    editorInstance = this;
+  constructor(/** @type {number}*/ projectId) {
+    if (Editor.#instance) {
+      throw new Error("Can not create class directly, use getInstance instead");
+    }
+    Editor.#instance = this;
 
     this.#projectId = projectId;
 
-    this.#saveAndLoadHandler = new SaveAndLoadHandler(this.#projectId);
+    this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance(this.#projectId);
 
     // initate ThreeJs scene
     this.#setUpScene();
@@ -97,6 +94,23 @@ export class Editor {
     window.addEventListener("resize", () => this.onWindowResize());
 
     this.animate();
+  }
+
+  /**
+   * Gets the current editor instance in use
+   * @param {number} [projectId=null] the id of the project, only needed for the first instanciation
+   * @returns {Editor} the saveAndLoadHandler in use
+   */
+  static getInstance(projectId = null) {
+    if (!Editor.#instance) {
+      if (!projectId) {
+        throw new Error(
+          "When executing get instance for the first time the project id is needed",
+        );
+      }
+      Editor.#instance = new Editor(projectId);
+    }
+    return Editor.#instance;
   }
 
   animate() {

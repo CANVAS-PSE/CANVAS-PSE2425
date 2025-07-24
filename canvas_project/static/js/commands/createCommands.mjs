@@ -18,7 +18,7 @@ export class ItemCreatedEvent extends CustomEvent {
  */
 export class CreateHeliostatCommand extends SingleObjectCommand {
   #heliostat;
-  #editor = new Editor();
+  #editor = Editor.getInstance();
 
   /**
    * Initializes a new CreateHeliostatCommand with the specified heliostat to create.
@@ -57,7 +57,7 @@ export class CreateHeliostatCommand extends SingleObjectCommand {
  */
 export class CreateReceiverCommand extends SingleObjectCommand {
   #receiver;
-  #editor = new Editor();
+  #editor = Editor.getInstance();
 
   /**
    * Initializes a new CreateReceiverCommand with the specified receiver to create.
@@ -96,7 +96,7 @@ export class CreateReceiverCommand extends SingleObjectCommand {
  */
 export class CreateLightSourceCommand extends SingleObjectCommand {
   #lightsource;
-  #editor = new Editor();
+  #editor = Editor.getInstance();
 
   /**
    * Initializes a new CreateLightSourceCommand with the specified light source to create.

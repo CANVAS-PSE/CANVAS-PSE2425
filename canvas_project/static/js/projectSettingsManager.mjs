@@ -19,8 +19,8 @@ export class ProjectSettingsManager {
    * Constructor for the project settings manager
    */
   constructor() {
-    this.#editor = new Editor();
-    this.#saveAndLoadHandler = new SaveAndLoadHandler();
+    this.#editor = Editor.getInstance();
+    this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
 
   /**

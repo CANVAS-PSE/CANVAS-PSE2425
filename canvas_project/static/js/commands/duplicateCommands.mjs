@@ -9,7 +9,7 @@ import * as THREE from "three";
  * Command to duplicate a heliostat.
  */
 export class DuplicateHeliostatCommand extends SingleObjectCommand {
-  #editor = new Editor();
+  #editor = Editor.getInstance();
   #heliostat;
   #heliostatCopy;
   #newPosition;
@@ -57,7 +57,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
  * Command to duplicate a receiver.
  */
 export class DuplicateReceiverCommand extends SingleObjectCommand {
-  #editor = new Editor();
+  #editor = Editor.getInstance();
   #receiver;
   #receiverCopy;
   #newPosition;
@@ -111,7 +111,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
  * Command to duplicate a lightsource.
  */
 export class DuplicateLightSourceCommand extends SingleObjectCommand {
-  #editor = new Editor();
+  #editor = Editor.getInstance();
   #lightsource;
   #lightsourceCopy;
 

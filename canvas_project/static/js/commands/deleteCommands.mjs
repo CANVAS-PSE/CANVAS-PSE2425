@@ -17,7 +17,7 @@ export class ItemDeletedEvent extends CustomEvent {
  * Command to handle the deletion of a heliostat.
  */
 export class DeleteHeliostatCommand extends SingleObjectCommand {
-  #editor = new Editor();
+  #editor = Editor.getInstance();
   #heliostat;
 
   /**
@@ -50,7 +50,7 @@ export class DeleteHeliostatCommand extends SingleObjectCommand {
  * Command to handle the deletion of a receiver.
  */
 export class DeleteReceiverCommand extends SingleObjectCommand {
-  #editor = new Editor();
+  #editor = Editor.getInstance();
   #receiver;
 
   /**
@@ -83,7 +83,7 @@ export class DeleteReceiverCommand extends SingleObjectCommand {
  * Command to handle the deletion of a lightsource.
  */
 export class DeleteLightSourceCommand extends SingleObjectCommand {
-  #editor = new Editor();
+  #editor = Editor.getInstance();
   #lightsource;
 
   /**
