@@ -100,22 +100,20 @@ class ConfirmDeletionView(View):
     def dispatch(self, request, uidb64, token):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
-            user = get_user_model().objects.get(pk=uid)
+            self.user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return redirect("invalid_link")
-        if not default_token_generator.check_token(user, token):
+        if not default_token_generator.check_token(self.user, token):
             return redirect("invalid_link")
 
-        return super().dispatch(request, uidb64)
+        return super().dispatch(request)
 
-    def get(self, request, _):
+    def get(self, request):
         return render(request, "account_management/confirm_deletion.html")
 
-    def post(self, request, uidb64):
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = get_user_model().objects.get(pk=uid)
+    def post(self, request):
         logout(request)
-        user.delete()
+        self.user.delete()
         return redirect("login")
 
 
@@ -251,28 +249,26 @@ class PasswordResetView(View):
     def dispatch(self, request, uidb64, token):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
-            user = get_user_model().objects.get(pk=uid)
+            self.user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return redirect("invalid_link")
 
-        if not default_token_generator.check_token(user, token):
+        if not default_token_generator.check_token(self.user, token):
             return redirect("invalid_link")
 
-        return super().dispatch(request, uidb64)
+        return super().dispatch(request)
 
-    def get(self, request, _):
+    def get(self, request):
         return render(
             request, self.password_reset_template, {"form": PasswordResetForm()}
         )
 
-    def post(self, request, uidb64):
+    def post(self, request):
         form = PasswordResetForm(request.POST)
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = get_user_model().objects.get(pk=uid)
 
         if form.is_valid():
-            user.set_password(form.cleaned_data["new_password"])
-            user.save()
+            self.user.set_password(form.cleaned_data["new_password"])
+            self.user.save()
 
             # Logout from all sessions
             logout(request)

@@ -1,26 +1,26 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from account_management.views import (
-    login_view,
+    LoginView,
     logout_view,
-    register_view,
+    RegistrationView,
     update_account,
     delete_account,
-    password_reset_view,
+    PasswordResetView,
     invalid_link,
-    confirm_deletion,
-    password_forgotten_view,
+    ConfirmDeletionView,
+    PasswordForgottenView,
 )
 
 
 class TestUrls(SimpleTestCase):
     def test_login_url_resolves(self):
         url = reverse("login")
-        self.assertEqual(resolve(url).func, login_view)
+        self.assertEqual(resolve(url).func.view_class, LoginView)
 
     def test_register_url_resolves(self):
         url = reverse("register")
-        self.assertEqual(resolve(url).func, register_view)
+        self.assertEqual(resolve(url).func.view_class, RegistrationView)
 
     def test_logout_url_resolves(self):
         url = reverse("logout")
@@ -36,7 +36,7 @@ class TestUrls(SimpleTestCase):
 
     def test_password_reset_url_resolves(self):
         url = reverse("password_reset", args=["uidb64", "token"])
-        self.assertEqual(resolve(url).func, password_reset_view)
+        self.assertEqual(resolve(url).func.view_class, PasswordResetView)
 
     def test_invalid_link_url_resolves(self):
         url = reverse("invalid_link")
@@ -44,8 +44,8 @@ class TestUrls(SimpleTestCase):
 
     def test_confirm_deletion_url_resolves(self):
         url = reverse("confirm_deletion", args=["uidb64", "token"])
-        self.assertEqual(resolve(url).func, confirm_deletion)
+        self.assertEqual(resolve(url).func.view_class, ConfirmDeletionView)
 
     def test_password_forgotten_url_resolves(self):
         url = reverse("password_forgotten")
-        self.assertEqual(resolve(url).func, password_forgotten_view)
+        self.assertEqual(resolve(url).func.view_class, PasswordForgottenView)

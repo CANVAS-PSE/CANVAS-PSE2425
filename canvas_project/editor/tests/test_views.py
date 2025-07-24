@@ -48,6 +48,11 @@ class EditorViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["project_name"], "testProject")
 
+    def test_get_method_logged_out(self):
+        self.client.logout()
+        response = self.client.get(self.editor)
+        self.assertEqual(response.status_code, 302)
+
 
 class DownloadViewTest(TestCase):
     def setUp(self):
@@ -114,6 +119,11 @@ class DownloadViewTest(TestCase):
             for lightsource in lightsources:
                 self.assertEqual(42, lightsources[lightsource]["number_of_rays"][()])
 
+    def test_download_logged_out(self):
+        self.client.logout()
+        response = self.client.get(self.download)
+        self.assertEqual(response.status_code, 302)
+
 
 class PreviewViewTest(TestCase):
     def setUp(self):
@@ -142,3 +152,8 @@ class PreviewViewTest(TestCase):
     def test_wrong_method(self):
         response = self.client.get(self.upload)
         self.assertEqual(response.status_code, 405)
+
+    def test_upload_logged_out(self):
+        self.client.logout()
+        response = self.client.get(self.upload)
+        self.assertEqual(response.status_code, 302)

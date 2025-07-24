@@ -1,6 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
-from django.views.decorators.http import require_POST, require_http_methods
+from django.views.decorators.http import require_POST
+from django.views import View
+from django.views.generic import ListView
 from .models import Project
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import ProjectForm, UpdateProjectForm
@@ -15,13 +18,33 @@ from hdf5_management.hdf5_manager import HDF5Manager
 PROJECT_NAME_MUST_BE_UNIQUE_WARNING = "The project name must be unique"
 
 
-# General project handling
-@login_required
-@require_http_methods(["POST", "GET"])
-def projects(request):
-    form = ProjectForm()
+class ProjectsView(LoginRequiredMixin, ListView):
+    """
+    Manages the displaying and creating of projects
+    """
 
-    if request.method == "POST":
+    model = Project
+    template_name = "project_management/projects.html"
+    context_object_name = "projects"
+
+    def get_queryset(self):
+        queryset = Project.objects.filter(owner=self.request.user).order_by(
+            "-last_edited"
+        )
+        for project in queryset:
+            project.uid = _generate_uid(self.request)
+            project.token = _generate_token(project.name)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the ProjectForm to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        context["form"] = ProjectForm()
+        return context
+
+    def post(self, request):
         # Initialize the form with POST and FILE data
         form = ProjectForm(request.POST, request.FILES)
 
@@ -45,17 +68,9 @@ def projects(request):
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
 
-    # Fetch all projects for the current user
-    all_projects = Project.objects.filter(owner=request.user).order_by("-last_edited")
-    for project in all_projects:
-        project.uid = _generate_uid(request)
-        project.token = _generate_token(project.name)
-
-    context = {
-        "projects": all_projects,
-        "form": form,
-    }
-    return render(request, "project_management/projects.html", context)
+            context = self.get_context_data(object_list=self.get_queryset())
+            context["form"] = form
+            return render(request, "project_management/projects.html", context)
 
 
 def _create_project(
@@ -183,32 +198,51 @@ def share_project(request, project_name):
     return redirect("projects")
 
 
-@login_required
-@require_http_methods(["GET", "POST"])
-def shared_project(request, uid, token):
-    # get the shared project
-    try:
-        user_id = urlsafe_base64_decode(uid).decode()
-        user = get_user_model().objects.get(pk=user_id)
-        project_name = urlsafe_base64_decode(token).decode()
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        raise Http404
+class SharedProjectView(LoginRequiredMixin, View):
+    """
+    Manages copying a shared project to the user
+    """
 
-    project = get_object_or_404(Project, owner=user, name=project_name)
+    def get(self, request, uid, token):
+        # get the shared project
+        try:
+            user_id = urlsafe_base64_decode(uid).decode()
+            user = get_user_model().objects.get(pk=user_id)
+            project_name = urlsafe_base64_decode(token).decode()
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise Http404
 
-    if project.last_shared is None or (timezone.now() - project.last_shared).days > 3:
-        raise Http404
+        project = get_object_or_404(Project, owner=user, name=project_name)
 
-    # render a preview where the user can choose to add the project
-    if request.method == "GET":
+        if (
+            project.last_shared is None
+            or (timezone.now() - project.last_shared).days > 3
+        ):
+            raise Http404
+
         return render(
             request,
             "project_management/sharedProject.html",
             context={"project": project},
         )
 
-    # copy the project to the user
-    elif request.method == "POST":
+    def post(self, request, uid, token):
+        # get the shared project
+        try:
+            user_id = urlsafe_base64_decode(uid).decode()
+            user = get_user_model().objects.get(pk=user_id)
+            project_name = urlsafe_base64_decode(token).decode()
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise Http404
+
+        project = get_object_or_404(Project, owner=user, name=project_name)
+
+        if (
+            project.last_shared is None
+            or (timezone.now() - project.last_shared).days > 3
+        ):
+            raise Http404
+
         # copy the associated project to the user
         fks_to_copy = (
             list(project.heliostats.all())
