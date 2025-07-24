@@ -11,6 +11,7 @@ from .forms import (
     PasswordForgottenForm,
 )
 from django.views.decorators.http import require_POST, require_http_methods, require_GET
+from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -27,17 +28,22 @@ REDIRECT_LOGIN_URL = "login"
 DEFAULT_PROFIL_PIC = "profile_pics/default.jpg"
 
 
-@require_http_methods(["GET", "POST"])
-def register_view(request):
+class RegistrationView(View):
     """
     Register a new user and redirect to the login page upon success.
     If the user is already logged in, redirect to the projects page.
     """
 
-    if request.user.is_authenticated:
-        return redirect(REDIRECT_PROJECTS_URL)
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(REDIRECT_PROJECTS_URL)
+        return super().dispatch(request, *args, **kwargs)
 
-    if request.method == "POST":
+    def get(self, request):
+        form = RegisterForm()
+        return render(request, "account_management/register.html", {"form": form})
+
+    def post(self, request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             first_name = form.cleaned_data.get("first_name")
@@ -56,9 +62,7 @@ def register_view(request):
             login(request, user)
             send_register_email(user, request)
             return redirect(REDIRECT_PROJECTS_URL)
-    else:
-        form = RegisterForm()
-    return render(request, "account_management/register.html", {"form": form})
+        return render(request, "account_management/register.html", {"form": form})
 
 
 def send_register_email(user, request):
