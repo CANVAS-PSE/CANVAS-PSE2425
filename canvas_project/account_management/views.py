@@ -10,7 +10,7 @@ from .forms import (
     PasswordResetForm,
     PasswordForgottenForm,
 )
-from django.views.decorators.http import require_POST, require_http_methods, require_GET
+from django.views.decorators.http import require_POST, require_GET
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -92,48 +92,56 @@ def send_register_email(user, request):
     email.send()
 
 
-@require_http_methods(["GET", "POST"])
-def confirm_deletion(request, uidb64, token):
+class ConfirmDeletionView(View):
     """
-    Confirm the deletion of the user's account.
+    View to confirm the deletion of an account via the email that gets send on registration
     """
-    try:
+
+    def dispatch(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return redirect("invalid_link")
+        if not default_token_generator.check_token(user, token):
+            return redirect("invalid_link")
+
+        return super().dispatch(request, uidb64)
+
+    def get(self, request, _):
+        return render(request, "account_management/confirm_deletion.html")
+
+    def post(self, request, uidb64):
         uid = urlsafe_base64_decode(uidb64).decode()
         user = get_user_model().objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-
-    if user is not None and default_token_generator.check_token(user, token):
-        if request.method == "POST":
-            logout(request)
-            user.delete()
-            return redirect("login")
-        else:
-            return render(request, "account_management/confirm_deletion.html")
-    else:
-        return redirect("invalid_link")
+        logout(request)
+        user.delete()
+        return redirect("login")
 
 
-@require_http_methods(["GET", "POST"])
-def login_view(request):
+class LoginView(View):
     """
-    Log in the user and redirect to the projects page upon success.
-    If the user is already logged in, redirect to the projects page.
+    View that handles the login functionality
     """
 
-    if request.user.is_authenticated:
-        return redirect(REDIRECT_PROJECTS_URL)
+    login_template = "account_management/login.html"
 
-    if request.method == "POST":
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(REDIRECT_PROJECTS_URL)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        return render(request, self.login_template, {"form": LoginForm()})
+
+    def post(self, request):
         form = LoginForm(request.POST)
         if form.is_valid():
             user = form.get_user()
             user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
             return redirect(REDIRECT_PROJECTS_URL)
-    else:
-        form = LoginForm()
-    return render(request, "account_management/login.html", {"form": form})
+        return render(request, self.login_template, {"form": form})
 
 
 @require_POST
@@ -233,35 +241,46 @@ def send_password_change_email(user, request):
     email.send()
 
 
-@require_http_methods(["GET", "POST"])
-def password_reset_view(request, uidb64, token):
+class PasswordResetView(View):
     """
-    View to reset the password and log the user out from all sessions.
+    View that handles the password reseting via the link send to the email address
     """
-    try:
+
+    password_reset_template = "account_management/password_reset.html"
+
+    def dispatch(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return redirect("invalid_link")
+
+        if not default_token_generator.check_token(user, token):
+            return redirect("invalid_link")
+
+        return super().dispatch(request, uidb64)
+
+    def get(self, request, _):
+        return render(
+            request, self.password_reset_template, {"form": PasswordResetForm()}
+        )
+
+    def post(self, request, uidb64):
+        form = PasswordResetForm(request.POST)
         uid = urlsafe_base64_decode(uidb64).decode()
         user = get_user_model().objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
 
-    if user is not None and default_token_generator.check_token(user, token):
-        if request.method == "POST":
-            form = PasswordResetForm(request.POST)
-            if form.is_valid():
-                user.set_password(form.cleaned_data["new_password"])
-                user.save()
+        if form.is_valid():
+            user.set_password(form.cleaned_data["new_password"])
+            user.save()
 
-                # Logout from all sessions
-                logout(request)
+            # Logout from all sessions
+            logout(request)
 
-                # Redirect to login page
-                return redirect("login")
+            # Redirect to login page
+            return redirect("login")
         else:
-            form = PasswordResetForm()
-
-        return render(request, "account_management/password_reset.html", {"form": form})
-    else:
-        return redirect("invalid_link")
+            return render(request, self.password_reset_template, {"form": form})
 
 
 @require_GET
@@ -289,22 +308,25 @@ def delete_account(request):
     return redirect(request.META.get("HTTP_REFERER", "projects"))
 
 
-@require_http_methods(["GET", "POST"])
-def password_forgotten_view(request):
+class PasswordForgottenView(View):
     """
     View if a user doesn't remember its password and wants to reset it.
     """
-    if request.method == "POST":
+
+    password_forgotten_template = "account_management/password_forgotten.html"
+
+    def get(self, request):
+        return render(
+            request, self.password_forgotten_template, {"form": PasswordForgottenForm()}
+        )
+
+    def post(self, request):
         form = PasswordForgottenForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"]
             user = User.objects.get(email=email)
             send_password_forgotten_email(user, request)
         return redirect("login")
-    else:
-        form = PasswordForgottenForm()
-
-    return render(request, "account_management/password_forgotten.html", {"form": form})
 
 
 def send_password_forgotten_email(user, request):
