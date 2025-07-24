@@ -50,6 +50,7 @@ class EditorViewTest(TestCase):
 
     def test_get_method_logged_out(self):
         self.client.logout()
+        self.editor = reverse("editor", kwargs={"project_name": "testProject"})
         response = self.client.get(self.editor)
         self.assertEqual(response.status_code, 302)
 
