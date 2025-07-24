@@ -43,7 +43,7 @@
   import { Editor } from "{% static 'js/editor/editor.mjs' %}";
 
   window.addEventListener("DOMContentLoaded", (_) => {
-    const editor = new Editor("{{ project_id }}");
+    const editor = Editor.getInstance("{{ project_id }}");
     editor.loadProject();
   });
 </script>

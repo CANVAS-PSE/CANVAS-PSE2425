@@ -1,13 +1,12 @@
 import { Heliostat, Receiver, LightSource } from "objects";
 
-let saveAndLoadHandlerInstance = null;
-
 /**
  * Provides a wrapper for the API
- *
  * Contains a methods for every databank manipulation needed.
  */
 export class SaveAndLoadHandler {
+  /** @type {SaveAndLoadHandler} */
+  static #instance;
   #projectID;
   #baseAPIUrl;
 
@@ -16,18 +15,29 @@ export class SaveAndLoadHandler {
    * @param {number} [projectId=null] the projectID for api requests.
    */
   constructor(projectId = null) {
-    if (saveAndLoadHandlerInstance) {
-      return saveAndLoadHandlerInstance;
+    if (SaveAndLoadHandler.#instance) {
+      throw new Error("Can notcreate class directly, use getInstance instead");
     }
-    if (!projectId) {
-      throw new Error(
-        "To initialize the SaveAndLoadHandler an projectID is needed",
-      );
-    }
-    saveAndLoadHandlerInstance = this;
-
+    SaveAndLoadHandler.#instance = this;
     this.#projectID = projectId;
     this.#baseAPIUrl = window.location.origin + "/api/";
+  }
+
+  /**
+   * Gets the current saveAndLoadHandler instance in use
+   * @param {number} [projectId=null] the id of the project, only needed for the first instanciation
+   * @returns {SaveAndLoadHandler} the saveAndLoadHandler in use
+   */
+  static getInstance(projectId = null) {
+    if (!SaveAndLoadHandler.#instance) {
+      if (!projectId) {
+        throw new Error(
+          "When executing get instance for the first time the project id is needed",
+        );
+      }
+      SaveAndLoadHandler.#instance = new SaveAndLoadHandler(projectId);
+    }
+    return SaveAndLoadHandler.#instance;
   }
 
   /**

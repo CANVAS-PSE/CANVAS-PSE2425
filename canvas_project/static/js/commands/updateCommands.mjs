@@ -54,7 +54,7 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
     this.#attribute = attribute;
     this.#newParameter = newParameter;
     this.#oldParameter = this.#getAttributeValue();
-    this.#saveAndLoadHandler = new SaveAndLoadHandler();
+    this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
 
   /**
@@ -185,7 +185,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
     this.#attribute = attribute;
     this.#newParameter = newParameter;
     this.#oldParameter = this.#getAttributeValue();
-    this.#saveAndLoadHandler = new SaveAndLoadHandler();
+    this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
 
   /**
@@ -363,7 +363,7 @@ export class UpdateLightsourceCommand extends SingleObjectCommand {
     this.#attribute = attribute;
     this.#newParameter = newParameter;
     this.#oldParameter = this.#getAttributeValue();
-    this.#saveAndLoadHandler = new SaveAndLoadHandler();
+    this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
 
   /**

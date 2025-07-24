@@ -28,7 +28,7 @@ export class OverviewHandler {
    */
   constructor(picker) {
     this.#picker = picker;
-    this.#editor = new Editor();
+    this.#editor = Editor.getInstance();
     this.#overviewButton = document.getElementById("overview-tab");
     this.#heliostatList = document.getElementById("heliostatList");
     this.#receiverList = document.getElementById("receiverList");
