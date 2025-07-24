@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.projects, name="projects"),
+    path("", views.ProjectsView.as_view(), name="projects"),
     path(
         "updateProject/<str:project_name>", views.update_project, name="updateProject"
     ),
@@ -28,7 +28,7 @@ urlpatterns = [
     ),
     path(
         "sharedProjects/<str:uid>/<str:token>",
-        views.shared_project,
+        views.SharedProjectView.as_view(),
         name="sharedProjects",
     ),
 ]

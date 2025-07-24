@@ -1,35 +1,32 @@
 from .models import Job
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from .models import Project
 
 import random
 
 
-# Create your views here.
-@login_required
-@require_http_methods(["POST", "GET"])
-def create_new_job(request, project_id):
-    project = get_object_or_404(Project, owner=request.user, pk=project_id)
-    if request.method == "POST":
-        new_job = Job.objects.create(owner=request.user, project=project)
-        return JsonResponse({"jobID": new_job.pk})
-    if request.method == "GET":
+class JobManagementView(LoginRequiredMixin, View):
+    def get(self, request, project_id):
+        project = get_object_or_404(Project, owner=request.user, pk=project_id)
         jobs = Job.objects.filter(owner=request.user, project=project).order_by(
             "starting_time"
         )
         job_ids = [job.pk for job in jobs]
         return JsonResponse({"jobIDs": job_ids})
 
+    def post(self, request, project_id):
+        project = get_object_or_404(Project, owner=request.user, pk=project_id)
+        new_job = Job.objects.create(owner=request.user, project=project)
+        return JsonResponse({"jobID": new_job.pk})
 
-@login_required
-@require_http_methods(["DELETE", "GET"])
-def get_job_status(request, job_id, project_id):
-    project = get_object_or_404(Project, owner=request.user, pk=project_id)
-    if request.method == "GET":
+
+class JobStatusView(LoginRequiredMixin, View):
+    def get(self, request, job_id, project_id):
+        project = get_object_or_404(Project, owner=request.user, pk=project_id)
         job = get_object_or_404(Job, pk=job_id, owner=request.user, project=project)
 
         starting_time = job.starting_time
@@ -58,7 +55,9 @@ def get_job_status(request, job_id, project_id):
                 "result": result,
             }
         )
-    if request.method == "DELETE":
+
+    def delete(self, request, job_id, project_id):
+        project = get_object_or_404(Project, owner=request.user, pk=project_id)
         job = get_object_or_404(Job, pk=job_id, owner=request.user, project=project)
         job.delete()
 
