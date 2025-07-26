@@ -39,6 +39,10 @@ export class UndoRedoHandler {
     this.#initializeButtons();
   }
 
+  /**
+   * Gets the current instance of the undo redo handler in use
+   * @returns {UndoRedoHandler} the udno redo handler in use
+   */
   static getInstance() {
     if (!UndoRedoHandler.#intance) {
       UndoRedoHandler.#intance = new UndoRedoHandler();
