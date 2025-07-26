@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SaveAndLoadHandler } from "saveAndLoadHandler";
 
 /**
  * Handles the genertion of project previews of the editor page
@@ -63,34 +64,10 @@ export class PreviewHandler {
       method: "POST",
       body: formData,
       headers: {
-        "X-CSRFToken": this.#getCookie("csrftoken"),
+        "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     }).catch((error) => {
       console.error("Error uploading file:", error);
     });
-  }
-
-  /**
-   * Gets the cookie specified by the name
-   * @param {string} name The name of the cookie you want to get.
-   * @returns {string|null} the cookie or null if it couldn't be found.
-   */
-  #getCookie(name) {
-    if (!document.cookie) {
-      return null;
-    }
-
-    // document.cookie is a key=value list separated by ';'
-    const xsrfCookies = document.cookie
-      .split(";")
-      .map((c) => c.trim())
-      //filter the right cookie name
-      .filter((c) => c.startsWith(name + "="));
-
-    if (xsrfCookies.length === 0) {
-      return null;
-    }
-    // return the decoded value of the first cookie found
-    return decodeURIComponent(xsrfCookies[0].split("=")[1]);
   }
 }

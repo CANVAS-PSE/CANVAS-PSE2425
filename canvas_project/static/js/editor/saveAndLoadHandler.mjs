@@ -313,11 +313,11 @@ export class SaveAndLoadHandler {
   }
 
   /**
-   * Gets the cookie specified by the name
+   * Utiltiy function that gets the cookie specified by the name
    * @param {string} name The name of the cookie you want to get.
    * @returns {string|null} the cookie or null if it couldn't be found.
    */
-  #getCookie(name) {
+  static getCookie(name) {
     if (!document.cookie) {
       return null;
     }
@@ -348,7 +348,7 @@ export class SaveAndLoadHandler {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": this.#getCookie("csrftoken"),
+        "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
       body: JSON.stringify(body),
     })

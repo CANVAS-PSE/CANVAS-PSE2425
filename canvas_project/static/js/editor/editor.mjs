@@ -18,6 +18,7 @@ import { PreviewHandler } from "previewHandler";
 import { ModeSelector } from "modeSelector";
 
 export class Editor {
+  /** @type {Editor} */
   static #instance;
   #undoRedoHandler;
   #saveAndLoadHandler;
@@ -69,7 +70,7 @@ export class Editor {
     this.#setUpScene();
 
     // initiate needed classes
-    this.#undoRedoHandler = new UndoRedoHandler();
+    this.#undoRedoHandler = UndoRedoHandler.getInstance();
     this.#picker = new Picker(
       this.#camera,
       this.#transformControls,

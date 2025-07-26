@@ -1,10 +1,13 @@
 import { Command } from "command";
-let undoRedoHandlerInstance = null;
+
 /**
  * This class manages the execution of commands and provides undo/redo functionality.
  * It maintains two stacks to keep track of executed and undone commands, allowing users to reverse or reapply actions seamlessly.
  */
 export class UndoRedoHandler {
+  /** @type {UndoRedoHandler} */
+  static #intance;
+
   /**
    * A stack that stores commands that have been executed.
    * The stack has a maximum size of 100 commands, and any excess commands will result in the oldest commands
@@ -25,15 +28,26 @@ export class UndoRedoHandler {
    * Sets up the undo and redo stacks with a maximum size of 100 commands each.
    */
   constructor() {
-    if (undoRedoHandlerInstance) {
-      return undoRedoHandlerInstance;
+    if (UndoRedoHandler.#intance) {
+      throw new Error("Can not create class directly, use getInstance instead");
     }
-    undoRedoHandlerInstance = this;
+    UndoRedoHandler.#intance = this;
 
     this.#undoStack = [];
     this.#redoStack = [];
     this.#initializeKeyBindings();
     this.#initializeButtons();
+  }
+
+  /**
+   * Gets the current instance of the undo redo handler in use
+   * @returns {UndoRedoHandler} the udno redo handler in use
+   */
+  static getInstance() {
+    if (!UndoRedoHandler.#intance) {
+      UndoRedoHandler.#intance = new UndoRedoHandler();
+    }
+    return UndoRedoHandler.#intance;
   }
 
   /**
