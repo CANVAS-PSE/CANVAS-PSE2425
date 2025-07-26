@@ -156,7 +156,7 @@ export class Heliostat extends SelectableObject {
   #aimPointComponent;
   #numberOfFacetsComponent;
   #kinematicTypeComponent;
-  #undoRedoHandler = new UndoRedoHandler();
+  #undoRedoHandler = UndoRedoHandler.getInstance();
   #isMovable = true;
   /**
    * @type { string[] }
@@ -456,7 +456,7 @@ export class Receiver extends SelectableObject {
   #resolutionU;
   #curvatureE;
   #curvatureU;
-  #undoRedoHandler = new UndoRedoHandler();
+  #undoRedoHandler = UndoRedoHandler.getInstance();
 
   #top;
   #base;
@@ -1020,7 +1020,7 @@ export class LightSource extends SelectableObject {
   #distributionMeanComponent;
   #distributionCovarianceComponent;
 
-  #undoRedoHandler = new UndoRedoHandler();
+  #undoRedoHandler = UndoRedoHandler.getInstance();
   #isMovable = false;
   #rotatableAxis = null;
 
