@@ -1,6 +1,7 @@
 import { Modal } from "bootstrap";
 import { CommandPrompt } from "commandPrompt";
 import { ObjectManager } from "objectManager";
+import { SaveAndLoadHandler } from "saveAndLoadHandler";
 
 /**
  * Parent class of all prompt commands
@@ -352,7 +353,7 @@ export class ExportProjectPromptCommand extends PromptCommand {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": this.#getCookie("csrftoken"),
+        "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     })
       .then((response) => {
@@ -374,30 +375,6 @@ export class ExportProjectPromptCommand extends PromptCommand {
         console.error("Error:", error);
         modal.hide();
       });
-  }
-
-  /**
-   * Gets the cookie specified by the name
-   * @param {string} name The name of the cookie you want to get.
-   * @returns {string|null} the cookie or null if it couldn't be found.
-   */
-  #getCookie(name) {
-    if (!document.cookie) {
-      return null;
-    }
-
-    // document.cookie is a key=value list separated by ';'
-    const xsrfCookies = document.cookie
-      .split(";")
-      .map((c) => c.trim())
-      //filter the right cookie name
-      .filter((c) => c.startsWith(name + "="));
-
-    if (xsrfCookies.length === 0) {
-      return null;
-    }
-    // return the decoded value of the first cookie found
-    return decodeURIComponent(xsrfCookies[0].split("=")[1]);
   }
 }
 
@@ -506,35 +483,11 @@ export class LogoutPromptCommand extends PromptCommand {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": this.#getCookie("csrftoken"),
+        "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     }).then(() => {
       window.location.href = window.location.origin;
     });
-  }
-
-  /**
-   * Gets the cookie specified by the name
-   * @param {string} name The name of the cookie you want to get.
-   * @returns {string|null} the cookie or null if it couldn't be found.
-   */
-  #getCookie(name) {
-    if (!document.cookie) {
-      return null;
-    }
-
-    // document.cookie is a key=value list separated by ';'
-    const xsrfCookies = document.cookie
-      .split(";")
-      .map((c) => c.trim())
-      //filter the right cookie name
-      .filter((c) => c.startsWith(name + "="));
-
-    if (xsrfCookies.length === 0) {
-      return null;
-    }
-    // return the decoded value of the first cookie found
-    return decodeURIComponent(xsrfCookies[0].split("=")[1]);
   }
 }
 

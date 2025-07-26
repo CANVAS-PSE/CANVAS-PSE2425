@@ -1,3 +1,5 @@
+import { SaveAndLoadHandler } from "saveAndLoadHandler";
+
 let apiUrl = window.location.origin;
 
 export class JobInterface {
@@ -52,7 +54,7 @@ export class JobInterface {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": this.#getCookie("csrftoken"),
+        "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     })
       .then((res) => res.json())
@@ -88,7 +90,7 @@ export class JobInterface {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": this.#getCookie("csrftoken"),
+        "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     }).catch((error) => {
       console.error("Error deleting new job:", error);
@@ -111,30 +113,6 @@ export class JobInterface {
       .catch((error) => {
         console.error("Error getting all jobs:", error);
       });
-  }
-
-  /**
-   * Gets the cookie specified by the name
-   * @param {string} name The name of the cookie you want to get.
-   * @returns {null} the cookie or null if it couldn't be found.
-   */
-  #getCookie(name) {
-    if (!document.cookie) {
-      return null;
-    }
-
-    // document.cookie is a key=value list separated by ';'
-    const xsrfCookies = document.cookie
-      .split(";")
-      .map((c) => c.trim())
-      //filter the right cookie name
-      .filter((c) => c.startsWith(name + "="));
-
-    if (xsrfCookies.length === 0) {
-      return null;
-    }
-    // return the decoded value of the first cookie found
-    return decodeURIComponent(xsrfCookies[0].split("=")[1]);
   }
 }
 
@@ -165,7 +143,7 @@ export class Job extends HTMLElement {
       "d-flex",
       "p-2",
       "gap-2",
-      "align-items-center"
+      "align-items-center",
     );
 
     const jobName = document.createElement("div");
@@ -186,7 +164,7 @@ export class Job extends HTMLElement {
     this.#progressElem.setAttribute("role", "progressbar");
     this.#progressElem.setAttribute(
       "aria-valuenow",
-      (this.#progress * 100).toString()
+      (this.#progress * 100).toString(),
     );
     this.#progressElem.setAttribute("aria-valuemin", "0");
     this.#progressElem.setAttribute("aria-valuemax", "100");
@@ -199,7 +177,7 @@ export class Job extends HTMLElement {
       "btn",
       "btn-primary",
       "text-nowrap",
-      "rouned-3"
+      "rouned-3",
     );
     this.#resultButton.innerHTML = "View Result";
     this.#resultButton.classList.add("d-none");
@@ -222,7 +200,7 @@ export class Job extends HTMLElement {
           this.#statusElem.innerHTML = "Status: " + data["status"];
           this.#progressElem.setAttribute(
             "aria-valuenow",
-            (data["progress"] * 100).toString()
+            (data["progress"] * 100).toString(),
           );
           this.#progressElem.style.width = data["progress"] * 100 + "%";
           if (data["progress"] >= 1) {
