@@ -350,7 +350,7 @@ export class ExportProjectPromptCommand extends PromptCommand {
     const projectName = window.location.pathname.split("/")[2];
 
     fetch(window.location + "/download", {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
