@@ -29,5 +29,5 @@ jobs:
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
-          cd canvas_project/
+          cd canvas_editor/
           python manage.py test

@@ -25,7 +25,7 @@ from django.http import JsonResponse
 
 REDIRECT_PROJECTS_URL = "projects"
 REDIRECT_LOGIN_URL = "login"
-DEFAULT_PROFIL_PIC = "profile_pics/default.jpg"
+DEFAULT_PROFIL_PIC = "profile_pics/default.svg"
 
 
 class RegistrationView(View):

@@ -1,5 +1,5 @@
 {
-  "name": "canvas_project",
+  "name": "canvas_editor",
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
@@ -16,6 +16,6 @@
     "lint-staged": "^16.1.2"
   },
   "lint-staged": {
-    "*.{js,mjs}": "npx eslint --fix --config canvas_project/eslint.config.mjs"
+    "*.{js,mjs}": "npx eslint --fix --config canvas_editor/eslint.config.mjs"
   }
 }

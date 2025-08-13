@@ -26,11 +26,11 @@ pip install -r requirements.txt
 # Installing Pre-commit Hooks
 pre-commit install
 
-# add the .env file to the root of the canvas_project folder
+# add the .env file to the root of the canvas_editor folder
 # containing debug variable, client_id + secret_key for OpenID, email-host password, etc.
 
 # configure the database
-cd canvas_project/
+cd canvas_editor/
 python manage.py migrate
 
 # Install npm dependencies

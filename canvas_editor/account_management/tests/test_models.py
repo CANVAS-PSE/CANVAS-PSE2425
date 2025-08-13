@@ -18,7 +18,7 @@ class UserProfileModelTest(TestCase):
     def test_user_profile_creation(self):
         self.assertEqual(self.profile.user, self.user)
         self.assertFalse(bool(self.profile.profile_picture))
-        self.assertEqual(self.profile.image_url, static("img/profile_pics/default.jpg"))
+        self.assertEqual(self.profile.image_url, static("img/profile_pics/default.svg"))
 
     def test_user_profile_str(self):
         self.assertEqual(str(self.profile), self.user.email)

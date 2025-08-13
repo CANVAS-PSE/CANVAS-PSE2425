@@ -41,7 +41,7 @@ class JobStatusView(LoginRequiredMixin, View):
 
         if time_diff > 3:
             status = "Finished"
-            result = f"/static/img/render/example_{random.randint(1, 19)}.pdf"
+            result = "/static/img/render/example_0.pdf"
         elif time_diff > 2:
             status = "Aligning Heliostats"
         else:

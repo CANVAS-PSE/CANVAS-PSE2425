@@ -34,8 +34,8 @@ class UserProfile(models.Model):
     def image_url(self):
         if self.profile_picture and os.path.isfile(self.profile_picture.path):
             return self.profile_picture.url
-        return static("img/profile_pics/default.jpg")
+        return static("img/profile_pics/default.svg")
 
     @staticmethod
     def default_picture_url():
-        return static("img/profile_pics/default.jpg")
+        return static("img/profile_pics/default.svg")
