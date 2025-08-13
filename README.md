@@ -1,4 +1,4 @@
-![banner](https://github.com/user-attachments/assets/a3be1582-ffdc-4a34-94df-08d07bcda11e)
+![banner](logos/banner.jpg)
 
 # CANVAS - 3D editor for the AI-enhanced differentiable Ray Tracer ARTIST
 
@@ -52,6 +52,7 @@ Please also carefully check our [code of conduct](CODE_OF_CONDUCT.md) :blue_hear
 Liberally licensed under MIT.
 
 ## Acknowledgments
+
 This work is supported by the [Helmholtz AI](https://www.helmholtz.ai/) platform grant.
 
 ---
