@@ -1,4 +1,4 @@
-![banner](logos/banner.jpg)
+![banner](./logos/banner.jpg)
 
 # CANVAS - 3D editor for the AI-enhanced differentiable Ray Tracer ARTIST
 
