@@ -1,11 +1,14 @@
+"""A module for managing hdf5 files in Canvas."""
+
 import os
 import pathlib
+
+import h5py
 import torch
-from artist.util import config_dictionary, set_logger_config
+from artist.data_loader import stral_loader
 from artist.scenario.configuration_classes import (
     ActuatorConfig,
     ActuatorPrototypeConfig,
-    SurfaceConfig,
     HeliostatConfig,
     HeliostatListConfig,
     KinematicPrototypeConfig,
@@ -17,39 +20,41 @@ from artist.scenario.configuration_classes import (
     TargetAreaConfig,
     TargetAreaListConfig,
 )
-from artist.scenario.scenario_generator import (
-    ActuatorListConfig,
-    KinematicConfig,
-    ScenarioGenerator,
-)
-from artist.scenario.surface_converter import SurfaceConverter
-from project_management.models import Heliostat, Lightsource, Project, Receiver
-import h5py
+from artist.scenario.h5_scenario_generator import H5ScenarioGenerator
+from artist.scenario.surface_generator import SurfaceGenerator
+from artist.util import config_dictionary, set_logger_config
 from django.conf import settings
 from django.contrib.auth.models import User
+from project_management.models import Heliostat, Lightsource, Project, Receiver
 
 
 class HDF5Manager:
-    def create_hdf5_file(self, user: User, project: Project):
-        """
-        Creates the actual HDF5 file
+    """Manages hdf5 file. Creates or reads hdf5 files compatible with ARTIST.
+
+    Methods
+    -------
+    create_hdf5_file
+    create_project_from_hdf5_file
+
+    """
+
+    def create_hdf5_file(self, user: User, project: Project) -> None:
+        """Create a HDF5 file for the given project.
 
         Parameters
         ----------
+        user : User
+            The user associated with the project.
         project : Project
-            The project which is to be converted into an HDF5 file
+            The project to be converted to an HDF5 file.
 
-        Returns
-        -------
-        HDF5File????
         """
-
         #
         # General Setup
         #
 
         # Set CANVAS_ROOT
-        CANVAS_ROOT = settings.BASE_DIR
+        canvas_root = settings.BASE_DIR
 
         # Set up logger.
         set_logger_config()
@@ -74,7 +79,7 @@ class HDF5Manager:
 
         # The path to the stral file containing heliostat and deflectometry data.
         stral_file_path = (
-            pathlib.Path(CANVAS_ROOT) / "hdf5_management/data/test_stral_data.binp"
+            pathlib.Path(canvas_root) / "hdf5_management/data/test_stral_data.binp"
         )
 
         # Include the power plant configuration.
@@ -143,25 +148,58 @@ class HDF5Manager:
         # Prototype
         #
 
-        # Generate surface configuration from STRAL data.
-        # max_epoch set to 100 for a faster scenario file creation
-        surface_converter = SurfaceConverter(
-            max_epoch=100,
-        )
-        facet_prototype_list = surface_converter.generate_surface_config_from_stral(
+        (
+            facet_translation_vectors,
+            canting,
+            surface_points_with_facets_list,
+            surface_normals_with_facets_list,
+        ) = stral_loader.extract_stral_deflectometry_data(
             stral_file_path=stral_file_path, device=device
         )
 
-        # Generate the surface prototype configuration.
-        surface_prototype_config = SurfacePrototypeConfig(
-            facet_list=facet_prototype_list
+        # Generate surface configuration from STRAL data.
+        surface_generator = SurfaceGenerator(device=device)
+
+        # Please leave the optimizable parameters empty, they will automatically be added for the surface fit.
+        nurbs_fit_optimizer = torch.optim.Adam(
+            [torch.empty(1, requires_grad=True)], lr=1e-3
+        )
+        nurbs_fit_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            nurbs_fit_optimizer,
+            mode="min",
+            factor=0.2,
+            patience=50,
+            threshold=1e-7,
+            threshold_mode="abs",
         )
 
-        # Note that we do not include kinematic deviations in this scenario!
+        # Use this surface config for fitted deflectometry surfaces.
+        surface_config = surface_generator.generate_fitted_surface_config(
+            heliostat_name="heliostat_1",
+            facet_translation_vectors=facet_translation_vectors,
+            canting=canting,
+            surface_points_with_facets_list=surface_points_with_facets_list,
+            surface_normals_with_facets_list=surface_normals_with_facets_list,
+            optimizer=nurbs_fit_optimizer,
+            scheduler=nurbs_fit_scheduler,
+            device=device,
+        )
+
+        # Use this surface configuration for ideal surfaces.
+        # surface_config = surface_generator.generate_ideal_surface_config(
+        #     facet_translation_vectors=facet_translation_vectors,
+        #     canting=canting,
+        #     device=device,
+        # )
+
+        surface_prototype_config = SurfacePrototypeConfig(
+            facet_list=surface_config.facet_list
+        )
+
         # Include the kinematic prototype configuration.
         kinematic_prototype_config = KinematicPrototypeConfig(
             type=config_dictionary.rigid_body_key,
-            initial_orientation=torch.tensor([0.0, 0.0, 1.0, 0.0], device=device),
+            initial_orientation=torch.tensor([0.0, 0.0, 1.0, 0.0]),
         )
 
         # Include an ideal actuator.
@@ -171,7 +209,7 @@ class HDF5Manager:
             clockwise_axis_movement=False,
         )
 
-        # Include a second ideal actuator.
+        # Include an ideal actuator.
         actuator2_prototype = ActuatorConfig(
             key="actuator_2",
             type=config_dictionary.ideal_actuator_key,
@@ -203,13 +241,13 @@ class HDF5Manager:
         # For reasons of simplicity and the lack of Heliostat-surface attributes in this Canvas version,
         # the facet_prototype_list will be used here.
         # Due to this, the number of facettes will always be the one set in the stral-file in this version (=4).
-        surface_config = SurfaceConfig(facet_list=facet_prototype_list)
 
         # Create a list of all heliostats
         heliostat_list = []
 
         # Add all heliostats to list
         for heliostat in project.heliostats.all():
+
             heliostat_config = HeliostatConfig(
                 name=str(heliostat),
                 id=heliostat.pk,
@@ -222,23 +260,6 @@ class HDF5Manager:
                     ],
                     device=device,
                 ),
-                aim_point=torch.tensor(
-                    [
-                        heliostat.aimpoint_x,
-                        heliostat.aimpoint_y,
-                        heliostat.aimpoint_z,
-                        1.0,
-                    ],
-                    device=device,
-                ),
-                surface=surface_config,
-                kinematic=KinematicConfig(
-                    type=config_dictionary.rigid_body_key,
-                    initial_orientation=torch.tensor(
-                        [0.0, 0.0, 1.0, 0.0], device=device
-                    ),
-                ),
-                actuators=ActuatorListConfig(actuator_list=actuator_prototype_list),
             )
             heliostat_list.append(heliostat_config)
 
@@ -249,7 +270,7 @@ class HDF5Manager:
         # Generate the scenario HDF5 file given the defined parameters
         #
 
-        scenario_generator = ScenarioGenerator(
+        scenario_generator = H5ScenarioGenerator(
             file_path=scenario_path,
             power_plant_config=power_plant_config,
             target_area_list_config=target_area_list_config,
@@ -260,24 +281,34 @@ class HDF5Manager:
         scenario_generator.generate_scenario()
 
     def create_project_from_hdf5_file(self, project_file: str, new_project: Project):
+        """Create a project from a HDF5 file.
+
+        Parameters
+        ----------
+        project_file: str
+            The path to the HDF5 file
+        new_project: Project
+            The project in which the data is to be stored
+
+        """
         with h5py.File(project_file, "r") as f:
-            heliostats_group: h5py.Group = f.get("heliostats")
+            heliostats_group: h5py.Group = f.get(config_dictionary.heliostat_key)
             if heliostats_group is not None:
                 for heliostat_object in heliostats_group:
                     heliostat = heliostats_group[heliostat_object]
 
-                    aimpoint = heliostat["aim_point"]
+                    aimpoint = heliostat[config_dictionary.heliostat_aim_point]
                     aimpoint_x = aimpoint[0]
                     aimpoint_y = aimpoint[1]
                     aimpoint_z = aimpoint[2]
 
-                    position = heliostat["position"]
+                    position = heliostat[config_dictionary.heliostat_position]
                     position_x = position[0]
                     position_y = position[1]
                     position_z = position[2]
 
-                    surface = heliostat["surface"]
-                    facets = surface["facets"]
+                    surface = heliostat[config_dictionary.heliostat_surface_key]
+                    facets = surface[config_dictionary.facets_key]
                     number_of_facets = len(facets.keys())
 
                     Heliostat.objects.create(
@@ -292,27 +323,25 @@ class HDF5Manager:
                         number_of_facets=number_of_facets,
                     )
 
-            # powerplant_group: h5py.Group = f.get("power_plant")
-            # if powerplant_group is not None:
-            #     pass
-            # # At the moment there is no powerPlant position stored with a scenario in CANVAS
-            #
-            # prototypes_group: h5py.Group = f.get("prototypes")
-            # if prototypes_group is not None:
-            #     pass
-            #     # Placeholder for when prototypes are effectively used
+            light_sources_group: h5py.Group = f.get(config_dictionary.light_source_key)
+            if light_sources_group is not None:
+                for lightsource_object in light_sources_group:
+                    light_source = light_sources_group[lightsource_object]
+                    number_of_rays = light_source[
+                        config_dictionary.light_source_number_of_rays
+                    ]
+                    lightsource_type = light_source[config_dictionary.light_source_type]
 
-            lightsources_group: h5py.Group = f.get("lightsources")
-            if lightsources_group is not None:
-                for lightsource_object in lightsources_group:
-                    lightsource = lightsources_group[lightsource_object]
-                    number_of_rays = lightsource["number_of_rays"]
-                    lightsource_type = lightsource["type"]
-
-                    distribution_params = lightsource["distribution_parameters"]
-                    covariance = distribution_params["covariance"]
-                    distribution_type = distribution_params["distribution_type"]
-                    mean = distribution_params["mean"]
+                    distribution_params = light_source[
+                        config_dictionary.light_source_distribution_parameters
+                    ]
+                    covariance = distribution_params[
+                        config_dictionary.light_source_covariance
+                    ]
+                    distribution_type = distribution_params[
+                        config_dictionary.light_source_distribution_type
+                    ]
+                    mean = distribution_params[config_dictionary.light_source_mean]
 
                     Lightsource.objects.create(
                         project=new_project,
@@ -324,23 +353,23 @@ class HDF5Manager:
                         mean=mean[()],
                     )
 
-            receivers_group: h5py.Group = f.get("target_areas")
+            receivers_group: h5py.Group = f.get(config_dictionary.target_area_receiver)
             if receivers_group is not None:
                 for receiver_object in receivers_group:
                     receiver = receivers_group[receiver_object]
 
-                    position = receiver["position_center"]
+                    position = receiver[config_dictionary.target_area_position_center]
                     position_x = position[0]
                     position_y = position[1]
                     position_z = position[2]
 
-                    normal = receiver["normal_vector"]
+                    normal = receiver[config_dictionary.target_area_normal_vector]
                     normal_x = normal[0]
                     normal_y = normal[1]
                     normal_z = normal[2]
 
-                    plane_e = receiver["plane_e"]
-                    plane_u = receiver["plane_u"]
+                    plane_e = receiver[config_dictionary.target_area_plane_e]
+                    plane_u = receiver[config_dictionary.target_area_plane_u]
 
                     Receiver.objects.create(
                         project=new_project,
