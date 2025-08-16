@@ -1,23 +1,24 @@
+from allauth.socialaccount.models import SocialAccount
 from django.test import TestCase
+
 from account_management.forms import (
-    LoginForm,
-    RegisterForm,
-    UpdateAccountForm,
     DeleteAccountForm,
+    LoginForm,
     PasswordForgottenForm,
     PasswordResetForm,
+    RegisterForm,
+    UpdateAccountForm,
 )
 from account_management.models import User
-from allauth.socialaccount.models import SocialAccount
 from account_management.tests.test_constants import (
-    TOO_SHORT_PASSWORD,
-    SECURE_PASSWORD,
-    NO_UPPERCASE_PASSWORD,
+    MISMATCHED_BUT_CORRECT_PASSWORD,
     NO_LOWERCASE_PASSWORD,
-    UPDATED_PASSWORD,
     NO_NUMERIC_PASSWORD,
     NO_SPECIAL_CHAR_PASSWORD,
-    MISMATCHED_BUT_CORRECT_PASSWORD,
+    NO_UPPERCASE_PASSWORD,
+    SECURE_PASSWORD,
+    TOO_SHORT_PASSWORD,
+    UPDATED_PASSWORD,
     WRONG_LOGIN_PASSWORD,
 )
 

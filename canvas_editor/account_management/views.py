@@ -1,49 +1,53 @@
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.shortcuts import redirect
-from django.contrib.auth import login, update_session_auth_hash, logout
-from .forms import (
-    RegisterForm,
-    LoginForm,
-    UpdateAccountForm,
-    DeleteAccountForm,
-    PasswordResetForm,
-    PasswordForgottenForm,
-)
-from django.views.decorators.http import require_POST, require_GET
-from django.views import View
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.contrib.auth import get_user_model
-from .models import UserProfile
 from allauth.socialaccount.models import SocialAccount
-from django.http import JsonResponse
+from canvas import message_dict, path_dict, view_name_dict
+from django.contrib import messages
+from django.contrib.auth import get_user_model, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMessage
+from django.http import (
+    HttpResponse,
+    HttpResponsePermanentRedirect,
+    HttpResponseRedirect,
+    JsonResponse,
+)
+from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views import View
+from django.views.decorators.http import require_GET, require_POST
 
-REDIRECT_PROJECTS_URL = "projects"
-REDIRECT_LOGIN_URL = "login"
-DEFAULT_PROFIL_PIC = "profile_pics/default.svg"
+from .forms import (
+    DeleteAccountForm,
+    LoginForm,
+    PasswordForgottenForm,
+    PasswordResetForm,
+    RegisterForm,
+    UpdateAccountForm,
+)
+from .models import UserProfile
 
 
 class RegistrationView(View):
-    """
-    Register a new user and redirect to the login page upon success.
+    """Register a new user and redirect to the login page upon success.
+
     If the user is already logged in, redirect to the projects page.
     """
 
     def dispatch(self, request, *args, **kwargs):
+        """Deside where to dispatch this request to or to redirect to the projects overview."""
         if request.user.is_authenticated:
-            return redirect(REDIRECT_PROJECTS_URL)
+            return redirect(view_name_dict.projects_view)
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
+    def get(self, request) -> HttpResponse:
+        """Render the registration view."""
         form = RegisterForm()
         return render(request, "account_management/register.html", {"form": form})
 
-    def post(self, request):
+    def post(self, request) -> HttpResponse:
+        """Handle the registration process."""
         form = RegisterForm(request.POST)
         if form.is_valid():
             first_name = form.cleaned_data.get("first_name")
@@ -61,14 +65,12 @@ class RegistrationView(View):
             user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
             send_register_email(user, request)
-            return redirect(REDIRECT_PROJECTS_URL)
+            return redirect(view_name_dict.projects_view)
         return render(request, "account_management/register.html", {"form": form})
 
 
-def send_register_email(user, request):
-    """
-    Send an email to the user to confirm that their account has been created.
-    """
+def send_register_email(user, request) -> None:
+    """Send an email to the user to confirm that their account has been created."""
     subject = "CANVAS: Registration Confirmation"
 
     # Create the token for the user
@@ -93,70 +95,74 @@ def send_register_email(user, request):
 
 
 class ConfirmDeletionView(View):
-    """
-    View to confirm the deletion of an account via the email that gets send on registration
-    """
+    """View to confirm the deletion of an account via the email that gets send on registration."""
 
     def dispatch(self, request, uidb64, token):
+        """Deside where to dispatch this request to.
+
+        Also checks if the user exists and the link is valid. Renders invalid link view if so.
+        """
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             self.user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return redirect("invalid_link")
+            return redirect(view_name_dict.invalid_link_view)
         if not default_token_generator.check_token(self.user, token):
-            return redirect("invalid_link")
+            return redirect(view_name_dict.invalid_link_view)
 
         return super().dispatch(request)
 
-    def get(self, request):
+    def get(self, request) -> HttpResponse:
+        """Render the confirm deletion view."""
         return render(request, "account_management/confirm_deletion.html")
 
-    def post(self, request):
+    def post(self, request) -> HttpResponse:
+        """Delete and logout the user."""
         logout(request)
         self.user.delete()
         return redirect("login")
 
 
 class LoginView(View):
-    """
-    View that handles the login functionality
-    """
+    """View that handles the login functionality."""
 
     login_template = "account_management/login.html"
 
     def dispatch(self, request, *args, **kwargs):
+        """Decide where to dispatch this request to.
+
+        Redirects the user to the projects overview page if logged in.
+        """
         if request.user.is_authenticated:
-            return redirect(REDIRECT_PROJECTS_URL)
+            return redirect(view_name_dict.projects_view)
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
+    def get(self, request) -> HttpResponse:
+        """Render the login page."""
         return render(request, self.login_template, {"form": LoginForm()})
 
-    def post(self, request):
+    def post(self, request) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+        """Log the user in."""
         form = LoginForm(request.POST)
         if form.is_valid():
             user = form.get_user()
             user.backend = "django.contrib.auth.backends.ModelBackend"
             login(request, user)
-            return redirect(REDIRECT_PROJECTS_URL)
+            return redirect(view_name_dict.projects_view)
         return render(request, self.login_template, {"form": form})
 
 
 @require_POST
-def logout_view(request):
-    """
-    Log out the current user and redirect to the login page.
-    """
+def logout_view(request) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+    """Log out the current user and redirect to the login page."""
     logout(request)
-    return redirect(REDIRECT_LOGIN_URL)
+    return redirect(view_name_dict.login_view)
 
 
 @require_POST
 @login_required
-def update_account(request):
-    """
-    Update the user's account information.
-    """
+def update_account(request) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+    """Update the user's account information."""
     user = request.user
 
     form = UpdateAccountForm(instance=user, data=request.POST, files=request.FILES)
@@ -182,20 +188,22 @@ def update_account(request):
             new_profile_picture=form.cleaned_data["profile_picture"],
         )
 
-        messages.success(request, "Your account has been updated successfully.")
+        messages.success(request, message_dict.account_created_text)
     else:
         for field in form:
             for error in field.errors:
                 messages.error(request, f"Error in {field.label}: {error}")
-    return redirect(request.META.get("HTTP_REFERER", "projects"))
+    return redirect(request.META.get("HTTP_REFERER", view_name_dict.projects_view))
 
 
-def _update_profile_picture(user: User, delete_picture: bool, new_profile_picture):
+def _update_profile_picture(
+    user: User, delete_picture: bool, new_profile_picture
+) -> None:
     profile, _ = UserProfile.objects.get_or_create(user=user)
 
     if delete_picture and profile.profile_picture:
         profile.profile_picture.delete()
-        profile.profile_picture = DEFAULT_PROFIL_PIC
+        profile.profile_picture = path_dict.default_profil_pic
     elif new_profile_picture:
         profile.profile_picture.delete()
         profile.profile_picture = new_profile_picture
@@ -206,16 +214,15 @@ def _update_profile_picture(user: User, delete_picture: bool, new_profile_pictur
 
 @login_required
 @require_GET
-def get_user_info(request):
+def get_user_info(request) -> JsonResponse:
+    """Get wether the user is an OpenID user or not."""
     user = request.user
     is_openid_user = SocialAccount.objects.filter(user=user).exists()
     return JsonResponse({"is_openid_user": is_openid_user})
 
 
-def send_password_change_email(user, request):
-    """
-    Send an email to the user to confirm that their password has been changed.
-    """
+def send_password_change_email(user, request) -> None:
+    """Send an email to the user to confirm that their password has been changed."""
     subject = "Password Change Confirmation"
 
     # Create the token for the user
@@ -240,30 +247,34 @@ def send_password_change_email(user, request):
 
 
 class PasswordResetView(View):
-    """
-    View that handles the password reseting via the link send to the email address
-    """
+    """View that handles the password reseting via the link send to the email address."""
 
     password_reset_template = "account_management/password_reset.html"
 
     def dispatch(self, request, uidb64, token):
+        """Decide where to dispatch this request to.
+
+        If the user does not exist or link is invalid, a according error view is rendered.
+        """
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             self.user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return redirect("invalid_link")
+            return redirect(view_name_dict.invalid_link_view)
 
         if not default_token_generator.check_token(self.user, token):
-            return redirect("invalid_link")
+            return redirect(view_name_dict.invalid_link_view)
 
         return super().dispatch(request)
 
-    def get(self, request):
+    def get(self, request) -> HttpResponse:
+        """Render the password reset form."""
         return render(
             request, self.password_reset_template, {"form": PasswordResetForm()}
         )
 
-    def post(self, request):
+    def post(self, request) -> HttpResponse:
+        """Validate the reset from and reset the password."""
         form = PasswordResetForm(request.POST)
 
         if form.is_valid():
@@ -280,43 +291,42 @@ class PasswordResetView(View):
 
 
 @require_GET
-def invalid_link(request):
+def invalid_link(request) -> HttpResponse:
+    """Render a invalid link view."""
     return render(request, "account_management/invalid_link.html")
 
 
 @require_POST
 @login_required
-def delete_account(request):
-    """
-    Delete the user's account.
-    """
+def delete_account(request) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+    """Delete the user's account."""
     if request.method == "POST":
         form = DeleteAccountForm(request.user, request.POST)
         if form.is_valid():
             request.user.delete()
             logout(request)
-            return redirect(REDIRECT_LOGIN_URL)
+            return redirect(view_name_dict.login_view)
         else:
             for field in form:
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
 
-    return redirect(request.META.get("HTTP_REFERER", "projects"))
+    return redirect(request.META.get("HTTP_REFERER", view_name_dict.projects_view))
 
 
 class PasswordForgottenView(View):
-    """
-    View if a user doesn't remember its password and wants to reset it.
-    """
+    """View if a user doesn't remember its password and wants to reset it."""
 
     password_forgotten_template = "account_management/password_forgotten.html"
 
-    def get(self, request):
+    def get(self, request) -> HttpResponse:
+        """Render the password forgotten form."""
         return render(
             request, self.password_forgotten_template, {"form": PasswordForgottenForm()}
         )
 
-    def post(self, request):
+    def post(self, request) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
+        """Validate the form and send the reset email."""
         form = PasswordForgottenForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"]
@@ -326,9 +336,7 @@ class PasswordForgottenView(View):
 
 
 def send_password_forgotten_email(user, request):
-    """
-    Send an email to the user to reset their password.
-    """
+    """Send an email to the user to reset their password."""
     subject = "Password Reset"
 
     # Create the token for the user

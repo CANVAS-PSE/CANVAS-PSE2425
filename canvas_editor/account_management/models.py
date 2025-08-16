@@ -1,19 +1,19 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.templatetags.static import static
 import os
 
+from canvas import path_dict
+from django.contrib.auth.models import User
+from django.db import models
+from django.templatetags.static import static
 
-def user_directory_path(instance, filename):
-    """
-    Return the path to the user's profile picture.
-    """
+
+def user_directory_path(instance, filename: str) -> str:
+    """Return the path to the user's profile picture."""
     return f"users/{instance.user.id}/{filename}"
 
 
 class UserProfile(models.Model):
-    """
-    Model representing a user's profile.
+    """Model representing a user's profile.
+
     This model extends the default Django User model by adding a profile picture.
     """
 
@@ -25,17 +25,17 @@ class UserProfile(models.Model):
     )
 
     def __str__(self):
-        """
-        Return user's email.
-        """
+        """Return user's email."""
         return self.user.email
 
     @property
     def image_url(self):
+        """Get the url to the profile picture of the user."""
         if self.profile_picture and os.path.isfile(self.profile_picture.path):
             return self.profile_picture.url
-        return static("img/profile_pics/default.svg")
+        return static(path_dict.default_profil_pic)
 
     @staticmethod
     def default_picture_url():
-        return static("img/profile_pics/default.svg")
+        """Get the default profile picture path."""
+        return static(path_dict.default_profil_pic)

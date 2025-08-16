@@ -1,29 +1,41 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
-from account_management.models import UserProfile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.templatetags.static import static
+from django.test import TestCase
+
+from account_management.models import UserProfile
+from account_management.tests.test_constants import (
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_USERNAME,
+)
+from canvas import path_dict
 
 
 class UserProfileModelTest(TestCase):
+    """Contains tests for the user profile model."""
+
     def setUp(self):
-        """Setup a test user and user profile."""
+        """Configure the testing environment."""
         self.user = User.objects.create_user(
-            username="testuser",
-            email="testuser@example.com",
-            password="SecurePassword123!",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
+            password=SECURE_PASSWORD,
         )
         self.profile = UserProfile.objects.get(user=self.user)
 
     def test_user_profile_creation(self):
+        """Test the fields of the automatically generated user profile on user creation."""
         self.assertEqual(self.profile.user, self.user)
         self.assertFalse(bool(self.profile.profile_picture))
-        self.assertEqual(self.profile.image_url, static("img/profile_pics/default.svg"))
+        self.assertEqual(self.profile.image_url, static(path_dict.default_profil_pic))
 
     def test_user_profile_str(self):
+        """Test the __str__ method of the user profile."""
         self.assertEqual(str(self.profile), self.user.email)
 
     def test_user_profile_picture_upload_path(self):
+        """Test that the upload of profile pictures works."""
         file = SimpleUploadedFile(
             "test.jpg", b"file_content", content_type="image/jpeg"
         )

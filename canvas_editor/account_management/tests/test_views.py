@@ -1,31 +1,34 @@
-from django.test import TestCase, Client
-from django.urls import reverse
+import io
+import json
+import os
+
+from allauth.socialaccount.models import SocialAccount
+from canvas import view_name_dict
 from django.contrib.auth.models import User
-from django.core import mail
-from django.test.client import RequestFactory
-from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.messages import get_messages
+from django.core import mail
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase
+from django.test.client import RequestFactory
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode
+from PIL import Image
+from project_management.models import Project
+
+from account_management.models import UserProfile
+from account_management.tests.test_constants import (
+    COMPLETELY_WRONG_PASSWORD,
+    MISMATCHED_BUT_CORRECT_PASSWORD,
+    NO_SPECIAL_CHAR_PASSWORD,
+    RESET_PASSWORD,
+    SECURE_PASSWORD,
+    UPDATED_PASSWORD,
+)
 from account_management.views import (
-    send_register_email,
     send_password_change_email,
     send_password_forgotten_email,
-)
-from django.contrib.messages import get_messages
-from account_management.models import UserProfile
-from django.core.files.uploadedfile import SimpleUploadedFile
-from project_management.models import Project
-from PIL import Image
-import io
-import os
-import json
-from allauth.socialaccount.models import SocialAccount
-from account_management.tests.test_constants import (
-    SECURE_PASSWORD,
-    MISMATCHED_BUT_CORRECT_PASSWORD,
-    UPDATED_PASSWORD,
-    RESET_PASSWORD,
-    NO_SPECIAL_CHAR_PASSWORD,
-    COMPLETELY_WRONG_PASSWORD,
+    send_register_email,
 )
 
 
@@ -313,7 +316,9 @@ class PasswordResetViewTest(TestCase):
         )
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
-        self.password_reset_url = reverse("password_reset", args=[self.uid, self.token])
+        self.password_reset_url = reverse(
+            view_name_dict.password_reset_view, args=[self.uid, self.token]
+        )
 
     def test_GET(self):
         # Test if the password reset page is accessible via GET request
