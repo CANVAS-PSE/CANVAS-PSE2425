@@ -47,7 +47,7 @@ class ParameterizedViewTestMixin:
         self.assertRedirects(response, self.projects_url)
 
 
-class RegisterViewTests(TestCase, ParameterizedViewTestMixin):
+class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.register_url = reverse("register")
@@ -107,7 +107,7 @@ class RegisterViewTests(TestCase, ParameterizedViewTestMixin):
         self.assertTrue(response.context["form"].errors)
 
 
-class LoginViewTest(TestCase, ParameterizedViewTestMixin):
+class LoginViewTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.login_url = reverse("login")
@@ -222,7 +222,7 @@ class SendRegisterMailTest(TestCase):
         )  # Ensure the confirmation URL is in the email body
 
 
-class ConfirmDeletionTest(TestCase):
+class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -302,7 +302,7 @@ class SendPasswordChangeMailTest(TestCase):
         )  # Ensure the confirmation URL is in the email body
 
 
-class PasswordResetViewTest(TestCase):
+class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -374,7 +374,7 @@ class PasswordResetViewTest(TestCase):
         self.assertRedirects(response, reverse("invalid_link"))
 
 
-class InvalidLinkTest(TestCase):
+class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.invalid_link_url = reverse("invalid_link")
@@ -452,7 +452,7 @@ class DeleteAccountTest(TestCase):
         self.assertRedirects(response, "/?next=/delete_account/")
 
 
-class PasswordForgottenViewTest(TestCase):
+class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
