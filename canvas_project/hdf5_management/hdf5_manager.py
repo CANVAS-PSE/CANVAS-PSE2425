@@ -2,11 +2,10 @@ import os
 import pathlib
 import h5py
 import torch
-from artist.util import config_dictionary, set_logger_config
+from artist.data_loader import stral_loader
 from artist.scenario.configuration_classes import (
     ActuatorConfig,
     ActuatorPrototypeConfig,
-    SurfaceConfig,
     HeliostatConfig,
     HeliostatListConfig,
     KinematicPrototypeConfig,
@@ -19,6 +18,7 @@ from artist.scenario.configuration_classes import (
     TargetAreaListConfig,
 )
 from artist.scenario.h5_scenario_generator import H5ScenarioGenerator
+from artist.scenario.surface_generator import SurfaceGenerator
 from artist.util import config_dictionary, set_logger_config
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -138,19 +138,51 @@ class HDF5Manager:
         #
         # Prototype
         #
-
-        # Generate surface configuration from STRAL data.
-        # max_epoch set to 100 for a faster scenario file creation
-        surface_converter = SurfaceConverter(
-            max_epoch=100,
-        )
-        facet_prototype_list = surface_converter.generate_surface_config_from_stral(
+        (
+            facet_translation_vectors,
+            canting,
+            surface_points_with_facets_list,
+            surface_normals_with_facets_list,
+        ) = stral_loader.extract_stral_deflectometry_data(
             stral_file_path=stral_file_path, device=device
         )
 
-        # Generate the surface prototype configuration.
+        # Generate surface configuration from STRAL data.
+        surface_generator = SurfaceGenerator(device=device)
+
+        # Please leave the optimizable parameters empty, they will automatically be added for the surface fit.
+        nurbs_fit_optimizer = torch.optim.Adam(
+            [torch.empty(1, requires_grad=True)], lr=1e-3
+        )
+        nurbs_fit_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            nurbs_fit_optimizer,
+            mode="min",
+            factor=0.2,
+            patience=50,
+            threshold=1e-7,
+            threshold_mode="abs",
+        )
+
+        # Use this surface config for fitted deflectometry surfaces.
+        surface_config = surface_generator.generate_fitted_surface_config(
+            heliostat_name="heliostat_1",
+            facet_translation_vectors=facet_translation_vectors,
+            canting=canting,
+            surface_points_with_facets_list=surface_points_with_facets_list,
+            surface_normals_with_facets_list=surface_normals_with_facets_list,
+            optimizer=nurbs_fit_optimizer,
+            scheduler=nurbs_fit_scheduler,
+            device=device,
+        )
+
+        # Use this surface configuration for ideal surfaces.
+        # surface_config = surface_generator.generate_ideal_surface_config(
+        #     facet_translation_vectors=facet_translation_vectors,
+        #     canting=canting,
+        #     device=device,
+        # )
         surface_prototype_config = SurfacePrototypeConfig(
-            facet_list=facet_prototype_list
+            facet_list=surface_config.facet_list
         )
 
         # Note that we do not include kinematic deviations in this scenario!
@@ -199,7 +231,6 @@ class HDF5Manager:
         # For reasons of simplicity and the lack of Heliostat-surface attributes in this Canvas version,
         # the facet_prototype_list will be used here.
         # Due to this, the number of facettes will always be the one set in the stral-file in this version (=4).
-        surface_config = SurfaceConfig(facet_list=facet_prototype_list)
 
         # Create a list of all heliostats
         heliostat_list = []
@@ -218,23 +249,6 @@ class HDF5Manager:
                     ],
                     device=device,
                 ),
-                aim_point=torch.tensor(
-                    [
-                        heliostat.aimpoint_x,
-                        heliostat.aimpoint_y,
-                        heliostat.aimpoint_z,
-                        1.0,
-                    ],
-                    device=device,
-                ),
-                surface=surface_config,
-                kinematic=KinematicConfig(
-                    type=config_dictionary.rigid_body_key,
-                    initial_orientation=torch.tensor(
-                        [0.0, 0.0, 1.0, 0.0], device=device
-                    ),
-                ),
-                actuators=ActuatorListConfig(actuator_list=actuator_prototype_list),
             )
             heliostat_list.append(heliostat_config)
 
@@ -245,7 +259,7 @@ class HDF5Manager:
         # Generate the scenario HDF5 file given the defined parameters
         #
 
-        scenario_generator = ScenarioGenerator(
+        scenario_generator = H5ScenarioGenerator(
             file_path=scenario_path,
             power_plant_config=power_plant_config,
             target_area_list_config=target_area_list_config,
