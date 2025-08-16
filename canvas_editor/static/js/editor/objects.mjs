@@ -253,6 +253,10 @@ export class Heliostat extends SelectableObject {
     return true;
   }
 
+  get isMovable() {
+    return this.#isMovable;
+  }
+
   get oldPosition() {
     return this.#oldPosition;
   }
