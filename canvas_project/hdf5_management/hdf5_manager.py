@@ -17,12 +17,12 @@ from artist.scenario.configuration_classes import (
     TargetAreaConfig,
     TargetAreaListConfig,
 )
-from artist.scenario.scenario_generator import (
+from artist.scenario.h5_scenario_generator import (
     ActuatorListConfig,
     KinematicConfig,
     ScenarioGenerator,
 )
-from artist.scenario.surface_converter import SurfaceConverter
+from artist.scenario.surface_generator import SurfaceConverter
 from project_management.models import Heliostat, Lightsource, Project, Receiver
 import h5py
 from django.conf import settings
