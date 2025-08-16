@@ -7,7 +7,6 @@ requires-python = ">=3.10"
 dependencies = [
   "django",
   "djangorestframework",
-  "git+https://github.com/ARTIST-Association/ARTIST.git",
   "torch",
   "django-cleanup",
   "django-allauth",
@@ -16,11 +15,18 @@ dependencies = [
   "python-dotenv",
   "cryptography",
   "Pillow",
+  "mypy"
+]
+
+[project.optional-dependencies]
+dev = [
   "coverage",
-  "mypy",
   "pre-commit",
   "ruff"
 ]
+
+[tool.setuptools]
+packages = ["canvas", "editor", "autosave_api", "job_interface", "hdf5_management", "account_management", "project_management"]
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
