@@ -29,7 +29,25 @@ from account_management.tests.test_constants import (
 )
 
 
-class RegisterViewTests(TestCase):
+class ParameterizedViewTestMixin:
+    """
+    Mixin class to provide parameterized testing capabilities for views.
+    """
+
+    def assert_view_get(self, url_name, template, expected_status=200):
+        response = self.client.get(url_name)
+        self.assertEqual(response.status_code, expected_status)
+        self.assertTemplateUsed(response, template)
+
+    # Test if an authenticated user is redirected to the projects page when accessing the register/login page
+    def GET_authenticated(self, url_namee):
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        response = self.client.get(url_namee)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, self.projects_url)
+
+
+class RegisterViewTests(TestCase, ParameterizedViewTestMixin):
     def setUp(self):
         self.client = Client()
         self.register_url = reverse("register")
@@ -50,19 +68,13 @@ class RegisterViewTests(TestCase):
         }
 
     def test_GET(self):
-        # Test if the register page is accessible via GET request
-        response = self.client.get(self.register_url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/register.html")
+        ParameterizedViewTestMixin.assert_view_get(
+            self, self.register_url, "account_management/register.html"
+        )
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the register page
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
-
-        response = self.client.get(self.register_url)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.projects_url)
+        ParameterizedViewTestMixin.GET_authenticated(self, self.register_url)
 
     def test_POST_valid_data(self):
         # Test if a new user can successfully register and is redirected to the projects page
@@ -97,7 +109,7 @@ class RegisterViewTests(TestCase):
         self.assertTrue(response.context["form"].errors)
 
 
-class LoginViewTest(TestCase):
+class LoginViewTest(TestCase, ParameterizedViewTestMixin):
     def setUp(self):
         self.client = Client()
         self.login_url = reverse("login")
@@ -112,19 +124,13 @@ class LoginViewTest(TestCase):
 
     def test_GET(self):
         # Test if the login page is accessible via GET request
-        response = self.client.get(self.login_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/login.html")
+        ParameterizedViewTestMixin.assert_view_get(
+            self, self.login_url, "account_management/login.html"
+        )
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the login page
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
-
-        response = self.client.get(self.login_url)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.projects_url)
+        ParameterizedViewTestMixin.GET_authenticated(self, self.login_url)
 
     def test_POST_valid_data(self):
         # Test if a valid user can successfully log in and is redirected to the projects page
@@ -237,11 +243,10 @@ class ConfirmDeletionTest(TestCase):
         )
 
     def test_GET(self):
-        # Test if the confirmation page is accessible via GET request
-        response = self.client.get(self.confirm_deletion_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/confirm_deletion.html")
+        # Test if the confirm deletion page is accessible via GET request
+        ParameterizedViewTestMixin.assert_view_get(
+            self, self.confirm_deletion_url, "account_management/confirm_deletion.html"
+        )
 
     def test_POST(self):
         # Test if a valid POST request deletes the user and redirects to login page
@@ -317,10 +322,9 @@ class PasswordResetViewTest(TestCase):
 
     def test_GET(self):
         # Test if the password reset page is accessible via GET request
-        response = self.client.get(self.password_reset_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/password_reset.html")
+        ParameterizedViewTestMixin.assert_view_get(
+            self, self.password_reset_url, "account_management/password_reset.html"
+        )
 
     def test_POST_valid_data(self):
         # Test if a valid password reset request updates the password and logs the user out
@@ -381,10 +385,9 @@ class InvalidLinkTest(TestCase):
 
     def test_GET(self):
         # Test if the invalid link page is accessible via GET request
-        response = self.client.get(self.invalid_link_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/invalid_link.html")
+        ParameterizedViewTestMixin.assert_view_get(
+            self, self.invalid_link_url, "account_management/invalid_link.html"
+        )
 
     def test_POST(self):
         # Test if the invalid link page is accessible via POST
@@ -467,10 +470,11 @@ class PasswordForgottenViewTest(TestCase):
 
     def test_GET(self):
         # Test if the password forgotten page is accessible via GET request
-        response = self.client.get(self.password_forgotten_url)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/password_forgotten.html")
+        ParameterizedViewTestMixin.assert_view_get(
+            self,
+            self.password_forgotten_url,
+            "account_management/password_forgotten.html",
+        )
 
     def test_POST_valid_data(self):
         # Test if a valid email submission redirects to login page

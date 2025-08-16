@@ -32,10 +32,17 @@ class UserProfile(models.Model):
 
     @property
     def image_url(self):
+        """
+        Return the URL of the profile picture.
+        If no profile picture is set, return the default image URL.
+        """
         if self.profile_picture and os.path.isfile(self.profile_picture.path):
             return self.profile_picture.url
         return static("img/profile_pics/default.jpg")
 
     @staticmethod
     def default_picture_url():
+        """
+        Return the URL of the default profile picture.
+        """
         return static("img/profile_pics/default.jpg")

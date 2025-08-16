@@ -17,7 +17,16 @@ import {
   Vector4,
 } from "three";
 
+/**
+ * Class representing an axis arrow for the compass.
+ */
 class CompassAxisArrow extends Object3D {
+  /**
+   * Creates an instance of the compass axis arrow.
+   * @param {string} axisId - The ID of the axis (x, y, or z).
+   * @param {Color} color - The color of the arrow.
+   * @param {string} label - The label for the arrow.
+   */
   constructor(axisId, color, label) {
     super();
     this.axisId = axisId;
@@ -35,7 +44,7 @@ class CompassAxisArrow extends Object3D {
       1,
       color,
       0.3,
-      0.3,
+      0.3
     );
     this.add(this.arrow);
 
@@ -44,12 +53,21 @@ class CompassAxisArrow extends Object3D {
     this.add(this.label);
   }
 
+  /**
+   * Disposes of the arrow and label resources.
+   */
   dispose() {
     this.arrow.dispose();
     this.label.material.map.dispose();
     this.label.material.dispose();
   }
 
+  /**
+   * Creates a text sprite for the compass label.
+   * @param {Color} color - The color of the text.
+   * @param {string} text - The text to display.
+   * @returns {Sprite} - The created text sprite.
+   */
   getTextSprite(color, text) {
     const canvas = document.createElement("canvas");
     canvas.width = 64;
@@ -79,7 +97,7 @@ class CompassAxisCircle extends Object3D {
     const axisGeometry = new BoxGeometry(0.8, axisWidth, axisWidth).translate(
       0.4,
       0,
-      0,
+      0
     );
     this.axis = new Mesh(axisGeometry, this.getAxisMaterial(color));
 
