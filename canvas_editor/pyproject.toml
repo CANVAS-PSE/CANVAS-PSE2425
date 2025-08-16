@@ -4,26 +4,6 @@ version = "1.0-beta"
 description = "An web-based 3D editor for ARTIST"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [
-  "django",
-  "djangorestframework",
-  "torch",
-  "django-cleanup",
-  "django-allauth",
-  "requests",
-  "PyJWT",
-  "python-dotenv",
-  "cryptography",
-  "Pillow",
-  "mypy"
-]
-
-[project.optional-dependencies]
-dev = [
-  "coverage",
-  "pre-commit",
-  "ruff"
-]
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.

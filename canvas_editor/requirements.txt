@@ -1,1 +1,15 @@
+django
+djangorestframework
 git+https://github.com/ARTIST-Association/ARTIST.git
+torch
+django-cleanup
+django-allauth
+requests
+PyJWT
+python-dotenv
+cryptography
+Pillow
+coverage
+mypy
+pre-commit
+ruff
