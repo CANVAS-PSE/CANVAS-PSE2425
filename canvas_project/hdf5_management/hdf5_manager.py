@@ -1,5 +1,6 @@
 import os
 import pathlib
+import h5py
 import torch
 from artist.util import config_dictionary, set_logger_config
 from artist.scenario.configuration_classes import (
