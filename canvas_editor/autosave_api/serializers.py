@@ -3,7 +3,7 @@ from project_management.models import (
     Project,
     Heliostat,
     Receiver,
-    Lightsource,
+    LightSource,
     Settings,
 )
 
@@ -28,13 +28,13 @@ class ReceiverSerializer(serializers.ModelSerializer):
         exclude = ["project"]
 
 
-class LightsourceSerializer(serializers.ModelSerializer):
+class LightSourceSerializer(serializers.ModelSerializer):
     """
-    Serializer to convert a lightsource into JSON or to convert JSON into a lightsource.
+    Serializer to convert a light source into JSON or to convert JSON into a light source.
     """
 
     class Meta:
-        model = Lightsource
+        model = LightSource
         exclude = ["project"]
 
 
@@ -65,7 +65,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
     heliostats = HeliostatSerializer(many=True, read_only=True)
     receivers = ReceiverSerializer(many=True, read_only=True)
-    lightsources = LightsourceSerializer(many=True, read_only=True)
+    light_sources = LightSourceSerializer(many=True, read_only=True)
     settings = SettingsSerializer(read_only=True)
 
     class Meta:
@@ -74,6 +74,6 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
             "name",
             "heliostats",
             "receivers",
-            "lightsources",
+            "light_sources",
             "settings",
         ]

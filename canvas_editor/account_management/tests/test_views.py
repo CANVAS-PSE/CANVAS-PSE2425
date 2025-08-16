@@ -3,7 +3,6 @@ import json
 import os
 
 from allauth.socialaccount.models import SocialAccount
-from canvas import view_name_dict
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.messages import get_messages
@@ -14,7 +13,6 @@ from django.test.client import RequestFactory
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 from PIL import Image
-from project_management.models import Project
 
 from account_management.models import UserProfile
 from account_management.tests.test_constants import (
@@ -30,6 +28,8 @@ from account_management.views import (
     send_password_forgotten_email,
     send_register_email,
 )
+from canvas import path_dict, view_name_dict
+from project_management.models import Project
 
 
 class RegisterViewTests(TestCase):
@@ -782,7 +782,9 @@ class UpdateAccountTest(TestCase):
         self.profile.refresh_from_db()
 
         # Verify profile picture is default picture
-        self.assertEqual(self.profile.profile_picture.name, "profile_pics/default.svg")
+        self.assertEqual(
+            self.profile.profile_picture.name, path_dict.default_profil_pic
+        )
 
         # Verify the old image was deleted
         self.assertFalse(os.path.exists(expected_path))

@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from job_interface.models import Job
-from project_management.models import Project, Heliostat, Receiver, Lightsource
+from project_management.models import Project, Heliostat, Receiver, LightSource
 from django.utils import timezone
 from datetime import timedelta
 from django.urls import reverse
@@ -18,7 +18,7 @@ class ViewTests(TestCase):
         )
         Heliostat.objects.create(project=self.project)
         Receiver.objects.create(project=self.project)
-        Lightsource.objects.create(project=self.project)
+        LightSource.objects.create(project=self.project)
         self.job = Job.objects.create(owner=self.user, project=self.project)
         self.client.login(username="testuser", password="testpassword")
 

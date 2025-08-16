@@ -6,7 +6,7 @@ from project_management.models import (
     Project,
     Heliostat,
     Receiver,
-    Lightsource,
+    LightSource,
     Settings,
 )
 from .serializers import (
@@ -14,7 +14,7 @@ from .serializers import (
     ProjectDetailSerializer,
     HeliostatSerializer,
     ReceiverSerializer,
-    LightsourceSerializer,
+    LightSourceSerializer,
     SettingsSerializer,
 )
 
@@ -138,12 +138,12 @@ class ReceiverDetail(generics.RetrieveUpdateDestroyAPIView):
         return Receiver.objects.filter(project__owner=self.request.user)
 
 
-class LightsourceList(generics.ListCreateAPIView):
+class LightSourceList(generics.ListCreateAPIView):
     """
-    Creates a view to list all lightsources or to create a new one.
+    Creates a view to list all light sources or to create a new one.
     """
 
-    serializer_class = LightsourceSerializer
+    serializer_class = LightSourceSerializer
 
     # Accepted authentication classes and the needed permissions to access the API
     authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -159,24 +159,24 @@ class LightsourceList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         project_id = self.kwargs["project_id"]
-        return Lightsource.objects.filter(
+        return LightSource.objects.filter(
             project__id=project_id, project__owner=self.request.user
         )
 
 
-class LightsourceDetail(generics.RetrieveUpdateDestroyAPIView):
+class LightSourceDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Creates a view to retrieve, update or delete a specific lightsource, defined by the given pk.
     """
 
-    serializer_class = LightsourceSerializer
+    serializer_class = LightSourceSerializer
 
     # Accepted authentication classes and the needed permissions to access the API
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Lightsource.objects.filter(project__owner=self.request.user)
+        return LightSource.objects.filter(project__owner=self.request.user)
 
 
 class SettingsDetail(generics.RetrieveUpdateAPIView):

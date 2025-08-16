@@ -257,7 +257,7 @@ export class Editor {
 
     const heliostatList = projectJson["heliostats"];
     const receiverList = projectJson["receivers"];
-    const lightsourceList = projectJson["lightsources"];
+    const lightsourceList = projectJson["light_sources"];
     const settingsList = projectJson["settings"];
 
     heliostatList.forEach((heliostat) => {
@@ -268,13 +268,6 @@ export class Editor {
           heliostat.position_y,
           heliostat.position_z,
         ),
-        new THREE.Vector3(
-          heliostat.aimpoint_x,
-          heliostat.aimpoint_y,
-          heliostat.aimpoint_z,
-        ),
-        heliostat.number_of_facets,
-        heliostat.kinematic_type,
         heliostat.id,
       );
       this.#selectableGroup.add(tmp);
@@ -289,7 +282,6 @@ export class Editor {
           receiver.position_y,
           receiver.position_z,
         ),
-        receiver.rotation_y,
         new THREE.Vector3(
           receiver.normal_x,
           receiver.normal_y,

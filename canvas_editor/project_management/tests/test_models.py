@@ -1,14 +1,15 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
+from django.db.utils import IntegrityError
+from django.test import TestCase
+from django.utils import timezone
+
 from project_management.models import (
-    Project,
     Heliostat,
+    LightSource,
+    Project,
     Receiver,
-    Lightsource,
     Settings,
 )
-from django.utils import timezone
-from django.db.utils import IntegrityError
 
 
 class ModelTests(TestCase):
@@ -56,11 +57,6 @@ class ModelTests(TestCase):
         self.assertEqual(heliostat.position_x, 0)
         self.assertEqual(heliostat.position_y, 0)
         self.assertEqual(heliostat.position_z, 0)
-        self.assertEqual(heliostat.aimpoint_x, 0)
-        self.assertEqual(heliostat.aimpoint_y, 50)
-        self.assertEqual(heliostat.aimpoint_z, 0)
-        self.assertEqual(heliostat.number_of_facets, 4)
-        self.assertEqual(heliostat.kinematic_type, "ideal")
         self.assertEqual(
             str(heliostat), str(heliostat.project) + " Heliostat " + str(heliostat.pk)
         )
@@ -76,7 +72,6 @@ class ModelTests(TestCase):
         self.assertEqual(receiver.normal_x, 0)
         self.assertEqual(receiver.normal_y, 1)
         self.assertEqual(receiver.normal_z, 0)
-        self.assertEqual(receiver.rotation_y, 0)
         self.assertEqual(receiver.receiver_type, "planar")
         self.assertEqual(receiver.curvature_e, 0)
         self.assertEqual(receiver.curvature_u, 0)
@@ -88,19 +83,19 @@ class ModelTests(TestCase):
             str(receiver), str(receiver.project) + " Receiver " + str(receiver.pk)
         )
 
-    def test_lightsource(self):
-        lightsource = Lightsource.objects.create(project=self.project)
+    def test_light_source(self):
+        light_source = LightSource.objects.create(project=self.project)
 
-        self.assertTrue(isinstance(lightsource, Lightsource))
-        self.assertEqual(lightsource.name, "Light source")
-        self.assertEqual(lightsource.number_of_rays, 100)
-        self.assertEqual(lightsource.lightsource_type, "sun")
-        self.assertEqual(lightsource.distribution_type, "normal")
-        self.assertEqual(lightsource.mean, 0)
-        self.assertEqual(lightsource.covariance, 4.3681e-06)
+        self.assertTrue(isinstance(light_source, LightSource))
+        self.assertEqual(light_source.name, "Light source")
+        self.assertEqual(light_source.number_of_rays, 100)
+        self.assertEqual(light_source.light_source_type, "sun")
+        self.assertEqual(light_source.distribution_type, "normal")
+        self.assertEqual(light_source.mean, 0)
+        self.assertEqual(light_source.covariance, 4.3681e-06)
         self.assertEqual(
-            str(lightsource),
-            str(lightsource.project) + " Lightsource " + str(lightsource.pk),
+            str(light_source),
+            str(light_source.project) + " LightSource " + str(light_source.pk),
         )
 
     def test_settings(self):

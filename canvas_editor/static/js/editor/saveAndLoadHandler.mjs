@@ -63,11 +63,6 @@ export class SaveAndLoadHandler {
       position_x: heliostat.position.x,
       position_y: heliostat.position.y,
       position_z: heliostat.position.z,
-      aimpoint_x: heliostat.aimPoint.x,
-      aimpoint_y: heliostat.aimPoint.y,
-      aimpoint_z: heliostat.aimPoint.z,
-      number_of_facets: heliostat.numberOfFacets,
-      kinematic_type: heliostat.kinematicType,
     };
 
     return this.#makeApiCall(url, "POST", body);
@@ -90,7 +85,6 @@ export class SaveAndLoadHandler {
       normal_x: receiver.normalVector.x,
       normal_y: receiver.normalVector.y,
       normal_z: receiver.normalVector.z,
-      rotation_y: receiver.quaternionToYDegree(receiver.oldQuaternion),
       curvature_e: receiver.curvatureE,
       curvature_u: receiver.curvatureU,
       plane_e: receiver.planeE,
@@ -109,7 +103,7 @@ export class SaveAndLoadHandler {
    */
   async createLightSource(lightsource) {
     const url =
-      this.#baseAPIUrl + "projects/" + this.#projectID + "/lightsources/";
+      this.#baseAPIUrl + "projects/" + this.#projectID + "/light_sources/";
 
     const body = {
       name: lightsource.objectName,
@@ -182,7 +176,7 @@ export class SaveAndLoadHandler {
       this.#baseAPIUrl +
       "projects/" +
       this.#projectID +
-      "/lightsources/" +
+      "/light_sources/" +
       lightsource.apiID +
       "/";
 
@@ -214,11 +208,6 @@ export class SaveAndLoadHandler {
       position_x: heliostat.position.x,
       position_y: heliostat.position.y,
       position_z: heliostat.position.z,
-      aimpoint_x: heliostat.aimPoint.x,
-      aimpoint_y: heliostat.aimPoint.y,
-      aimpoint_z: heliostat.aimPoint.z,
-      number_of_facets: heliostat.numberOfFacets,
-      kinematic_type: heliostat.kinematicType,
     };
 
     return this.#makeApiCall(url, "PUT", body);
@@ -252,7 +241,6 @@ export class SaveAndLoadHandler {
       normal_x: receiver.normalVector.x,
       normal_y: receiver.normalVector.y,
       normal_z: receiver.normalVector.z,
-      rotation_y: receiver.quaternionToYDegree(receiver.oldQuaternion),
       curvature_e: receiver.curvatureE,
       curvature_u: receiver.curvatureU,
       plane_e: receiver.planeE,
@@ -278,7 +266,7 @@ export class SaveAndLoadHandler {
       this.#baseAPIUrl +
       "projects/" +
       this.#projectID +
-      "/lightsources/" +
+      "/light_sources/" +
       lightsource.apiID +
       "/";
 

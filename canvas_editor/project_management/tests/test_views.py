@@ -1,16 +1,18 @@
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
-from project_management.models import (
-    Project,
-    Heliostat,
-    Receiver,
-    Lightsource,
-)
-from django.utils import timezone
-from django.urls import reverse
-from django.conf import settings
 import pathlib
+
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.http import urlsafe_base64_encode
+
+from project_management.models import (
+    Heliostat,
+    LightSource,
+    Project,
+    Receiver,
+)
 
 
 class ViewTests(TestCase):
@@ -24,7 +26,7 @@ class ViewTests(TestCase):
         )
         Heliostat.objects.create(project=self.project)
         Receiver.objects.create(project=self.project)
-        Lightsource.objects.create(project=self.project)
+        LightSource.objects.create(project=self.project)
         self.client.login(username="testuser", password="testpassword")
 
         # urls
@@ -160,16 +162,13 @@ class ViewTests(TestCase):
             Project.objects.last().heliostats.all()[0].position_x, -3
         )  # Position x of heliostat 0 in the testScenario.h5 file
         self.assertEqual(
-            Project.objects.last().heliostats.all()[0].aimpoint_y, 70
-        )  # Aimpoint y of heliostat 0 in the testScenario.h5 file
-        self.assertEqual(
             Project.objects.last().receivers.count(), 1
         )  # Number of receivers in the testScenario.h5 file
         self.assertEqual(
-            Project.objects.last().receivers.all()[0].position_y, 70
+            Project.objects.last().receivers.all()[0].position_y, 50
         )  # Position y of receiver 0 in the testScenario.h5 file
         self.assertEqual(
-            Project.objects.last().lightsources.count(), 1
+            Project.objects.last().light_sources.count(), 1
         )  # Number of receivers in the testScenario.h5 file
 
     def test_projects_POST_no_data(self):
@@ -307,21 +306,17 @@ class ViewTests(TestCase):
             self.project.heliostats.all()[0].position_x,
         )
         self.assertEqual(
-            Project.objects.last().heliostats.all()[0].kinematic_type,
-            self.project.heliostats.all()[0].kinematic_type,
-        )
-        self.assertEqual(
             Project.objects.last().receivers.count(), self.project.receivers.count()
         )
         self.assertEqual(
             Project.objects.last().receivers.all()[0].project, Project.objects.last()
         )
         self.assertEqual(
-            Project.objects.last().lightsources.count(),
-            self.project.lightsources.count(),
+            Project.objects.last().light_sources.count(),
+            self.project.light_sources.count(),
         )
         self.assertEqual(
-            Project.objects.last().lightsources.all()[0].project,
+            Project.objects.last().light_sources.all()[0].project,
             Project.objects.last(),
         )
 
@@ -378,20 +373,16 @@ class ViewTests(TestCase):
             self.project.heliostats.all()[0].position_x,
         )
         self.assertEqual(
-            Project.objects.last().heliostats.all()[0].kinematic_type,
-            self.project.heliostats.all()[0].kinematic_type,
-        )
-        self.assertEqual(
             Project.objects.last().receivers.count(), self.project.receivers.count()
         )
         self.assertEqual(
             Project.objects.last().receivers.all()[0].project, Project.objects.last()
         )
         self.assertEqual(
-            Project.objects.last().lightsources.count(),
-            self.project.lightsources.count(),
+            Project.objects.last().light_sources.count(),
+            self.project.light_sources.count(),
         )
         self.assertEqual(
-            Project.objects.last().lightsources.all()[0].project,
+            Project.objects.last().light_sources.all()[0].project,
             Project.objects.last(),
         )

@@ -36,13 +36,7 @@ export class ObjectManager {
    * Method to create a heliostat
    */
   createHeliostat() {
-    const heliostat = new Heliostat(
-      "Heliostat",
-      new Vector3(15, 0, -15),
-      new Vector3(0, 0, 0),
-      4,
-      "ideal"
-    );
+    const heliostat = new Heliostat("Heliostat", new Vector3(15, 0, -15));
     this.#undoRedoHandler.executeCommand(new CreateHeliostatCommand(heliostat));
     this.#picker.setSelection([heliostat]);
   }
@@ -54,7 +48,6 @@ export class ObjectManager {
     const receiver = new Receiver(
       "Receiver",
       new Vector3(0, 50, 0),
-      0,
       new Vector3(0, 0, 0),
       "round",
       0,
@@ -62,7 +55,7 @@ export class ObjectManager {
       0,
       0,
       0,
-      0
+      0,
     );
     this.#undoRedoHandler.executeCommand(new CreateReceiverCommand(receiver));
 
@@ -79,10 +72,10 @@ export class ObjectManager {
       "sun",
       "normal",
       1,
-      1
+      1,
     );
     this.#undoRedoHandler.executeCommand(
-      new CreateLightSourceCommand(lightSource)
+      new CreateLightSourceCommand(lightSource),
     );
     this.#picker.setSelection([lightSource]);
   }

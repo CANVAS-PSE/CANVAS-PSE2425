@@ -156,7 +156,7 @@ def duplicate_project(request, project_name):
         fks_to_copy = (
             list(project.heliostats.all())
             + list(project.receivers.all())
-            + list(project.lightsources.all())
+            + list(project.light_sources.all())
         )
         settings = project.settings
         project.pk = None
@@ -247,7 +247,7 @@ class SharedProjectView(LoginRequiredMixin, View):
         fks_to_copy = (
             list(project.heliostats.all())
             + list(project.receivers.all())
-            + list(project.lightsources.all())
+            + list(project.light_sources.all())
         )
         settings = project.settings
         project.pk = None

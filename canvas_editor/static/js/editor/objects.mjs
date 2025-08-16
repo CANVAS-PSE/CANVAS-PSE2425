@@ -3,7 +3,6 @@ import {
   MultiFieldInspectorComponent,
   SelectFieldInspectorComponent,
   SingleFieldInspectorComponent,
-  SliderFieldInspectorComponent,
 } from "inspectorComponents";
 import * as THREE from "three";
 import { Vector3, Object3D } from "three";
@@ -148,14 +147,8 @@ export class SelectableObject extends Object3D {
  */
 export class Heliostat extends SelectableObject {
   #apiID;
-  #aimPoint;
-  #numberOfFacets;
-  #kinematicType;
   #headerComponent;
   #positionComponent;
-  #aimPointComponent;
-  #numberOfFacetsComponent;
-  #kinematicTypeComponent;
   #undoRedoHandler = UndoRedoHandler.getInstance();
   #isMovable = true;
   /**
@@ -169,19 +162,9 @@ export class Heliostat extends SelectableObject {
    * @param {number} [apiID=null] The id for api usage
    * @param {string} heliostatName the name of the heliostat
    * @param {THREE.Vector3} position The position of the heliostat.
-   * @param {THREE.Vector3} aimPoint The Point the Heliostat is aiming at.
-   * @param {number} numberOfFacets Number of Facets the Heliostat has.
-   * @param {string} kinematicType The type of kinematic the Heliostat has.
    */
 
-  constructor(
-    heliostatName,
-    position,
-    aimPoint,
-    numberOfFacets,
-    kinematicType,
-    apiID = null,
-  ) {
+  constructor(heliostatName, position, apiID = null) {
     super(heliostatName);
     this.loader = new GLTFLoader();
     this.loader.load("/static/models/heliostat.glb", (gltf) => {
@@ -196,10 +179,6 @@ export class Heliostat extends SelectableObject {
     this.position.copy(position);
     this.#oldPosition = new Vector3(position.x, position.y, position.z);
     this.#apiID = apiID;
-    this.#aimPoint = aimPoint;
-    this.#numberOfFacets = numberOfFacets;
-    this.#kinematicType = kinematicType;
-    this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
 
     // create components for inspector
     this.#headerComponent = new HeaderInspectorComponent(
@@ -264,91 +243,10 @@ export class Heliostat extends SelectableObject {
       uCoordinate,
       eCoordinate,
     ]);
-
-    const nAimpoint = new SingleFieldInspectorComponent(
-      "N",
-      "number",
-      () => this.#aimPoint.x,
-      (newValue) => {
-        this.#undoRedoHandler.executeCommand(
-          new UpdateHeliostatCommand(
-            this,
-            "aimPoint",
-            new Vector3(newValue, this.#aimPoint.y, this.#aimPoint.z),
-          ),
-        );
-      },
-      -Infinity,
-    );
-
-    const uAimpoint = new SingleFieldInspectorComponent(
-      "U",
-      "number",
-      () => this.#aimPoint.y,
-      (newValue) => {
-        this.#undoRedoHandler.executeCommand(
-          new UpdateHeliostatCommand(
-            this,
-            "aimPoint",
-            new Vector3(this.#aimPoint.x, newValue, this.#aimPoint.z),
-          ),
-        );
-      },
-      -Infinity,
-    );
-
-    const eAimpoint = new SingleFieldInspectorComponent(
-      "E",
-      "number",
-      () => this.#aimPoint.z,
-      (newValue) => {
-        this.#undoRedoHandler.executeCommand(
-          new UpdateHeliostatCommand(
-            this,
-            "aimPoint",
-            new Vector3(this.#aimPoint.x, this.#aimPoint.y, newValue),
-          ),
-        );
-      },
-      -Infinity,
-    );
-
-    this.#aimPointComponent = new MultiFieldInspectorComponent("Aimpoint", [
-      nAimpoint,
-      uAimpoint,
-      eAimpoint,
-    ]);
-
-    this.#numberOfFacetsComponent = new SingleFieldInspectorComponent(
-      "Number of facets",
-      "number",
-      () => this.#numberOfFacets,
-      (newValue) => {
-        this.#undoRedoHandler.executeCommand(
-          new UpdateHeliostatCommand(this, "numberOfFacets", newValue),
-        );
-      },
-      -Infinity,
-    );
-
-    this.#kinematicTypeComponent = new SelectFieldInspectorComponent(
-      "Kinematic type",
-      [{ label: "ideal", value: "ideal" }],
-      () => this.#kinematicType,
-      (newValue) => {
-        this.#undoRedoHandler.executeCommand(
-          new UpdateHeliostatCommand(this, "kinematicType", newValue),
-        );
-      },
-    );
   }
 
   get rotatableAxis() {
     return this.#rotatableAxis;
-  }
-
-  get isMovable() {
-    return this.#isMovable;
   }
 
   get isSelectable() {
@@ -366,7 +264,6 @@ export class Heliostat extends SelectableObject {
   updatePosition(position) {
     this.position.copy(position);
     this.#oldPosition = new Vector3(position.x, position.y, position.z);
-    this.lookAt(this.#aimPoint.x, this.oldPosition.y, this.#aimPoint.z);
   }
 
   /**
@@ -395,19 +292,6 @@ export class Heliostat extends SelectableObject {
       new UpdateHeliostatCommand(this, "position", position),
     );
   }
-  /**
-   * Updates the aimPoint of the Heliostat and updates rotation of the Heliostat accordingly
-   * @param {THREE.Vector3} aimPoint - the new aimPoint of the Heliostat
-   */
-  set aimPoint(aimPoint) {
-    this.#aimPoint = aimPoint;
-    this.lookAt(aimPoint.x, this.oldPosition.y, aimPoint.z);
-  }
-
-  get aimPoint() {
-    return this.#aimPoint;
-  }
-
   get apiID() {
     return this.#apiID;
   }
@@ -415,31 +299,8 @@ export class Heliostat extends SelectableObject {
   set apiID(value) {
     this.#apiID = value;
   }
-
-  get numberOfFacets() {
-    return this.#numberOfFacets;
-  }
-
-  set numberOfFacets(numberOfFacets) {
-    this.#numberOfFacets = numberOfFacets;
-  }
-
-  get kinematicType() {
-    return this.#kinematicType;
-  }
-
-  set kinematicType(kinematicType) {
-    this.#kinematicType = kinematicType;
-  }
-
   get inspectorComponents() {
-    return [
-      this.#headerComponent,
-      this.#positionComponent,
-      this.#aimPointComponent,
-      this.#numberOfFacetsComponent,
-      this.#kinematicTypeComponent,
-    ];
+    return [this.#headerComponent, this.#positionComponent];
   }
 }
 
@@ -463,7 +324,6 @@ export class Receiver extends SelectableObject {
 
   #headerComponent;
   #positionComponent;
-  #rotationUComponent;
   #normalVectorComponent;
   #towerTypeComponent;
   #curvatureComponent;
@@ -472,13 +332,11 @@ export class Receiver extends SelectableObject {
   #isMovable = true;
   #rotatableAxis = ["Y"];
   #oldPosition;
-  #oldQuaternion;
 
   /**
    * Creates a Receiver object
    * @param {string} receiverName the name of the receiver
    * @param {THREE.Vector3} position Is the position of the receiver
-   * @param {number} rotationY the rotation Y of the receiver
    * @param {THREE.Vector3} normalVector the normal vector of the receiver
    * @param {string} towerType the type of the tower
    * @param {number} planeE the plane E of the receiver
@@ -492,7 +350,6 @@ export class Receiver extends SelectableObject {
   constructor(
     receiverName,
     position,
-    rotationY,
     normalVector,
     towerType,
     planeE,
@@ -512,7 +369,6 @@ export class Receiver extends SelectableObject {
     this.add(this.#top);
 
     this.updatePosition(position);
-    this.updateRotation(this.yDegreeToQuaternion(rotationY));
 
     this.#apiID = apiID;
     this.#towerType = towerType;
@@ -523,7 +379,6 @@ export class Receiver extends SelectableObject {
     this.#resolutionU = resolutionU;
     this.#curvatureE = curvatureE;
     this.#curvatureU = curvatureU;
-    this.#oldQuaternion = new THREE.Quaternion(0, rotationY, 0);
 
     // create components for the inspector
     this.#headerComponent = new HeaderInspectorComponent(
@@ -588,24 +443,6 @@ export class Receiver extends SelectableObject {
       uCoordinate,
       eCoordinate,
     ]);
-
-    this.#rotationUComponent = new SliderFieldInspectorComponent(
-      "Rotation U",
-      0,
-      360,
-      () => this.quaternionToYDegree(this.#oldQuaternion),
-      (newValue) => {
-        newValue = this.yDegreeToQuaternion(newValue);
-        this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(
-            this,
-            "rotation",
-            new THREE.Quaternion().copy(newValue),
-          ),
-        );
-      },
-      15,
-    );
 
     const nNormalVector = new SingleFieldInspectorComponent(
       "N",
@@ -759,30 +596,6 @@ export class Receiver extends SelectableObject {
     ]);
   }
 
-  /**
-   * Converts a quaternion to a y degree (a number from 0 to 360)
-   * @param {THREE.Quaternion} quaternion - the quaternion to convert
-   * @returns {number} - the y degree of the quaternion, a number from 0 to 360
-   */
-  quaternionToYDegree(quaternion) {
-    const euler = new THREE.Euler();
-    euler.setFromQuaternion(quaternion, "YXZ");
-    let angle = THREE.MathUtils.radToDeg(euler.y);
-    return (angle + 360) % 360;
-  }
-
-  /**
-   * Converts a y degree (a number from 0 to 360) to a quaternion
-   * @param {number} angle - the angle in degrees to convert
-   * @returns {THREE.Quaternion} - the quaternion representing the rotation around the y-axis
-   */
-  yDegreeToQuaternion(angle) {
-    const euler = new THREE.Euler(0, THREE.MathUtils.degToRad(angle), 0, "YXZ");
-    const quaternion = new THREE.Quaternion().setFromEuler(euler);
-    return quaternion;
-  }
-
-  //
   lockPositionY(y) {
     this.#base.position.y = y;
   }
@@ -801,10 +614,6 @@ export class Receiver extends SelectableObject {
 
   get oldPosition() {
     return this.#oldPosition;
-  }
-
-  get oldQuaternion() {
-    return this.#oldQuaternion;
   }
 
   /**
@@ -837,30 +646,6 @@ export class Receiver extends SelectableObject {
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
       new UpdateReceiverCommand(this, "objectName", name),
-    );
-  }
-
-  /**
-   * Updates the rotation of the receiver
-   * @param {THREE.Quaternion} rotation - the new rotation of the receiver
-   */
-  updateAndSaveObjectRotation(rotation) {
-    this.#undoRedoHandler.executeCommand(
-      new UpdateReceiverCommand(this, "rotation", rotation),
-    );
-  }
-
-  /**
-   * Updates the quaternion of the receiver, and indirectly updates the rotation of the receiver
-   * @param {THREE.Quaternion} quaternion - the new quaternion of the receiver
-   */
-  updateRotation(quaternion) {
-    this.quaternion.copy(quaternion);
-    this.#oldQuaternion = new THREE.Quaternion(
-      quaternion.x,
-      quaternion.y,
-      quaternion.z,
-      quaternion.w,
     );
   }
 
@@ -954,7 +739,6 @@ export class Receiver extends SelectableObject {
     return [
       this.#headerComponent,
       this.#positionComponent,
-      this.#rotationUComponent,
       this.#normalVectorComponent,
       this.#towerTypeComponent,
       this.#curvatureComponent,

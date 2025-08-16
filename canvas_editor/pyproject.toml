@@ -25,9 +25,6 @@ dev = [
   "ruff"
 ]
 
-[tool.setuptools]
-packages = ["canvas", "editor", "autosave_api", "job_interface", "hdf5_management", "account_management", "project_management"]
-
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [

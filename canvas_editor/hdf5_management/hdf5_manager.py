@@ -25,7 +25,7 @@ from artist.scenario.surface_generator import SurfaceGenerator
 from artist.util import config_dictionary, set_logger_config
 from django.conf import settings
 from django.contrib.auth.models import User
-from project_management.models import Heliostat, Lightsource, Project, Receiver
+from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class HDF5Manager:
@@ -114,6 +114,8 @@ class HDF5Manager:
                 ),
                 plane_e=receiver.plane_e,
                 plane_u=receiver.plane_u,
+                curvature_e=receiver.curvature_e,
+                curvature_u=receiver.curvature_u,
             )
             target_area_config_list.append(receiver_config)
 
@@ -128,10 +130,10 @@ class HDF5Manager:
         light_source_list = []
 
         # Add all light sources to list
-        for light_source in project.lightsources.all():
+        for light_source in project.light_sources.all():
             light_source_config = LightSourceConfig(
                 light_source_key=str(light_source),
-                light_source_type=light_source.lightsource_type,
+                light_source_type=light_source.light_source_type,
                 number_of_rays=light_source.number_of_rays,
                 distribution_type=light_source.distribution_type,
                 mean=light_source.mean,
@@ -297,19 +299,10 @@ class HDF5Manager:
                 for heliostat_object in heliostats_group:
                     heliostat = heliostats_group[heliostat_object]
 
-                    aimpoint = heliostat[config_dictionary.heliostat_aim_point]
-                    aimpoint_x = aimpoint[0]
-                    aimpoint_y = aimpoint[1]
-                    aimpoint_z = aimpoint[2]
-
                     position = heliostat[config_dictionary.heliostat_position]
                     position_x = position[0]
                     position_y = position[1]
                     position_z = position[2]
-
-                    surface = heliostat[config_dictionary.heliostat_surface_key]
-                    facets = surface[config_dictionary.facets_key]
-                    number_of_facets = len(facets.keys())
 
                     Heliostat.objects.create(
                         project=new_project,
@@ -317,20 +310,18 @@ class HDF5Manager:
                         position_x=position_x,
                         position_y=position_y,
                         position_z=position_z,
-                        aimpoint_x=aimpoint_x,
-                        aimpoint_y=aimpoint_y,
-                        aimpoint_z=aimpoint_z,
-                        number_of_facets=number_of_facets,
                     )
 
             light_sources_group: h5py.Group = f.get(config_dictionary.light_source_key)
             if light_sources_group is not None:
-                for lightsource_object in light_sources_group:
-                    light_source = light_sources_group[lightsource_object]
+                for light_source_object in light_sources_group:
+                    light_source = light_sources_group[light_source_object]
                     number_of_rays = light_source[
                         config_dictionary.light_source_number_of_rays
                     ]
-                    lightsource_type = light_source[config_dictionary.light_source_type]
+                    light_source_type = light_source[
+                        config_dictionary.light_source_type
+                    ]
 
                     distribution_params = light_source[
                         config_dictionary.light_source_distribution_parameters
@@ -343,17 +334,17 @@ class HDF5Manager:
                     ]
                     mean = distribution_params[config_dictionary.light_source_mean]
 
-                    Lightsource.objects.create(
+                    LightSource.objects.create(
                         project=new_project,
-                        name=str(lightsource_object),
+                        name=str(light_source_object),
                         number_of_rays=number_of_rays[()],
-                        lightsource_type=lightsource_type[()].decode("utf-8"),
+                        light_source_type=light_source_type[()].decode("utf-8"),
                         covariance=covariance[()],
                         distribution_type=distribution_type[()].decode("utf-8"),
                         mean=mean[()],
                     )
 
-            receivers_group: h5py.Group = f.get(config_dictionary.target_area_receiver)
+            receivers_group: h5py.Group = f.get(config_dictionary.target_area_key)
             if receivers_group is not None:
                 for receiver_object in receivers_group:
                     receiver = receivers_group[receiver_object]
@@ -371,6 +362,9 @@ class HDF5Manager:
                     plane_e = receiver[config_dictionary.target_area_plane_e]
                     plane_u = receiver[config_dictionary.target_area_plane_u]
 
+                    curvature_e = receiver[config_dictionary.target_area_curvature_e]
+                    curvature_u = receiver[config_dictionary.target_area_curvature_u]
+
                     Receiver.objects.create(
                         project=new_project,
                         name=str(receiver_object),
@@ -382,4 +376,6 @@ class HDF5Manager:
                         normal_z=normal_z,
                         plane_e=plane_e[()],
                         plane_u=plane_u[()],
-                    )
+                        curvature_e=curvature_e[()],
+                        curvature_u=curvature_u[()],
+                    ),

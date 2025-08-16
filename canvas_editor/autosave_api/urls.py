@@ -1,13 +1,14 @@
 from django.urls import path
+
 from .views import (
-    ProjectList,
-    ProjectDetailList,
-    HeliostatList,
     HeliostatDetail,
-    ReceiverList,
+    HeliostatList,
+    LightSourceDetail,
+    LightSourceList,
+    ProjectDetailList,
+    ProjectList,
     ReceiverDetail,
-    LightsourceList,
-    LightsourceDetail,
+    ReceiverList,
     SettingsDetail,
 )
 
@@ -35,14 +36,14 @@ urlpatterns = [
         name="receiver_detail",
     ),
     path(
-        "projects/<int:project_id>/lightsources/",
-        LightsourceList.as_view(),
-        name="lightsource_list",
+        "projects/<int:project_id>/light_sources/",
+        LightSourceList.as_view(),
+        name="light_source_list",
     ),
     path(
-        "projects/<int:project_id>/lightsources/<int:pk>/",
-        LightsourceDetail.as_view(),
-        name="lightsource_detail",
+        "projects/<int:project_id>/light_sources/<int:pk>/",
+        LightSourceDetail.as_view(),
+        name="light_source_detail",
     ),
     path(
         "projects/<int:project_id>/settings/",
