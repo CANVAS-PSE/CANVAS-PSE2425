@@ -17,16 +17,11 @@ from artist.scenario.configuration_classes import (
     TargetAreaConfig,
     TargetAreaListConfig,
 )
-from artist.scenario.h5_scenario_generator import (
-    ActuatorListConfig,
-    KinematicConfig,
-    ScenarioGenerator,
-)
-from artist.scenario.surface_generator import SurfaceConverter
-from project_management.models import Heliostat, Lightsource, Project, Receiver
-import h5py
+from artist.scenario.h5_scenario_generator import H5ScenarioGenerator
+from artist.util import config_dictionary, set_logger_config
 from django.conf import settings
 from django.contrib.auth.models import User
+from project_management.models import Heliostat, Lightsource, Project, Receiver
 
 
 class HDF5Manager:
