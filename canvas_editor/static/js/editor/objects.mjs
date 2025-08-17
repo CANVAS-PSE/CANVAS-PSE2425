@@ -120,7 +120,9 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns the axis on which the object is rotatable
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {string[]} array containing all reotable axis.
    */
   get rotatableAxis() {
     throw new Error("This method must be implemented in all subclasses");
@@ -128,7 +130,9 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns whether the object is movable or not
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {boolean} wether the object is movable
    */
   get isMovable() {
     throw new Error("This method must be implemented in all subclasses");
@@ -136,7 +140,9 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns whether an object is selectable or not
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {boolean} wether the object is selectable
    */
   get isSelectable() {
     throw new Error("This method must be implemented in all subclasses");
@@ -144,7 +150,9 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns the old position of the heliostat
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {THREE.Vector3} the old position of the object
    */
   get oldPosition() {
     throw new Error("This method must be implemented in all subclasses");
@@ -168,16 +176,9 @@ export class Heliostat extends SelectableObject {
 
   /**
    * Creates a Heliostat object
-   * @param {number} [apiID=null] The id for api usage
+   * @param {number} [apiID] The id for api usage
    * @param {string} heliostatName the name of the heliostat
    * @param {THREE.Vector3} position The position of the heliostat.
-   */
-
-  /**
-   *
-   * @param heliostatName
-   * @param position
-   * @param apiID
    */
   constructor(heliostatName, position, apiID = null) {
     super(heliostatName);
@@ -937,7 +938,7 @@ export class LightSource extends SelectableObject {
   #rotatableAxis = null;
 
   /**
-   * @param {string} lightsourceName the name of the lightsource
+   * @param {string} lightSourceName the name of the lightsource
    * @param {number} numberOfRays the number of rays the light source has
    * @param {string} lightSourceType the type of the light source
    * @param {string} distributionType the type of the distribution
@@ -946,7 +947,7 @@ export class LightSource extends SelectableObject {
    * @param {number} [apiID] the id for api usage
    */
   constructor(
-    lightsourceName,
+    lightSourceName,
     numberOfRays,
     lightSourceType,
     distributionType,
@@ -954,7 +955,7 @@ export class LightSource extends SelectableObject {
     distributionCovariance,
     apiID = null,
   ) {
-    super(lightsourceName);
+    super(lightSourceName);
     this.#apiID = apiID;
     this.#numberOfRays = numberOfRays;
     this.#lightSourceType = lightSourceType;
