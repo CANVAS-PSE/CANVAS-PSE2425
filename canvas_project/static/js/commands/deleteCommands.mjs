@@ -3,6 +3,9 @@ import { Heliostat, LightSource, Receiver, SelectableObject } from "objects";
 import { SingleObjectCommand } from "singleObjectCommands";
 import { ItemCreatedEvent } from "createCommands";
 
+/**
+ * This event is dispatched when an item is deleted from the scene.
+ */
 export class ItemDeletedEvent extends CustomEvent {
   /**
    * Creates a new item deleted event
@@ -29,6 +32,9 @@ export class DeleteHeliostatCommand extends SingleObjectCommand {
     this.#heliostat = heliostat;
   }
 
+  /**
+   * Deletes the heliostat from the scene and dispatches an ItemDeletedEvent.
+   */
   execute() {
     this.#editor.deleteHeliostat(this.#heliostat);
 
@@ -37,6 +43,9 @@ export class DeleteHeliostatCommand extends SingleObjectCommand {
       .dispatchEvent(new ItemDeletedEvent(this.#heliostat));
   }
 
+  /**
+   * Reverts the deletion by adding the heliostat back to the scene and dispatching an ItemCreatedEvent.
+   */
   undo() {
     this.#editor.addHeliostat(this.#heliostat);
 
@@ -62,6 +71,9 @@ export class DeleteReceiverCommand extends SingleObjectCommand {
     this.#receiver = receiver;
   }
 
+  /**
+   * Deletes the receiver from the scene and dispatches an ItemDeletedEvent.
+   */
   execute() {
     this.#editor.deleteReceiver(this.#receiver);
 
@@ -70,6 +82,9 @@ export class DeleteReceiverCommand extends SingleObjectCommand {
       .dispatchEvent(new ItemDeletedEvent(this.#receiver));
   }
 
+  /**
+   * Reverts the deletion by adding the receiver back to the scene and dispatching an ItemCreatedEvent.
+   */
   undo() {
     this.#editor.addReceiver(this.#receiver);
 
@@ -95,6 +110,9 @@ export class DeleteLightSourceCommand extends SingleObjectCommand {
     this.#lightsource = lightsource;
   }
 
+  /**
+   * Deletes the lightsource from the scene and dispatches an ItemDeletedEvent.
+   */
   execute() {
     this.#editor.deleteLightsource(this.#lightsource);
 
@@ -103,6 +121,9 @@ export class DeleteLightSourceCommand extends SingleObjectCommand {
       .dispatchEvent(new ItemDeletedEvent(this.#lightsource));
   }
 
+  /**
+   * Reverts the deletion by adding the lightsource back to the scene and dispatching an ItemCreatedEvent.
+   */
   undo() {
     this.#editor.addLightsource(this.#lightsource);
 

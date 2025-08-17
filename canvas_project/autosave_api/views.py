@@ -198,4 +198,7 @@ class SettingsDetail(generics.RetrieveUpdateAPIView):
         return obj
 
     def get_queryset(self):
+        """
+        Return the settings for the project of the user.
+        """
         return Settings.objects.filter(project__owner=self.request.user)

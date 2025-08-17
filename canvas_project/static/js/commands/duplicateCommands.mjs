@@ -30,12 +30,15 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
       this.#newPosition,
       this.#heliostat.aimPoint,
       this.#heliostat.numberOfFacets,
-      this.#heliostat.kinematicType,
+      this.#heliostat.kinematicType
     );
 
     document.dispatchEvent(new ItemCreatedEvent(this.#heliostatCopy));
   }
 
+  /**
+   * Executes the command to duplicate the heliostat and dispatches an ItemCreatedEvent.
+   */
   async execute() {
     await this.#editor.addHeliostat(this.#heliostatCopy);
 
@@ -44,6 +47,9 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
       .dispatchEvent(new ItemCreatedEvent(this.#heliostatCopy));
   }
 
+  /**
+   * Reverts the duplication by removing the copied heliostat and dispatching an ItemDeletedEvent.
+   */
   undo() {
     this.#editor.deleteHeliostat(this.#heliostatCopy);
 
@@ -84,12 +90,15 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
       this.#receiver.resolutionE,
       this.#receiver.resolutionU,
       this.#receiver.curvatureE,
-      this.#receiver.curvatureU,
+      this.#receiver.curvatureU
     );
 
     document.dispatchEvent(new ItemCreatedEvent(this.#receiverCopy));
   }
 
+  /**
+   * Executes the command to duplicate the receiver and dispatches an ItemCreatedEvent.
+   */
   async execute() {
     await this.#editor.addReceiver(this.#receiverCopy);
 
@@ -98,6 +107,9 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
       .dispatchEvent(new ItemCreatedEvent(this.#receiverCopy));
   }
 
+  /**
+   * Reverts the duplication by removing the copied receiver and dispatching an ItemDeletedEvent.
+   */
   undo() {
     this.#editor.deleteReceiver(this.#receiverCopy);
 
@@ -130,12 +142,15 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
       this.#lightsource.lightSourceType,
       this.#lightsource.distributionType,
       this.#lightsource.distributionMean,
-      this.#lightsource.distributionCovariance,
+      this.#lightsource.distributionCovariance
     );
 
     document.dispatchEvent(new ItemCreatedEvent(this.#lightsourceCopy));
   }
 
+  /**
+   * Executes the command to duplicate the lightsource and dispatches an ItemCreatedEvent.
+   */
   async execute() {
     await this.#editor.addLightsource(this.#lightsourceCopy);
 
@@ -144,6 +159,9 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
       .dispatchEvent(new ItemCreatedEvent(this.#lightsourceCopy));
   }
 
+  /**
+   * Reverts the duplication by removing the copied lightsource and dispatching an ItemDeletedEvent.
+   */
   undo() {
     this.#editor.deleteLightsource(this.#lightsourceCopy);
 

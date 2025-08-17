@@ -1,11 +1,13 @@
 import io
-from django.test import TestCase, Client
-from project_management.models import Project, Heliostat, Receiver, Lightsource
-from django.contrib.auth.models import User
-from django.urls import reverse
 import os
-from django.conf import settings
 import h5py
+from artist.util import config_dictionary
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
+from django.urls import reverse
+
+from project_management.models import Heliostat, Lightsource, Project, Receiver
 
 
 class EditorViewTest(TestCase):
@@ -15,7 +17,7 @@ class EditorViewTest(TestCase):
     It ensures that the editor view behaves correctly when accessed and when form data is submitted.
 
     Methods
-    --------
+    -------
     setUp(self):
         Set up the test environment by creating a user and a project.
     test_get_method(self):
@@ -72,7 +74,7 @@ class DownloadViewTest(TestCase):
         heliostat = Heliostat()
         heliostat.name = "testHeliostat"
         heliostat.project = project
-        heliostat.aimpoint_x = 42
+        heliostat.position_x = 42
         heliostat.save()
 
         # Add a receiver to the project
@@ -105,20 +107,22 @@ class DownloadViewTest(TestCase):
             # Check if the datasets contain the expected data
             heliostats = hdf5_file.get("heliostats")
             receivers = hdf5_file.get("target_areas")
-            lightsources = hdf5_file.get("lightsources")
+            light_sources = hdf5_file.get("lightsources")
 
             self.assertIsNotNone(heliostats)
-            self.assertIsNotNone(lightsources)
-            self.assertIsNotNone(lightsources)
+            self.assertIsNotNone(light_sources)
+            self.assertIsNotNone(receivers)
 
             for heliostat in heliostats:
-                self.assertEqual(42, heliostats[heliostat]["aim_point"][0])
+                self.assertEqual(
+                    42, heliostats[heliostat][config_dictionary.heliostat_position][0]
+                )
 
             for receiver in receivers:
                 self.assertEqual(42, receivers[receiver]["normal_vector"][0])
 
-            for lightsource in lightsources:
-                self.assertEqual(42, lightsources[lightsource]["number_of_rays"][()])
+            for light_source in light_sources:
+                self.assertEqual(42, light_sources[light_source]["number_of_rays"][()])
 
     def test_download_logged_out(self):
         self.client.logout()

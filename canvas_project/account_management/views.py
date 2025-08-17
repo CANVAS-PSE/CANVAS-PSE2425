@@ -35,15 +35,24 @@ class RegistrationView(View):
     """
 
     def dispatch(self, request, *args, **kwargs):
+        """
+        If the user is already authenticated, redirect to the projects page.
+        """
         if request.user.is_authenticated:
             return redirect(REDIRECT_PROJECTS_URL)
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
+        """
+        Render the registration form.
+        """
         form = RegisterForm()
         return render(request, "account_management/register.html", {"form": form})
 
     def post(self, request):
+        """
+        Handle the registration form submission.
+        """
         form = RegisterForm(request.POST)
         if form.is_valid():
             first_name = form.cleaned_data.get("first_name")
@@ -98,6 +107,9 @@ class ConfirmDeletionView(View):
     """
 
     def dispatch(self, request, uidb64, token):
+        """
+        Check if the user exists and the token is valid.
+        """
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             self.user = get_user_model().objects.get(pk=uid)
@@ -191,6 +203,9 @@ def update_account(request):
 
 
 def _update_profile_picture(user: User, delete_picture: bool, new_profile_picture):
+    """
+    Update the user's profile picture or delete it if requested.
+    """
     profile, _ = UserProfile.objects.get_or_create(user=user)
 
     if delete_picture and profile.profile_picture:
@@ -207,6 +222,9 @@ def _update_profile_picture(user: User, delete_picture: bool, new_profile_pictur
 @login_required
 @require_GET
 def get_user_info(request):
+    """
+    Check if the user is logged in via OpenID and return the information as JSON.
+    """
     user = request.user
     is_openid_user = SocialAccount.objects.filter(user=user).exists()
     return JsonResponse({"is_openid_user": is_openid_user})
@@ -247,6 +265,10 @@ class PasswordResetView(View):
     password_reset_template = "account_management/password_reset.html"
 
     def dispatch(self, request, uidb64, token):
+        """
+        Check if the user exists and the token is valid.
+        If not, redirect to the invalid link page.
+        """
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             self.user = get_user_model().objects.get(pk=uid)
@@ -264,6 +286,9 @@ class PasswordResetView(View):
         )
 
     def post(self, request):
+        """
+        Handle the password reset form submission.
+        """
         form = PasswordResetForm(request.POST)
 
         if form.is_valid():
@@ -281,6 +306,9 @@ class PasswordResetView(View):
 
 @require_GET
 def invalid_link(request):
+    """
+    Render a page indicating that the link is invalid.
+    """
     return render(request, "account_management/invalid_link.html")
 
 
@@ -312,11 +340,17 @@ class PasswordForgottenView(View):
     password_forgotten_template = "account_management/password_forgotten.html"
 
     def get(self, request):
+        """
+        Render the password forgotten form.
+        """
         return render(
             request, self.password_forgotten_template, {"form": PasswordForgottenForm()}
         )
 
     def post(self, request):
+        """
+        Handle the password forgotten form submission.
+        """
         form = PasswordForgottenForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"]

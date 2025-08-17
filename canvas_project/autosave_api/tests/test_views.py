@@ -15,6 +15,7 @@ from autosave_api.serializers import (
     LightsourceSerializer,
 )
 from django.contrib.auth.models import User
+from parameterized import parameterized
 
 
 class APITestCase(TestCase):
@@ -46,24 +47,6 @@ class APITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.project.name)
 
-    def test_create_heliostat(self):
-        url = reverse("heliostat_list", kwargs={"project_id": self.project.id})
-        data = {"name": "New Heliostat"}
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Heliostat.objects.count(), 1)
-        self.assertEqual(
-            Heliostat.objects.get(id=response.data["id"]).project, self.project
-        )
-
-    def test_get_heliostats(self):
-        Heliostat.objects.create(name="Heliostat 1", project=self.project)
-        url = reverse("heliostat_list", kwargs={"project_id": self.project.id})
-        response = self.client.get(url, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Heliostat 1")
-
     def test_get_heliostat_detail(self):
         heliostat = Heliostat.objects.create(name="Heliostat 1", project=self.project)
         heliostat.position_x = 42
@@ -82,24 +65,6 @@ class APITestCase(TestCase):
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, HeliostatSerializer(heliostat).data)
-
-    def test_create_receiver(self):
-        url = reverse("receiver_list", kwargs={"project_id": self.project.id})
-        data = {"name": "New Receiver"}
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Receiver.objects.count(), 1)
-        self.assertEqual(
-            Receiver.objects.get(id=response.data["id"]).project, self.project
-        )
-
-    def test_get_receivers(self):
-        Receiver.objects.create(name="Receiver 1", project=self.project)
-        url = reverse("receiver_list", kwargs={"project_id": self.project.id})
-        response = self.client.get(url, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Receiver 1")
 
     def test_get_receiver_detail(self):
         receiver = Receiver.objects.create(name="Receiver 1", project=self.project)
@@ -125,24 +90,6 @@ class APITestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, ReceiverSerializer(receiver).data)
-
-    def test_create_lightsource(self):
-        url = reverse("lightsource_list", kwargs={"project_id": self.project.id})
-        data = {"name": "New Lightsource"}
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Lightsource.objects.count(), 1)
-        self.assertEqual(
-            Lightsource.objects.get(id=response.data["id"]).project, self.project
-        )
-
-    def test_get_lightsources(self):
-        Lightsource.objects.create(name="Lightsource 1", project=self.project)
-        url = reverse("lightsource_list", kwargs={"project_id": self.project.id})
-        response = self.client.get(url, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Lightsource 1")
 
     def test_get_lightsource_detail(self):
         lightsource = Lightsource.objects.create(
@@ -172,3 +119,41 @@ class APITestCase(TestCase):
         settings.refresh_from_db()
         self.assertEqual(settings.shadows, False)
         self.assertEqual(settings.fog, False)
+
+    def create_object(self, url_list_name, data_name, model_class):
+        url = reverse(url_list_name, kwargs={"project_id": self.project.id})
+        data = {"name": data_name}
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(model_class.objects.count(), 1)
+        self.assertEqual(
+            model_class.objects.get(id=response.data["id"]).project, self.project
+        )
+
+    @parameterized.expand(
+        [
+            ("heliostat_list", "New Heliostat", Heliostat),
+            ("receiver_list", "New Receiver", Receiver),
+            ("lightsource_list", "New Lightsource", Lightsource),
+        ]
+    )
+    def test_create_object(self, url_list_name, data_name, model_class):
+        self.create_object(url_list_name, data_name, model_class)
+
+    def get_objects(self, model_class, model_name, url_list_name):
+        model_class.objects.create(name=model_name, project=self.project)
+        url = reverse(url_list_name, kwargs={"project_id": self.project.id})
+        response = self.client.get(url, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["name"], model_name)
+
+    @parameterized.expand(
+        [
+            (Heliostat, "Heliostat 1", "heliostat_list"),
+            (Receiver, "Receiver 1", "receiver_list"),
+            (Lightsource, "Lightsource 1", "lightsource_list"),
+        ]
+    )
+    def test_get_objects(self, model_class, model_name, url_list_name):
+        self.get_objects(model_class, model_name, url_list_name)
