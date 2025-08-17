@@ -1,4 +1,4 @@
-![banner](https://github.com/user-attachments/assets/a3be1582-ffdc-4a34-94df-08d07bcda11e)
+![banner](./logos/banner.png)
 
 # CANVAS - 3D editor for the AI-enhanced differentiable Ray Tracer ARTIST
 
@@ -10,7 +10,7 @@
 
 ## Installation
 
-We heavily recommend to install `CANVAS` package in a dedicated `Python3.8+` virtual environment ([click here for the documentation](https://docs.python.org/3/library/venv.html)).
+We heavily recommend to install `CANVAS` package in a dedicated `Python3.10+` virtual environment ([click here for the documentation](https://docs.python.org/3/library/venv.html)).
 
 After setting up and activating the virtual environment _(or deciding against it)_, execute the following instructions, to set up the code base
 
@@ -26,11 +26,11 @@ pip install -r requirements.txt
 # Installing Pre-commit Hooks
 pre-commit install
 
-# add the .env file to the root of the canvas_project folder
+# add the .env file to the root of the canvas_editor folder
 # containing debug variable, client_id + secret_key for OpenID, email-host password, etc.
 
 # configure the database
-cd canvas_project/
+cd canvas_editor/
 python manage.py migrate
 
 # Install npm dependencies
@@ -52,6 +52,7 @@ Please also carefully check our [code of conduct](CODE_OF_CONDUCT.md) :blue_hear
 Liberally licensed under MIT.
 
 ## Acknowledgments
+
 This work is supported by the [Helmholtz AI](https://www.helmholtz.ai/) platform grant.
 
 ---
