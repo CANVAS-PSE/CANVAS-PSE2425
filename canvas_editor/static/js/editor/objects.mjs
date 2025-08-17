@@ -308,6 +308,7 @@ export class Heliostat extends CanvasObject {
   }
 
   /**
+   * Update and save the name of the object
    * @param {string} name the new name for the object
    */
   updateAndSaveObjectName(name) {
@@ -317,14 +318,14 @@ export class Heliostat extends CanvasObject {
   }
 
   /**
-   *
+   * Duplicate the object
    */
   duplicate() {
     this.#undoRedoHandler.executeCommand(new DuplicateHeliostatCommand(this));
   }
 
   /**
-   *
+   * Delete the object
    */
   delete() {
     this.#undoRedoHandler.executeCommand(new DeleteHeliostatCommand(this));
@@ -348,7 +349,7 @@ export class Heliostat extends CanvasObject {
   }
 
   /**
-   *
+   * Set the api id used for this object
    */
   set apiID(value) {
     this.#apiID = value;
@@ -717,6 +718,7 @@ export class Receiver extends CanvasObject {
   }
 
   /**
+   * Update and save the name of the object
    * @param {string} name the new name
    */
   updateAndSaveObjectName(name) {
@@ -748,7 +750,7 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Set the api id of the object
    */
   set apiID(value) {
     this.#apiID = value;
@@ -763,7 +765,7 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Set the type of the receiver
    */
   set towerType(value) {
     this.#towerType = value;
@@ -778,7 +780,7 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Set the normal vector of the target area
    */
   set normalVector(value) {
     this.#normalVector = value;
@@ -896,7 +898,7 @@ export class Receiver extends CanvasObject {
  */
 export class ReceiverBase extends Object3D {
   /**
-   *
+   * Create the receiver base
    */
   constructor() {
     super();
@@ -918,7 +920,7 @@ export class ReceiverBase extends Object3D {
  */
 export class ReceiverTop extends Object3D {
   /**
-   *
+   * Create the top of the receiver
    */
   constructor() {
     super();
@@ -958,6 +960,7 @@ export class LightSource extends CanvasObject {
   #rotatableAxis = null;
 
   /**
+   * Create the light source object
    * @param {string} lightSourceName the name of the lightsource
    * @param {number} numberOfRays the number of rays the light source has
    * @param {string} lightSourceType the type of the light source
@@ -1080,6 +1083,7 @@ export class LightSource extends CanvasObject {
   }
 
   /**
+   * Update and save the name of the object
    * @param {string} name the new name
    */
   updateAndSaveObjectName(name) {
@@ -1095,7 +1099,7 @@ export class LightSource extends CanvasObject {
     this.#undoRedoHandler.executeCommand(new DuplicateLightSourceCommand(this));
   }
   /**
-   *
+   * Delete the object
    */
   delete() {
     this.#undoRedoHandler.executeCommand(new DeleteLightSourceCommand(this));
@@ -1110,7 +1114,7 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Set the api id of the object
    */
   set apiID(id) {
     this.#apiID = id;
@@ -1125,7 +1129,7 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Set the number of rays the light source uses
    */
   set numberOfRays(number) {
     this.#numberOfRays = number;
@@ -1140,7 +1144,7 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Set the type of the light source
    */
   set lightSourceType(type) {
     this.#lightSourceType = type;

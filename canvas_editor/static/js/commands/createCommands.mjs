@@ -4,7 +4,7 @@ import { Heliostat, Receiver, LightSource, CanvasObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 
 /**
- *
+ * Event that tells that an canvas object has been created
  */
 export class ItemCreatedEvent extends CustomEvent {
   /**
