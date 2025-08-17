@@ -1,5 +1,6 @@
 import {
   HeaderInspectorComponent,
+  InspectorComponent,
   MultiFieldInspectorComponent,
   SelectFieldInspectorComponent,
   SingleFieldInspectorComponent,
@@ -40,21 +41,25 @@ export class CanvasObject extends Object3D {
   }
 
   /**
-   *
+   * Get the name of the object
+   * @returns {string} the name of the object
    */
   get objectName() {
     return this.#objectName;
   }
 
   /**
-   *
+   * Set the name of the object
    */
   set objectName(name) {
     this.#objectName = name;
   }
 
   /**
-   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * Get a list of inspector components used for this object
+   * @abstract
+   * @throws {Error}  Throws an error if the method is not implemented in subclasses.
+   * @returns {InspectorComponent[]} an array of the inspector components
    */
   get inspectorComponents() {
     throw new Error("This method must be implemented in all subclasses");
@@ -154,7 +159,7 @@ export class CanvasObject extends Object3D {
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
    * @returns {THREE.Vector3} the old position of the object
    */
-  get oldPosition() {
+  get currentPosition() {
     throw new Error("This method must be implemented in all subclasses");
   }
 }
@@ -172,13 +177,13 @@ export class Heliostat extends CanvasObject {
    * @type { string[] }
    */
   #rotatableAxis = null;
-  #oldPosition;
+  #currentPosition;
 
   /**
    * Creates a Heliostat object
-   * @param {number} [apiID] The id for api usage
    * @param {string} heliostatName the name of the heliostat
    * @param {THREE.Vector3} position The position of the heliostat.
+   * @param {number} [apiID] The id for api usage
    */
   constructor(heliostatName, position, apiID = null) {
     super(heliostatName);
@@ -193,7 +198,7 @@ export class Heliostat extends CanvasObject {
       this.add(this.mesh);
     });
     this.position.copy(position);
-    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#currentPosition = new Vector3(position.x, position.y, position.z);
     this.#apiID = apiID;
 
     // create components for inspector
@@ -262,31 +267,35 @@ export class Heliostat extends CanvasObject {
   }
 
   /**
-   *
+   * Get an array containing all rotatable axis
+   * @returns {string[]} containing all rotatable axis
    */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
   /**
-   *
+   * Get wether the object is selectable
+   * @returns {boolean} wether the object is selectable
    */
   get isSelectable() {
     return true;
   }
 
   /**
-   *
+   * Get wether the object is movable
+   * @returns {boolean} wether the object is movable
    */
   get isMovable() {
     return this.#isMovable;
   }
 
   /**
-   *
+   * Get the current position of the object
+   * @returns {THREE.Vector3} the positon of the object
    */
-  get oldPosition() {
-    return this.#oldPosition;
+  get currentPosition() {
+    return this.#currentPosition;
   }
 
   /**
@@ -295,7 +304,7 @@ export class Heliostat extends CanvasObject {
    */
   updatePosition(position) {
     this.position.copy(position);
-    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#currentPosition = new Vector3(position.x, position.y, position.z);
   }
 
   /**
@@ -303,7 +312,7 @@ export class Heliostat extends CanvasObject {
    */
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateHeliostatCommand(this, "objectName", name),
+      new UpdateHeliostatCommand(this, "heliostatName", name),
     );
   }
 
@@ -331,7 +340,8 @@ export class Heliostat extends CanvasObject {
     );
   }
   /**
-   *
+   * Get the api id used for this object
+   * @returns {number} the api id
    */
   get apiID() {
     return this.#apiID;
@@ -343,8 +353,10 @@ export class Heliostat extends CanvasObject {
   set apiID(value) {
     this.#apiID = value;
   }
+
   /**
-   *
+   * Get an array of all inspectorComponents for this object
+   * @returns {InspectorComponent[]} array of inspectorComponents
    */
   get inspectorComponents() {
     return [this.#headerComponent, this.#positionComponent];
@@ -378,7 +390,7 @@ export class Receiver extends CanvasObject {
   #resolutionComponent;
   #isMovable = true;
   #rotatableAxis = ["Y"];
-  #oldPosition;
+  #currentPosition;
 
   /**
    * Creates a Receiver object
@@ -426,6 +438,7 @@ export class Receiver extends CanvasObject {
     this.#resolutionU = resolutionU;
     this.#curvatureE = curvatureE;
     this.#curvatureU = curvatureU;
+    this.#currentPosition = new Vector3(position.x, position.y, position.z);
 
     // create components for the inspector
     this.#headerComponent = new HeaderInspectorComponent(
@@ -440,7 +453,7 @@ export class Receiver extends CanvasObject {
     const nCoordinate = new SingleFieldInspectorComponent(
       "N",
       "number",
-      () => this.getPosition().x,
+      () => this.currentPosition.x,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -456,7 +469,7 @@ export class Receiver extends CanvasObject {
     const uCoordinate = new SingleFieldInspectorComponent(
       "U",
       "number",
-      () => this.getPosition().y,
+      () => this.currentPosition.y,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -472,7 +485,7 @@ export class Receiver extends CanvasObject {
     const eCoordinate = new SingleFieldInspectorComponent(
       "E",
       "number",
-      () => this.getPosition().z,
+      () => this.currentPosition.z,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -644,39 +657,43 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
-   * @param y
+   * Set the position of the base to the desired height
+   * @param {number} y the desired height
    */
-  lockPositionY(y) {
+  setBaseHeight(y) {
     this.#base.position.y = y;
   }
 
   /**
-   *
+   * Get all rotable axis
+   * @returns {string[]} containing all rotable axis
    */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
   /**
-   *
+   * Get wether the object is movable or notjh
+   * @returns {boolean} wether the object is movable
    */
   get isMovable() {
     return this.#isMovable;
   }
 
   /**
-   *
+   * Get wether the object is selectable
+   * @returns {boolean} wether the object is selectable
    */
   get isSelectable() {
     return true;
   }
 
   /**
-   *
+   * Get the current position of the object
+   * @returns {THREE.Vector3} the current position
    */
-  get oldPosition() {
-    return this.#oldPosition;
+  get currentPosition() {
+    return this.#currentPosition;
   }
 
   /**
@@ -695,15 +712,8 @@ export class Receiver extends CanvasObject {
    */
   updatePosition(position) {
     this.position.copy(position);
-    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#currentPosition = new Vector3(position.x, position.y, position.z);
     this.#base.position.y = -position.y;
-  }
-
-  /**
-   *
-   */
-  getPosition() {
-    return this.position;
   }
 
   /**
@@ -711,7 +721,7 @@ export class Receiver extends CanvasObject {
    */
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateReceiverCommand(this, "objectName", name),
+      new UpdateReceiverCommand(this, "receiverName", name),
     );
   }
 
@@ -730,7 +740,8 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Get the api Id used for this object
+   * @returns {number} the api id
    */
   get apiID() {
     return this.#apiID;
@@ -744,7 +755,8 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Get the type of the receiver
+   * @returns {string} the type of the receiver
    */
   get towerType() {
     return this.#towerType;
@@ -758,7 +770,8 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Get the normal vector of the target area
+   * @returns {THREE.Vector3} the normal vector
    */
   get normalVector() {
     return this.#normalVector;
@@ -772,84 +785,90 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Get the size of the target areay in east direction
+   * @returns {number} the size
    */
   get planeE() {
     return this.#planeE;
   }
 
   /**
-   *
+   * Set the size of the target areay in east direction
    */
   set planeE(value) {
     this.#planeE = value;
   }
 
   /**
-   *
+   * Get the size of the target areay in up direction
+   * @returns {number} the size
    */
   get planeU() {
     return this.#planeU;
   }
 
   /**
-   *
+   * Set the size of the target areay in east direction
    */
   set planeU(value) {
     this.#planeU = value;
   }
 
   /**
-   *
+   * Get the resoultion of the target area in east direction
+   * @returns {number} the resolution
    */
   get resolutionE() {
     return this.#resolutionE;
   }
 
   /**
-   *
+   * Set the resoultion of the target area in east direction
    */
   set resolutionE(value) {
     this.#resolutionE = value;
   }
 
   /**
-   *
+   * Get the resoultion of the target area in up direction
+   * @returns {number} the resolution
    */
   get resolutionU() {
     return this.#resolutionU;
   }
 
   /**
-   *
+   * Set the resoultion of the target area in up direction
    */
   set resolutionU(value) {
     this.#resolutionU = value;
   }
 
   /**
-   *
+   * Get the curvature of the target area in east direction
+   * @returns {number} the curvature
    */
   get curvatureE() {
     return this.#curvatureE;
   }
 
   /**
-   *
+   * Set the curvature of the target area in east direction
    */
   set curvatureE(value) {
     this.#curvatureE = value;
   }
 
   /**
-   *
+   * Get the curvature of the target area in up direction
+   * @returns {number} the curvature
    */
   get curvatureU() {
     return this.#curvatureU;
   }
 
   /**
-   *
+   * Set the curvature of the target area in east direction
    */
   set curvatureU(value) {
     this.#curvatureU = value;
