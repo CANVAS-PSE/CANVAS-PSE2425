@@ -17,7 +17,7 @@ After setting up and activating the virtual environment _(or deciding against it
 ```bash
 # You may have to replace python with python3, depending on your operating system.
 # clone the repo
-git clone https://github.com/CANVAS-PSE/CANVAS-PSE2425.git
+git clone https://github.com/ARTIST-Association/CANVAS.git
 
 # install requirements
 cd CANVAS-PSE2425/
