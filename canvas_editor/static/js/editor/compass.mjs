@@ -44,7 +44,7 @@ class CompassAxisArrow extends Object3D {
       1,
       color,
       0.3,
-      0.3,
+      0.3
     );
     this.add(this.arrow);
 
@@ -107,7 +107,7 @@ class CompassAxisCircle extends Object3D {
     const axisGeometry = new BoxGeometry(0.8, axisWidth, axisWidth).translate(
       0.4,
       0,
-      0,
+      0
     );
     this.axis = new Mesh(axisGeometry, this.getAxisMaterial(color));
 

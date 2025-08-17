@@ -150,7 +150,6 @@ class HDF5Manager:
         #
         # Prototype
         #
-
         (
             facet_translation_vectors,
             canting,
@@ -194,7 +193,6 @@ class HDF5Manager:
         #     canting=canting,
         #     device=device,
         # )
-
         surface_prototype_config = SurfacePrototypeConfig(
             facet_list=surface_config.facet_list
         )
@@ -365,19 +363,17 @@ class HDF5Manager:
                     curvature_e = receiver[config_dictionary.target_area_curvature_e]
                     curvature_u = receiver[config_dictionary.target_area_curvature_u]
 
-                    (
-                        Receiver.objects.create(
-                            project=new_project,
-                            name=str(receiver_object),
-                            position_x=position_x,
-                            position_y=position_y,
-                            position_z=position_z,
-                            normal_x=normal_x,
-                            normal_y=normal_y,
-                            normal_z=normal_z,
-                            plane_e=plane_e[()],
-                            plane_u=plane_u[()],
-                            curvature_e=curvature_e[()],
-                            curvature_u=curvature_u[()],
-                        ),
-                    )
+                    Receiver.objects.create(
+                        project=new_project,
+                        name=str(receiver_object),
+                        position_x=position_x,
+                        position_y=position_y,
+                        position_z=position_z,
+                        normal_x=normal_x,
+                        normal_y=normal_y,
+                        normal_z=normal_z,
+                        plane_e=plane_e[()],
+                        plane_u=plane_u[()],
+                        curvature_e=curvature_e[()],
+                        curvature_u=curvature_u[()],
+                    ),

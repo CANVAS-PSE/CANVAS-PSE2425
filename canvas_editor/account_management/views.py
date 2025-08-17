@@ -43,9 +43,7 @@ class RegistrationView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        """
-        Render the registration form.
-        """
+        """Render the registration form."""
         form = RegisterForm()
         return render(request, "account_management/register.html", {"form": form})
 

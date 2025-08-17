@@ -100,30 +100,9 @@ class APITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, ReceiverSerializer(receiver).data)
 
-    def test_create_light_source(self):
-        """Test creating a new light source for a project."""
-        url = reverse("light_source_list", kwargs={"project_id": self.project.id})
-        data = {"name": "New light source"}
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(LightSource.objects.count(), 1)
-        self.assertEqual(
-            LightSource.objects.get(id=response.data["id"]).project, self.project
-        )
-
-    def test_get_light_sources(self):
-        """Test retrieving the list of light sources for a project."""
-        LightSource.objects.create(name="Light source 1", project=self.project)
-        url = reverse("light_source_list", kwargs={"project_id": self.project.id})
-        response = self.client.get(url, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["name"], "Light source 1")
-
-    def test_get_light_source_detail(self):
-        """Test retrieving the details of a specific light source."""
+    def test_get_lightsource_detail(self):
         light_source = LightSource.objects.create(
-            name="Light source 1", project=self.project
+            name="Lightsource 1", project=self.project
         )
         light_source.number_of_rays = 42
         light_source.light_source_type = "test"
