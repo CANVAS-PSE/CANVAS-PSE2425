@@ -126,10 +126,16 @@ export class CommandPrompt {
     );
   }
 
+  /**
+   *
+   */
   hide() {
     this.#modal.hide();
   }
 
+  /**
+   *
+   */
   #openCommandPrompt() {
     // Prevent that the command prompt closes the loading modal
     const loadingModal = document.getElementById("loadingModal");
@@ -271,6 +277,9 @@ export class CommandPrompt {
     return indexList;
   }
 
+  /**
+   *
+   */
   get currentlyAvailableCommands() {
     return this.#currentlyAvailabeCommands;
   }

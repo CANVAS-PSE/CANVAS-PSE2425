@@ -17,6 +17,9 @@ import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
 import { ModeSelector } from "modeSelector";
 
+/**
+ *
+ */
 export class Editor {
   /** @type {Editor} */
   static #instance;
@@ -56,6 +59,10 @@ export class Editor {
   #receiverList = [];
   #lightsourceList = [];
 
+  /**
+   *
+   * @param projectId
+   */
   constructor(/** @type {number}*/ projectId) {
     if (Editor.#instance) {
       throw new Error("Can not create class directly, use getInstance instead");
@@ -99,7 +106,7 @@ export class Editor {
 
   /**
    * Gets the current editor instance in use
-   * @param {number} [projectId=null] the id of the project, only needed for the first instanciation
+   * @param {number} [projectId] the id of the project, only needed for the first instanciation
    * @returns {Editor} the saveAndLoadHandler in use
    */
   static getInstance(projectId = null) {
@@ -114,11 +121,17 @@ export class Editor {
     return Editor.#instance;
   }
 
+  /**
+   *
+   */
   animate() {
     requestAnimationFrame(() => this.animate());
     this.render();
   }
 
+  /**
+   *
+   */
   render() {
     this.#selectionBox.update();
     this.#renderer.clear();
@@ -126,17 +139,26 @@ export class Editor {
     this.#compass.render(this.#renderer);
   }
 
+  /**
+   *
+   */
   updateAspectRatio() {
     this.#camera.aspect = this.#canvas.offsetWidth / this.#canvas.offsetHeight;
     this.#camera.updateProjectionMatrix();
   }
 
+  /**
+   *
+   */
   onWindowResize() {
     this.updateAspectRatio();
     this.#renderer.setSize(this.#canvas.offsetWidth, this.#canvas.offsetHeight);
     this.render();
   }
 
+  /**
+   *
+   */
   #setUpScene() {
     this.#canvas = document.getElementById("canvas");
 

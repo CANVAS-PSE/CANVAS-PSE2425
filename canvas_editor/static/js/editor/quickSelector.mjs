@@ -5,6 +5,9 @@ import { ObjectManager } from "objectManager";
  * This class handles the creation of objects like heliostats, receivers, and light sources
  */
 
+/**
+ *
+ */
 export class QuickSelector {
   #objectManager;
 

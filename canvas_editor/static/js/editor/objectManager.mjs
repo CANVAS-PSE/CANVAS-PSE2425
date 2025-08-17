@@ -14,6 +14,9 @@ import {
  * Also manages keyboard shortcuts for deleting and duplicating objects
  */
 
+/**
+ *
+ */
 export class ObjectManager {
   #picker;
   #undoRedoHandler;

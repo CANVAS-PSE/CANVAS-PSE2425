@@ -1,4 +1,10 @@
+/**
+ *
+ */
 export class ProjectOverviewManager {
+  /**
+   *
+   */
   constructor() {
     // handle all favorite buttons
     document.querySelectorAll(".favoriteButton").forEach((button) => {
@@ -57,6 +63,9 @@ export class ProjectOverviewManager {
     }
   }
 
+  /**
+   *
+   */
   #handleFavoriteFilter() {
     const favoriteSwitchWrapper = document.createElement("div");
     favoriteSwitchWrapper.classList.add(

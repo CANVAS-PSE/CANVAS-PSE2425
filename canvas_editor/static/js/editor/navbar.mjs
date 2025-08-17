@@ -4,6 +4,9 @@ import { ObjectManager } from "objectManager";
  * and handles the functionality of the buttons in the navbar.
  */
 
+/**
+ *
+ */
 export class Navbar {
   #objectManager;
 
@@ -29,6 +32,10 @@ export class Navbar {
 
     // Safari
     if (navigator.userAgent.indexOf("Safari") > -1) {
+      /**
+       *
+       * @param _
+       */
       fullscreen.onclick = (
         /* eslint-disable-next-line no-unused-vars */
         _,
@@ -42,6 +49,10 @@ export class Navbar {
       return;
     }
 
+    /**
+     *
+     * @param _
+     */
     fullscreen.onclick = (_) => {
       if (document.fullscreenElement === null) {
         _ = document.documentElement.requestFullscreen();

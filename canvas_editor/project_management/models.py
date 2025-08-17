@@ -108,7 +108,6 @@ class Settings(models.Model):
     project = models.OneToOneField(
         Project, related_name="settings", on_delete=models.CASCADE
     )
-    # Environment settings
 
     # Graphic settings
     shadows = models.BooleanField(default=True)

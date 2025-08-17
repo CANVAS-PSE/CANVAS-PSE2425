@@ -3,6 +3,9 @@ import { SelectableObject } from "objects";
  * Represents a single component of the inspector
  */
 export class InspectorComponent {
+  /**
+   *
+   */
   constructor() {
     if (new.target == InspectorComponent) {
       throw new Error("This class is abstract an cannot be instantiated.");
@@ -19,6 +22,9 @@ export class InspectorComponent {
     );
   }
 
+  /**
+   *
+   */
   disableBorder() {
     throw new Error(
       "The disableBorder method must be implemented in every subclass of InspectorComponent",
@@ -61,6 +67,9 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     this.#InputLimitBottom = InputLimitBottom;
   }
 
+  /**
+   *
+   */
   render() {
     const wrapper = document.createElement("div");
     wrapper.classList.add("d-flex", "p-2", "bg-body", "rounded-2", "gap-2");
@@ -104,6 +113,9 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     return wrapper;
   }
 
+  /**
+   *
+   */
   disableBorder() {
     this.#hasBorder = false;
   }
@@ -128,6 +140,9 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
     this.#title = title;
   }
 
+  /**
+   *
+   */
   render() {
     const wrapper = document.createElement("div");
     wrapper.classList.add("accordion");
@@ -212,6 +227,9 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
     this.#hasBorder = true;
   }
 
+  /**
+   *
+   */
   render() {
     const wrapper = document.createElement("div");
     wrapper.classList.add("d-flex", "p-2", "bg-body", "rounded-3", "gap-2");
@@ -248,6 +266,9 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
     return wrapper;
   }
 
+  /**
+   *
+   */
   disableBorder() {
     this.#hasBorder = false;
   }
@@ -272,7 +293,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
    * @param {number} max the max value of the field
    * @param {Function} getFieldValueFunc the function to get the value of the field
    * @param {Function} saveFunc the function to save the value
-   * @param {number} [step=undefined] the step the slider uses
+   * @param {number} [step] the step the slider uses
    */
   constructor(
     fieldName,
@@ -292,6 +313,9 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
     this.#hasBorder = true;
   }
 
+  /**
+   *
+   */
   render() {
     const wrapper = document.createElement("div");
     wrapper.classList.add(
@@ -364,6 +388,9 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
     return wrapper;
   }
 
+  /**
+   *
+   */
   disableBorder() {
     this.#hasBorder = false;
   }
@@ -390,6 +417,9 @@ export class HeaderInspectorComponent extends InspectorComponent {
     this.#selectedObject = selectedObject;
   }
 
+  /**
+   *
+   */
   render() {
     const wrapper = document.createElement("div");
     wrapper.classList.add("d-flex", "px-1", "gap-1");

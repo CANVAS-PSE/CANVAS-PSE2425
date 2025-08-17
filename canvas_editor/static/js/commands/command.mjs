@@ -5,6 +5,9 @@
  * @throws {Error} When the method is not implemented by a subclass.
  */
 
+/**
+ *
+ */
 export class Command {
   /**
    * Initializes a new instance of the Command class.

@@ -9,6 +9,9 @@ export const Mode = Object.freeze({
   ROTATE: "rotate",
 });
 
+/**
+ *
+ */
 export class Picker {
   #camera;
   #transformControls;
@@ -58,6 +61,9 @@ export class Picker {
     this.#addEventListenerCustomEvent();
   }
 
+  /**
+   *
+   */
   #setUpMouseEvents() {
     const canvasChild = this.#canvas.children[this.#canvas.children.length - 1];
 
@@ -89,6 +95,9 @@ export class Picker {
     });
   }
 
+  /**
+   *
+   */
   #setUpKeyboardEvents() {
     /** @type {[string, Function][]} */
     const keyboardEventMapping = [
@@ -326,6 +335,10 @@ export class Picker {
   /*
    * Updates the selection based on the ctrlKey
    * @param {Boolean} ctrlKey The state of the ctrlKey
+   */
+  /**
+   *
+   * @param ctrlKey
    */
   #updateSelection(ctrlKey) {
     // No object was clicked

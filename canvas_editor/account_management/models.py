@@ -1,9 +1,10 @@
 import os
 
-from canvas import path_dict
 from django.contrib.auth.models import User
 from django.db import models
 from django.templatetags.static import static
+
+from canvas import path_dict
 
 
 def user_directory_path(instance, filename: str) -> str:
@@ -32,7 +33,10 @@ class UserProfile(models.Model):
 
     @property
     def image_url(self):
-        """Get the url to the profile picture of the user."""
+        """
+        Return the URL of the profile picture.
+        If no profile picture is set, return the default image URL.
+        """
         if self.profile_picture and os.path.isfile(self.profile_picture.path):
             return self.profile_picture.url
         return static(path_dict.default_profil_pic)

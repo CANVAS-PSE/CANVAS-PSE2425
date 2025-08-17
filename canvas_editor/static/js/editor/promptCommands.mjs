@@ -20,7 +20,7 @@ export class PromptCommand extends HTMLElement {
    * Creates a new prompt command
    * @param {string} name the name of the command
    * @param {CommandPrompt} commandPrompt the command prompt in use for this command
-   * @param {string} [keybind=null] the keybind of the command
+   * @param {string} [keybind] the keybind of the command
    */
   constructor(name, commandPrompt, keybind = null) {
     super();
@@ -62,14 +62,23 @@ export class PromptCommand extends HTMLElement {
     });
   }
 
+  /**
+   *
+   */
   get commandName() {
     return this.#commandName;
   }
 
+  /**
+   *
+   */
   get occurenceLength() {
     return this.#occurenceLength;
   }
 
+  /**
+   *
+   */
   set occurenceLength(length) {
     this.#occurenceLength = length;
   }
@@ -111,10 +120,16 @@ export class PromptCommand extends HTMLElement {
     }
   }
 
+  /**
+   *
+   */
   select() {
     this.classList.add("bg-primary");
   }
 
+  /**
+   *
+   */
   unselect() {
     this.classList.remove("bg-primary");
   }
@@ -127,6 +142,9 @@ export class PromptCommand extends HTMLElement {
   }
 }
 
+/**
+ *
+ */
 export class ThemePromptCommand extends PromptCommand {
   /**
    * Create a new theme command
@@ -142,6 +160,9 @@ export class ThemePromptCommand extends PromptCommand {
     super(description, commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     throw new Error("This method needs to be implemented in all subclasses");
   }
@@ -202,6 +223,9 @@ export class LightModePromptCommand extends ThemePromptCommand {
     super("Use light mode", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     this.setTheme("light");
   }
@@ -219,6 +243,9 @@ export class DarkModePromptCommand extends ThemePromptCommand {
     super("Use dark mode", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     this.setTheme("dark");
   }
@@ -236,6 +263,9 @@ export class AutoModePromptCommand extends ThemePromptCommand {
     super("Use auto mode", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     this.setTheme("auto");
   }
@@ -256,6 +286,9 @@ export class AddHeliostatPromptCommand extends PromptCommand {
     this.#objectManager = objectManager;
   }
 
+  /**
+   *
+   */
   execute() {
     this.#objectManager.createHeliostat();
   }
@@ -276,6 +309,9 @@ export class AddReceiverPromptCommand extends PromptCommand {
     this.#objectManager = objectManager;
   }
 
+  /**
+   *
+   */
   execute() {
     this.#objectManager.createReceiver();
   }
@@ -296,6 +332,9 @@ export class AddLightSourcePromptCommand extends PromptCommand {
     this.#objectManager = objectManager;
   }
 
+  /**
+   *
+   */
   execute() {
     this.#objectManager.createLightSource();
   }
@@ -313,6 +352,9 @@ export class ToggleFullscreenPromptCommand extends PromptCommand {
     super("Toggle fullscreen", commandPrompt, "F11");
   }
 
+  /**
+   *
+   */
   execute() {
     if (navigator.userAgent.indexOf("Safari") > -1) {
       if (document.webkitFullscreenElement === null) {
@@ -343,6 +385,9 @@ export class ExportProjectPromptCommand extends PromptCommand {
     super("Export project", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     let modal = new Modal(document.getElementById("loadingModal"));
     modal.show();
@@ -390,6 +435,9 @@ export class RenderProjectPromptCommand extends PromptCommand {
     super("Render project", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     const jobModal = new Modal(document.getElementById("startJobModal"));
     jobModal.show();
@@ -414,6 +462,9 @@ export class OpenSettingsPromptCommand extends PromptCommand {
     super("Open settings", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     const settingsModal = new Modal(document.getElementById("settings"));
     settingsModal.show();
@@ -432,6 +483,9 @@ export class OpenJobInterfacePromptCommand extends PromptCommand {
     super("Open job interface", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     const jobInterfaceModal = new Modal(
       document.getElementById("jobInterface"),
@@ -458,6 +512,9 @@ export class OpenKeybindsPromptCommand extends PromptCommand {
     super("Open keybindings help page", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     const keybindingsModal = new Modal(
       document.getElementById("keyboardModal"),
@@ -478,6 +535,9 @@ export class LogoutPromptCommand extends PromptCommand {
     super("Logout", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     fetch(window.location.origin + "/logout/", {
       method: "POST",
@@ -503,6 +563,9 @@ export class NewProjectPromptCommand extends PromptCommand {
     super("Create new project", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     const newProjectModal = new Modal(
       document.getElementById("createNewProject"),
@@ -529,6 +592,9 @@ export class OpenProjectPromptCommand extends PromptCommand {
     super("Open exisiting project", commandPrompt);
   }
 
+  /**
+   *
+   */
   execute() {
     const newProjectModal = new Modal(document.getElementById("openProject"));
     newProjectModal.show();

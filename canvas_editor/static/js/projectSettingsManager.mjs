@@ -67,9 +67,17 @@ export class ProjectSettingsManager {
         label: "Shadow",
         key: "shadow",
         enabled: this.#shadowEnabled,
+        /**
+         *
+         * @param val
+         */
         store: (val) => {
           this.#shadowEnabled = val;
         },
+        /**
+         *
+         * @param val
+         */
         apply: (val) => {
           this.#editor.setShadows(val);
         },
@@ -78,9 +86,17 @@ export class ProjectSettingsManager {
         label: "Fog",
         key: "fog",
         enabled: this.#fogEnabled,
+        /**
+         *
+         * @param val
+         */
         store: (val) => {
           this.#fogEnabled = val;
         },
+        /**
+         *
+         * @param val
+         */
         apply: (val) => {
           this.#editor.setFog(val);
         },

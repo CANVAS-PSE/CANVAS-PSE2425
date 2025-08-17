@@ -30,6 +30,9 @@ export class ModeSelector {
     this.#addEventListeners();
   }
 
+  /**
+   *
+   */
   #addEventListeners() {
     // Add event listeners to the tab buttons to switch modes when clicked
     this.#tabButtons[Mode.NONE].addEventListener("click", () =>
@@ -55,6 +58,10 @@ export class ModeSelector {
   }
 
   // Switches the mode of the picker and updates the UI.
+  /**
+   *
+   * @param mode
+   */
   #switchToMode(mode) {
     this.#mode = mode;
     this.#picker.setMode(mode);

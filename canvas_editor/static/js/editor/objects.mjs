@@ -24,6 +24,9 @@ import {
   DeleteReceiverCommand,
 } from "deleteCommands";
 
+/**
+ *
+ */
 export class SelectableObject extends Object3D {
   #objectName;
 
@@ -36,10 +39,16 @@ export class SelectableObject extends Object3D {
     this.#objectName = name;
   }
 
+  /**
+   *
+   */
   get objectName() {
     return this.#objectName;
   }
 
+  /**
+   *
+   */
   set objectName(name) {
     this.#objectName = name;
   }
@@ -164,6 +173,12 @@ export class Heliostat extends SelectableObject {
    * @param {THREE.Vector3} position The position of the heliostat.
    */
 
+  /**
+   *
+   * @param heliostatName
+   * @param position
+   * @param apiID
+   */
   constructor(heliostatName, position, apiID = null) {
     super(heliostatName);
     this.loader = new GLTFLoader();
@@ -245,18 +260,30 @@ export class Heliostat extends SelectableObject {
     ]);
   }
 
+  /**
+   *
+   */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
+  /**
+   *
+   */
   get isSelectable() {
     return true;
   }
 
+  /**
+   *
+   */
   get isMovable() {
     return this.#isMovable;
   }
 
+  /**
+   *
+   */
   get oldPosition() {
     return this.#oldPosition;
   }
@@ -279,10 +306,16 @@ export class Heliostat extends SelectableObject {
     );
   }
 
+  /**
+   *
+   */
   duplicate() {
     this.#undoRedoHandler.executeCommand(new DuplicateHeliostatCommand(this));
   }
 
+  /**
+   *
+   */
   delete() {
     this.#undoRedoHandler.executeCommand(new DeleteHeliostatCommand(this));
   }
@@ -296,13 +329,22 @@ export class Heliostat extends SelectableObject {
       new UpdateHeliostatCommand(this, "position", position),
     );
   }
+  /**
+   *
+   */
   get apiID() {
     return this.#apiID;
   }
 
+  /**
+   *
+   */
   set apiID(value) {
     this.#apiID = value;
   }
+  /**
+   *
+   */
   get inspectorComponents() {
     return [this.#headerComponent, this.#positionComponent];
   }
@@ -349,7 +391,7 @@ export class Receiver extends SelectableObject {
    * @param {number} resolutionU the resolution U of the receiver
    * @param {number} curvatureE the curvature E of the receiver
    * @param {number} curvatureU the curvature U of the receiver
-   * @param {number} [apiID=null] The id for api usage
+   * @param {number} [apiID] The id for api usage
    */
   constructor(
     receiverName,
@@ -600,22 +642,38 @@ export class Receiver extends SelectableObject {
     ]);
   }
 
+  /**
+   *
+   * @param y
+   */
   lockPositionY(y) {
     this.#base.position.y = y;
   }
 
+  /**
+   *
+   */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
+  /**
+   *
+   */
   get isMovable() {
     return this.#isMovable;
   }
 
+  /**
+   *
+   */
   get isSelectable() {
     return true;
   }
 
+  /**
+   *
+   */
   get oldPosition() {
     return this.#oldPosition;
   }
@@ -640,6 +698,9 @@ export class Receiver extends SelectableObject {
     this.#base.position.y = -position.y;
   }
 
+  /**
+   *
+   */
   getPosition() {
     return this.position;
   }
@@ -667,78 +728,135 @@ export class Receiver extends SelectableObject {
     this.#undoRedoHandler.executeCommand(new DuplicateReceiverCommand(this));
   }
 
+  /**
+   *
+   */
   get apiID() {
     return this.#apiID;
   }
 
+  /**
+   *
+   */
   set apiID(value) {
     this.#apiID = value;
   }
 
+  /**
+   *
+   */
   get towerType() {
     return this.#towerType;
   }
 
+  /**
+   *
+   */
   set towerType(value) {
     this.#towerType = value;
   }
 
+  /**
+   *
+   */
   get normalVector() {
     return this.#normalVector;
   }
 
+  /**
+   *
+   */
   set normalVector(value) {
     this.#normalVector = value;
   }
 
+  /**
+   *
+   */
   get planeE() {
     return this.#planeE;
   }
 
+  /**
+   *
+   */
   set planeE(value) {
     this.#planeE = value;
   }
 
+  /**
+   *
+   */
   get planeU() {
     return this.#planeU;
   }
 
+  /**
+   *
+   */
   set planeU(value) {
     this.#planeU = value;
   }
 
+  /**
+   *
+   */
   get resolutionE() {
     return this.#resolutionE;
   }
 
+  /**
+   *
+   */
   set resolutionE(value) {
     this.#resolutionE = value;
   }
 
+  /**
+   *
+   */
   get resolutionU() {
     return this.#resolutionU;
   }
 
+  /**
+   *
+   */
   set resolutionU(value) {
     this.#resolutionU = value;
   }
 
+  /**
+   *
+   */
   get curvatureE() {
     return this.#curvatureE;
   }
 
+  /**
+   *
+   */
   set curvatureE(value) {
     this.#curvatureE = value;
   }
 
+  /**
+   *
+   */
   get curvatureU() {
     return this.#curvatureU;
   }
 
+  /**
+   *
+   */
   set curvatureU(value) {
     this.#curvatureU = value;
   }
 
+  /**
+   *
+   */
   get inspectorComponents() {
     return [
       this.#headerComponent,
@@ -756,6 +874,9 @@ export class Receiver extends SelectableObject {
  * Class that builds the base of the receiver
  */
 export class ReceiverBase extends Object3D {
+  /**
+   *
+   */
   constructor() {
     super();
     this.loader = new GLTFLoader();
@@ -775,6 +896,9 @@ export class ReceiverBase extends Object3D {
  * Class that builds the top of the receiver
  */
 export class ReceiverTop extends Object3D {
+  /**
+   *
+   */
   constructor() {
     super();
     this.loader = new GLTFLoader();
@@ -819,7 +943,7 @@ export class LightSource extends SelectableObject {
    * @param {string} distributionType the type of the distribution
    * @param {number} distributionMean the mean of the distribution
    * @param {number} distributionCovariance the covariance of the distribution
-   * @param {number} [apiID=null] the id for api usage
+   * @param {number} [apiID] the id for api usage
    */
   constructor(
     lightsourceName,
@@ -926,6 +1050,9 @@ export class LightSource extends SelectableObject {
     return this.#isMovable;
   }
 
+  /**
+   *
+   */
   get isSelectable() {
     return false;
   }
@@ -939,61 +1066,106 @@ export class LightSource extends SelectableObject {
     );
   }
 
+  /**
+   *
+   */
   duplicate() {
     this.#undoRedoHandler.executeCommand(new DuplicateLightSourceCommand(this));
   }
+  /**
+   *
+   */
   delete() {
     this.#undoRedoHandler.executeCommand(new DeleteLightSourceCommand(this));
   }
 
+  /**
+   *
+   */
   get apiID() {
     return this.#apiID;
   }
 
+  /**
+   *
+   */
   set apiID(id) {
     this.#apiID = id;
   }
 
+  /**
+   *
+   */
   get numberOfRays() {
     return this.#numberOfRays;
   }
 
+  /**
+   *
+   */
   set numberOfRays(number) {
     this.#numberOfRays = number;
   }
 
+  /**
+   *
+   */
   get lightSourceType() {
     return this.#lightSourceType;
   }
 
+  /**
+   *
+   */
   set lightSourceType(type) {
     this.#lightSourceType = type;
   }
 
+  /**
+   *
+   */
   get distributionType() {
     return this.#distributionType;
   }
 
+  /**
+   *
+   */
   set distributionType(type) {
     this.#distributionType = type;
   }
 
+  /**
+   *
+   */
   get distributionMean() {
     return this.#distributionMean;
   }
 
+  /**
+   *
+   */
   set distributionMean(number) {
     this.#distributionMean = number;
   }
 
+  /**
+   *
+   */
   get distributionCovariance() {
     return this.#distributionCovariance;
   }
 
+  /**
+   *
+   */
   set distributionCovariance(number) {
     this.#distributionCovariance = number;
   }
 
+  /**
+   *
+   */
   get inspectorComponents() {
     return [
       this.#header,

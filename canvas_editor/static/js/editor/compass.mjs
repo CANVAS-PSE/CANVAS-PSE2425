@@ -17,7 +17,16 @@ import {
   Vector4,
 } from "three";
 
+/**
+ * Class representing an axis arrow for the compass.
+ */
 class CompassAxisArrow extends Object3D {
+  /**
+   * Creates an instance of the compass axis arrow.
+   * @param {string} axisId - The ID of the axis (x, y, or z).
+   * @param {Color} color - The color of the arrow.
+   * @param {string} label - The label for the arrow.
+   */
   constructor(axisId, color, label) {
     super();
     this.axisId = axisId;
@@ -44,12 +53,21 @@ class CompassAxisArrow extends Object3D {
     this.add(this.label);
   }
 
+  /**
+   * Disposes of the arrow and label resources.
+   */
   dispose() {
     this.arrow.dispose();
     this.label.material.map.dispose();
     this.label.material.dispose();
   }
 
+  /**
+   * Creates a text sprite for the compass label.
+   * @param {Color} color - The color of the text.
+   * @param {string} text - The text to display.
+   * @returns {Sprite} - The created text sprite.
+   */
   getTextSprite(color, text) {
     const canvas = document.createElement("canvas");
     canvas.width = 64;
@@ -70,7 +88,17 @@ class CompassAxisArrow extends Object3D {
   }
 }
 
+/**
+ *
+ */
 class CompassAxisCircle extends Object3D {
+  /**
+   *
+   * @param axisId
+   * @param color
+   * @param label
+   * @param axisWidth
+   */
   constructor(axisId, color, label, axisWidth = 0.05) {
     super();
     this.axisId = axisId;
@@ -105,6 +133,9 @@ class CompassAxisCircle extends Object3D {
     this.add(this.negAxisHelper);
   }
 
+  /**
+   *
+   */
   dispose() {
     this.axis.material.dispose();
 
@@ -115,6 +146,10 @@ class CompassAxisCircle extends Object3D {
     this.negAxisHelper.material.dispose();
   }
 
+  /**
+   *
+   * @param point
+   */
   setOpacity(point) {
     // set opacity so the "hidden" part of the axis is partially transparent
     if (point[this.axisId] >= 0) {
@@ -126,14 +161,27 @@ class CompassAxisCircle extends Object3D {
     }
   }
 
+  /**
+   *
+   * @param point
+   */
   update(point) {
     this.setOpacity(point);
   }
 
+  /**
+   *
+   * @param color
+   */
   getAxisMaterial(color) {
     return new MeshBasicMaterial({ color: color, toneMapped: false });
   }
 
+  /**
+   *
+   * @param color
+   * @param text
+   */
   getSpriteMaterial(color, text = null) {
     const canvas = document.createElement("canvas");
     canvas.width = 64;
@@ -159,7 +207,17 @@ class CompassAxisCircle extends Object3D {
   }
 }
 
+/**
+ *
+ */
 class ViewHelper extends Object3D {
+  /**
+   *
+   * @param camera
+   * @param domElement
+   * @param size
+   * @param style
+   */
   constructor(camera, domElement, size = 128, style = "arrows") {
     super();
     this.camera = camera;
@@ -189,6 +247,10 @@ class ViewHelper extends Object3D {
     this.dim = size;
   }
 
+  /**
+   *
+   * @param renderer
+   */
   render(renderer) {
     this.quaternion.copy(this.camera.quaternion).invert();
     this.updateMatrixWorld();
@@ -214,6 +276,9 @@ class ViewHelper extends Object3D {
     renderer.setViewport(previousViewport); // reset to previous viewport
   }
 
+  /**
+   *
+   */
   dispose() {
     this.geometry.dispose();
 

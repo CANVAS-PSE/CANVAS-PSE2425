@@ -9,6 +9,9 @@
 (() => {
   "use strict";
 
+  /**
+   *
+   */
   const getStoredTheme = () => localStorage.getItem("theme");
   /**
    * Stores the selected theme in localStorage.
@@ -17,6 +20,9 @@
    */
   const setStoredTheme = (theme) => localStorage.setItem("theme", theme);
 
+  /**
+   *
+   */
   const getPreferredTheme = () => {
     const storedTheme = getStoredTheme();
     if (!storedTheme) {

@@ -2,6 +2,9 @@ import { Editor } from "editor";
 import { Heliostat, LightSource, Receiver, SelectableObject } from "objects";
 import { Picker } from "picker";
 
+/**
+ *
+ */
 export class OverviewHandler {
   #editor;
   #picker;
@@ -85,6 +88,9 @@ export class OverviewHandler {
     this.#handleUserInput();
   }
 
+  /**
+   *
+   */
   #render() {
     // clear the list
     this.#heliostatList.innerText = "";
@@ -298,6 +304,9 @@ export class OverviewHandler {
     return lightsourceEntry;
   }
 
+  /**
+   *
+   */
   #handleUserInput() {
     document
       .getElementById("accordionOverview")

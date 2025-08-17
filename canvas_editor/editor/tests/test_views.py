@@ -12,8 +12,8 @@ from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class EditorViewTest(TestCase):
-    """
-    Test suite for the EditorView.
+    """Test suite for the EditorView.
+
     This test suite includes tests for both GET and POST methods of the editor view.
     It ensures that the editor view behaves correctly when accessed and when form data is submitted.
 
@@ -23,12 +23,6 @@ class EditorViewTest(TestCase):
         Set up the test environment by creating a user and a project.
     test_get_method(self):
         Test the GET method of the editor view to ensure it returns the correct status code and context data.
-    test_post_method(self):
-        Test the POST method of the editor view to ensure it handles form submissions correctly, including:
-        - Submitting a project with an existing name.
-        - Submitting a unique project without a file attached.
-        - Submitting a unique project with an HDF5 file attached.
-        - Submitting a project with an existing name and an HDF5 file attached.
     """
 
     def setUp(self):
@@ -111,7 +105,7 @@ class DownloadViewTest(TestCase):
             light_sources = hdf5_file.get(config_dictionary.light_source_key)
 
             self.assertIsNotNone(heliostats)
-            self.assertIsNotNone(light_sources)
+            self.assertIsNotNone(receivers)
             self.assertIsNotNone(light_sources)
 
             for heliostat in heliostats:

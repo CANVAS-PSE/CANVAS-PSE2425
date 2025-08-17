@@ -2,6 +2,9 @@ import { SaveAndLoadHandler } from "saveAndLoadHandler";
 
 let apiUrl = window.location.origin;
 
+/**
+ *
+ */
 export class JobInterface {
   #jobInterfaceBody;
   #projectID;
@@ -49,6 +52,9 @@ export class JobInterface {
     this.#getJobs();
   }
 
+  /**
+   *
+   */
   #createNewJob() {
     fetch(apiUrl + "/jobs/" + this.#projectID + "/", {
       method: "POST",
@@ -97,6 +103,9 @@ export class JobInterface {
     });
   }
 
+  /**
+   *
+   */
   #getJobs() {
     fetch(apiUrl + "/jobs/" + this.#projectID + "/")
       .then((res) => res.json())
@@ -116,6 +125,9 @@ export class JobInterface {
   }
 }
 
+/**
+ *
+ */
 export class Job extends HTMLElement {
   #id;
   #jobInterface;
@@ -127,6 +139,12 @@ export class Job extends HTMLElement {
   #progressElem;
   #resultButton;
 
+  /**
+   *
+   * @param jobInterface
+   * @param jobID
+   * @param projectID
+   */
   constructor(jobInterface, jobID, projectID) {
     super();
     this.#id = jobID;
@@ -136,6 +154,9 @@ export class Job extends HTMLElement {
     this.#createJobElement();
   }
 
+  /**
+   *
+   */
   #createJobElement() {
     this.classList.add(
       "rounded-3",
@@ -192,6 +213,9 @@ export class Job extends HTMLElement {
     this.appendChild(deleteButton);
   }
 
+  /**
+   *
+   */
   fetchStatus() {
     if (!this.#isFinished) {
       fetch(apiUrl + "/jobs/" + this.#projectID + "/" + this.#id)
@@ -215,6 +239,9 @@ export class Job extends HTMLElement {
     }
   }
 
+  /**
+   *
+   */
   get jobID() {
     return this.#id;
   }

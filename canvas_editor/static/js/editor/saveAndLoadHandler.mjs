@@ -12,7 +12,7 @@ export class SaveAndLoadHandler {
 
   /**
    * Creates a saveAndLoadHandler or returns the existing one
-   * @param {number} [projectId=null] the projectID for api requests.
+   * @param {number} [projectId] the projectID for api requests.
    */
   constructor(projectId = null) {
     if (SaveAndLoadHandler.#instance) {
@@ -25,7 +25,7 @@ export class SaveAndLoadHandler {
 
   /**
    * Gets the current saveAndLoadHandler instance in use
-   * @param {number} [projectId=null] the id of the project, only needed for the first instanciation
+   * @param {number} [projectId] the id of the project, only needed for the first instanciation
    * @returns {SaveAndLoadHandler} the saveAndLoadHandler in use
    */
   static getInstance(projectId = null) {
@@ -328,7 +328,7 @@ export class SaveAndLoadHandler {
    * Wrapper function for an standard api call
    * @param {string} endpoint The endpoint to make the api call to
    * @param {"PUT" | "POST" | "GET" | "DELETE"} method The method you want to use
-   * @param {any} [body=null] the body for the api call
+   * @param {any} [body] the body for the api call
    * @returns {Promise<JSON>} the response of the api call as JSON
    */
   async #makeApiCall(endpoint, method, body) {

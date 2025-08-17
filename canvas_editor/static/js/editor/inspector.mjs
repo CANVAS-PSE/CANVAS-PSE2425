@@ -3,6 +3,9 @@ import { ItemDeletedEvent } from "deleteCommands";
 import { SelectableObject } from "objects";
 import { ItemUpdatedEvent } from "updateCommands";
 
+/**
+ *
+ */
 export class Inspector {
   #picker;
   /**
@@ -50,6 +53,9 @@ export class Inspector {
     this.#render();
   }
 
+  /**
+   *
+   */
   #render() {
     this.#objectList = this.#picker.getSelectedObjects();
     this.#inspectorElem.innerHTML = "";

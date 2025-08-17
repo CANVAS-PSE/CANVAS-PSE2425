@@ -3,6 +3,9 @@ import { Editor } from "editor";
 import { Heliostat, Receiver, LightSource, SelectableObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 
+/**
+ *
+ */
 export class ItemCreatedEvent extends CustomEvent {
   /**
    * Creates a new item create event.
