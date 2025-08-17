@@ -111,7 +111,7 @@ class DownloadViewTest(TestCase):
 
             self.assertIsNotNone(heliostats)
             self.assertIsNotNone(light_sources)
-            self.assertIsNotNone(light_sources)
+            self.assertIsNotNone(receivers)
 
             for heliostat in heliostats:
                 self.assertEqual(
