@@ -875,7 +875,8 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   *
+   * Get the inspectorComponents used for this object
+   * @returns {InspectorComponent[]} array of the inspectorComponents used
    */
   get inspectorComponents() {
     return [
@@ -1071,7 +1072,8 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Get wether the object is selectable
+   * @returns {boolean} if the object is selectable
    */
   get isSelectable() {
     return false;
@@ -1082,12 +1084,12 @@ export class LightSource extends CanvasObject {
    */
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateLightsourceCommand(this, "objectName", name),
+      new UpdateLightsourceCommand(this, "lightSourceName", name),
     );
   }
 
   /**
-   *
+   * Duplicate the object
    */
   duplicate() {
     this.#undoRedoHandler.executeCommand(new DuplicateLightSourceCommand(this));
@@ -1100,7 +1102,8 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Get the api ID used for this object
+   * @returns {number} the api id
    */
   get apiID() {
     return this.#apiID;
@@ -1114,7 +1117,8 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Get the number of rays for this light source
+   * @returns {number} the number of rays
    */
   get numberOfRays() {
     return this.#numberOfRays;
@@ -1128,7 +1132,8 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Get the type of the light source
+   * @returns {string} the type of the light source
    */
   get lightSourceType() {
     return this.#lightSourceType;
@@ -1142,49 +1147,53 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   *
+   * Get the distributionType of the light source
+   * @returns {string} the distributionType
    */
   get distributionType() {
     return this.#distributionType;
   }
 
   /**
-   *
+   * Set the distributionType of the light source
    */
   set distributionType(type) {
     this.#distributionType = type;
   }
 
   /**
-   *
+   * Get the distributionMean of the light source
+   * @returns {number} the distributionMean
    */
   get distributionMean() {
     return this.#distributionMean;
   }
 
   /**
-   *
+   * Set the distributionMean of the light source
    */
   set distributionMean(number) {
     this.#distributionMean = number;
   }
 
   /**
-   *
+   * Get the distributionCovariance of the light source
+   * @returns {number} the distributionCovariance
    */
   get distributionCovariance() {
     return this.#distributionCovariance;
   }
 
   /**
-   *
+   * Set the distributionCovariance of the light source
    */
   set distributionCovariance(number) {
     this.#distributionCovariance = number;
   }
 
   /**
-   *
+   * Get an array of all inspectorComponents used for this object
+   * @returns {InspectorComponent[]} array of all inspectorComponents
    */
   get inspectorComponents() {
     return [

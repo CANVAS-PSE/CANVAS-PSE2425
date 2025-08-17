@@ -65,7 +65,7 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
     /** @type {*} */
     this.#oldParameter =
       this.#attribute == "position"
-        ? this.#heliostat.oldPosition
+        ? this.#heliostat.currentPosition
         : this.#heliostat[this.#attribute];
     this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
@@ -161,7 +161,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
     this.#newParameter = newParameter;
     this.#oldParameter =
       this.#attribute == "position"
-        ? this.#receiver.oldPosition
+        ? this.#receiver.currentPosition
         : this.#receiver[this.#attribute];
     this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
