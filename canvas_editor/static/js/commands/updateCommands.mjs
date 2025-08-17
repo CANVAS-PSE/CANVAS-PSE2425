@@ -44,12 +44,12 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
   /**
    *The allowed attributes to set
    */
-  #allowedAttributes = ["heliostatName", "position"];
+  #allowedAttributes = ["objectName", "position"];
 
   /**
    * Initializes a new UpdateHeliostatCommand with the specified 'Heliostat' instance, attribute, and new parameter.
    * @param {Heliostat} heliostat - the 'Heliostat' instance to be updated.
-   * @param {"heliostatName" | "position"} attribute - The name of the attribute to modify.
+   * @param {"objectName" | "position"} attribute - The name of the attribute to modify.
    * @param {*} newParameter - the new value to assign to the attribute.
    */
   constructor(heliostat, attribute, newParameter) {
@@ -62,10 +62,9 @@ export class UpdateHeliostatCommand extends SingleObjectCommand {
     }
     this.#newParameter = newParameter;
 
-    /** @type {*} */
     this.#oldParameter =
       this.#attribute == "position"
-        ? this.#heliostat.currentPosition
+        ? this.#heliostat.lastPosition
         : this.#heliostat[this.#attribute];
     this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
@@ -132,7 +131,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
    * Allowed attributes
    */
   #allowedAttributes = [
-    "receiverName",
+    "objectName",
     "towerType",
     "normalVector",
     "planeE",
@@ -147,7 +146,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
   /**
    * Initializes a new UpdateReceiverCommand with the specified 'Receiver' instance, attribute, and new parameter.
    * @param {Receiver} receiver - This is the receiver object whose attribute will be updated.
-   * @param {"receiverName" | "towerType" | "normalVector" | "planeE" | "planeU" | "resolutionE" | "resolutionU" | "curvatureE" | "curvatureU" | "position" } attribute - The name of the attribute to modify.
+   * @param {"objectName" | "towerType" | "normalVector" | "planeE" | "planeU" | "resolutionE" | "resolutionU" | "curvatureE" | "curvatureU" | "position" } attribute - The name of the attribute to modify.
    * @param {*} newParameter - The new value to assign to the attribute. This can be of any type depending on the attribute being updated.
    */
   constructor(receiver, attribute, newParameter) {
@@ -161,7 +160,7 @@ export class UpdateReceiverCommand extends SingleObjectCommand {
     this.#newParameter = newParameter;
     this.#oldParameter =
       this.#attribute == "position"
-        ? this.#receiver.currentPosition
+        ? this.#receiver.lastPosition
         : this.#receiver[this.#attribute];
     this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance();
   }
@@ -241,7 +240,7 @@ export class UpdateLightsourceCommand extends SingleObjectCommand {
    * Allowed attributes
    */
   #allowedAttributes = [
-    "lightSourceName",
+    "objectName",
     "numberOfRays",
     "lightSourceType",
     "distributionType",
@@ -252,7 +251,7 @@ export class UpdateLightsourceCommand extends SingleObjectCommand {
   /**
    * Initializes a new UpdateLightSourceCommand with the specified 'LightSource' instance, attribute, and new parameter.
    * @param {LightSource} lightSource - This is the lightsource object whose attribute will be updated.
-   * @param { "lightSourceName" | "numberOfRays" | "lightSourceType" | "distributionType" | "distributionMean" | "distributionCovariance"} attribute - The name of the attribute to modify.
+   * @param { "objectName" | "numberOfRays" | "lightSourceType" | "distributionType" | "distributionMean" | "distributionCovariance"} attribute - The name of the attribute to modify.
    * @param {*} newParameter - The new value to assign to the attribute.
    */
   constructor(lightSource, attribute, newParameter) {

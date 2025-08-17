@@ -7,7 +7,6 @@ import {
 } from "inspectorComponents";
 import * as THREE from "three";
 import { Vector3, Object3D } from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { UndoRedoHandler } from "undoRedoHandler";
 import {
   UpdateHeliostatCommand,
@@ -24,12 +23,13 @@ import {
   DeleteLightSourceCommand,
   DeleteReceiverCommand,
 } from "deleteCommands";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
  * Represents a Object in CANVAS
  */
 export class CanvasObject extends Object3D {
-  #objectName;
+  objectName;
 
   /**
    * Creates a new selectable object
@@ -37,22 +37,7 @@ export class CanvasObject extends Object3D {
    */
   constructor(name) {
     super();
-    this.#objectName = name;
-  }
-
-  /**
-   * Get the name of the object
-   * @returns {string} the name of the object
-   */
-  get objectName() {
-    return this.#objectName;
-  }
-
-  /**
-   * Set the name of the object
-   */
-  set objectName(name) {
-    this.#objectName = name;
+    this.objectName = name;
   }
 
   /**
@@ -93,19 +78,6 @@ export class CanvasObject extends Object3D {
   }
 
   /**
-   * Duplicates the object
-   */
-  duplicate() {
-    throw new Error("This method must be implemented in all subclasses");
-  }
-  /**
-   * Deletes the object
-   */
-  delete() {
-    throw new Error("This method must be implemented in all subclasses");
-  }
-
-  /**
    * Updates the position of the object
    * @param {THREE.Vector3} position - the new position of the object
    */
@@ -120,6 +92,19 @@ export class CanvasObject extends Object3D {
    */
   // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateRotation(rotation) {
+    throw new Error("This method must be implemented in all subclasses");
+  }
+
+  /**
+   * Duplicates the object
+   */
+  duplicate() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
+  /**
+   * Deletes the object
+   */
+  delete() {
     throw new Error("This method must be implemented in all subclasses");
   }
 
@@ -154,12 +139,22 @@ export class CanvasObject extends Object3D {
   }
 
   /**
-   * Returns the old position of the heliostat
+   * Returns the position of the object executed by the last command
    * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
    * @returns {THREE.Vector3} the old position of the object
    */
-  get currentPosition() {
+  get lastPosition() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
+
+  /**
+   * Returns the rotation of the object executed by the last command
+   * @abstract
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {THREE.Vector3} the old rotation of the object
+   */
+  get lastRotation() {
     throw new Error("This method must be implemented in all subclasses");
   }
 }
@@ -177,7 +172,7 @@ export class Heliostat extends CanvasObject {
    * @type { string[] }
    */
   #rotatableAxis = null;
-  #currentPosition;
+  #lastPosition;
 
   /**
    * Creates a Heliostat object
@@ -198,7 +193,7 @@ export class Heliostat extends CanvasObject {
       this.add(this.mesh);
     });
     this.position.copy(position);
-    this.#currentPosition = new Vector3(position.x, position.y, position.z);
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
     this.#apiID = apiID;
 
     // create components for inspector
@@ -294,8 +289,8 @@ export class Heliostat extends CanvasObject {
    * Get the current position of the object
    * @returns {THREE.Vector3} the positon of the object
    */
-  get currentPosition() {
-    return this.#currentPosition;
+  get lastPosition() {
+    return this.#lastPosition;
   }
 
   /**
@@ -304,7 +299,7 @@ export class Heliostat extends CanvasObject {
    */
   updatePosition(position) {
     this.position.copy(position);
-    this.#currentPosition = new Vector3(position.x, position.y, position.z);
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
   }
 
   /**
@@ -313,7 +308,7 @@ export class Heliostat extends CanvasObject {
    */
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateHeliostatCommand(this, "heliostatName", name),
+      new UpdateHeliostatCommand(this, "objectName", name),
     );
   }
 
@@ -390,8 +385,8 @@ export class Receiver extends CanvasObject {
   #planeComponent;
   #resolutionComponent;
   #isMovable = true;
-  #rotatableAxis = ["Y"];
-  #currentPosition;
+  #rotatableAxis = null;
+  #lastPosition;
 
   /**
    * Creates a Receiver object
@@ -439,7 +434,7 @@ export class Receiver extends CanvasObject {
     this.#resolutionU = resolutionU;
     this.#curvatureE = curvatureE;
     this.#curvatureU = curvatureU;
-    this.#currentPosition = new Vector3(position.x, position.y, position.z);
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
 
     // create components for the inspector
     this.#headerComponent = new HeaderInspectorComponent(
@@ -454,7 +449,7 @@ export class Receiver extends CanvasObject {
     const nCoordinate = new SingleFieldInspectorComponent(
       "N",
       "number",
-      () => this.currentPosition.x,
+      () => this.lastPosition.x,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -470,7 +465,7 @@ export class Receiver extends CanvasObject {
     const uCoordinate = new SingleFieldInspectorComponent(
       "U",
       "number",
-      () => this.currentPosition.y,
+      () => this.lastPosition.y,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -486,7 +481,7 @@ export class Receiver extends CanvasObject {
     const eCoordinate = new SingleFieldInspectorComponent(
       "E",
       "number",
-      () => this.currentPosition.z,
+      () => this.lastPosition.z,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -693,8 +688,8 @@ export class Receiver extends CanvasObject {
    * Get the current position of the object
    * @returns {THREE.Vector3} the current position
    */
-  get currentPosition() {
-    return this.#currentPosition;
+  get lastPosition() {
+    return this.#lastPosition;
   }
 
   /**
@@ -713,7 +708,7 @@ export class Receiver extends CanvasObject {
    */
   updatePosition(position) {
     this.position.copy(position);
-    this.#currentPosition = new Vector3(position.x, position.y, position.z);
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
     this.#base.position.y = -position.y;
   }
 
@@ -723,7 +718,7 @@ export class Receiver extends CanvasObject {
    */
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateReceiverCommand(this, "receiverName", name),
+      new UpdateReceiverCommand(this, "objectName", name),
     );
   }
 
@@ -1088,7 +1083,7 @@ export class LightSource extends CanvasObject {
    */
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateLightsourceCommand(this, "lightSourceName", name),
+      new UpdateLightsourceCommand(this, "objectName", name),
     );
   }
 
