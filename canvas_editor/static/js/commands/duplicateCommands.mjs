@@ -28,12 +28,7 @@ export class DuplicateHeliostatCommand extends SingleObjectCommand {
         ? "Heliostat_Copy"
         : this.#heliostat.objectName + "_Copy",
       this.#newPosition,
-      this.#heliostat.aimPoint,
-      this.#heliostat.numberOfFacets,
-      this.#heliostat.kinematicType
     );
-
-    document.dispatchEvent(new ItemCreatedEvent(this.#heliostatCopy));
   }
 
   /**
@@ -82,7 +77,6 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
         ? "Receiver_Copy"
         : this.#receiver.objectName + "_Copy",
       this.#newPosition,
-      this.#receiver.quaternionToYDegree(this.#receiver.oldQuaternion),
       this.#receiver.normalVector,
       this.#receiver.towerType,
       this.#receiver.planeE,
@@ -90,10 +84,8 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
       this.#receiver.resolutionE,
       this.#receiver.resolutionU,
       this.#receiver.curvatureE,
-      this.#receiver.curvatureU
+      this.#receiver.curvatureU,
     );
-
-    document.dispatchEvent(new ItemCreatedEvent(this.#receiverCopy));
   }
 
   /**
@@ -142,10 +134,8 @@ export class DuplicateLightSourceCommand extends SingleObjectCommand {
       this.#lightsource.lightSourceType,
       this.#lightsource.distributionType,
       this.#lightsource.distributionMean,
-      this.#lightsource.distributionCovariance
+      this.#lightsource.distributionCovariance,
     );
-
-    document.dispatchEvent(new ItemCreatedEvent(this.#lightsourceCopy));
   }
 
   /**

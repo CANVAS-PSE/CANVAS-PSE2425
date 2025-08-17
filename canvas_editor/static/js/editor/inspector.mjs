@@ -1,6 +1,6 @@
 import { Picker } from "picker";
 import { ItemDeletedEvent } from "deleteCommands";
-import { SelectableObject } from "objects";
+import { CanvasObject } from "objects";
 import { ItemUpdatedEvent } from "updateCommands";
 
 /**
@@ -9,7 +9,7 @@ import { ItemUpdatedEvent } from "updateCommands";
 export class Inspector {
   #picker;
   /**
-   * @type {SelectableObject[]}
+   * @type {CanvasObject[]}
    */
   #objectList;
   #inspectorElem;

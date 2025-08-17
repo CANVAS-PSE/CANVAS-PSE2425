@@ -1,12 +1,12 @@
 import {
   HeaderInspectorComponent,
+  InspectorComponent,
   MultiFieldInspectorComponent,
   SelectFieldInspectorComponent,
   SingleFieldInspectorComponent,
 } from "inspectorComponents";
 import * as THREE from "three";
 import { Vector3, Object3D } from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { UndoRedoHandler } from "undoRedoHandler";
 import {
   UpdateHeliostatCommand,
@@ -23,12 +23,13 @@ import {
   DeleteLightSourceCommand,
   DeleteReceiverCommand,
 } from "deleteCommands";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
- *
+ * Represents a Object in CANVAS
  */
-export class SelectableObject extends Object3D {
-  #objectName;
+export class CanvasObject extends Object3D {
+  objectName;
 
   /**
    * Creates a new selectable object
@@ -36,25 +37,14 @@ export class SelectableObject extends Object3D {
    */
   constructor(name) {
     super();
-    this.#objectName = name;
+    this.objectName = name;
   }
 
   /**
-   *
-   */
-  get objectName() {
-    return this.#objectName;
-  }
-
-  /**
-   *
-   */
-  set objectName(name) {
-    this.#objectName = name;
-  }
-
-  /**
-   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * Get a list of inspector components used for this object
+   * @abstract
+   * @throws {Error}  Throws an error if the method is not implemented in subclasses.
+   * @returns {InspectorComponent[]} an array of the inspector components
    */
   get inspectorComponents() {
     throw new Error("This method must be implemented in all subclasses");
@@ -88,19 +78,6 @@ export class SelectableObject extends Object3D {
   }
 
   /**
-   * Duplicates the object
-   */
-  duplicate() {
-    throw new Error("This method must be implemented in all subclasses");
-  }
-  /**
-   * Deletes the object
-   */
-  delete() {
-    throw new Error("This method must be implemented in all subclasses");
-  }
-
-  /**
    * Updates the position of the object
    * @param {THREE.Vector3} position - the new position of the object
    */
@@ -119,8 +96,23 @@ export class SelectableObject extends Object3D {
   }
 
   /**
+   * Duplicates the object
+   */
+  duplicate() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
+  /**
+   * Deletes the object
+   */
+  delete() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
+
+  /**
    * Returns the axis on which the object is rotatable
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {string[]} array containing all reotable axis.
    */
   get rotatableAxis() {
     throw new Error("This method must be implemented in all subclasses");
@@ -128,7 +120,9 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns whether the object is movable or not
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {boolean} wether the object is movable
    */
   get isMovable() {
     throw new Error("This method must be implemented in all subclasses");
@@ -136,17 +130,31 @@ export class SelectableObject extends Object3D {
 
   /**
    * Returns whether an object is selectable or not
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {boolean} wether the object is selectable
    */
   get isSelectable() {
     throw new Error("This method must be implemented in all subclasses");
   }
 
   /**
-   * Returns the old position of the heliostat
+   * Returns the position of the object executed by the last command
+   * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {THREE.Vector3} the old position of the object
    */
-  get oldPosition() {
+  get lastPosition() {
+    throw new Error("This method must be implemented in all subclasses");
+  }
+
+  /**
+   * Returns the rotation of the object executed by the last command
+   * @abstract
+   * @throws {Error} - Throws an error if the method is not implemented in subclasses.
+   * @returns {THREE.Vector3} the old rotation of the object
+   */
+  get lastRotation() {
     throw new Error("This method must be implemented in all subclasses");
   }
 }
@@ -154,7 +162,7 @@ export class SelectableObject extends Object3D {
 /**
  * Class that represents the Heliostat object
  */
-export class Heliostat extends SelectableObject {
+export class Heliostat extends CanvasObject {
   #apiID;
   #headerComponent;
   #positionComponent;
@@ -164,20 +172,13 @@ export class Heliostat extends SelectableObject {
    * @type { string[] }
    */
   #rotatableAxis = null;
-  #oldPosition;
+  #lastPosition;
 
   /**
    * Creates a Heliostat object
-   * @param {number} [apiID=null] The id for api usage
    * @param {string} heliostatName the name of the heliostat
    * @param {THREE.Vector3} position The position of the heliostat.
-   */
-
-  /**
-   *
-   * @param heliostatName
-   * @param position
-   * @param apiID
+   * @param {number} [apiID] The id for api usage
    */
   constructor(heliostatName, position, apiID = null) {
     super(heliostatName);
@@ -192,7 +193,7 @@ export class Heliostat extends SelectableObject {
       this.add(this.mesh);
     });
     this.position.copy(position);
-    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
     this.#apiID = apiID;
 
     // create components for inspector
@@ -261,31 +262,35 @@ export class Heliostat extends SelectableObject {
   }
 
   /**
-   *
+   * Get an array containing all rotatable axis
+   * @returns {string[]} containing all rotatable axis
    */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
   /**
-   *
+   * Get wether the object is selectable
+   * @returns {boolean} wether the object is selectable
    */
   get isSelectable() {
     return true;
   }
 
   /**
-   *
+   * Get wether the object is movable
+   * @returns {boolean} wether the object is movable
    */
   get isMovable() {
     return this.#isMovable;
   }
 
   /**
-   *
+   * Get the current position of the object
+   * @returns {THREE.Vector3} the positon of the object
    */
-  get oldPosition() {
-    return this.#oldPosition;
+  get lastPosition() {
+    return this.#lastPosition;
   }
 
   /**
@@ -294,10 +299,11 @@ export class Heliostat extends SelectableObject {
    */
   updatePosition(position) {
     this.position.copy(position);
-    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
   }
 
   /**
+   * Update and save the name of the object
    * @param {string} name the new name for the object
    */
   updateAndSaveObjectName(name) {
@@ -307,14 +313,14 @@ export class Heliostat extends SelectableObject {
   }
 
   /**
-   *
+   * Duplicate the object
    */
   duplicate() {
     this.#undoRedoHandler.executeCommand(new DuplicateHeliostatCommand(this));
   }
 
   /**
-   *
+   * Delete the object
    */
   delete() {
     this.#undoRedoHandler.executeCommand(new DeleteHeliostatCommand(this));
@@ -330,20 +336,23 @@ export class Heliostat extends SelectableObject {
     );
   }
   /**
-   *
+   * Get the api id used for this object
+   * @returns {number} the api id
    */
   get apiID() {
     return this.#apiID;
   }
 
   /**
-   *
+   * Set the api id used for this object
    */
   set apiID(value) {
     this.#apiID = value;
   }
+
   /**
-   *
+   * Get an array of all inspectorComponents for this object
+   * @returns {InspectorComponent[]} array of inspectorComponents
    */
   get inspectorComponents() {
     return [this.#headerComponent, this.#positionComponent];
@@ -353,7 +362,7 @@ export class Heliostat extends SelectableObject {
 /**
  * Class that represents the receiver object
  */
-export class Receiver extends SelectableObject {
+export class Receiver extends CanvasObject {
   #apiID;
   #towerType;
   #normalVector;
@@ -376,8 +385,8 @@ export class Receiver extends SelectableObject {
   #planeComponent;
   #resolutionComponent;
   #isMovable = true;
-  #rotatableAxis = ["Y"];
-  #oldPosition;
+  #rotatableAxis = null;
+  #lastPosition;
 
   /**
    * Creates a Receiver object
@@ -425,6 +434,7 @@ export class Receiver extends SelectableObject {
     this.#resolutionU = resolutionU;
     this.#curvatureE = curvatureE;
     this.#curvatureU = curvatureU;
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
 
     // create components for the inspector
     this.#headerComponent = new HeaderInspectorComponent(
@@ -439,7 +449,7 @@ export class Receiver extends SelectableObject {
     const nCoordinate = new SingleFieldInspectorComponent(
       "N",
       "number",
-      () => this.getPosition().x,
+      () => this.lastPosition.x,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -455,7 +465,7 @@ export class Receiver extends SelectableObject {
     const uCoordinate = new SingleFieldInspectorComponent(
       "U",
       "number",
-      () => this.getPosition().y,
+      () => this.lastPosition.y,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -471,7 +481,7 @@ export class Receiver extends SelectableObject {
     const eCoordinate = new SingleFieldInspectorComponent(
       "E",
       "number",
-      () => this.getPosition().z,
+      () => this.lastPosition.z,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
@@ -643,39 +653,43 @@ export class Receiver extends SelectableObject {
   }
 
   /**
-   *
-   * @param y
+   * Set the position of the base to the desired height
+   * @param {number} y the desired height
    */
-  lockPositionY(y) {
+  setBaseHeight(y) {
     this.#base.position.y = y;
   }
 
   /**
-   *
+   * Get all rotable axis
+   * @returns {string[]} containing all rotable axis
    */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
   /**
-   *
+   * Get wether the object is movable or notjh
+   * @returns {boolean} wether the object is movable
    */
   get isMovable() {
     return this.#isMovable;
   }
 
   /**
-   *
+   * Get wether the object is selectable
+   * @returns {boolean} wether the object is selectable
    */
   get isSelectable() {
     return true;
   }
 
   /**
-   *
+   * Get the current position of the object
+   * @returns {THREE.Vector3} the current position
    */
-  get oldPosition() {
-    return this.#oldPosition;
+  get lastPosition() {
+    return this.#lastPosition;
   }
 
   /**
@@ -694,18 +708,12 @@ export class Receiver extends SelectableObject {
    */
   updatePosition(position) {
     this.position.copy(position);
-    this.#oldPosition = new Vector3(position.x, position.y, position.z);
+    this.#lastPosition = new Vector3(position.x, position.y, position.z);
     this.#base.position.y = -position.y;
   }
 
   /**
-   *
-   */
-  getPosition() {
-    return this.position;
-  }
-
-  /**
+   * Update and save the name of the object
    * @param {string} name the new name
    */
   updateAndSaveObjectName(name) {
@@ -729,133 +737,143 @@ export class Receiver extends SelectableObject {
   }
 
   /**
-   *
+   * Get the api Id used for this object
+   * @returns {number} the api id
    */
   get apiID() {
     return this.#apiID;
   }
 
   /**
-   *
+   * Set the api id of the object
    */
   set apiID(value) {
     this.#apiID = value;
   }
 
   /**
-   *
+   * Get the type of the receiver
+   * @returns {string} the type of the receiver
    */
   get towerType() {
     return this.#towerType;
   }
 
   /**
-   *
+   * Set the type of the receiver
    */
   set towerType(value) {
     this.#towerType = value;
   }
 
   /**
-   *
+   * Get the normal vector of the target area
+   * @returns {THREE.Vector3} the normal vector
    */
   get normalVector() {
     return this.#normalVector;
   }
 
   /**
-   *
+   * Set the normal vector of the target area
    */
   set normalVector(value) {
     this.#normalVector = value;
   }
 
   /**
-   *
+   * Get the size of the target areay in east direction
+   * @returns {number} the size
    */
   get planeE() {
     return this.#planeE;
   }
 
   /**
-   *
+   * Set the size of the target areay in east direction
    */
   set planeE(value) {
     this.#planeE = value;
   }
 
   /**
-   *
+   * Get the size of the target areay in up direction
+   * @returns {number} the size
    */
   get planeU() {
     return this.#planeU;
   }
 
   /**
-   *
+   * Set the size of the target areay in east direction
    */
   set planeU(value) {
     this.#planeU = value;
   }
 
   /**
-   *
+   * Get the resoultion of the target area in east direction
+   * @returns {number} the resolution
    */
   get resolutionE() {
     return this.#resolutionE;
   }
 
   /**
-   *
+   * Set the resoultion of the target area in east direction
    */
   set resolutionE(value) {
     this.#resolutionE = value;
   }
 
   /**
-   *
+   * Get the resoultion of the target area in up direction
+   * @returns {number} the resolution
    */
   get resolutionU() {
     return this.#resolutionU;
   }
 
   /**
-   *
+   * Set the resoultion of the target area in up direction
    */
   set resolutionU(value) {
     this.#resolutionU = value;
   }
 
   /**
-   *
+   * Get the curvature of the target area in east direction
+   * @returns {number} the curvature
    */
   get curvatureE() {
     return this.#curvatureE;
   }
 
   /**
-   *
+   * Set the curvature of the target area in east direction
    */
   set curvatureE(value) {
     this.#curvatureE = value;
   }
 
   /**
-   *
+   * Get the curvature of the target area in up direction
+   * @returns {number} the curvature
    */
   get curvatureU() {
     return this.#curvatureU;
   }
 
   /**
-   *
+   * Set the curvature of the target area in east direction
    */
   set curvatureU(value) {
     this.#curvatureU = value;
   }
 
   /**
-   *
+   * Get the inspectorComponents used for this object
+   * @returns {InspectorComponent[]} array of the inspectorComponents used
    */
   get inspectorComponents() {
     return [
@@ -875,7 +893,7 @@ export class Receiver extends SelectableObject {
  */
 export class ReceiverBase extends Object3D {
   /**
-   *
+   * Create the receiver base
    */
   constructor() {
     super();
@@ -897,7 +915,7 @@ export class ReceiverBase extends Object3D {
  */
 export class ReceiverTop extends Object3D {
   /**
-   *
+   * Create the top of the receiver
    */
   constructor() {
     super();
@@ -917,7 +935,7 @@ export class ReceiverTop extends Object3D {
 /**
  * Class that represents the light source object
  */
-export class LightSource extends SelectableObject {
+export class LightSource extends CanvasObject {
   #apiID;
   #numberOfRays;
   #lightSourceType;
@@ -937,7 +955,8 @@ export class LightSource extends SelectableObject {
   #rotatableAxis = null;
 
   /**
-   * @param {string} lightsourceName the name of the lightsource
+   * Create the light source object
+   * @param {string} lightSourceName the name of the lightsource
    * @param {number} numberOfRays the number of rays the light source has
    * @param {string} lightSourceType the type of the light source
    * @param {string} distributionType the type of the distribution
@@ -946,7 +965,7 @@ export class LightSource extends SelectableObject {
    * @param {number} [apiID] the id for api usage
    */
   constructor(
-    lightsourceName,
+    lightSourceName,
     numberOfRays,
     lightSourceType,
     distributionType,
@@ -954,7 +973,7 @@ export class LightSource extends SelectableObject {
     distributionCovariance,
     apiID = null,
   ) {
-    super(lightsourceName);
+    super(lightSourceName);
     this.#apiID = apiID;
     this.#numberOfRays = numberOfRays;
     this.#lightSourceType = lightSourceType;
@@ -1051,13 +1070,15 @@ export class LightSource extends SelectableObject {
   }
 
   /**
-   *
+   * Get wether the object is selectable
+   * @returns {boolean} if the object is selectable
    */
   get isSelectable() {
     return false;
   }
 
   /**
+   * Update and save the name of the object
    * @param {string} name the new name
    */
   updateAndSaveObjectName(name) {
@@ -1067,104 +1088,111 @@ export class LightSource extends SelectableObject {
   }
 
   /**
-   *
+   * Duplicate the object
    */
   duplicate() {
     this.#undoRedoHandler.executeCommand(new DuplicateLightSourceCommand(this));
   }
   /**
-   *
+   * Delete the object
    */
   delete() {
     this.#undoRedoHandler.executeCommand(new DeleteLightSourceCommand(this));
   }
 
   /**
-   *
+   * Get the api ID used for this object
+   * @returns {number} the api id
    */
   get apiID() {
     return this.#apiID;
   }
 
   /**
-   *
+   * Set the api id of the object
    */
   set apiID(id) {
     this.#apiID = id;
   }
 
   /**
-   *
+   * Get the number of rays for this light source
+   * @returns {number} the number of rays
    */
   get numberOfRays() {
     return this.#numberOfRays;
   }
 
   /**
-   *
+   * Set the number of rays the light source uses
    */
   set numberOfRays(number) {
     this.#numberOfRays = number;
   }
 
   /**
-   *
+   * Get the type of the light source
+   * @returns {string} the type of the light source
    */
   get lightSourceType() {
     return this.#lightSourceType;
   }
 
   /**
-   *
+   * Set the type of the light source
    */
   set lightSourceType(type) {
     this.#lightSourceType = type;
   }
 
   /**
-   *
+   * Get the distributionType of the light source
+   * @returns {string} the distributionType
    */
   get distributionType() {
     return this.#distributionType;
   }
 
   /**
-   *
+   * Set the distributionType of the light source
    */
   set distributionType(type) {
     this.#distributionType = type;
   }
 
   /**
-   *
+   * Get the distributionMean of the light source
+   * @returns {number} the distributionMean
    */
   get distributionMean() {
     return this.#distributionMean;
   }
 
   /**
-   *
+   * Set the distributionMean of the light source
    */
   set distributionMean(number) {
     this.#distributionMean = number;
   }
 
   /**
-   *
+   * Get the distributionCovariance of the light source
+   * @returns {number} the distributionCovariance
    */
   get distributionCovariance() {
     return this.#distributionCovariance;
   }
 
   /**
-   *
+   * Set the distributionCovariance of the light source
    */
   set distributionCovariance(number) {
     this.#distributionCovariance = number;
   }
 
   /**
-   *
+   * Get an array of all inspectorComponents used for this object
+   * @returns {InspectorComponent[]} array of all inspectorComponents
    */
   get inspectorComponents() {
     return [

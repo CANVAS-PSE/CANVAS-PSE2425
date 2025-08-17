@@ -1,4 +1,4 @@
-import { SelectableObject } from "objects";
+import { CanvasObject } from "objects";
 /**
  * Represents a single component of the inspector
  */
@@ -408,7 +408,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
    * Creates a new header component.
    * @param {Function} getFieldValueFunc the function to get the title
    * @param {Function} saveFunc the function to update the title
-   * @param {SelectableObject} selectedObject - the currently selected object in the inspector
+   * @param {CanvasObject} selectedObject - the currently selected object in the inspector
    */
   constructor(getFieldValueFunc, saveFunc, selectedObject) {
     super();

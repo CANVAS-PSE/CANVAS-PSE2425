@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { SelectableObject } from "objects";
+import { CanvasObject, Receiver } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 import { ItemCreatedEvent } from "createCommands";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 
 export const Mode = Object.freeze({
   NONE: "none",
@@ -10,7 +11,7 @@ export const Mode = Object.freeze({
 });
 
 /**
- *
+ * Handles all picking functionality in the canvas
  */
 export class Picker {
   #camera;
@@ -34,7 +35,7 @@ export class Picker {
   /**
    * Creates a new Picker object
    * @param {THREE.Camera} camera The camera to be used for raycasting
-   * @param {THREE.TransformControls} transformControls The transform controls to be used for selected objects
+   * @param {TransformControls} transformControls The transform controls to be used for selected objects
    * @param {THREE.Box3Helper} selectionBox The selection box to be used for selected objects
    * @param {THREE.Group} selectableGroup The group of objects to be selected
    */
@@ -62,7 +63,7 @@ export class Picker {
   }
 
   /**
-   *
+   * Set up all the event listeners needed for picking
    */
   #setUpMouseEvents() {
     const canvasChild = this.#canvas.children[this.#canvas.children.length - 1];
@@ -96,7 +97,7 @@ export class Picker {
   }
 
   /**
-   *
+   * Set up keyboard events needed for user input
    */
   #setUpKeyboardEvents() {
     /** @type {[string, Function][]} */
@@ -213,6 +214,7 @@ export class Picker {
   }
 
   /**
+   * Handle what happens if the users clicks inside of the canvas
    * @param {MouseEvent} event - The mouse down event
    */
   #onMouseDown(event) {
@@ -222,6 +224,7 @@ export class Picker {
   }
 
   /**
+   * Handles what happens of the user moves the mouse
    * @param {MouseEvent} event - The mouse move event
    */
   #onMouseMove(event) {
@@ -235,6 +238,7 @@ export class Picker {
   }
 
   /**
+   * Handles what happens if the user releases the mouse
    * @param {MouseEvent} event - The mouse up event
    */
   #onMouseUp(event) {
@@ -245,18 +249,22 @@ export class Picker {
       // also checks if the object was moved or if the camara was adjusted
       if (
         this.#transformControls.mode === "translate" &&
+        this.#selectedObject.isMovable &&
         !this.#transformControls.object.position.equals(
-          this.#selectedObject.oldPosition,
+          this.#selectedObject.lastPosition,
         )
       ) {
         this.#selectedObject.updateAndSaveObjectPosition(
           this.#transformControls.object.position.clone(),
         );
         this.#itemSelectedEvent();
-      } else if (this.#transformControls.mode === "rotate") {
+      } else if (
+        this.#transformControls.mode === "rotate" &&
+        this.#selectedObject.rotatableAxis
+      ) {
         if (
           !this.#transformControls.object.quaternion.equals(
-            this.#selectedObject.oldQuaternion,
+            this.#selectedObject.lastRotation,
           )
         ) {
           this.#selectedObject.updateAndSaveObjectRotation(
@@ -291,7 +299,7 @@ export class Picker {
    * Selects an object based on the mouse position and camera
    * @param {THREE.Vector2} mouse - The normalized mouse position
    * @param {THREE.Camera} camera - The camera used for raycasting
-   * @returns {SelectableObject|null} The selected object or null if no object was selected
+   * @returns {CanvasObject|null} The selected object or null if no object was selected
    */
   #select(mouse, camera) {
     // Raycast from the camera through the mouse position
@@ -308,7 +316,7 @@ export class Picker {
           // Move up the hierarchy until we find a SelectableObject
           while (
             hit.object.parent &&
-            !(hit.object.parent instanceof SelectableObject)
+            !(hit.object.parent instanceof CanvasObject)
           ) {
             hit.object = hit.object.parent;
           }
@@ -337,8 +345,8 @@ export class Picker {
    * @param {Boolean} ctrlKey The state of the ctrlKey
    */
   /**
-   *
-   * @param ctrlKey
+   * Handles the updating of the selection when the user uses the ctrl key and clicks
+   * @param {boolean} ctrlKey if the ctrl key is pressed
    */
   #updateSelection(ctrlKey) {
     // No object was clicked
@@ -441,9 +449,9 @@ export class Picker {
       if (this.#selectedObject.position.y < groundLevel) {
         this.#selectedObject.position.y = groundLevel;
       }
-      // If the object has a lockPositionY method, call it
-      if (typeof this.#transformControls.object.lockPositionY === "function") {
-        this.#transformControls.object.lockPositionY(
+      // If the object is a receiver set the base position to the ground
+      if (this.#transformControls.object instanceof Receiver) {
+        this.#transformControls.object.setBaseHeight(
           groundLevel - this.#transformControls.object.position.y,
         );
       }

@@ -1,5 +1,5 @@
 import { Editor } from "editor";
-import { Heliostat, LightSource, Receiver, SelectableObject } from "objects";
+import { Heliostat, LightSource, Receiver, CanvasObject } from "objects";
 import { Picker } from "picker";
 
 /**
@@ -10,7 +10,7 @@ export class OverviewHandler {
   #picker;
   #overviewButton;
   /**
-   * @type {SelectableObject[]}
+   * @type {CanvasObject[]}
    */
   #selectedObjects = [];
   #heliostatList;
@@ -336,7 +336,7 @@ export class OverviewHandler {
   /**
    * Adds edit functionality to the given button.
    * @param {HTMLButtonElement} button the button to open the edit field.
-   * @param {SelectableObject} object the object you want to edit.
+   * @param {CanvasObject} object the object you want to edit.
    * @param {"heliostat" | "receiver" | "light source"} type the type of object you want to edit the name of.
    */
   #addEditFunctionality(button, object, type) {
@@ -348,7 +348,7 @@ export class OverviewHandler {
 
   /**
    * Opens a new edit field for the given object
-   * @param {SelectableObject} object the object you want rename.
+   * @param {CanvasObject} object the object you want rename.
    * @param {"heliostat" | "receiver" | "light source"} type the type of object you want to edit the name of.
    */
   #openEditInput(object, type) {

@@ -23,14 +23,10 @@ export default defineConfig([
           },
         },
       ],
-      "jsdoc/require-description": [
+      "jsdoc/require-returns": [
         "warn",
         {
-          contexts: [
-            "FunctionDeclaration",
-            "MethodDefinition",
-            "ClassDeclaration",
-          ],
+          exemptThrows: true,
         },
       ],
     },

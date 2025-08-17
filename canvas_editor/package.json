@@ -16,6 +16,6 @@
     "lint-staged": "^16.1.2"
   },
   "lint-staged": {
-    "*.{js,mjs}": "npx eslint --fix --config canvas_editor/eslint.config.mjs"
+    "*.{js,mjs}": "npx eslint --config canvas_editor/eslint.config.mjs"
   }
 }

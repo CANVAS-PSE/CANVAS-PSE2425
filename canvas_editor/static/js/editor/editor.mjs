@@ -1,7 +1,5 @@
 import * as THREE from "three";
 import { ViewHelper } from "compass";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { TransformControls } from "three/addons/controls/TransformControls.js";
 import { UndoRedoHandler } from "undoRedoHandler";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
 import { Navbar } from "navbar";
@@ -16,6 +14,8 @@ import { Heliostat, Receiver, LightSource, Terrain } from "objects";
 import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
 import { ModeSelector } from "modeSelector";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 /**
  *
