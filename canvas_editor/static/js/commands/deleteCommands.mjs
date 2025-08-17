@@ -1,5 +1,5 @@
 import { Editor } from "editor";
-import { Heliostat, LightSource, Receiver, SelectableObject } from "objects";
+import { Heliostat, LightSource, Receiver, CanvasObject } from "objects";
 import { SingleObjectCommand } from "singleObjectCommands";
 import { ItemCreatedEvent } from "createCommands";
 
@@ -9,7 +9,7 @@ import { ItemCreatedEvent } from "createCommands";
 export class ItemDeletedEvent extends CustomEvent {
   /**
    * Creates a new item deleted event
-   * @param {SelectableObject} item the item that was deleted
+   * @param {CanvasObject} item the item that was deleted
    */
   constructor(item) {
     super("itemDeleted", { detail: { item: item } });

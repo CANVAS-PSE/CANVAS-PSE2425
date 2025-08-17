@@ -1,6 +1,6 @@
 import { SingleObjectCommand } from "singleObjectCommands";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
-import { Heliostat, Receiver, LightSource, SelectableObject } from "objects";
+import { Heliostat, Receiver, LightSource, CanvasObject } from "objects";
 import * as THREE from "three";
 
 /**
@@ -9,7 +9,7 @@ import * as THREE from "three";
 export class ItemUpdatedEvent extends CustomEvent {
   /**
    * Creates a new item updated event
-   * @param {SelectableObject} item the item that got updated
+   * @param {CanvasObject} item the item that got updated
    */
   constructor(item) {
     super("itemUpdated", { detail: { item: item } });

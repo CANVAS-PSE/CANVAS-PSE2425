@@ -25,9 +25,9 @@ import {
 } from "deleteCommands";
 
 /**
- *
+ * Represents a Object in CANVAS
  */
-export class SelectableObject extends Object3D {
+export class CanvasObject extends Object3D {
   #objectName;
 
   /**
@@ -162,7 +162,7 @@ export class SelectableObject extends Object3D {
 /**
  * Class that represents the Heliostat object
  */
-export class Heliostat extends SelectableObject {
+export class Heliostat extends CanvasObject {
   #apiID;
   #headerComponent;
   #positionComponent;
@@ -354,7 +354,7 @@ export class Heliostat extends SelectableObject {
 /**
  * Class that represents the receiver object
  */
-export class Receiver extends SelectableObject {
+export class Receiver extends CanvasObject {
   #apiID;
   #towerType;
   #normalVector;
@@ -918,7 +918,7 @@ export class ReceiverTop extends Object3D {
 /**
  * Class that represents the light source object
  */
-export class LightSource extends SelectableObject {
+export class LightSource extends CanvasObject {
   #apiID;
   #numberOfRays;
   #lightSourceType;

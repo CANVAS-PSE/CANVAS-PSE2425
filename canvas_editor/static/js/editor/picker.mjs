@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { SelectableObject } from "objects";
+import { CanvasObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 import { ItemCreatedEvent } from "createCommands";
 
@@ -291,7 +291,7 @@ export class Picker {
    * Selects an object based on the mouse position and camera
    * @param {THREE.Vector2} mouse - The normalized mouse position
    * @param {THREE.Camera} camera - The camera used for raycasting
-   * @returns {SelectableObject|null} The selected object or null if no object was selected
+   * @returns {CanvasObject|null} The selected object or null if no object was selected
    */
   #select(mouse, camera) {
     // Raycast from the camera through the mouse position
@@ -308,7 +308,7 @@ export class Picker {
           // Move up the hierarchy until we find a SelectableObject
           while (
             hit.object.parent &&
-            !(hit.object.parent instanceof SelectableObject)
+            !(hit.object.parent instanceof CanvasObject)
           ) {
             hit.object = hit.object.parent;
           }
