@@ -11,6 +11,10 @@ invalid_link_view = "invalid_link"
 confirm_deletion_view = "confirm_deletion"
 password_forgotten_view = "password_forgotten"
 get_user_info_view = "get_user_info"
+projects_view = "projects"
+invalid_token_view = "invalid_token"
+invalid_uid_view = "invalid_uid"
+editor_view = "editor"
 
 # Autosave api
 
