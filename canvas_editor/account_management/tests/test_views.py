@@ -38,16 +38,43 @@ class ParameterizedViewTestMixin:
     """
 
     def assert_view_get(self, url_name, template, expected_status=200):
-        response = self.client.get(url_name)
-        self.assertEqual(response.status_code, expected_status)
+        response = self.get_and_assert(url_name, expected_status)
         self.assertTemplateUsed(response, template)
 
     # Test if an authenticated user is redirected to the projects page when accessing the register/login page
-    def GET_authenticated(self, url_namee):
+    def GET_authenticated(self, url_name):
         self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
-        response = self.client.get(url_namee)
+        response = self.get_and_assert_redirect(url_name, 302, self.projects_url)
+        return response
+
+    def POST_valid_data_with_user(self, post_url, post_data, redirect_url):
+        response = self.client.post(post_url, post_data)
+        user = User.objects.get(email="test@mail.de")
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.projects_url)
+        self.assertRedirects(response, redirect_url)
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.id)
+
+    def post_and_assert(self, url_name, post_data=None, expected_status=200):
+        response = self.client.post(url_name, data=post_data or {})
+        self.assertEqual(response.status_code, expected_status)
+        return response
+
+    def get_and_assert(self, url_name, expected_status=200):
+        response = self.client.get(url_name)
+        self.assertEqual(response.status_code, expected_status)
+        return response
+
+    def get_and_assert_redirect(self, url_name, expected_status, redirect_to):
+        response = self.get_and_assert(url_name, expected_status)
+        self.assertRedirects(response, reverse(redirect_to))
+        return response
+
+    def post_and_assert_redirect(
+        self, url_name, post_data=None, expected_status=302, redirect_to=None
+    ):
+        response = self.post_and_assert(url_name, post_data, expected_status)
+        self.assertRedirects(response, reverse(redirect_to))
+        return response
 
 
 class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
@@ -79,30 +106,24 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
 
     def test_POST_valid_data(self):
         # Test if a new user can successfully register and is redirected to the projects page
-        response = self.client.post(
-            self.register_url,
-            self.valid_user_data,
+        self.POST_valid_data_with_user(
+            self.register_url, self.valid_user_data, self.projects_url
         )
-        user = User.objects.get(email="test2@mail.de")
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.projects_url)
-        self.assertEqual(int(self.client.session["_auth_user_id"]), user.id)
 
     def test_POST_invalid_data(self):
         # Test if invalid registration data (mismatched passwords) results in an error message
-        response = self.client.post(
-            self.register_url,
-            {
-                "first_name": "test_first_name",
-                "last_name": "test_last_name",
-                "email": "test@mail.de",
-                "password": SECURE_PASSWORD,
-                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
-            },
+
+        post_data = {
+            "first_name": "test_first_name",
+            "last_name": "test_last_name",
+            "email": "test@mail.de",
+            "password": SECURE_PASSWORD,
+            "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
+        }
+        response = self.post_and_assert(
+            self.register_url, post_data, expected_status=200
         )
 
-        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "account_management/register.html")
         self.assertContains(
             response, "The passwords you entered do not match. Please try again."
@@ -133,37 +154,25 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
 
     def test_POST_valid_data(self):
         # Test if a valid user can successfully log in and is redirected to the projects page
-        response = self.client.post(
-            self.login_url,
-            {
-                "email": "test@mail.de",
-                "password": SECURE_PASSWORD,
-            },
-        )
-
-        user = User.objects.get(email="test@mail.de")
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.projects_url)
-        self.assertEqual(int(self.client.session["_auth_user_id"]), user.id)
+        post_data = {
+            "email": "test@mail.de",
+            "password": SECURE_PASSWORD,
+        }
+        self.POST_valid_data_with_user(self.login_url, post_data, self.projects_url)
 
     def test_POST_invalid_data(self):
         # Test if an invalid login attempt (wrong email) results in an error message
-        response = self.client.post(
-            self.login_url,
-            {
-                "email": "max@mail.de",
-                "password": SECURE_PASSWORD,
-            },
-        )
-
-        self.assertEqual(response.status_code, 200)
+        post_data = {
+            "email": "max@mail.de",
+            "password": SECURE_PASSWORD,
+        }
+        response = self.post_and_assert(self.login_url, post_data, expected_status=200)
         self.assertTemplateUsed(response, "account_management/login.html")
         self.assertTrue(response.context["form"].errors)
         self.assertContains(response, "This email address is not registered.")
 
 
-class LogoutViewTest(TestCase):
+class LogoutViewTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.logout_url = reverse("logout")
@@ -185,9 +194,8 @@ class LogoutViewTest(TestCase):
 
     def test_POST(self):
         # Test if a user can successfully log out and is redirected to the login page
-        response = self.client.post(self.logout_url)
+        response = self.post_and_assert(self.logout_url, expected_status=302)
 
-        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.login_url)
         self.assertNotIn("_auth_user_id", self.client.session)
 
@@ -249,29 +257,27 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
 
     def test_POST(self):
         # Test if a valid POST request deletes the user and redirects to login page
-        response = self.client.post(self.confirm_deletion_url)
+        self.post_and_assert(self.confirm_deletion_url, expected_status=302)
 
-        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("login"))
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 
     def test_POST_invalid_token(self):
         # Test if an invalid token results in a redirect to the invalid link page
-        response = self.client.post(
-            reverse("confirm_deletion", args=[self.uid, "invalid_token"])
+        self.post_and_assert_redirect(
+            "confirm_deletion", [self.uid, "invalid_token"], 302, "invalid_link"
         )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
 
     def test_POST_invalid_uid(self):
         # Test if an invalid UID results in a redirect to the invalid link page
-        response = self.client.post(
-            reverse("confirm_deletion", args=["invalid_uid", self.token])
+        post_url = reverse(
+            "confirm_deletion", args=[["invalid_uid", self.token], self.token]
         )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.post_and_assert_redirect(
+            post_url,
+            expected_status=302,
+            redirect_to=reverse("invalid_link"),
+        )
 
 
 class SendPasswordChangeMailTest(TestCase):
@@ -329,31 +335,26 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
 
     def test_POST_valid_data(self):
         # Test if a valid password reset request updates the password and logs the user out
-        response = self.client.post(
-            self.password_reset_url,
-            {
-                "new_password": RESET_PASSWORD,
-                "password_confirmation": RESET_PASSWORD,
-            },
-        )
+        post_data = {
+            "new_password": RESET_PASSWORD,
+            "password_confirmation": RESET_PASSWORD,
+        }
 
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.post_and_assert_redirect(
+            self.password_reset_url, post_data, 302, reverse("login")
+        )
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(RESET_PASSWORD))
         self.assertNotIn("_auth_user_id", self.client.session)
 
     def test_POST_invalid_data(self):
         # Test if submitting mismatched passwords returns an error message
-        response = self.client.post(
-            self.password_reset_url,
-            {
-                "new_password": RESET_PASSWORD,
-                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
-            },
-        )
+        post_data = {
+            "new_password": RESET_PASSWORD,
+            "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
+        }
 
-        self.assertEqual(response.status_code, 200)
+        response = self.post_and_assert(self.password_reset_url, post_data, 200)
         self.assertTemplateUsed(response, "account_management/password_reset.html")
         self.assertTrue(response.context["form"].errors)
         self.assertContains(
@@ -362,21 +363,19 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
 
     def test_POST_invalid_token(self):
         # Test if an invalid token results in a redirect to the invalid link page
-        response = self.client.post(
-            reverse("password_reset", args=[self.uid, "invalid_token"])
+        self.post_and_assert_redirect(
+            "password_reset", [self.uid, "invalid_token"], 302, "invalid_link"
         )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
 
     def test_POST_invalid_uid(self):
         # Test if an invalid UID results in a redirect to the invalid link page
-        response = self.client.post(
-            reverse("password_reset", args=["invalid_uid", self.token])
-        )
 
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        post_url = reverse("password_reset", args=["invalid_uid", self.token])
+        self.post_and_assert_redirect(
+            post_url,
+            expected_status=302,
+            redirect_to=reverse("invalid_link"),
+        )
 
 
 class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
@@ -392,12 +391,10 @@ class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
 
     def test_POST(self):
         # Test if the invalid link page is accessible via POST
-        response = self.client.post(self.invalid_link_url)
-
-        self.assertEqual(response.status_code, 405)
+        self.post_and_assert(self.invalid_link_url, expected_status=405)
 
 
-class DeleteAccountTest(TestCase):
+class DeleteAccountTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -419,25 +416,19 @@ class DeleteAccountTest(TestCase):
     def test_POST_valid_data(self):
         # Test if a valid delete account request removes the user and redirects to login page
         self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
-        response = self.client.post(
-            self.delete_account_url,
-            {"password": SECURE_PASSWORD},
-        )
 
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        post_data = {"password": SECURE_PASSWORD}
+        self.post_and_assert_redirect(
+            self.delete_account_url, post_data, 302, reverse("login")
+        )
         self.assertNotIn("_auth_user_id", self.client.session)
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 
     def test_POST_invalid_data(self):
         # Test if an incorrect password prevents account deletion
         self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
-        response = self.client.post(
-            self.delete_account_url,
-            {"password": NO_SPECIAL_CHAR_PASSWORD},
-        )
-
-        self.assertEqual(response.status_code, 302)
+        post_data = {"password": NO_SPECIAL_CHAR_PASSWORD}
+        response = self.post_and_assert(self.delete_account_url, post_data, 302)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
             any(
@@ -448,10 +439,8 @@ class DeleteAccountTest(TestCase):
 
     def test_POST_not_authenticated(self):
         # Test if an unauthenticated user is redirected to the login page
-        response = self.client.post(
-            self.delete_account_url,
-            {"password": SECURE_PASSWORD},
-        )
+        post_data = {"password": SECURE_PASSWORD}
+        self.POST_not_authenticated(self.delete_account_url, post_data)
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/?next=/delete_account/")
@@ -478,22 +467,17 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
 
     def test_POST_valid_data(self):
         # Test if a valid email submission redirects to login page
-        response = self.client.post(
-            self.password_forgotten_url,
-            {"email": "test@mail.de"},
-        )
 
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        post_data = {"email": "test@mail.de"}
+
+        self.post_and_assert_redirect(
+            self.password_forgotten_url, post_data, 302, reverse("login")
+        )
 
     def test_POST_invalid_data(self):
         # Test if submitting an unregistered email returns an error message
-        response = self.client.post(
-            self.password_forgotten_url,
-            {"email": "test2@mail.de"},
-        )
-
-        self.assertEqual(response.status_code, 302)
+        post_data = {"email": "test2@mail.de"}
+        self.post_and_assert(self.password_forgotten_url, post_data, 302)
         assert len(mail.outbox) == 0
 
 
@@ -528,7 +512,7 @@ class SendPasswordForgottenMailTest(TestCase):
         )  # Ensure the confirmation URL is in the email body
 
 
-class UpdateAccountTest(TestCase):
+class UpdateAccountTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -549,17 +533,15 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_not_authenticated(self):
         # Attempting to update an account without authentication should redirect to the login page
-        response = self.client.post(
-            self.update_account_url,
-            {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "new_test@mail.de",
-                "old_password": SECURE_PASSWORD,
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": UPDATED_PASSWORD,
-            },
-        )
+        post_data = {
+            "first_name": "new_first_name",
+            "last_name": "new_last_name",
+            "email": "new_test@mail.de",
+            "old_password": SECURE_PASSWORD,
+            "new_password": UPDATED_PASSWORD,
+            "password_confirmation": UPDATED_PASSWORD,
+        }
+        self.POST_not_authenticated(self.update_account_url, post_data)
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/?next=/update_account/")
@@ -599,16 +581,12 @@ class UpdateAccountTest(TestCase):
         )
         self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
 
-        response = self.client.post(
-            self.update_account_url,
-            {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test2@mail.de",
-            },
-        )
-
-        self.assertEqual(response.status_code, 302)
+        post_data = {
+            "first_name": "new_first_name",
+            "last_name": "new_last_name",
+            "email": "test2@mail.de",
+        }
+        self.post_and_assert(self.update_account_url, post_data, 302)
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, "test_first_name")
         self.assertEqual(self.user.last_name, "test_last_name")
