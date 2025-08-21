@@ -10,7 +10,7 @@ class Project(models.Model):
     description = models.CharField(max_length=500, blank=True, default="")
     last_edited = models.DateTimeField(default=timezone.now)
     last_shared = models.DateTimeField(null=True, blank=True)
-    favorite = models.CharField(max_length=5, default="false")
+    favorite = models.BooleanField(default=False)
     preview = models.ImageField(
         upload_to="project_previews/",
     )
