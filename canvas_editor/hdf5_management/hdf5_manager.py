@@ -39,6 +39,18 @@ class HDF5Manager:
 
     """
 
+    # Helper function to safely extract values from datasets
+    # in case they are None or not in the expected format.
+    # Returns the default value if the dataset is None or cannot be converted.
+    @staticmethod
+    def safe_val(x, default=0.0):
+        if x is None:
+            return default
+        try:
+            return x[()]
+        except TypeError:
+            return x
+
     def create_hdf5_file(self, user: User, project: Project) -> None:
         """Create a HDF5 file for the given project.
 
@@ -87,64 +99,13 @@ class HDF5Manager:
         power_plant_config = PowerPlantConfig(
             power_plant_position=torch.tensor([0.0, 0.0, 0.0], device=device)
         )
-
-        #
-        # Receiver(s)
-        #
-
-        # Create list for target area (receiver) configs
-        target_area_config_list = []
-
-        # Add all receivers to list
-        for receiver in project.receivers.all():
-            receiver_config = TargetAreaConfig(
-                target_area_key=str(receiver),
-                geometry=config_dictionary.target_area_type_planar,
-                center=torch.tensor(
-                    [
-                        receiver.position_x,
-                        receiver.position_y,
-                        receiver.position_z,
-                        1.0,
-                    ],
-                    device=device,
-                ),
-                normal_vector=torch.tensor(
-                    [receiver.normal_x, receiver.normal_y, receiver.normal_z, 0.0],
-                    device=device,
-                ),
-                plane_e=receiver.plane_e,
-                plane_u=receiver.plane_u,
-                curvature_e=receiver.curvature_e,
-                curvature_u=receiver.curvature_u,
-            )
-            target_area_config_list.append(receiver_config)
-
-        # Include the tower area configurations.
-        target_area_list_config = TargetAreaListConfig(target_area_config_list)
-
-        #
-        # Light source(s)
-        #
-
-        # Create a list of light source configs
-        light_source_list = []
-
-        # Add all light sources to list
-        for light_source in project.light_sources.all():
-            light_source_config = LightSourceConfig(
-                light_source_key=str(light_source),
-                light_source_type=light_source.light_source_type,
-                number_of_rays=light_source.number_of_rays,
-                distribution_type=light_source.distribution_type,
-                mean=light_source.mean,
-                covariance=light_source.covariance,
-            )
-            light_source_list.append(light_source_config)
-
-        # Include the configuration for the list of light sources.
-        light_source_list_config = LightSourceListConfig(
-            light_source_list=light_source_list
+        # creates all receivers
+        target_area_list_config = self._create_target_area_config_list(
+            project=project, device=device
+        )
+        # creates all light sources
+        light_source_list_config = self._create_light_source_config_list(
+            project=project, device=device
         )
 
         #
@@ -173,6 +134,9 @@ class HDF5Manager:
             patience=50,
             threshold=1e-7,
             threshold_mode="abs",
+        )
+        heliostats_list_config = self._create_heliostats_list_config(
+            project=project, device=device
         )
 
         # Use this surface config for fitted deflectometry surfaces.
@@ -233,9 +197,87 @@ class HDF5Manager:
         )
 
         #
-        # Heliostat(s)
+        # Generate the scenario HDF5 file given the defined parameters
         #
 
+        scenario_generator = H5ScenarioGenerator(
+            file_path=scenario_path,
+            power_plant_config=power_plant_config,
+            target_area_list_config=target_area_list_config,
+            light_source_list_config=light_source_list_config,
+            prototype_config=prototype_config,
+            heliostat_list_config=heliostats_list_config,
+        )
+        scenario_generator.generate_scenario()
+
+    def _create_target_area_config_list(self, project: Project, device: torch.device):
+        """
+        Create a list of target area configurations from the project.
+        This includes all receivers in the project.
+        """
+
+        # Create list for target area (receiver) configs
+        target_area_config_list = []
+
+        # Add all receivers to list
+        for receiver in project.receivers.all():
+            receiver_config = TargetAreaConfig(
+                target_area_key=str(receiver),
+                geometry=config_dictionary.target_area_type_planar,
+                center=torch.tensor(
+                    [
+                        receiver.position_x,
+                        receiver.position_y,
+                        receiver.position_z,
+                        1.0,
+                    ],
+                    device=device,
+                ),
+                normal_vector=torch.tensor(
+                    [receiver.normal_x, receiver.normal_y, receiver.normal_z, 0.0],
+                    device=device,
+                ),
+                plane_e=receiver.plane_e,
+                plane_u=receiver.plane_u,
+                curvature_e=receiver.curvature_e,
+                curvature_u=receiver.curvature_u,
+            )
+            target_area_config_list.append(receiver_config)
+
+        # Include the tower area configurations.
+        target_area_list_config = TargetAreaListConfig(target_area_config_list)
+        return target_area_list_config
+
+    def _create_light_source_config_list(self, project: Project, device: torch.device):
+        """
+        Create a list of light source configurations from the project.
+        """
+
+        # Create a list of light source configs
+        light_source_list = []
+
+        # Add all light sources to list
+        for light_source in project.light_sources.all():
+            light_source_config = LightSourceConfig(
+                light_source_key=str(light_source),
+                light_source_type=light_source.light_source_type,
+                number_of_rays=light_source.number_of_rays,
+                distribution_type=light_source.distribution_type,
+                mean=light_source.mean,
+                covariance=light_source.covariance,
+            )
+            light_source_list.append(light_source_config)
+
+        # Include the configuration for the list of light sources.
+        light_source_list_config = LightSourceListConfig(
+            light_source_list=light_source_list
+        )
+        return light_source_list_config
+
+    def _create_heliostats_list_config(self, project: Project, device: torch.device):
+        """
+        Create a list of heliostat configurations from the project.
+        """
         # Note, not all individual heliostat parameters are provided here
 
         # Generate the surface configuration.
@@ -265,20 +307,7 @@ class HDF5Manager:
 
         # Create the configuration for all heliostats.
         heliostats_list_config = HeliostatListConfig(heliostat_list=heliostat_list)
-
-        #
-        # Generate the scenario HDF5 file given the defined parameters
-        #
-
-        scenario_generator = H5ScenarioGenerator(
-            file_path=scenario_path,
-            power_plant_config=power_plant_config,
-            target_area_list_config=target_area_list_config,
-            light_source_list_config=light_source_list_config,
-            prototype_config=prototype_config,
-            heliostat_list_config=heliostats_list_config,
-        )
-        scenario_generator.generate_scenario()
+        return heliostats_list_config
 
     def create_project_from_hdf5_file(self, project_file: str, new_project: Project):
         """Create a project from a HDF5 file.
@@ -291,89 +320,119 @@ class HDF5Manager:
             The project in which the data is to be stored
 
         """
-        with h5py.File(project_file, "r") as f:
-            heliostats_group: h5py.Group = f.get(config_dictionary.heliostat_key)
-            if heliostats_group is not None:
-                for heliostat_object in heliostats_group:
-                    heliostat = heliostats_group[heliostat_object]
+        with h5py.File(project_file, "r") as hdf5_file:
+            # create the heliostats from the hdf5 file
+            self._create_heliostats_from_hdf5_file(
+                h5f=hdf5_file, new_project=new_project
+            )
+            # creates the light sources from the hdf5 file
+            self._create_light_sources_from_hdf5_file(
+                h5f=hdf5_file, new_project=new_project
+            )
+            # creates the receivers from the hdf5 file
+            self._create_receivers_from_hdf5_file(
+                h5f=hdf5_file, new_project=new_project
+            )
 
-                    position = heliostat[config_dictionary.heliostat_position]
-                    position_x = position[0]
-                    position_y = position[1]
-                    position_z = position[2]
+    def _create_heliostats_from_hdf5_file(self, h5f: h5py.File, new_project: Project):
+        """
+        Create heliostats from a HDF5 file.
+        """
 
-                    Heliostat.objects.create(
-                        project=new_project,
-                        name=str(heliostat_object),
-                        position_x=position_x,
-                        position_y=position_y,
-                        position_z=position_z,
-                    )
+        heliostats_group: h5py.Group = h5f.get(config_dictionary.heliostat_key)
+        if heliostats_group is not None:
+            for heliostat_object in heliostats_group:
+                heliostat = heliostats_group[heliostat_object]
 
-            light_sources_group: h5py.Group = f.get(config_dictionary.light_source_key)
-            if light_sources_group is not None:
-                for light_source_object in light_sources_group:
-                    light_source = light_sources_group[light_source_object]
-                    number_of_rays = light_source[
-                        config_dictionary.light_source_number_of_rays
-                    ]
-                    light_source_type = light_source[
-                        config_dictionary.light_source_type
-                    ]
+                position = heliostat[config_dictionary.heliostat_position]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
 
-                    distribution_params = light_source[
-                        config_dictionary.light_source_distribution_parameters
-                    ]
-                    covariance = distribution_params[
-                        config_dictionary.light_source_covariance
-                    ]
-                    distribution_type = distribution_params[
-                        config_dictionary.light_source_distribution_type
-                    ]
-                    mean = distribution_params[config_dictionary.light_source_mean]
+                Heliostat.objects.create(
+                    project=new_project,
+                    name=str(heliostat_object),
+                    position_x=position_x,
+                    position_y=position_y,
+                    position_z=position_z,
+                )
 
-                    LightSource.objects.create(
-                        project=new_project,
-                        name=str(light_source_object),
-                        number_of_rays=number_of_rays[()],
-                        light_source_type=light_source_type[()].decode("utf-8"),
-                        covariance=covariance[()],
-                        distribution_type=distribution_type[()].decode("utf-8"),
-                        mean=mean[()],
-                    )
+    def _create_light_sources_from_hdf5_file(
+        self, h5f: h5py.File, new_project: Project
+    ):
+        """
+        Create light sources from a HDF5 file.
+        """
+        light_sources_group: h5py.Group = h5f.get(config_dictionary.light_source_key)
+        if light_sources_group is not None:
+            for light_source_object in light_sources_group:
+                light_source = light_sources_group[light_source_object]
+                number_of_rays = light_source[
+                    config_dictionary.light_source_number_of_rays
+                ]
+                light_source_type = light_source[config_dictionary.light_source_type]
 
-            receivers_group: h5py.Group = f.get(config_dictionary.target_area_key)
-            if receivers_group is not None:
-                for receiver_object in receivers_group:
-                    receiver = receivers_group[receiver_object]
+                distribution_params = light_source[
+                    config_dictionary.light_source_distribution_parameters
+                ]
+                covariance = distribution_params[
+                    config_dictionary.light_source_covariance
+                ]
+                distribution_type = distribution_params[
+                    config_dictionary.light_source_distribution_type
+                ]
+                mean = distribution_params[config_dictionary.light_source_mean]
 
-                    position = receiver[config_dictionary.target_area_position_center]
-                    position_x = position[0]
-                    position_y = position[1]
-                    position_z = position[2]
+                LightSource.objects.create(
+                    project=new_project,
+                    name=str(light_source_object),
+                    number_of_rays=number_of_rays[()],
+                    light_source_type=light_source_type[()].decode("utf-8"),
+                    covariance=covariance[()],
+                    distribution_type=distribution_type[()].decode("utf-8"),
+                    mean=mean[()],
+                )
 
-                    normal = receiver[config_dictionary.target_area_normal_vector]
-                    normal_x = normal[0]
-                    normal_y = normal[1]
-                    normal_z = normal[2]
+    def _create_receivers_from_hdf5_file(self, h5f: h5py.File, new_project: Project):
+        """
+        Create receivers from a HDF5 file.
+        """
+        receivers_group: h5py.Group = h5f.get(config_dictionary.target_area_key)
+        if receivers_group is not None:
+            for receiver_object in receivers_group:
+                receiver = receivers_group[receiver_object]
 
-                    plane_e = receiver[config_dictionary.target_area_plane_e]
-                    plane_u = receiver[config_dictionary.target_area_plane_u]
+                position = receiver[config_dictionary.target_area_position_center]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
 
-                    curvature_e = receiver[config_dictionary.target_area_curvature_e]
-                    curvature_u = receiver[config_dictionary.target_area_curvature_u]
+                normal = receiver[config_dictionary.target_area_normal_vector]
+                normal_x = normal[0]
+                normal_y = normal[1]
+                normal_z = normal[2]
 
-                    Receiver.objects.create(
-                        project=new_project,
-                        name=str(receiver_object),
-                        position_x=position_x,
-                        position_y=position_y,
-                        position_z=position_z,
-                        normal_x=normal_x,
-                        normal_y=normal_y,
-                        normal_z=normal_z,
-                        plane_e=plane_e[()],
-                        plane_u=plane_u[()],
-                        curvature_e=curvature_e[()],
-                        curvature_u=curvature_u[()],
-                    ),
+                plane_e = receiver[config_dictionary.target_area_plane_e]
+                plane_u = receiver[config_dictionary.target_area_plane_u]
+
+                # Optional datasets (often absent for planar target areas)
+                curv_e_ds = receiver.get(config_dictionary.target_area_curvature_e)
+                curv_u_ds = receiver.get(config_dictionary.target_area_curvature_u)
+
+                curvature_e = HDF5Manager.safe_val(curv_e_ds, default=0.0)
+                curvature_u = HDF5Manager.safe_val(curv_u_ds, default=0.0)
+
+                Receiver.objects.create(
+                    project=new_project,
+                    name=str(receiver_object),
+                    position_x=position_x,
+                    position_y=position_y,
+                    position_z=position_z,
+                    normal_x=normal_x,
+                    normal_y=normal_y,
+                    normal_z=normal_z,
+                    plane_e=plane_e[()],
+                    plane_u=plane_u[()],
+                    curvature_e=curvature_e,
+                    curvature_u=curvature_u,
+                )
