@@ -26,6 +26,7 @@ from artist.util import config_dictionary, set_logger_config
 from django.conf import settings
 from django.contrib.auth.models import User
 
+from canvas import message_dict, path_dict
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
@@ -44,6 +45,9 @@ class HDF5Manager:
     # Returns the default value if the dataset is None or cannot be converted.
     @staticmethod
     def safe_val(x, default=0.0):
+        """
+        Safely extract the value from a dataset, returning a default if None or invalid.
+        """
         if x is None:
             return default
         try:
@@ -62,18 +66,59 @@ class HDF5Manager:
             The project to be converted to an HDF5 file.
 
         """
-        #
-        # General Setup
-        #
-
-        # Set CANVAS_ROOT
-        canvas_root = settings.BASE_DIR
 
         # Set up logger.
         set_logger_config()
 
-        # Set the device.
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = self._pick_device()
+
+        scenario_dir, scenario_path = self._prepare_paths(user, project)
+
+        # Include the power plant configuration.
+        power_plant_config = PowerPlantConfig(
+            power_plant_position=torch.tensor([0.0, 0.0, 0.0], device=device)
+        )
+
+        # Include the target area configuration.
+        target_area_list_config = self._create_target_area_config(
+            project=project, device=device
+        )
+
+        # Include the light source configuration.
+        light_source_list_config = self._create_light_source_config(
+            project=project, device=device
+        )
+
+        # Include the prototype configuration.
+        prototype_config = self._create_prototype_config(device=device)
+
+        # Include the heliostat prototype config.
+        heliostats_list_config = self._create_heliostat_config(
+            project=project, device=device
+        )
+
+        # Initialize the scenario generator with the provided configurations.
+        scenario_generator = H5ScenarioGenerator(
+            file_path=scenario_path,
+            power_plant_config=power_plant_config,
+            target_area_list_config=target_area_list_config,
+            light_source_list_config=light_source_list_config,
+            prototype_config=prototype_config,
+            heliostat_list_config=heliostats_list_config,
+        )
+        # Generate the scenario and save it to the specified HDF5 file.
+        scenario_generator.generate_scenario()
+
+    def _pick_device(self) -> torch.device:
+        """
+        Pick the device for tensor operations, either CPU or CUDA if available.
+        """
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    def _prepare_paths(
+        self, user: User, project: Project
+    ) -> tuple[pathlib.Path, pathlib.Path]:
+        """Prepare the paths for saving the scenario file."""
 
         # Check if scenario folder exists
         os.makedirs("./hdf5_management/scenarios", exist_ok=True)
@@ -82,7 +127,6 @@ class HDF5Manager:
         scenario_path = pathlib.Path(
             f"./hdf5_management/scenarios/{user.id}_{project.name}ScenarioFile"
         )
-
         # This checks to make sure the path you defined is valid and a scenario HDF5 can be saved there.
         if not pathlib.Path(scenario_path).parent.is_dir():
             raise FileNotFoundError(
@@ -90,27 +134,22 @@ class HDF5Manager:
                 "Please create the folder or adjust the file path before running again!"
             )
 
-        # The path to the stral file containing heliostat and deflectometry data.
+        scenarios_dir = pathlib.Path("./hdf5_management/scenarios")
+        return scenarios_dir, scenario_path
+
+    def _create_surface_prototype_from_stral(
+        self, device: torch.device
+    ) -> SurfacePrototypeConfig:
+        """
+        Build the surface prototype configuration from a STRAL file.
+        """
+        # Set CANVAS_ROOT
+        canvas_root = settings.BASE_DIR
+
         stral_file_path = (
-            pathlib.Path(canvas_root) / "hdf5_management/data/test_stral_data.binp"
+            canvas_root / "hdf5_management" / "data" / "test_stral_data.binp"
         )
 
-        # Include the power plant configuration.
-        power_plant_config = PowerPlantConfig(
-            power_plant_position=torch.tensor([0.0, 0.0, 0.0], device=device)
-        )
-        # creates all receivers
-        target_area_list_config = self._create_target_area_config_list(
-            project=project, device=device
-        )
-        # creates all light sources
-        light_source_list_config = self._create_light_source_config_list(
-            project=project, device=device
-        )
-
-        #
-        # Prototype
-        #
         (
             facet_translation_vectors,
             canting,
@@ -135,9 +174,6 @@ class HDF5Manager:
             threshold=1e-7,
             threshold_mode="abs",
         )
-        heliostats_list_config = self._create_heliostats_list_config(
-            project=project, device=device
-        )
 
         # Use this surface config for fitted deflectometry surfaces.
         surface_config = surface_generator.generate_fitted_surface_config(
@@ -159,6 +195,17 @@ class HDF5Manager:
         # )
         surface_prototype_config = SurfacePrototypeConfig(
             facet_list=surface_config.facet_list
+        )
+        return surface_prototype_config
+
+    def _create_prototype_config(self, device: torch.device) -> PrototypeConfig:
+        """
+        Build the prototype configuration for the project.
+        """
+
+        # Build the surface prototype from the STRAL file.
+        surface_prototype_config = self._create_surface_prototype_from_stral(
+            device=device
         )
 
         # Include the kinematic prototype configuration.
@@ -195,25 +242,11 @@ class HDF5Manager:
             kinematic_prototype=kinematic_prototype_config,
             actuators_prototype=actuator_prototype_config,
         )
+        return prototype_config
 
-        #
-        # Generate the scenario HDF5 file given the defined parameters
-        #
-
-        scenario_generator = H5ScenarioGenerator(
-            file_path=scenario_path,
-            power_plant_config=power_plant_config,
-            target_area_list_config=target_area_list_config,
-            light_source_list_config=light_source_list_config,
-            prototype_config=prototype_config,
-            heliostat_list_config=heliostats_list_config,
-        )
-        scenario_generator.generate_scenario()
-
-    def _create_target_area_config_list(self, project: Project, device: torch.device):
+    def _create_target_area_config(self, project: Project, device: torch.device):
         """
-        Create a list of target area configurations from the project.
-        This includes all receivers in the project.
+        Build the target area configuration for the project.
         """
 
         # Create list for target area (receiver) configs
@@ -248,9 +281,9 @@ class HDF5Manager:
         target_area_list_config = TargetAreaListConfig(target_area_config_list)
         return target_area_list_config
 
-    def _create_light_source_config_list(self, project: Project, device: torch.device):
+    def _create_light_source_config(self, project: Project, device: torch.device):
         """
-        Create a list of light source configurations from the project.
+        Build the light source configuration for the project.
         """
 
         # Create a list of light source configs
@@ -274,10 +307,11 @@ class HDF5Manager:
         )
         return light_source_list_config
 
-    def _create_heliostats_list_config(self, project: Project, device: torch.device):
+    def _create_heliostat_config(self, project: Project, device: torch.device):
         """
-        Create a list of heliostat configurations from the project.
+        Build the heliostat configuration for the project.
         """
+
         # Note, not all individual heliostat parameters are provided here
 
         # Generate the surface configuration.

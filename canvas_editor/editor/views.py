@@ -94,12 +94,27 @@ def download(request, project_name):
         f"./hdf5_management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
     )
 
-    response = FileResponse(
-        open(path, "rb"), as_attachment=True, filename=project_name + ".h5"
-    )
+    f = open(path, "rb")
+    response = FileResponse(f, as_attachment=True, filename=project_name + ".h5")
 
-    os.remove(path)
+    original_close = response.close
 
+    def close_and_cleanup(*args, **kwargs):
+        try:
+            try:
+                if not f.closed:
+                    f.close()
+            finally:
+                # Delete the temporary file after sending it
+                try:
+                    path.unlink()
+                except FileNotFoundError:
+                    pass
+        finally:
+            # <- IMPORTANT: Call Django's own close
+            return original_close(*args, **kwargs)
+
+    response.close = close_and_cleanup
     return response
 
 

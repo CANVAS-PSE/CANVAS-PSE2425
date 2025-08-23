@@ -209,7 +209,7 @@ def _update_profile_picture(
 
     if delete_picture and profile.profile_picture:
         profile.profile_picture.delete()
-        profile.profile_picture = path_dict.default_profil_pic
+        profile.profile_picture = path_dict.default_profile_pic
     elif new_profile_picture:
         profile.profile_picture.delete()
         profile.profile_picture = new_profile_picture
