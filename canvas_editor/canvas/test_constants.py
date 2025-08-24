@@ -1,7 +1,17 @@
 # Constants for testing account management features in a Canvas project
 
+# Account management
 TEST_EMAIL = "testuser@example.com"
+TEST_EMAIL_2 = "test@mail.de"
+TEST_EMAIL_3 = "test2@mail.de"
 TEST_USERNAME = "testuser"
+NEW_FIRST_NAME = "new_first_name"
+NEW_LAST_NAME = "new_last_name"
+NEW_EMAIL = "new_test@mail.de"
+TEST_FIRST_NAME_2 = "test2_first_name"
+TEST_LAST_NAME_2 = "test2_last_name"
+TEST_FIRST_NAME = "test_first_name"
+TEST_LAST_NAME = "test_last_name"
 SECURE_PASSWORD = "SecurePass123!"
 TOO_SHORT_PASSWORD = "Save-1"
 TEST_PASSWORD = "test"

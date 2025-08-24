@@ -22,6 +22,16 @@ from canvas.test_constants import (
     RESET_PASSWORD,
     SECURE_PASSWORD,
     UPDATED_PASSWORD,
+    TEST_EMAIL_2,
+    TEST_USERNAME,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_FIRST_NAME_2,
+    TEST_LAST_NAME_2,
+    TEST_EMAIL_3,
+    NEW_FIRST_NAME,
+    NEW_LAST_NAME,
+    NEW_EMAIL,
 )
 from account_management.views import (
     send_password_change_email,
@@ -44,7 +54,7 @@ class ParameterizedViewTestMixin:
 
     # Test if an authenticated user is redirected to the projects page when accessing the register/login page
     def GET_authenticated(self, url_namee):
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
         response = self.client.get(url_namee)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.projects_url)
@@ -56,16 +66,16 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         self.register_url = reverse("register")
         self.projects_url = reverse("projects")
         self.user = User.objects.create_user(
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            username="test@mail.de",
+            username=TEST_EMAIL_2,
         )
         self.valid_user_data = {
-            "first_name": "test2_first_name",
-            "last_name": "test2_last_name",
-            "email": "test2@mail.de",
+            "first_name": TEST_FIRST_NAME_2,
+            "last_name": TEST_LAST_NAME_2,
+            "email": TEST_EMAIL_3,
             "password": SECURE_PASSWORD,
             "password_confirmation": SECURE_PASSWORD,
         }
@@ -83,7 +93,7 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
             self.register_url,
             self.valid_user_data,
         )
-        user = User.objects.get(email="test2@mail.de")
+        user = User.objects.get(email=TEST_EMAIL_3)
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.projects_url)
@@ -94,9 +104,9 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.register_url,
             {
-                "first_name": "test_first_name",
-                "last_name": "test_last_name",
-                "email": "test@mail.de",
+                "first_name": TEST_FIRST_NAME,
+                "last_name": TEST_LAST_NAME,
+                "email": TEST_EMAIL_2,
                 "password": SECURE_PASSWORD,
                 "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
             },
@@ -116,11 +126,11 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         self.login_url = reverse("login")
         self.projects_url = reverse("projects")
         self.user = User.objects.create_user(
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            username="test@mail.de",
+            username=TEST_EMAIL_2,
         )
 
     def test_GET(self):
@@ -136,12 +146,12 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.login_url,
             {
-                "email": "test@mail.de",
+                "email": TEST_EMAIL_2,
                 "password": SECURE_PASSWORD,
             },
         )
 
-        user = User.objects.get(email="test@mail.de")
+        user = User.objects.get(email=TEST_EMAIL_2)
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.projects_url)
@@ -152,7 +162,7 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.login_url,
             {
-                "email": "max@mail.de",
+                "email": TEST_EMAIL_3,
                 "password": SECURE_PASSWORD,
             },
         )
@@ -169,13 +179,13 @@ class LogoutViewTest(TestCase):
         self.logout_url = reverse("logout")
         self.login_url = reverse("login")
         self.user = User.objects.create_user(
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            username="test@mail.de",
+            username=TEST_EMAIL_2,
         )
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
     def test_GET(self):
         # Test if a GET request to the logout endpoint returns a 405 (Method Not Allowed) as it should only accept POST requests
@@ -196,11 +206,11 @@ class SendRegisterMailTest(TestCase):
     def test_send_register_email(self):
         # Test if the registration email is sent correctly
         user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL_2,
             password=COMPLETELY_WRONG_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
 
         factory = RequestFactory()
@@ -214,7 +224,7 @@ class SendRegisterMailTest(TestCase):
         assert (
             email.subject == "CANVAS: Registration Confirmation"
         )  # Verify email subject
-        assert email.to == ["test@example.com"]  # Verify recipient
+        assert email.to == [TEST_EMAIL_2]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)
@@ -229,11 +239,11 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
@@ -278,11 +288,11 @@ class SendPasswordChangeMailTest(TestCase):
     def test_send_password_change_email(self):
         # Test if a password change email is sent correctly
         user = User.objects.create_user(
-            username="testuser",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
 
         factory = RequestFactory()
@@ -294,7 +304,7 @@ class SendPasswordChangeMailTest(TestCase):
         email = mail.outbox[0]
 
         assert email.subject == "Password Change Confirmation"  # Verify email subject
-        assert email.to == ["test@mail.de"]  # Verify recipient
+        assert email.to == [TEST_EMAIL_2]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)
@@ -309,11 +319,11 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
@@ -401,24 +411,24 @@ class DeleteAccountTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_EMAIL_2,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.delete_account_url = reverse("delete_account")
 
     def test_GET(self):
         # Test if a GET request to the delete account endpoint returns a 405 (Method Not Allowed), as it should only accept POST requests
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
         response = self.client.get(self.delete_account_url)
 
         self.assertEqual(response.status_code, 405)
 
     def test_POST_valid_data(self):
         # Test if a valid delete account request removes the user and redirects to login page
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
             {"password": SECURE_PASSWORD},
@@ -431,7 +441,7 @@ class DeleteAccountTest(TestCase):
 
     def test_POST_invalid_data(self):
         # Test if an incorrect password prevents account deletion
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
             {"password": NO_SPECIAL_CHAR_PASSWORD},
@@ -461,11 +471,11 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_EMAIL_2,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.password_forgotten_url = reverse("password_forgotten")
 
@@ -480,7 +490,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         # Test if a valid email submission redirects to login page
         response = self.client.post(
             self.password_forgotten_url,
-            {"email": "test@mail.de"},
+            {"email": TEST_EMAIL_2},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -490,7 +500,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         # Test if submitting an unregistered email returns an error message
         response = self.client.post(
             self.password_forgotten_url,
-            {"email": "test2@mail.de"},
+            {"email": TEST_EMAIL_3},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -501,11 +511,11 @@ class SendPasswordForgottenMailTest(TestCase):
     def test_send_password_forgotten_email(self):
         # Test if the password forgotten email is sent correctly
         user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_EMAIL_2,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
 
         factory = RequestFactory()
@@ -517,7 +527,7 @@ class SendPasswordForgottenMailTest(TestCase):
         email = mail.outbox[0]
 
         assert email.subject == "Password Reset"  # Verify email subject
-        assert email.to == ["test@mail.de"]  # Verify recipient
+        assert email.to == [TEST_EMAIL_2]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)
@@ -532,11 +542,11 @@ class UpdateAccountTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_EMAIL_2,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
         self.update_account_url = reverse("update_account")
@@ -552,9 +562,9 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "new_test@mail.de",
+                "first_name": NEW_FIRST_NAME,
+                "last_name": NEW_LAST_NAME,
+                "email": NEW_EMAIL,
                 "old_password": SECURE_PASSWORD,
                 "new_password": UPDATED_PASSWORD,
                 "password_confirmation": UPDATED_PASSWORD,
@@ -566,14 +576,14 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_valid_data_without_profile(self):
         # Test if a user can successfully update their account information
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "new_test@mail.de",
+                "first_name": NEW_FIRST_NAME,
+                "last_name": NEW_LAST_NAME,
+                "email": NEW_EMAIL,
                 "old_password": SECURE_PASSWORD,
                 "new_password": UPDATED_PASSWORD,
                 "password_confirmation": UPDATED_PASSWORD,
@@ -582,37 +592,37 @@ class UpdateAccountTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "new_first_name")
-        self.assertEqual(self.user.last_name, "new_last_name")
+        self.assertEqual(self.user.first_name, NEW_FIRST_NAME)
+        self.assertEqual(self.user.last_name, NEW_LAST_NAME)
         self.assertTrue(self.user.check_password(UPDATED_PASSWORD))
-        self.assertEqual(self.user.email, "new_test@mail.de")
-        self.assertEqual(self.user.username, "new_test@mail.de")
+        self.assertEqual(self.user.email, NEW_EMAIL)
+        self.assertEqual(self.user.username, NEW_EMAIL)
 
     def test_POST_invalid_data(self):
         # Attempting to update with an email that is already in use should fail
         User.objects.create_user(
-            username="test2@mail.de",
-            email="test2@mail.de",
+            username=TEST_EMAIL_3,
+            email=TEST_EMAIL_3,
             password=SECURE_PASSWORD,
-            first_name="test2_first_name",
-            last_name="test2_last_name",
+            first_name=TEST_FIRST_NAME_2,
+            last_name=TEST_LAST_NAME_2,
         )
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test2@mail.de",
+                "first_name": NEW_FIRST_NAME,
+                "last_name": NEW_LAST_NAME,
+                "email": TEST_EMAIL_3,
             },
         )
 
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "test_first_name")
-        self.assertEqual(self.user.last_name, "test_last_name")
-        self.assertEqual(self.user.email, "test@mail.de")
+        self.assertEqual(self.user.first_name, TEST_FIRST_NAME)
+        self.assertEqual(self.user.last_name, TEST_LAST_NAME)
+        self.assertEqual(self.user.email, TEST_EMAIL_2)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
             any(
@@ -623,14 +633,14 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_From_projects_page(self):
         # Ensuring the user is redirected back to the projects page after updating their account
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test@mail.de",
+                "first_name": NEW_FIRST_NAME,
+                "last_name": NEW_LAST_NAME,
+                "email": TEST_EMAIL_2,
             },
             HTTP_REFERER="/projects/",
         )
@@ -638,14 +648,14 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/projects/")
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "new_first_name")
-        self.assertEqual(self.user.last_name, "new_last_name")
-        self.assertEqual(self.user.email, "test@mail.de")
+        self.assertEqual(self.user.first_name, NEW_FIRST_NAME)
+        self.assertEqual(self.user.last_name, NEW_LAST_NAME)
+        self.assertEqual(self.user.email, TEST_EMAIL_2)
         self.assertTrue(self.user.check_password(SECURE_PASSWORD))
 
     def test_POST_from_editor_page(self):
         # Ensuring the user is redirected back to the editor page after updating their account
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         project = Project.objects.create(
             name="test_project",
@@ -656,9 +666,9 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test@mail.de",
+                "first_name": NEW_FIRST_NAME,
+                "last_name": NEW_LAST_NAME,
+                "email": TEST_EMAIL_2,
             },
             HTTP_REFERER=editor_url,
         )
@@ -666,13 +676,13 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, editor_url)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "new_first_name")
-        self.assertEqual(self.user.last_name, "new_last_name")
-        self.assertEqual(self.user.email, "test@mail.de")
+        self.assertEqual(self.user.first_name, NEW_FIRST_NAME)
+        self.assertEqual(self.user.last_name, NEW_LAST_NAME)
+        self.assertEqual(self.user.email, TEST_EMAIL_2)
 
     def test_POST_upload_profile_picture(self):
         # Uploading a profile picture and verifying that it is saved correctly
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         # create example picture
         image = Image.new("RGB", (100, 100), color="blue")
@@ -686,9 +696,9 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test@mail.de",
+                "first_name": NEW_FIRST_NAME,
+                "last_name": NEW_LAST_NAME,
+                "email": TEST_EMAIL_2,
                 "old_password": SECURE_PASSWORD,
                 "new_password": UPDATED_PASSWORD,
                 "password_confirmation": UPDATED_PASSWORD,
@@ -706,7 +716,7 @@ class UpdateAccountTest(TestCase):
 
     def test_update_profile_picture_replaces_old_one(self):
         # Test if the old profile picture is deleted when a new one is uploaded
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         # First profile picture upload
         image1 = Image.new("RGB", (100, 100), color="blue")
@@ -754,7 +764,7 @@ class UpdateAccountTest(TestCase):
 
     def test_POST_delete_profile_picture(self):
         # Test if a user can delete their profile picture
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         image = Image.new("RGB", (100, 100), color="blue")
         image_file = io.BytesIO()
@@ -793,7 +803,7 @@ class GetUserInfoTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", email="test@mail.de", password=SECURE_PASSWORD
+            username=TEST_USERNAME, email=TEST_EMAIL_2, password=SECURE_PASSWORD
         )
         self.get_user_info_url = reverse("get_user_info")
 
@@ -805,7 +815,7 @@ class GetUserInfoTest(TestCase):
 
     def test_get_user_info_authenticated_without_socialaccount(self):
         # A regular authenticated user without a SocialAccount should receive `is_openid_user: False`.
-        self.client.login(username="testuser", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
         response = self.client.get(self.get_user_info_url)
 
         self.assertEqual(response.status_code, 200)
@@ -814,7 +824,7 @@ class GetUserInfoTest(TestCase):
 
     def test_get_user_info_authenticated_with_socialaccount(self):
         # A user with a SocialAccount should receive `is_openid_user: True`.
-        self.client.login(username="testuser", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
         SocialAccount.objects.create(user=self.user, provider="google")
 
         response = self.client.get(self.get_user_info_url)
