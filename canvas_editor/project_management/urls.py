@@ -18,7 +18,7 @@ urlpatterns = [
     ),
     path(
         "toggle_favor/<str:project_name>",
-        views.toggle_favor_project,
+        views.ToggleFavorProject.as_view(),
         name=view_name_dict.toggle_favor_project_view,
     ),
     path(

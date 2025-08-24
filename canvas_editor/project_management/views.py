@@ -12,6 +12,7 @@ from django.views import View
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
+from canvas import view_name_dict
 from hdf5_management.hdf5_manager import HDF5Manager
 
 from .forms import ProjectForm, UpdateProjectForm
@@ -123,13 +124,15 @@ def delete_project(request, project_name):
         return redirect("projects")
 
 
-@login_required
-@require_POST
-def toggle_favor_project(request, project_name):
-    project = get_object_or_404(Project, owner=request.user, name=project_name)
-    project.favorite = False if project.favorite else True
-    project.save(update_fields=["favorite"])
-    return redirect("projects")
+class ToggleFavorProject(LoginRequiredMixin, View):
+    """Toggle the favorite attribute of the project."""
+
+    def post(self, request, project_name):
+        """Toggle the favorite attribute of the project."""
+        project = get_object_or_404(Project, owner=request.user, name=project_name)
+        project.favorite = False if project.favorite else True
+        project.save(update_fields=["favorite"])
+        return redirect(view_name_dict.projects_view)
 
 
 # Duplicate a project
