@@ -13,9 +13,11 @@ from django.http import (
 )
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST
+from django.views.generic.edit import FormView
 
 from canvas import message_dict, path_dict, view_name_dict
 
@@ -30,11 +32,43 @@ from .forms import (
 from .models import UserProfile
 
 
-class RegistrationView(View):
+class RegistrationView(FormView):
     """Register a new user and redirect to the login page upon success.
 
     If the user is already logged in, redirect to the projects page.
     """
+
+    template_name = "account_management/register.html"
+    form_class = RegisterForm
+
+    def get_success_url(self):
+        """Get the url that the user gets redirected to on success."""
+        return reverse(view_name_dict.projects_view)
+
+    @staticmethod
+    def send_register_email(user, request) -> None:
+        """Send an email to the user to confirm that their account has been created."""
+        subject = "CANVAS: Registration Confirmation"
+
+        # Create the token for the user
+        uid = urlsafe_base64_encode(str(user.id).encode())
+        token = default_token_generator.make_token(user)
+
+        base_url = request.build_absolute_uri("/")
+        # Create the URL for the password change page
+        delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
+
+        message = render_to_string(
+            "account_management/accounts/account_creation_confirmation_email.html",
+            {
+                "user": user,
+                "delete_account_url": delete_account_url,
+            },
+        )
+
+        to_email = user.email
+        email = EmailMessage(subject, message, to=[to_email])
+        email.send()
 
     def dispatch(self, request, *args, **kwargs):
         """Deside where to dispatch this request to or to redirect to the projects overview."""
@@ -42,59 +76,28 @@ class RegistrationView(View):
             return redirect(view_name_dict.projects_view)
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request):
-        """Render the registration form."""
-        form = RegisterForm()
-        return render(request, "account_management/register.html", {"form": form})
+    def form_invalid(self, form) -> HttpResponse:
+        """Handle invalid form."""
+        return render(self.request, "account_management/register.html", {"form": form})
 
-    def post(self, request):
-        """
-        Handle the registration form submission.
-        """
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            first_name = form.cleaned_data.get("first_name")
-            last_name = form.cleaned_data.get("last_name")
-            email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("password")
-            user = User(
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                username=email,
-            )
-            user.set_password(password)
-            user.save()
-            user.backend = "django.contrib.auth.backends.ModelBackend"
-            login(request, user)
-            send_register_email(user, request)
-            return redirect(view_name_dict.projects_view)
-        return render(request, "account_management/register.html", {"form": form})
-
-
-def send_register_email(user, request) -> None:
-    """Send an email to the user to confirm that their account has been created."""
-    subject = "CANVAS: Registration Confirmation"
-
-    # Create the token for the user
-    uid = urlsafe_base64_encode(str(user.id).encode())
-    token = default_token_generator.make_token(user)
-
-    base_url = request.build_absolute_uri("/")
-    # Create the URL for the password change page
-    delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
-
-    message = render_to_string(
-        "account_management/accounts/account_creation_confirmation_email.html",
-        {
-            "user": user,
-            "delete_account_url": delete_account_url,
-        },
-    )
-
-    to_email = user.email
-    email = EmailMessage(subject, message, to=[to_email])
-    email.send()
+    def form_valid(self, form) -> HttpResponseRedirect:
+        """Handle valid form."""
+        first_name = form.cleaned_data.get("first_name")
+        last_name = form.cleaned_data.get("last_name")
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password")
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            username=email,
+        )
+        user.set_password(password)
+        user.save()
+        user.backend = "django.contrib.auth.backends.ModelBackend"
+        login(self.request, user)
+        self.send_register_email(user, self.request)
+        return super().form_valid(form)
 
 
 class ConfirmDeletionView(View):
