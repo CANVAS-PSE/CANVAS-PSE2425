@@ -27,6 +27,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 from canvas import message_dict, path_dict
+from canvas.test_constants import (
+    ACTUATOR_NAME,
+    ACTUATOR_NAME_2,
+    HELIOSTAT_NAME_1,
+    NURBS_FIT_SCHEDULER_PARAMS,
+)
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
@@ -72,7 +78,7 @@ class HDF5Manager:
 
         device = self._pick_device()
 
-        scenario_dir, scenario_path = self._prepare_paths(user, project)
+        scenario_path = self._prepare_paths(user, project)
 
         # Include the power plant configuration.
         power_plant_config = PowerPlantConfig(
@@ -115,27 +121,26 @@ class HDF5Manager:
         """
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    def _prepare_paths(
-        self, user: User, project: Project
-    ) -> tuple[pathlib.Path, pathlib.Path]:
+    def _prepare_paths(self, user: User, project: Project) -> pathlib.Path:
         """Prepare the paths for saving the scenario file."""
 
+        scenario_dir = pathlib.Path("./hdf5_management/scenarios")
         # Check if scenario folder exists
-        os.makedirs("./hdf5_management/scenarios", exist_ok=True)
+        os.makedirs(scenario_dir, exist_ok=True)
 
         # The following parameter is the name of the scenario.
         scenario_path = pathlib.Path(
-            f"./hdf5_management/scenarios/{user.id}_{project.name}ScenarioFile"
+            f"{scenario_dir}/{user.id}_{project.name}{path_dict.SCENARIO_FILE_SUFFIX}"
         )
         # This checks to make sure the path you defined is valid and a scenario HDF5 can be saved there.
         if not pathlib.Path(scenario_path).parent.is_dir():
             raise FileNotFoundError(
-                f"The folder ``{pathlib.Path(scenario_path).parent}`` selected to save the scenario does not exist. "
-                "Please create the folder or adjust the file path before running again!"
+                message_dict.folder_not_found_text.format(
+                    pathlib.Path(scenario_path).parent
+                )
             )
 
-        scenarios_dir = pathlib.Path("./hdf5_management/scenarios")
-        return scenarios_dir, scenario_path
+        return scenario_path
 
     def _create_surface_prototype_from_stral(
         self, device: torch.device
@@ -146,9 +151,7 @@ class HDF5Manager:
         # Set CANVAS_ROOT
         canvas_root = settings.BASE_DIR
 
-        stral_file_path = (
-            canvas_root / "hdf5_management" / "data" / "test_stral_data.binp"
-        )
+        stral_file_path = canvas_root / path_dict.TEST_STRAL_DATA_PATH
 
         (
             facet_translation_vectors,
@@ -167,17 +170,12 @@ class HDF5Manager:
             [torch.empty(1, requires_grad=True)], lr=1e-3
         )
         nurbs_fit_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            nurbs_fit_optimizer,
-            mode="min",
-            factor=0.2,
-            patience=50,
-            threshold=1e-7,
-            threshold_mode="abs",
+            nurbs_fit_optimizer, **NURBS_FIT_SCHEDULER_PARAMS
         )
 
         # Use this surface config for fitted deflectometry surfaces.
         surface_config = surface_generator.generate_fitted_surface_config(
-            heliostat_name="heliostat_1",
+            heliostat_name=HELIOSTAT_NAME_1,
             facet_translation_vectors=facet_translation_vectors,
             canting=canting,
             surface_points_with_facets_list=surface_points_with_facets_list,
@@ -216,14 +214,14 @@ class HDF5Manager:
 
         # Include an ideal actuator.
         actuator1_prototype = ActuatorConfig(
-            key="actuator_1",
+            key=ACTUATOR_NAME,
             type=config_dictionary.ideal_actuator_key,
             clockwise_axis_movement=False,
         )
 
         # Include an ideal actuator.
         actuator2_prototype = ActuatorConfig(
-            key="actuator_2",
+            key=ACTUATOR_NAME_2,
             type=config_dictionary.ideal_actuator_key,
             clockwise_axis_movement=True,
         )

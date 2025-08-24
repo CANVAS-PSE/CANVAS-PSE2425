@@ -46,3 +46,15 @@ RECEIVER_TYPE = "ideal"
 TEST_TYPE = "test"
 TEST_NUMBER = 42
 TEST_FLOAT_NUMBER = 4.2
+
+# Constants for testing HDF5 management features in a Canvas project
+ACTUATOR_NAME = "actuator_1"
+ACTUATOR_NAME_2 = "actuator_2"
+HELIOSTAT_NAME_1 = "heliostat_1"
+NURBS_FIT_SCHEDULER_PARAMS = {
+    "mode": "min",
+    "factor": 0.2,
+    "patience": 50,
+    "threshold": 1e-7,
+    "threshold_mode": "abs",
+}
