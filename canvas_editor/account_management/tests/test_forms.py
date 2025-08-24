@@ -12,6 +12,7 @@ from account_management.forms import (
 from account_management.models import User
 from canvas.test_constants import (
     MISMATCHED_BUT_CORRECT_PASSWORD,
+    NEW_PASSWORD_FIELD,
     NO_LOWERCASE_PASSWORD,
     NO_NUMERIC_PASSWORD,
     NO_SPECIAL_CHAR_PASSWORD,
@@ -29,22 +30,37 @@ from canvas.test_constants import (
     NEW_EMAIL,
     TEST_FIRST_NAME_2,
     TEST_LAST_NAME_2,
+    FIRST_NAME_FIELD,
+    LAST_NAME_FIELD,
+    EMAIL_FIELD,
+    PASSWORD_FIELD,
+    PASSWORD_CONFIRMATION_FIELD,
 )
 from canvas import message_dict
 
 
-class RegisterFormTest(TestCase):
+class FormTestMixin:
+    default_data = {}
+
+    def create_form(self, **overrides):
+        data = self.default_data.copy()
+        data.update(overrides)
+        return self.form_class(data=data)
+
+
+class RegisterFormTest(FormTestMixin, TestCase):
+    form_class = RegisterForm
+    default_data = {
+        FIRST_NAME_FIELD: TEST_FIRST_NAME,
+        LAST_NAME_FIELD: TEST_LAST_NAME,
+        EMAIL_FIELD: TEST_EMAIL_2,
+        PASSWORD_FIELD: SECURE_PASSWORD,
+        PASSWORD_CONFIRMATION_FIELD: SECURE_PASSWORD,
+    }
+
     def test_register_form_valid_data(self):
         # Test case for valid data submission in RegisterForm
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": SECURE_PASSWORD,
-                "password_confirmation": SECURE_PASSWORD,
-            }
-        )
+        form = self.create_form()
         self.assertTrue(form.is_valid())
 
     def test_register_form_no_data(self):
@@ -61,15 +77,7 @@ class RegisterFormTest(TestCase):
             email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
         )
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": SECURE_PASSWORD,
-                "password_confirmation": SECURE_PASSWORD,
-            }
-        )
+        form = self.create_form()
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["email"],
@@ -78,14 +86,8 @@ class RegisterFormTest(TestCase):
 
     def test_register_form_passwords_not_matching(self):
         # Test case for RegisterForm where passwords do not match
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": SECURE_PASSWORD,
-                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
-            }
+        form = self.create_form(
+            **{PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD}
         )
         self.assertFalse(form.is_valid())
         self.assertEqual(
@@ -95,13 +97,10 @@ class RegisterFormTest(TestCase):
 
     def test_register_form_password_too_short(self):
         # Test case for RegisterForm where password is too short
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": TOO_SHORT_PASSWORD,
-                "password_confirmation": TOO_SHORT_PASSWORD,
+        form = self.create_form(
+            **{
+                PASSWORD_FIELD: TOO_SHORT_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: TOO_SHORT_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -112,13 +111,10 @@ class RegisterFormTest(TestCase):
 
     def test_register_form_password_no_uppercase(self):
         # Test case for RegisterForm where password has no uppercase letter
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": NO_UPPERCASE_PASSWORD,
-                "password_confirmation": NO_UPPERCASE_PASSWORD,
+        form = self.create_form(
+            **{
+                PASSWORD_FIELD: NO_UPPERCASE_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_UPPERCASE_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -129,13 +125,10 @@ class RegisterFormTest(TestCase):
 
     def test_register_form_password_no_lowercase(self):
         # Test case for RegisterForm where password has no lowercase letter
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": NO_LOWERCASE_PASSWORD,
-                "password_confirmation": NO_LOWERCASE_PASSWORD,
+        form = self.create_form(
+            **{
+                PASSWORD_FIELD: NO_LOWERCASE_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_LOWERCASE_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -146,13 +139,10 @@ class RegisterFormTest(TestCase):
 
     def test_register_form_password_no_number(self):
         # Test case for RegisterForm where password has no number
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": NO_NUMERIC_PASSWORD,
-                "password_confirmation": NO_NUMERIC_PASSWORD,
+        form = self.create_form(
+            **{
+                PASSWORD_FIELD: NO_NUMERIC_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_NUMERIC_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -163,13 +153,10 @@ class RegisterFormTest(TestCase):
 
     def test_register_form_password_no_special_character(self):
         # Test case for RegisterForm where password has no special character
-        form = RegisterForm(
-            data={
-                "first_name": TEST_FIRST_NAME,
-                "last_name": TEST_LAST_NAME,
-                "email": TEST_EMAIL_2,
-                "password": NO_SPECIAL_CHAR_PASSWORD,
-                "password_confirmation": NO_SPECIAL_CHAR_PASSWORD,
+        form = self.create_form(
+            **{
+                PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_SPECIAL_CHAR_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -179,7 +166,13 @@ class RegisterFormTest(TestCase):
         )
 
 
-class LoginFormTest(TestCase):
+class LoginFormTest(FormTestMixin, TestCase):
+    form_class = LoginForm
+    default_data = {
+        "email": TEST_EMAIL_2,
+        "password": SECURE_PASSWORD,
+    }
+
     def setUp(self):
         self.user = User.objects.create_user(
             username=TEST_EMAIL_2,
@@ -191,12 +184,7 @@ class LoginFormTest(TestCase):
 
     def test_login_form_valid_data(self):
         # Test case for valid data submission in LoginForm
-        form = LoginForm(
-            data={
-                "email": TEST_EMAIL_2,
-                "password": SECURE_PASSWORD,
-            }
-        )
+        form = self.create_form()
         self.assertTrue(form.is_valid())
         self.assertEqual(form.get_user(), self.user)
 
@@ -207,10 +195,9 @@ class LoginFormTest(TestCase):
 
     def test_login_form_wrong_email(self):
         # Test case for LoginForm with not existing email
-        form = LoginForm(
-            data={
-                "email": TEST_EMAIL_3,
-                "password": SECURE_PASSWORD,
+        form = self.create_form(
+            **{
+                EMAIL_FIELD: TEST_EMAIL_3,
             }
         )
         self.assertFalse(form.is_valid())
@@ -221,12 +208,7 @@ class LoginFormTest(TestCase):
 
     def test_login_form_wrong_password(self):
         # Test case for LoginForm with wrong password
-        form = LoginForm(
-            data={
-                "email": TEST_EMAIL_2,
-                "password": NO_SPECIAL_CHAR_PASSWORD,
-            }
-        )
+        form = self.create_form(**{PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD})
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
@@ -234,7 +216,17 @@ class LoginFormTest(TestCase):
         )
 
 
-class UpdateAccountFormTest(TestCase):
+class UpdateAccountFormTest(FormTestMixin, TestCase):
+    form_class = UpdateAccountForm
+    default_data = {
+        "first_name": NEW_FIRST_NAME,
+        "last_name": NEW_LAST_NAME,
+        "email": NEW_EMAIL,
+        "old_password": SECURE_PASSWORD,
+        "new_password": UPDATED_PASSWORD,
+        "password_confirmation": UPDATED_PASSWORD,
+    }
+
     def setUp(self):
         self.user = User.objects.create_user(
             username=TEST_EMAIL_2,
@@ -477,7 +469,7 @@ class UpdateAccountFormTest(TestCase):
         )
 
 
-class DeleteAccountFormTest(TestCase):
+class DeleteAccountFormTest(FormTestMixin, TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username=TEST_EMAIL_2,
@@ -517,7 +509,13 @@ class DeleteAccountFormTest(TestCase):
         )
 
 
-class PasswordResetFormTest(TestCase):
+class PasswordResetFormTest(FormTestMixin, TestCase):
+    form_class = PasswordResetForm
+    default_data = {
+        NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
+        PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
+    }
+
     def setUp(self):
         self.user = User.objects.create_user(
             username=TEST_EMAIL_2,
@@ -529,12 +527,7 @@ class PasswordResetFormTest(TestCase):
 
     def test_password_reset_form_valid_data(self):
         # Test case for valid data submission in PasswordResetForm
-        form = PasswordResetForm(
-            data={
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": UPDATED_PASSWORD,
-            }
-        )
+        form = self.create_form()
         self.assertTrue(form.is_valid())
 
     def test_password_reset_form_no_data(self):
@@ -544,11 +537,8 @@ class PasswordResetFormTest(TestCase):
 
     def test_password_reset_form_passwords_not_matching(self):
         # Test case for PasswordResetForm where passwords do not match
-        form = PasswordResetForm(
-            data={
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
-            }
+        form = self.create_form(
+            **{PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD}
         )
         self.assertFalse(form.is_valid())
         self.assertEqual(
@@ -558,10 +548,10 @@ class PasswordResetFormTest(TestCase):
 
     def test_password_reset_form_password_too_short(self):
         # Test case for PasswordResetForm where password is too short
-        form = PasswordResetForm(
-            data={
-                "new_password": TOO_SHORT_PASSWORD,
-                "password_confirmation": TOO_SHORT_PASSWORD,
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: TOO_SHORT_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: TOO_SHORT_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -572,10 +562,10 @@ class PasswordResetFormTest(TestCase):
 
     def test_password_reset_form_password_no_uppercase(self):
         # Test case for PasswordResetForm where password has no uppercase letter
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_UPPERCASE_PASSWORD,
-                "password_confirmation": NO_UPPERCASE_PASSWORD,
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_UPPERCASE_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_UPPERCASE_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -586,10 +576,10 @@ class PasswordResetFormTest(TestCase):
 
     def test_password_reset_form_password_no_lowercase(self):
         # Test case for PasswordResetForm where password has no lowercase letter
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_LOWERCASE_PASSWORD,
-                "password_confirmation": NO_LOWERCASE_PASSWORD,
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_LOWERCASE_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_LOWERCASE_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -600,10 +590,10 @@ class PasswordResetFormTest(TestCase):
 
     def test_password_reset_form_password_no_number(self):
         # Test case for PasswordResetForm where password has no number
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_NUMERIC_PASSWORD,
-                "password_confirmation": NO_NUMERIC_PASSWORD,
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_NUMERIC_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_NUMERIC_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -614,10 +604,10 @@ class PasswordResetFormTest(TestCase):
 
     def test_password_reset_form_password_no_special_character(self):
         # Test case for PasswordResetForm where password has no special character
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_SPECIAL_CHAR_PASSWORD,
-                "password_confirmation": NO_SPECIAL_CHAR_PASSWORD,
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_SPECIAL_CHAR_PASSWORD,
             }
         )
         self.assertFalse(form.is_valid())
@@ -627,7 +617,12 @@ class PasswordResetFormTest(TestCase):
         )
 
 
-class PasswordForgottenFormTest(TestCase):
+class PasswordForgottenFormTest(FormTestMixin, TestCase):
+    form_class = PasswordForgottenForm
+    default_data = {
+        "email": TEST_EMAIL_2,
+    }
+
     def setUp(self):
         self.user = User.objects.create_user(
             username=TEST_EMAIL_2,
@@ -638,12 +633,9 @@ class PasswordForgottenFormTest(TestCase):
         )
 
     def test_password_forgotten_form_valid_data(self):
+
         # Test case for valid data submission in PasswordForgottenForm
-        form = PasswordForgottenForm(
-            data={
-                "email": TEST_EMAIL_2,
-            }
-        )
+        form = self.create_form()
         self.assertTrue(form.is_valid())
 
     def test_password_forgotten_form_no_data(self):
@@ -653,11 +645,7 @@ class PasswordForgottenFormTest(TestCase):
 
     def test_password_forgotten_form_wrong_email(self):
         # Test case for PasswordForgottenForm with not existing email
-        form = PasswordForgottenForm(
-            data={
-                "email": TEST_EMAIL_3,
-            }
-        )
+        form = self.create_form(**{EMAIL_FIELD: TEST_EMAIL_3})
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["email"],
