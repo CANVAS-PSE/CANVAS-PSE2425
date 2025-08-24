@@ -63,8 +63,8 @@ class ParameterizedViewTestMixin:
 class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
-        self.register_url = reverse("register")
-        self.projects_url = reverse("projects")
+        self.register_url = reverse(view_name_dict.register_view)
+        self.projects_url = reverse(view_name_dict.projects_view)
         self.user = User.objects.create_user(
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
@@ -123,8 +123,8 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
 class LoginViewTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
-        self.login_url = reverse("login")
-        self.projects_url = reverse("projects")
+        self.login_url = reverse(view_name_dict.login_view)
+        self.projects_url = reverse(view_name_dict.projects_view)
         self.user = User.objects.create_user(
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
@@ -176,8 +176,8 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
 class LogoutViewTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.logout_url = reverse("logout")
-        self.login_url = reverse("login")
+        self.logout_url = reverse(view_name_dict.logout_view)
+        self.login_url = reverse(view_name_dict.login_view)
         self.user = User.objects.create_user(
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
@@ -248,7 +248,7 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
         self.confirm_deletion_url = reverse(
-            "confirm_deletion", args=[self.uid, self.token]
+            view_name_dict.confirm_deletion_view, args=[self.uid, self.token]
         )
 
     def test_GET(self):
@@ -262,26 +262,32 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(self.confirm_deletion_url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 
     def test_POST_invalid_token(self):
         # Test if an invalid token results in a redirect to the invalid link page
         response = self.client.post(
-            reverse("confirm_deletion", args=[self.uid, "invalid_token"])
+            reverse(
+                view_name_dict.confirm_deletion_view,
+                args=[self.uid, view_name_dict.invalid_token_view],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
 
     def test_POST_invalid_uid(self):
         # Test if an invalid UID results in a redirect to the invalid link page
         response = self.client.post(
-            reverse("confirm_deletion", args=["invalid_uid", self.token])
+            reverse(
+                view_name_dict.confirm_deletion_view,
+                args=[view_name_dict.invalid_uid_view, self.token],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
 
 
 class SendPasswordChangeMailTest(TestCase):
@@ -348,7 +354,7 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(RESET_PASSWORD))
         self.assertNotIn("_auth_user_id", self.client.session)
@@ -373,26 +379,32 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
     def test_POST_invalid_token(self):
         # Test if an invalid token results in a redirect to the invalid link page
         response = self.client.post(
-            reverse("password_reset", args=[self.uid, "invalid_token"])
+            reverse(
+                view_name_dict.password_reset_view,
+                args=[self.uid, view_name_dict.invalid_token_view],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
 
     def test_POST_invalid_uid(self):
         # Test if an invalid UID results in a redirect to the invalid link page
         response = self.client.post(
-            reverse("password_reset", args=["invalid_uid", self.token])
+            reverse(
+                view_name_dict.password_reset_view,
+                args=[view_name_dict.invalid_uid_view, self.token],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
 
 
 class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         self.client = Client()
-        self.invalid_link_url = reverse("invalid_link")
+        self.invalid_link_url = reverse(view_name_dict.invalid_link_view)
 
     def test_GET(self):
         # Test if the invalid link page is accessible via GET request
@@ -417,7 +429,7 @@ class DeleteAccountTest(TestCase):
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
         )
-        self.delete_account_url = reverse("delete_account")
+        self.delete_account_url = reverse(view_name_dict.delete_account_view)
 
     def test_GET(self):
         # Test if a GET request to the delete account endpoint returns a 405 (Method Not Allowed), as it should only accept POST requests
@@ -435,7 +447,7 @@ class DeleteAccountTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
         self.assertNotIn("_auth_user_id", self.client.session)
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 
@@ -477,7 +489,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
         )
-        self.password_forgotten_url = reverse("password_forgotten")
+        self.password_forgotten_url = reverse(view_name_dict.password_forgotten_view)
 
     def test_GET(self):
         # Test if the password forgotten page is accessible via GET request
@@ -494,7 +506,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
 
     def test_POST_invalid_data(self):
         # Test if submitting an unregistered email returns an error message
@@ -549,7 +561,7 @@ class UpdateAccountTest(TestCase):
             last_name=TEST_LAST_NAME,
         )
         self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
-        self.update_account_url = reverse("update_account")
+        self.update_account_url = reverse(view_name_dict.update_account_view)
 
     def test_GET(self):
         # Test if a GET request to the delete account endpoint returns a 405 (Method Not Allowed), as it should only accept POST requests
@@ -661,7 +673,7 @@ class UpdateAccountTest(TestCase):
             name="test_project",
             owner=self.user,
         )
-        editor_url = reverse("editor", args=[project.name])
+        editor_url = reverse(view_name_dict.editor_view, args=[project.name])
 
         response = self.client.post(
             self.update_account_url,

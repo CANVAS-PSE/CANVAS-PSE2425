@@ -11,7 +11,7 @@ urlpatterns = [
     ),
     path("logout/", views.logout_view, name=view_name_dict.logout_view),
     path(
-        "update_account/", views.update_account, name=view_name_dict.updata_account_view
+        "update_account/", views.update_account, name=view_name_dict.update_account_view
     ),
     path(
         "delete_account/", views.delete_account, name=view_name_dict.delete_account_view
