@@ -30,8 +30,14 @@ from canvas import message_dict, path_dict
 from canvas.test_constants import (
     ACTUATOR_NAME,
     ACTUATOR_NAME_2,
+    CURVATURE_DEFAULT,
     HELIOSTAT_NAME_1,
+    HOMOGENEOUS_COORDINATE,
+    KINEMATIC_PROTOTYPE_CONFIG,
     NURBS_FIT_SCHEDULER_PARAMS,
+    POSITION_COORDINATE_X,
+    POSITION_COORDINATE_Y,
+    POSITION_COORDINATE_Z,
 )
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
@@ -209,7 +215,7 @@ class HDF5Manager:
         # Include the kinematic prototype configuration.
         kinematic_prototype_config = KinematicPrototypeConfig(
             type=config_dictionary.rigid_body_key,
-            initial_orientation=torch.tensor([0.0, 0.0, 1.0, 0.0]),
+            initial_orientation=torch.tensor(KINEMATIC_PROTOTYPE_CONFIG),
         )
 
         # Include an ideal actuator.
@@ -330,7 +336,7 @@ class HDF5Manager:
                         heliostat.position_x,
                         heliostat.position_y,
                         heliostat.position_z,
-                        1.0,
+                        HOMOGENEOUS_COORDINATE,
                     ],
                     device=device,
                 ),
@@ -377,9 +383,9 @@ class HDF5Manager:
                 heliostat = heliostats_group[heliostat_object]
 
                 position = heliostat[config_dictionary.heliostat_position]
-                position_x = position[0]
-                position_y = position[1]
-                position_z = position[2]
+                position_x = position[POSITION_COORDINATE_X]
+                position_y = position[POSITION_COORDINATE_Y]
+                position_z = position[POSITION_COORDINATE_Z]
 
                 Heliostat.objects.create(
                     project=new_project,
@@ -435,14 +441,14 @@ class HDF5Manager:
                 receiver = receivers_group[receiver_object]
 
                 position = receiver[config_dictionary.target_area_position_center]
-                position_x = position[0]
-                position_y = position[1]
-                position_z = position[2]
+                position_x = position[POSITION_COORDINATE_X]
+                position_y = position[POSITION_COORDINATE_Y]
+                position_z = position[POSITION_COORDINATE_Z]
 
                 normal = receiver[config_dictionary.target_area_normal_vector]
-                normal_x = normal[0]
-                normal_y = normal[1]
-                normal_z = normal[2]
+                normal_x = normal[POSITION_COORDINATE_X]
+                normal_y = normal[POSITION_COORDINATE_Y]
+                normal_z = normal[POSITION_COORDINATE_Z]
 
                 plane_e = receiver[config_dictionary.target_area_plane_e]
                 plane_u = receiver[config_dictionary.target_area_plane_u]
@@ -451,8 +457,8 @@ class HDF5Manager:
                 curv_e_ds = receiver.get(config_dictionary.target_area_curvature_e)
                 curv_u_ds = receiver.get(config_dictionary.target_area_curvature_u)
 
-                curvature_e = HDF5Manager.safe_val(curv_e_ds, default=0.0)
-                curvature_u = HDF5Manager.safe_val(curv_u_ds, default=0.0)
+                curvature_e = HDF5Manager.safe_val(curv_e_ds, default=CURVATURE_DEFAULT)
+                curvature_u = HDF5Manager.safe_val(curv_u_ds, default=CURVATURE_DEFAULT)
 
                 Receiver.objects.create(
                     project=new_project,
