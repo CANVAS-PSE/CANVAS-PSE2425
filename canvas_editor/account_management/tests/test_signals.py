@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from account_management.models import UserProfile
-from account_management.tests.test_constants import TEST_PASSWORD
+from canvas.test_constants import TEST_PASSWORD
 
 
 class TestSignals(TestCase):

@@ -15,7 +15,7 @@ from django.utils.http import urlsafe_base64_encode
 from PIL import Image
 
 from account_management.models import UserProfile
-from account_management.tests.test_constants import (
+from canvas.test_constants import (
     COMPLETELY_WRONG_PASSWORD,
     MISMATCHED_BUT_CORRECT_PASSWORD,
     NO_SPECIAL_CHAR_PASSWORD,

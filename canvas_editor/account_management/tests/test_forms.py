@@ -10,7 +10,7 @@ from account_management.forms import (
     UpdateAccountForm,
 )
 from account_management.models import User
-from account_management.tests.test_constants import (
+from canvas.test_constants import (
     MISMATCHED_BUT_CORRECT_PASSWORD,
     NO_LOWERCASE_PASSWORD,
     NO_NUMERIC_PASSWORD,
