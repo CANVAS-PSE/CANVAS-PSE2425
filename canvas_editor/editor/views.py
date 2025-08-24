@@ -1,13 +1,15 @@
 import os
-from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
-from django.views.decorators.http import require_GET, require_POST
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from hdf5_management.hdf5_manager import HDF5Manager
 from django.contrib.auth.models import User
-from project_management.forms import ProjectForm
 from django.http import FileResponse, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views.decorators.http import require_GET, require_POST
+
+from hdf5_management.hdf5_manager import HDF5Manager
+from project_management.forms import ProjectForm
 from project_management.models import (
     Project,
 )
@@ -16,8 +18,7 @@ from project_management.models import (
 @login_required
 @require_GET
 def editor(request, project_name):
-    """
-    Handles the editor view for a given project.
+    """Handle the editor view for a given project.
 
     Parameters
     ----------
@@ -31,7 +32,6 @@ def editor(request, project_name):
     HttpResponse
         The editor page where the user can edit the project.
     """
-
     try:
         project = Project.objects.get(owner=request.user, name=project_name)
     except Project.DoesNotExist:
@@ -83,7 +83,6 @@ def download(request, project_name):
     HttpResponse
         FileResponse to download the hdf5 file.
     """
-
     project = get_object_or_404(Project, name=project_name, owner=request.user)
 
     hdf5_manager = HDF5Manager()
@@ -121,7 +120,6 @@ def upload_preview(request, project_name):
     HttpResponse : status 404
         on all other occasions
     """
-
     project = get_object_or_404(Project, name=project_name, owner=request.user)
     file = request.FILES["preview"]
 

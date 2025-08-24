@@ -5,10 +5,14 @@ from . import views
 urlpatterns = [
     path("", views.ProjectsView.as_view(), name="projects"),
     path(
-        "updateProject/<str:project_name>", views.update_project, name="updateProject"
+        "updateProject/<str:project_name>",
+        views.UpdateProjectView.as_view(),
+        name="updateProject",
     ),
     path(
-        "deleteProject/<str:project_name>", views.delete_project, name="deleteProject"
+        "deleteProject/<str:project_name>",
+        views.DeleteProjectView.as_view(),
+        name="deleteProject",
     ),
     path("favorProject/<str:project_name>", views.favor_project, name="favorProject"),
     path(
@@ -18,12 +22,12 @@ urlpatterns = [
     ),
     path(
         "duplicateProject/<str:project_name>",
-        views.duplicate_project,
+        views.DuplicateProjectView.as_view(),
         name="duplicateProject",
     ),
     path(
         "shareProject/<str:project_name>",
-        views.share_project,
+        views.ShareProjectView.as_view(),
         name="shareProject",
     ),
     path(
