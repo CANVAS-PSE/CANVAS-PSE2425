@@ -41,6 +41,12 @@ email_not_registered_text = "This email address is not registered."
 account_created_text = "Your account has been updated successfully."
 """Message shown when account is created successfully."""
 
+current_password_prompt = "Please enter your current password."
+"""Prompt for the user to enter their current password."""
+
+new_password_prompt = "Please enter a new password."
+"""Prompt for the user to enter a new password."""
+
 # Email messages
 registration_confirmation_subject = "CANVAS: Registration Confirmation"
 """ Message shown in the subject line of the registration confirmation email. """
