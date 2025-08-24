@@ -15,6 +15,7 @@ password_forgotten_view = "password_forgotten"
 get_user_info_view = "get_user_info"
 invalid_token_view = "invalid_token"
 invalid_uid_view = "invalid_uid"
+get_user_info_view = "get_user_info"
 
 # Autosave api
 

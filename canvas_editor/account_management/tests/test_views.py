@@ -16,11 +16,21 @@ from PIL import Image
 
 from account_management.models import UserProfile
 from canvas.test_constants import (
+    CHECKBOX_TRUE,
     COMPLETELY_WRONG_PASSWORD,
+    DELETE_PICTURE_FIELD,
     MISMATCHED_BUT_CORRECT_PASSWORD,
+    NEW_PROFILE_PICTURE_JPG,
+    NEW_PROFILE_PICTURE_SURFIX,
     NO_SPECIAL_CHAR_PASSWORD,
+    OLD_PROFILE_PICTURE_JPG,
+    OLD_PROFILE_PICTURE_SURFIX,
+    PROFILE_PIC_FIELD,
+    PROFILE_PIC_PREFIX,
+    PROFILE_PIC_SURFIX,
     RESET_PASSWORD,
     SECURE_PASSWORD,
+    TEST_PROJECT_NAME,
     UPDATED_PASSWORD,
     TEST_EMAIL_2,
     TEST_USERNAME,
@@ -32,13 +42,14 @@ from canvas.test_constants import (
     NEW_FIRST_NAME,
     NEW_LAST_NAME,
     NEW_EMAIL,
+    TEST_PROFILE_PICTURE,
 )
 from account_management.views import (
     send_password_change_email,
     send_password_forgotten_email,
     send_register_email,
 )
-from canvas import path_dict, view_name_dict
+from canvas import path_dict, view_name_dict, message_dict, template_dict
 from project_management.models import Project
 
 
@@ -81,7 +92,7 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         }
 
     def test_GET(self):
-        self.assert_view_get(self.register_url, "account_management/register.html")
+        self.assert_view_get(self.register_url, template_dict.register_template)
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the register page
@@ -113,10 +124,8 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/register.html")
-        self.assertContains(
-            response, "The passwords you entered do not match. Please try again."
-        )
+        self.assertTemplateUsed(response, template_dict.register_template)
+        self.assertContains(response, message_dict.password_match_criterium_text)
         self.assertTrue(response.context["form"].errors)
 
 
@@ -135,7 +144,7 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
 
     def test_GET(self):
         # Test if the login page is accessible via GET request
-        self.assert_view_get(self.login_url, "account_management/login.html")
+        self.assert_view_get(self.login_url, template_dict.login_template)
 
     def test_GET_authenticated(self):
         # Test if an authenticated user is redirected to the projects page when accessing the login page
@@ -168,9 +177,9 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/login.html")
+        self.assertTemplateUsed(response, template_dict.login_template)
         self.assertTrue(response.context["form"].errors)
-        self.assertContains(response, "This email address is not registered.")
+        self.assertContains(response, message_dict.email_not_registered_text)
 
 
 class LogoutViewTest(TestCase):
@@ -222,13 +231,15 @@ class SendRegisterMailTest(TestCase):
         email = mail.outbox[0]
 
         assert (
-            email.subject == "CANVAS: Registration Confirmation"
+            email.subject == message_dict.registration_confirmation_subject
         )  # Verify email subject
         assert email.to == [TEST_EMAIL_2]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)
-        expected_url_part = f"confirm_deletion/{uid}/{token}/"
+        expected_url_part = reverse(
+            view_name_dict.confirm_deletion_view, args=[uid, token]
+        )
 
         assert (
             expected_url_part in email.body
@@ -254,7 +265,7 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
     def test_GET(self):
         # Test if the confirm deletion page is accessible via GET request
         self.assert_view_get(
-            self.confirm_deletion_url, "account_management/confirm_deletion.html"
+            self.confirm_deletion_url, template_dict.confirm_deletion_template
         )
 
     def test_POST(self):
@@ -309,12 +320,16 @@ class SendPasswordChangeMailTest(TestCase):
         assert len(mail.outbox) == 1  # Check if one email was sent
         email = mail.outbox[0]
 
-        assert email.subject == "Password Change Confirmation"  # Verify email subject
+        assert (
+            email.subject == message_dict.password_change_confirmation_subject
+        )  # Verify email subject
         assert email.to == [TEST_EMAIL_2]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)
-        expected_url_part = f"password_reset/{uid}/{token}/"
+        expected_url_part = reverse(
+            view_name_dict.password_reset_view, args=[uid, token]
+        )
 
         assert (
             expected_url_part in email.body
@@ -340,7 +355,7 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
     def test_GET(self):
         # Test if the password reset page is accessible via GET request
         self.assert_view_get(
-            self.password_reset_url, "account_management/password_reset.html"
+            self.password_reset_url, template_dict.password_reset_template
         )
 
     def test_POST_valid_data(self):
@@ -370,11 +385,9 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/password_reset.html")
+        self.assertTemplateUsed(response, template_dict.password_reset_template)
         self.assertTrue(response.context["form"].errors)
-        self.assertContains(
-            response, "The passwords you entered do not match. Please try again."
-        )
+        self.assertContains(response, message_dict.password_match_criterium_text)
 
     def test_POST_invalid_token(self):
         # Test if an invalid token results in a redirect to the invalid link page
@@ -408,9 +421,7 @@ class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
 
     def test_GET(self):
         # Test if the invalid link page is accessible via GET request
-        self.assert_view_get(
-            self.invalid_link_url, "account_management/invalid_link.html"
-        )
+        self.assert_view_get(self.invalid_link_url, template_dict.invalid_link_template)
 
     def test_POST(self):
         # Test if the invalid link page is accessible via POST
@@ -462,9 +473,7 @@ class DeleteAccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any(
-                "The password you entered is incorrect." in str(msg) for msg in messages
-            )
+            any(message_dict.incorrect_password_text in str(msg) for msg in messages)
         )
         self.assertTrue(User.objects.filter(id=self.user.id).exists())
 
@@ -495,7 +504,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         # Test if the password forgotten page is accessible via GET request
         self.assert_view_get(
             self.password_forgotten_url,
-            "account_management/password_forgotten.html",
+            template_dict.password_forgotten_template,
         )
 
     def test_POST_valid_data(self):
@@ -538,12 +547,16 @@ class SendPasswordForgottenMailTest(TestCase):
         assert len(mail.outbox) == 1  # Check if one email was sent
         email = mail.outbox[0]
 
-        assert email.subject == "Password Reset"  # Verify email subject
+        assert (
+            email.subject == message_dict.password_reset_confirmation_subject
+        )  # Verify email subject
         assert email.to == [TEST_EMAIL_2]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)
-        expected_url_part = f"password_reset/{uid}/{token}/"
+        expected_url_part = reverse(
+            view_name_dict.password_reset_view, args=[uid, token]
+        )
 
         assert (
             expected_url_part in email.body
@@ -637,10 +650,7 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(self.user.email, TEST_EMAIL_2)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any(
-                "This email address is already in use. Please try another." in str(msg)
-                for msg in messages
-            )
+            any(message_dict.email_already_in_use_text in str(msg) for msg in messages)
         )
 
     def test_POST_From_projects_page(self):
@@ -670,7 +680,7 @@ class UpdateAccountTest(TestCase):
         self.client.login(username=TEST_EMAIL_2, password=SECURE_PASSWORD)
 
         project = Project.objects.create(
-            name="test_project",
+            name=TEST_PROJECT_NAME,
             owner=self.user,
         )
         editor_url = reverse(view_name_dict.editor_view, args=[project.name])
@@ -702,7 +712,7 @@ class UpdateAccountTest(TestCase):
         image.save(image_file, format="JPEG")
         image_file.seek(0)
         profile_picture = SimpleUploadedFile(
-            "profile_picture.jpg", image_file.read(), content_type="image/jpeg"
+            TEST_PROFILE_PICTURE, image_file.read(), content_type="image/jpeg"
         )
 
         response = self.client.post(
@@ -723,7 +733,7 @@ class UpdateAccountTest(TestCase):
 
         self.profile.refresh_from_db()
         self.assertTrue(self.profile.profile_picture)
-        expected_path = f"users/{self.user.id}/profile_picture"
+        expected_path = f"{PROFILE_PIC_PREFIX}/{self.user.id}/{PROFILE_PIC_SURFIX}"
         self.assertTrue(self.profile.profile_picture.name.startswith(expected_path))
 
     def test_update_profile_picture_replaces_old_one(self):
@@ -736,13 +746,15 @@ class UpdateAccountTest(TestCase):
         image1.save(image_file1, format="JPEG")
         image_file1.seek(0)
         profile_picture1 = SimpleUploadedFile(
-            "old_profile_picture.jpg", image_file1.read(), content_type="image/jpeg"
+            OLD_PROFILE_PICTURE_JPG, image_file1.read(), content_type="image/jpeg"
         )
 
         self.profile.profile_picture = profile_picture1
         self.profile.save()
 
-        first_picture_path = f"users/{self.user.id}/old_profile_picture"
+        first_picture_path = (
+            f"{PROFILE_PIC_PREFIX}/{self.user.id}/{OLD_PROFILE_PICTURE_SURFIX}"
+        )
         self.assertTrue(
             self.profile.profile_picture.name.startswith(first_picture_path)
         )
@@ -753,13 +765,13 @@ class UpdateAccountTest(TestCase):
         image2.save(image_file2, format="JPEG")
         image_file2.seek(0)
         new_profile_picture = SimpleUploadedFile(
-            "new_profile_picture.jpg", image_file2.read(), content_type="image/jpeg"
+            NEW_PROFILE_PICTURE_JPG, image_file2.read(), content_type="image/jpeg"
         )
 
         response2 = self.client.post(
             self.update_account_url,
             {
-                "profile_picture": new_profile_picture,
+                PROFILE_PIC_FIELD: new_profile_picture,
             },
         )
 
@@ -767,7 +779,9 @@ class UpdateAccountTest(TestCase):
         self.profile.refresh_from_db()
 
         # Verify the new image was saved
-        first_picture_path = f"users/{self.user.id}/new_profile_picture"
+        first_picture_path = (
+            f"{PROFILE_PIC_PREFIX}/{self.user.id}/{NEW_PROFILE_PICTURE_SURFIX}"
+        )
         self.assertTrue(
             self.profile.profile_picture.name.startswith(first_picture_path)
         )
@@ -783,19 +797,19 @@ class UpdateAccountTest(TestCase):
         image.save(image_file, format="JPEG")
         image_file.seek(0)
         profile_picture = SimpleUploadedFile(
-            "profile_picture.jpg", image_file.read(), content_type="image/jpeg"
+            TEST_PROFILE_PICTURE, image_file.read(), content_type="image/jpeg"
         )
 
         self.profile.profile_picture = profile_picture
         self.profile.save()
 
-        expected_path = f"users/{self.user.id}/profile_picture"
+        expected_path = f"{PROFILE_PIC_PREFIX}/{self.user.id}/{PROFILE_PIC_SURFIX}"
         self.assertTrue(self.profile.profile_picture.name.startswith(expected_path))
 
         response = self.client.post(
             self.update_account_url,
             {
-                "delete_picture": "1",  # Setze das Profilbild auf den Standardwert
+                DELETE_PICTURE_FIELD: CHECKBOX_TRUE,  # Setze das Profilbild auf den Standardwert
             },
         )
 
@@ -817,7 +831,7 @@ class GetUserInfoTest(TestCase):
         self.user = User.objects.create_user(
             username=TEST_USERNAME, email=TEST_EMAIL_2, password=SECURE_PASSWORD
         )
-        self.get_user_info_url = reverse("get_user_info")
+        self.get_user_info_url = reverse(view_name_dict.get_user_info_view)
 
     def test_get_user_info_not_authenticated(self):
         # Unauthenticated users should be redirected to the login page.

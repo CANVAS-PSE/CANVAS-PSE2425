@@ -40,3 +40,11 @@ email_not_registered_text = "This email address is not registered."
 
 account_created_text = "Your account has been updated successfully."
 """Message shown when account is created successfully."""
+
+# Email messages
+registration_confirmation_subject = "CANVAS: Registration Confirmation"
+""" Message shown in the subject line of the registration confirmation email. """
+password_change_confirmation_subject = "Password Change Confirmation"
+""" Message shown in the subject line of the password change confirmation email. """
+password_reset_confirmation_subject = "Password Reset"
+""" Message shown in the subject line of the password reset confirmation email. """
