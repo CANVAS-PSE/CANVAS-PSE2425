@@ -29,7 +29,7 @@ class ModelTests(TestCase):
         self.assertEqual(self.project.description, "Test project description")
         self.assertEqual(project2.description, "")
         self.assertEqual(self.project.owner, self.user)
-        self.assertEqual(self.project.favorite, "false")
+        self.assertEqual(self.project.favorite, False)
         self.assertTrue(
             (self.project.last_edited - timezone.now()).total_seconds() <= 3
         )

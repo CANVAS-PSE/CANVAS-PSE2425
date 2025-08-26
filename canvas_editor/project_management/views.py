@@ -1,27 +1,28 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, Http404
-from django.urls import reverse
-from django.views.decorators.http import require_POST
-from django.views import View
-from django.views.generic import ListView
-from .models import Project
-from django.shortcuts import redirect, render, get_object_or_404
-from .forms import ProjectForm, UpdateProjectForm
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views import View
+from django.views.decorators.http import require_POST
+from django.views.generic import ListView
+
+from canvas import view_name_dict
 from hdf5_management.hdf5_manager import HDF5Manager
+
+from .forms import ProjectForm, UpdateProjectForm
+from .models import Project
 
 PROJECT_NAME_MUST_BE_UNIQUE_WARNING = "The project name must be unique"
 
 
 class ProjectsView(LoginRequiredMixin, ListView):
-    """
-    Manages the displaying and creating of projects
-    """
+    """Manages the displaying and creating of projects"""
 
     model = Project
     template_name = "project_management/projects.html"
@@ -37,9 +38,7 @@ class ProjectsView(LoginRequiredMixin, ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        """
-        Adds the ProjectForm to the context.
-        """
+        """Adds the ProjectForm to the context."""
         context = super().get_context_data(**kwargs)
         context["form"] = ProjectForm()
         return context
@@ -125,26 +124,15 @@ def delete_project(request, project_name):
         return redirect("projects")
 
 
-# Set project to favorite
-@login_required
-@require_POST
-def favor_project(request, project_name):
-    project = Project.objects.get(owner=request.user, name=project_name)
-    if project.owner == request.user:
-        project.favorite = "true"
-        project.save(update_fields=["favorite"])
-        return redirect("projects")
+class ToggleFavorProject(LoginRequiredMixin, View):
+    """Toggle the favorite attribute of the project."""
 
-
-# Set project to not favorite
-@login_required
-@require_POST
-def defavor_project(request, project_name):
-    project = Project.objects.get(owner=request.user, name=project_name)
-    if project.owner == request.user:
-        project.favorite = "false"
+    def post(self, request, project_name):
+        """Toggle the favorite attribute of the project."""
+        project = get_object_or_404(Project, owner=request.user, name=project_name)
+        project.favorite = False if project.favorite else True
         project.save(update_fields=["favorite"])
-        return redirect("projects")
+        return redirect(view_name_dict.projects_view)
 
 
 # Duplicate a project

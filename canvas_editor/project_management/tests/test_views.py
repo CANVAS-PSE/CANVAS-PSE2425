@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_encode
 
+from canvas import view_name_dict
 from project_management.models import (
     Heliostat,
     LightSource,
@@ -30,17 +31,24 @@ class ViewTests(TestCase):
         self.client.login(username="testuser", password="testpassword")
 
         # urls
-        self.projects_url = reverse("projects")
-        self.update_project_url = reverse("updateProject", args=[self.project.name])
-        self.delete_project_url = reverse("deleteProject", args=[self.project.name])
-        self.favor_project_url = reverse("favorProject", args=[self.project.name])
-        self.defavor_project_url = reverse("defavorProject", args=[self.project.name])
-        self.duplicate_project_url = reverse(
-            "duplicateProject", args=[self.project.name]
+        self.projects_url = reverse(view_name_dict.projects_view)
+        self.update_project_url = reverse(
+            view_name_dict.update_project_view, args=[self.project.name]
         )
-        self.share_project_url = reverse("shareProject", args=[self.project.name])
+        self.toogle_favor_project_url = reverse(
+            view_name_dict.toggle_favor_project_view, args=[self.project.name]
+        )
+        self.delete_project_url = reverse(
+            view_name_dict.delete_project_view, args=[self.project.name]
+        )
+        self.duplicate_project_url = reverse(
+            view_name_dict.duplicate_project_view, args=[self.project.name]
+        )
+        self.share_project_url = reverse(
+            view_name_dict.share_project_view, args=[self.project.name]
+        )
         self.shared_projects_url = reverse(
-            "sharedProjects",
+            view_name_dict.shared_projects_view,
             args=[
                 urlsafe_base64_encode(str(self.user.pk).encode()),
                 urlsafe_base64_encode(str(self.project.name).encode()),
@@ -275,17 +283,14 @@ class ViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 0)
 
-    def test_favor_project_POST(self):
-        response = self.client.post(self.favor_project_url)
-
+    def test_toggle_favor_project_post(self):
+        response = self.client.post(self.toogle_favor_project_url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.last().favorite, "true")
+        self.assertEqual(Project.objects.last().favorite, True)
 
-    def test_defavor_project_POST(self):
-        response = self.client.post(self.defavor_project_url)
-
+        response = self.client.post(self.toogle_favor_project_url)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.last().favorite, "false")
+        self.assertEqual(Project.objects.last().favorite, False)
 
     def test_duplicate_project_POST(self):
         response = self.client.post(self.duplicate_project_url)

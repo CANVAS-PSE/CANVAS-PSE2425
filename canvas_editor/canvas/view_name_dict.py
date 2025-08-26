@@ -20,3 +20,10 @@ get_user_info_view = "get_user_info"
 
 # project management
 projects_view = "projects"
+update_project_view = "updateProject"
+delete_project_view = "deleteProject"
+toggle_favor_project_view = "toggleFavor"
+duplicate_project_view = "duplicateProject"
+share_project_view = "shareProject"
+shared_projects_view = "sharedProjects"
+projects_view = "projects"
