@@ -1,4 +1,6 @@
-import { Heliostat, Receiver, LightSource } from "objects";
+import { Heliostat } from "heliostat";
+import { LightSource } from "lightSource";
+import { Receiver } from "receiver";
 
 /**
  * Provides a wrapper for the API

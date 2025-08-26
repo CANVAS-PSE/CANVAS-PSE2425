@@ -1,9 +1,11 @@
 import { Editor } from "editor";
-import { Heliostat, LightSource, Receiver } from "objects";
 import { SingleObjectCommand } from "singleObjectCommands";
 import { ItemCreatedEvent } from "createCommands";
 import { ItemDeletedEvent } from "deleteCommands";
 import * as THREE from "three";
+import { Heliostat } from "heliostat";
+import { LightSource } from "lightSource";
+import { Receiver } from "receiver";
 
 /**
  * Command to duplicate a heliostat.

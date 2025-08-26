@@ -1,5 +1,5 @@
+import { CanvasObject } from "canvasObject";
 import { Command } from "command";
-import { CanvasObject } from "objects";
 
 /**
  * This class is designed for operations that target multiple 'SelectableObject' instances.
