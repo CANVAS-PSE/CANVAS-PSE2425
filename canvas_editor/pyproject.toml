@@ -89,3 +89,6 @@ docstring-code-line-length = "dynamic"
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
+[tool.djlint]
+profile = "django"
+

@@ -94,6 +94,7 @@ def send_register_email(user, request) -> None:
 
     to_email = user.email
     email = EmailMessage(subject, message, to=[to_email])
+    email.content_subtype = "html"
     email.send()
 
 
@@ -251,6 +252,7 @@ def send_password_change_email(user, request) -> None:
 
     to_email = user.email
     email = EmailMessage(subject, message, to=[to_email])
+    email.content_subtype = "html"
     email.send()
 
 
@@ -367,4 +369,5 @@ def send_password_forgotten_email(user, request):
 
     to_email = user.email
     email = EmailMessage(subject, message, to=[to_email])
+    email.content_subtype = "html"
     email.send()
