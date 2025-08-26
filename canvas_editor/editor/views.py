@@ -1,5 +1,4 @@
-import os
-
+from pathlib import Path
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404
@@ -55,15 +54,30 @@ class DownloadView(LoginRequiredMixin, View):
         hdf5_manager = HDF5Manager()
         hdf5_manager.create_hdf5_file(request.user, project)
 
-        # Set CANVAS_ROOT
-        path = f"./hdf5_management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
-
-        response = FileResponse(
-            open(path, "rb"), as_attachment=True, filename=project_name + ".h5"
+        path = Path(
+            f"./hdf5_management/scenarios/{request.user.id}_{project.name}ScenarioFile.h5"
         )
 
-        os.remove(path)
+        f = open(path, "rb")
+        response = FileResponse(f, as_attachment=True, filename=project_name + ".h5")
 
+        original_close = response.close
+
+        def close_and_cleanup(*args, **kwargs):
+            try:
+                try:
+                    if not f.closed:
+                        f.close()
+                finally:
+                    # Delete the temporary file after sending it
+                    try:
+                        path.unlink()
+                    except FileNotFoundError:
+                        pass
+            finally:
+                original_close(*args, **kwargs)
+
+        response.close = close_and_cleanup
         return response
 
 

@@ -28,7 +28,7 @@ class UserProfileModelTest(TestCase):
         """Test the fields of the automatically generated user profile on user creation."""
         self.assertEqual(self.profile.user, self.user)
         self.assertFalse(bool(self.profile.profile_picture))
-        self.assertEqual(self.profile.image_url, static(path_dict.default_profil_pic))
+        self.assertEqual(self.profile.image_url, static(path_dict.default_profile_pic))
 
     def test_user_profile_str(self):
         """Test the __str__ method of the user profile."""

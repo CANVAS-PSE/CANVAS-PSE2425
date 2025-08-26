@@ -1,9 +1,9 @@
 /**
- *
+ * Handles the project overview page
  */
 export class ProjectOverviewManager {
   /**
-   *
+   * Create the project overview manager
    */
   constructor() {
     // handle all favorite buttons
@@ -14,11 +14,6 @@ export class ProjectOverviewManager {
     });
 
     this.#handleFavoriteFilter();
-    // handle duplication
-
-    // handle deletion
-
-    // handle editing
   }
 
   /**
@@ -29,42 +24,35 @@ export class ProjectOverviewManager {
     const projectName = favoriteButton.dataset.projectName;
     const isFavorite = favoriteButton.dataset.isFavorite;
 
-    if (isFavorite == "true") {
-      favoriteButton.dataset.isFavorite = "false";
+    if (isFavorite == "True") {
+      favoriteButton.dataset.isFavorite = "False";
       const projectElement = favoriteButton.closest(".project");
-      projectElement.dataset.isFavorite = "false";
+      projectElement.dataset.isFavorite = "False";
       favoriteButton.children[0].classList.remove(
         "bi-star-fill",
         "text-warning",
       );
       favoriteButton.children[0].classList.add("bi-star");
-      fetch(window.location + "defavorProject/" + projectName, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": this.#getCookie("csrftoken"),
-        },
-      });
-    } else if (isFavorite == "false") {
-      favoriteButton.dataset.isFavorite = "true";
+    } else if (isFavorite == "False") {
+      favoriteButton.dataset.isFavorite = "True";
       const projectElement = favoriteButton.closest(".project");
-      projectElement.dataset.isFavorite = "true";
+      projectElement.dataset.isFavorite = "True";
       favoriteButton.children[0].classList.remove("bi-star");
       favoriteButton.children[0].classList.add("bi-star-fill", "text-warning");
-      fetch(window.location + "favorProject/" + projectName, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": this.#getCookie("csrftoken"),
-        },
-      });
     } else {
       throw new Error(`invalid favorite state for project ${projectName}`);
     }
+    fetch(window.location + "toggle_favor/" + projectName, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": this.#getCookie("csrftoken"),
+      },
+    });
   }
 
   /**
-   *
+   * Handle the favorite filterting functionality
    */
   #handleFavoriteFilter() {
     const favoriteSwitchWrapper = document.createElement("div");

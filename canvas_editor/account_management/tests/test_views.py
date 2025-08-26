@@ -781,7 +781,7 @@ class UpdateAccountTest(TestCase):
 
         # Verify profile picture is default picture
         self.assertEqual(
-            self.profile.profile_picture.name, path_dict.default_profil_pic
+            self.profile.profile_picture.name, path_dict.default_profile_pic
         )
 
         # Verify the old image was deleted

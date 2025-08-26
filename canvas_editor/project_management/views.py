@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponseRedirect
@@ -9,7 +8,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
-from django.views.decorators.http import require_POST
 from django.views.generic import FormView, ListView
 
 from canvas import view_name_dict
@@ -158,26 +156,15 @@ class DeleteProjectView(LoginRequiredMixin, View):
             return redirect(view_name_dict.projects_view)
 
 
-# Set project to favorite
-@login_required
-@require_POST
-def favor_project(request, project_name):
-    project = Project.objects.get(owner=request.user, name=project_name)
-    if project.owner == request.user:
-        project.favorite = "true"
-        project.save(update_fields=["favorite"])
-        return redirect("projects")
+class ToggleFavorProject(LoginRequiredMixin, View):
+    """Toggle the favorite attribute of the project."""
 
-
-# Set project to not favorite
-@login_required
-@require_POST
-def defavor_project(request, project_name):
-    project = Project.objects.get(owner=request.user, name=project_name)
-    if project.owner == request.user:
-        project.favorite = "false"
+    def post(self, request, project_name):
+        """Toggle the favorite attribute of the project."""
+        project = get_object_or_404(Project, owner=request.user, name=project_name)
+        project.favorite = False if project.favorite else True
         project.save(update_fields=["favorite"])
-        return redirect("projects")
+        return redirect(view_name_dict.projects_view)
 
 
 class DuplicateProjectView(LoginRequiredMixin, View):
