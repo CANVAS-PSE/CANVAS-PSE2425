@@ -24,18 +24,16 @@ from account_management.tests.test_constants import (
     UPDATED_PASSWORD,
 )
 from account_management.views import (
-    send_password_change_email,
-    send_password_forgotten_email,
-    send_register_email,
+    PasswordForgottenView,
+    RegistrationView,
+    UpdateAccountView,
 )
-from canvas import path_dict, view_name_dict
+from canvas import message_dict, path_dict, view_name_dict
 from project_management.models import Project
 
 
 class ParameterizedViewTestMixin:
-    """
-    Mixin class to provide parameterized testing capabilities for views.
-    """
+    """Mixin class to provide parameterized testing capabilities for views."""
 
     def assert_view_get(self, url_name, template, expected_status=200):
         response = self.client.get(url_name)
@@ -206,7 +204,7 @@ class SendRegisterMailTest(TestCase):
         factory = RequestFactory()
         request = factory.get("/")
 
-        send_register_email(user, request)
+        RegistrationView.send_register_email(user, request)
 
         assert len(mail.outbox) == 1  # Check if one email was sent
         email = mail.outbox[0]
@@ -288,7 +286,7 @@ class SendPasswordChangeMailTest(TestCase):
         factory = RequestFactory()
         request = factory.get("/")
 
-        send_password_change_email(user, request)
+        UpdateAccountView.send_password_change_email(user, request)
 
         assert len(mail.outbox) == 1  # Check if one email was sent
         email = mail.outbox[0]
@@ -493,7 +491,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
             {"email": "test2@mail.de"},
         )
 
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         assert len(mail.outbox) == 0
 
 
@@ -511,7 +509,7 @@ class SendPasswordForgottenMailTest(TestCase):
         factory = RequestFactory()
         request = factory.get("/")
 
-        send_password_forgotten_email(user, request)
+        PasswordForgottenView.send_password_forgotten_email(user, request)
 
         assert len(mail.outbox) == 1  # Check if one email was sent
         email = mail.outbox[0]
@@ -541,12 +539,6 @@ class UpdateAccountTest(TestCase):
         self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
         self.update_account_url = reverse("update_account")
 
-    def test_GET(self):
-        # Test if a GET request to the delete account endpoint returns a 405 (Method Not Allowed), as it should only accept POST requests
-        response = self.client.get(self.update_account_url)
-
-        self.assertEqual(response.status_code, 405)
-
     def test_POST_not_authenticated(self):
         # Attempting to update an account without authentication should redirect to the login page
         response = self.client.post(
@@ -563,6 +555,13 @@ class UpdateAccountTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/?next=/update_account/")
+
+    def test_GET(self):
+        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        # Test if a GET request to the delete account endpoint returns a 405 (Method Not Allowed), as it should only accept POST requests
+        response = self.client.get(self.update_account_url)
+
+        self.assertEqual(response.status_code, 405)
 
     def test_POST_valid_data_without_profile(self):
         # Test if a user can successfully update their account information

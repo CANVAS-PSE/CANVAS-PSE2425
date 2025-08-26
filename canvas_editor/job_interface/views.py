@@ -1,12 +1,10 @@
-from .models import Job
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import get_object_or_404
-from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from .models import Project
+from django.views import View
 
-import random
+from .models import Job, Project
 
 
 class JobManagementView(LoginRequiredMixin, View):
