@@ -17,15 +17,42 @@ import * as THREE from "three";
  * Class that represents the receiver object
  */
 export class Receiver extends CanvasObject {
-  #apiID;
-  #towerType;
-  #normalVector;
-  #planeE;
-  #planeU;
-  #resolutionE;
-  #resolutionU;
-  #curvatureE;
-  #curvatureU;
+  /**
+   * The apiID used for this receiver
+   */
+  apiID;
+  /**
+   * The type of the target remains
+   */
+  towerType;
+  /**
+   * The normal vector of the target remains
+   */
+  normalVector;
+  /**
+   * The size of the target area in east direction.
+   */
+  planeE;
+  /**
+   * The size of the target area in up direction.
+   */
+  planeU;
+  /**
+   * The resoultion of the target area in east direction.
+   */
+  resolutionE;
+  /**
+   * The resolution of the target area in up direction.
+   */
+  resolutionU;
+  /**
+   * The curvature of the target area in the east direction.
+   */
+  curvatureE;
+  /**
+   * The curvature of the target area in the up direction.
+   */
+  curvatureU;
   #undoRedoHandler = UndoRedoHandler.getInstance();
 
   #top;
@@ -79,15 +106,15 @@ export class Receiver extends CanvasObject {
 
     this.updatePosition(position);
 
-    this.#apiID = apiID;
-    this.#towerType = towerType;
-    this.#normalVector = normalVector;
-    this.#planeE = planeE;
-    this.#planeU = planeU;
-    this.#resolutionE = resolutionE;
-    this.#resolutionU = resolutionU;
-    this.#curvatureE = curvatureE;
-    this.#curvatureU = curvatureU;
+    this.apiID = apiID;
+    this.towerType = towerType;
+    this.normalVector = normalVector;
+    this.planeE = planeE;
+    this.planeU = planeU;
+    this.resolutionE = resolutionE;
+    this.resolutionU = resolutionU;
+    this.curvatureE = curvatureE;
+    this.curvatureU = curvatureU;
     this.#lastPosition = new Vector3(position.x, position.y, position.z);
 
     // create components for the inspector
@@ -157,13 +184,13 @@ export class Receiver extends CanvasObject {
     const nNormalVector = new SingleFieldInspectorComponent(
       "N",
       "number",
-      () => this.#normalVector.x,
+      () => this.normalVector.x,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
             this,
             "normalVector",
-            new Vector3(newValue, this.#normalVector.y, this.#normalVector.z),
+            new Vector3(newValue, this.normalVector.y, this.normalVector.z),
           ),
         );
       },
@@ -173,13 +200,13 @@ export class Receiver extends CanvasObject {
     const uNormalVector = new SingleFieldInspectorComponent(
       "U",
       "number",
-      () => this.#normalVector.y,
+      () => this.normalVector.y,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
             this,
             "normalVector",
-            new Vector3(this.#normalVector.x, newValue, this.#normalVector.z),
+            new Vector3(this.normalVector.x, newValue, this.normalVector.z),
           ),
         );
       },
@@ -189,13 +216,13 @@ export class Receiver extends CanvasObject {
     const eNormalVector = new SingleFieldInspectorComponent(
       "E",
       "number",
-      () => this.#normalVector.z,
+      () => this.normalVector.z,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(
             this,
             "normalVector",
-            new Vector3(this.#normalVector.x, this.#normalVector.y, newValue),
+            new Vector3(this.normalVector.x, this.normalVector.y, newValue),
           ),
         );
       },
@@ -210,7 +237,7 @@ export class Receiver extends CanvasObject {
     this.#towerTypeComponent = new SelectFieldInspectorComponent(
       "Type",
       [{ label: "planar", value: "planar" }],
-      () => this.#towerType,
+      () => this.towerType,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(this, "towerType", newValue),
@@ -221,7 +248,7 @@ export class Receiver extends CanvasObject {
     const eCurvature = new SingleFieldInspectorComponent(
       "E",
       "number",
-      () => this.#curvatureE,
+      () => this.curvatureE,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(this, "curvatureE", newValue),
@@ -233,7 +260,7 @@ export class Receiver extends CanvasObject {
     const uCurvature = new SingleFieldInspectorComponent(
       "U",
       "number",
-      () => this.#curvatureU,
+      () => this.curvatureU,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(this, "curvatureU", newValue),
@@ -250,7 +277,7 @@ export class Receiver extends CanvasObject {
     const ePlane = new SingleFieldInspectorComponent(
       "E",
       "number",
-      () => this.#planeE,
+      () => this.planeE,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(this, "planeE", newValue),
@@ -262,7 +289,7 @@ export class Receiver extends CanvasObject {
     const uPlane = new SingleFieldInspectorComponent(
       "U",
       "number",
-      () => this.#planeU,
+      () => this.planeU,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(this, "planeU", newValue),
@@ -279,7 +306,7 @@ export class Receiver extends CanvasObject {
     const eResolution = new SingleFieldInspectorComponent(
       "E",
       "number",
-      () => this.#resolutionE,
+      () => this.resolutionE,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(this, "resolutionE", newValue),
@@ -291,7 +318,7 @@ export class Receiver extends CanvasObject {
     const uResolution = new SingleFieldInspectorComponent(
       "U",
       "number",
-      () => this.#resolutionU,
+      () => this.resolutionU,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
           new UpdateReceiverCommand(this, "resolutionU", newValue),
@@ -312,38 +339,6 @@ export class Receiver extends CanvasObject {
    */
   setBaseHeight(y) {
     this.#base.position.y = y;
-  }
-
-  /**
-   * Get all rotable axis
-   * @returns {string[]} containing all rotable axis
-   */
-  get rotatableAxis() {
-    return this.#rotatableAxis;
-  }
-
-  /**
-   * Get wether the object is movable or notjh
-   * @returns {boolean} wether the object is movable
-   */
-  get isMovable() {
-    return this.#isMovable;
-  }
-
-  /**
-   * Get wether the object is selectable
-   * @returns {boolean} wether the object is selectable
-   */
-  get isSelectable() {
-    return true;
-  }
-
-  /**
-   * Get the current position of the object
-   * @returns {THREE.Vector3} the current position
-   */
-  get lastPosition() {
-    return this.#lastPosition;
   }
 
   /**
@@ -391,138 +386,35 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   * Get the api Id used for this object
-   * @returns {number} the api id
+   * Get all rotable axis
+   * @returns {string[]} containing all rotable axis
    */
-  get apiID() {
-    return this.#apiID;
+  get rotatableAxis() {
+    return this.#rotatableAxis;
   }
 
   /**
-   * Set the api id of the object
+   * Get wether the object is movable or notjh
+   * @returns {boolean} wether the object is movable
    */
-  set apiID(value) {
-    this.#apiID = value;
+  get isMovable() {
+    return this.#isMovable;
   }
 
   /**
-   * Get the type of the receiver
-   * @returns {string} the type of the receiver
+   * Get wether the object is selectable
+   * @returns {boolean} wether the object is selectable
    */
-  get towerType() {
-    return this.#towerType;
+  get isSelectable() {
+    return true;
   }
 
   /**
-   * Set the type of the receiver
+   * Get the current position of the object
+   * @returns {THREE.Vector3} the current position
    */
-  set towerType(value) {
-    this.#towerType = value;
-  }
-
-  /**
-   * Get the normal vector of the target area
-   * @returns {THREE.Vector3} the normal vector
-   */
-  get normalVector() {
-    return this.#normalVector;
-  }
-
-  /**
-   * Set the normal vector of the target area
-   */
-  set normalVector(value) {
-    this.#normalVector = value;
-  }
-
-  /**
-   * Get the size of the target areay in east direction
-   * @returns {number} the size
-   */
-  get planeE() {
-    return this.#planeE;
-  }
-
-  /**
-   * Set the size of the target areay in east direction
-   */
-  set planeE(value) {
-    this.#planeE = value;
-  }
-
-  /**
-   * Get the size of the target areay in up direction
-   * @returns {number} the size
-   */
-  get planeU() {
-    return this.#planeU;
-  }
-
-  /**
-   * Set the size of the target areay in east direction
-   */
-  set planeU(value) {
-    this.#planeU = value;
-  }
-
-  /**
-   * Get the resoultion of the target area in east direction
-   * @returns {number} the resolution
-   */
-  get resolutionE() {
-    return this.#resolutionE;
-  }
-
-  /**
-   * Set the resoultion of the target area in east direction
-   */
-  set resolutionE(value) {
-    this.#resolutionE = value;
-  }
-
-  /**
-   * Get the resoultion of the target area in up direction
-   * @returns {number} the resolution
-   */
-  get resolutionU() {
-    return this.#resolutionU;
-  }
-
-  /**
-   * Set the resoultion of the target area in up direction
-   */
-  set resolutionU(value) {
-    this.#resolutionU = value;
-  }
-
-  /**
-   * Get the curvature of the target area in east direction
-   * @returns {number} the curvature
-   */
-  get curvatureE() {
-    return this.#curvatureE;
-  }
-
-  /**
-   * Set the curvature of the target area in east direction
-   */
-  set curvatureE(value) {
-    this.#curvatureE = value;
-  }
-
-  /**
-   * Get the curvature of the target area in up direction
-   * @returns {number} the curvature
-   */
-  get curvatureU() {
-    return this.#curvatureU;
-  }
-
-  /**
-   * Set the curvature of the target area in east direction
-   */
-  set curvatureU(value) {
-    this.#curvatureU = value;
+  get lastPosition() {
+    return this.#lastPosition;
   }
 
   /**
@@ -541,10 +433,10 @@ export class Receiver extends CanvasObject {
     ];
   }
 }
+
 /**
  * Class that builds the base of the receiver
  */
-
 export class ReceiverBase extends Object3D {
   /**
    * Create the receiver base
@@ -557,7 +449,6 @@ export class ReceiverBase extends Object3D {
 /**
  * Class that builds the top of the receiver
  */
-
 export class ReceiverTop extends Object3D {
   /**
    * Create the top of the receiver

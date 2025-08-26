@@ -16,7 +16,11 @@ import * as THREE from "three";
  * Class that represents the Heliostat object
  */
 export class Heliostat extends CanvasObject {
-  #apiID;
+  /**
+   * The api id used for this heliostat.
+   * @type {number}
+   */
+  apiID;
   #headerComponent;
   #positionComponent;
   #undoRedoHandler = UndoRedoHandler.getInstance();
@@ -38,7 +42,7 @@ export class Heliostat extends CanvasObject {
     loadGltf("/static/models/heliostat.glb", this, true);
     this.position.copy(position);
     this.#lastPosition = new Vector3(position.x, position.y, position.z);
-    this.#apiID = apiID;
+    this.apiID = apiID;
 
     // create components for inspector
     this.#headerComponent = new HeaderInspectorComponent(
@@ -106,38 +110,6 @@ export class Heliostat extends CanvasObject {
   }
 
   /**
-   * Get an array containing all rotatable axis
-   * @returns {string[]} containing all rotatable axis
-   */
-  get rotatableAxis() {
-    return this.#rotatableAxis;
-  }
-
-  /**
-   * Get wether the object is selectable
-   * @returns {boolean} wether the object is selectable
-   */
-  get isSelectable() {
-    return true;
-  }
-
-  /**
-   * Get wether the object is movable
-   * @returns {boolean} wether the object is movable
-   */
-  get isMovable() {
-    return this.#isMovable;
-  }
-
-  /**
-   * Get the current position of the object
-   * @returns {THREE.Vector3} the positon of the object
-   */
-  get lastPosition() {
-    return this.#lastPosition;
-  }
-
-  /**
    * Updates the position of the heliostat
    * @param {THREE.Vector3} position the new position
    */
@@ -179,20 +151,6 @@ export class Heliostat extends CanvasObject {
       new UpdateHeliostatCommand(this, "position", position),
     );
   }
-  /**
-   * Get the api id used for this object
-   * @returns {number} the api id
-   */
-  get apiID() {
-    return this.#apiID;
-  }
-
-  /**
-   * Set the api id used for this object
-   */
-  set apiID(value) {
-    this.#apiID = value;
-  }
 
   /**
    * Get an array of all inspectorComponents for this object
@@ -200,5 +158,37 @@ export class Heliostat extends CanvasObject {
    */
   get inspectorComponents() {
     return [this.#headerComponent, this.#positionComponent];
+  }
+
+  /**
+   * Get an array containing all rotatable axis
+   * @returns {string[]} containing all rotatable axis
+   */
+  get rotatableAxis() {
+    return this.#rotatableAxis;
+  }
+
+  /**
+   * Get wether the object is selectable
+   * @returns {boolean} wether the object is selectable
+   */
+  get isSelectable() {
+    return true;
+  }
+
+  /**
+   * Get wether the object is movable
+   * @returns {boolean} wether the object is movable
+   */
+  get isMovable() {
+    return this.#isMovable;
+  }
+
+  /**
+   * Get the current position of the object
+   * @returns {THREE.Vector3} the positon of the object
+   */
+  get lastPosition() {
+    return this.#lastPosition;
   }
 }
