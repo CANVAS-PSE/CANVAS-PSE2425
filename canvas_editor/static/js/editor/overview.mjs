@@ -1,6 +1,9 @@
+import { CanvasObject } from "canvasObject";
 import { Editor } from "editor";
-import { Heliostat, LightSource, Receiver, CanvasObject } from "objects";
+import { Heliostat } from "heliostat";
+import { LightSource } from "lightSource";
 import { Picker } from "picker";
+import { Receiver } from "receiver";
 
 /**
  *

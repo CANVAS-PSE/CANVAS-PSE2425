@@ -1,7 +1,10 @@
 import { SingleObjectCommand } from "singleObjectCommands";
 import { Editor } from "editor";
-import { Heliostat, Receiver, LightSource, CanvasObject } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
+import { CanvasObject } from "canvasObject";
+import { Heliostat } from "heliostat";
+import { LightSource } from "lightSource";
+import { Receiver } from "receiver";
 
 /**
  * Event that tells that an canvas object has been created

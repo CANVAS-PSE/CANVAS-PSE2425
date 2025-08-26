@@ -1,7 +1,10 @@
 import { Editor } from "editor";
-import { Heliostat, LightSource, Receiver, CanvasObject } from "objects";
 import { SingleObjectCommand } from "singleObjectCommands";
 import { ItemCreatedEvent } from "createCommands";
+import { CanvasObject } from "canvasObject";
+import { Heliostat } from "heliostat";
+import { LightSource } from "lightSource";
+import { Receiver } from "receiver";
 
 /**
  * This event is dispatched when an item is deleted from the scene.

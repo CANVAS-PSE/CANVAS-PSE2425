@@ -1,7 +1,7 @@
 import { Picker } from "picker";
 import { ItemDeletedEvent } from "deleteCommands";
-import { CanvasObject } from "objects";
 import { ItemUpdatedEvent } from "updateCommands";
+import { CanvasObject } from "canvasObject";
 
 /**
  *
