@@ -39,9 +39,9 @@ class UserProfile(models.Model):
         """
         if self.profile_picture and os.path.isfile(self.profile_picture.path):
             return self.profile_picture.url
-        return static(path_dict.default_profil_pic)
+        return static(path_dict.default_profile_pic)
 
     @staticmethod
     def default_picture_url():
         """Get the default profile picture path."""
-        return static(path_dict.default_profil_pic)
+        return static(path_dict.default_profile_pic)
