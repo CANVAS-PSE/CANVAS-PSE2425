@@ -1,10 +1,8 @@
-from canvas import message_dict
-
+from typing import Any
 
 from django import forms
 
-
-from typing import Any
+from canvas import message_dict
 
 
 class PasswordResetForm(forms.Form):

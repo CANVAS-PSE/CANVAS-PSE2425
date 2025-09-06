@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic.edit import FormView
 
-from account_management.forms.PasswordResetForm import PasswordResetForm
+from account_management.forms.password_reset_form import PasswordResetForm
 from canvas import view_name_dict
 
 

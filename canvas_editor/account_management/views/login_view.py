@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic.edit import FormView
 
-from account_management.forms.LoginForm import LoginForm
+from account_management.forms.login_form import LoginForm
 from canvas import view_name_dict
 
 

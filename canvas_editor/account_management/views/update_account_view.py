@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
 from django.views import View
 
-from account_management.forms.UpdateAccountForm import UpdateAccountForm
+from account_management.forms.update_account_form import UpdateAccountForm
 from account_management.models import UserProfile
 from canvas import message_dict, path_dict, view_name_dict
 

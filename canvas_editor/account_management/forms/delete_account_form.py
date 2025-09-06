@@ -1,7 +1,6 @@
-from canvas import message_dict
-
-
 from django import forms
+
+from canvas import message_dict
 
 
 class DeleteAccountForm(forms.Form):

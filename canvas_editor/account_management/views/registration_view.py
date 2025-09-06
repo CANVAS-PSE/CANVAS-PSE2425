@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 from django.views.generic.edit import FormView
 
-from account_management.forms.RegisterForm import RegisterForm
+from account_management.forms.register_form import RegisterForm
 from canvas import view_name_dict
 
 

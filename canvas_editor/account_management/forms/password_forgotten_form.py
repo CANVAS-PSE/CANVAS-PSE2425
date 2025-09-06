@@ -1,8 +1,7 @@
-from canvas import message_dict
-
-
 from django import forms
 from django.contrib.auth.models import User
+
+from canvas import message_dict
 
 
 class PasswordForgottenForm(forms.Form):

@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic.edit import FormView
 
-from account_management.forms.DeleteAccountForm import DeleteAccountForm
+from account_management.forms.delete_account_form import DeleteAccountForm
 from canvas import view_name_dict
 
 

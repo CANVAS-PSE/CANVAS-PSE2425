@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 from django.views.generic.edit import FormView
 
-from account_management.forms.PasswordForgottenForm import PasswordForgottenForm
+from account_management.forms.password_forgotten_form import PasswordForgottenForm
 from canvas import view_name_dict
 
 

@@ -1,12 +1,10 @@
-from canvas import message_dict
-
+from typing import Any
 
 from allauth.socialaccount.models import SocialAccount
 from django import forms
 from django.contrib.auth.models import User
 
-
-from typing import Any
+from canvas import message_dict
 
 
 class UpdateAccountForm(forms.ModelForm):

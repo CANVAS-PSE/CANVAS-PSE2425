@@ -50,10 +50,9 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.login_url,
-            {"username": "test@mail.de", "password": SECURE_PASSWORD},
+            {"email": "test@mail.de", "password": SECURE_PASSWORD},
         )
 
-        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("projects"))
 
     def test_post_invalid(self):
@@ -64,7 +63,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.login_url,
-            {"username": "test@mail.de", "password": "wrong_password"},
+            {"email": "test@mail.de", "password": "wrong_password"},
         )
 
         self.assertEqual(response.status_code, 200)
