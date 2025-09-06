@@ -1,13 +1,17 @@
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
 from job_interface.models import Job
-from project_management.models import Project, Heliostat, Receiver, LightSource
-from django.utils import timezone
-from datetime import timedelta
+from project_management.models import Heliostat, LightSource, Project, Receiver
+
+
+from django.contrib.auth.models import User
+from django.test import Client, TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 
-class ViewTests(TestCase):
+from datetime import timedelta
+
+
+class JobInterfaceViewTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(

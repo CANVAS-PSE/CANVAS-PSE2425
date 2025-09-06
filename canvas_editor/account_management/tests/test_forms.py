@@ -1,14 +1,14 @@
 from allauth.socialaccount.models import SocialAccount
 from django.test import TestCase
 
-from account_management.forms import (
-    DeleteAccountForm,
-    LoginForm,
-    PasswordForgottenForm,
-    PasswordResetForm,
+from account_management.forms.DeleteAccountForm import DeleteAccountForm
+from account_management.forms.LoginForm import LoginForm
+from account_management.forms.PasswordForgottenForm import PasswordForgottenForm
+from account_management.forms.PasswordResetForm import PasswordResetForm
+from account_management.forms.RegisterForm import (
     RegisterForm,
-    UpdateAccountForm,
 )
+from account_management.forms.UpdateAccountForm import UpdateAccountForm
 from account_management.models import User
 from account_management.tests.test_constants import (
     MISMATCHED_BUT_CORRECT_PASSWORD,

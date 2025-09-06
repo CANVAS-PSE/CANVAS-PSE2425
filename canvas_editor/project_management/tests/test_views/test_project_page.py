@@ -1,4 +1,6 @@
-import pathlib
+from canvas import view_name_dict
+from project_management.models import Heliostat, LightSource, Project, Receiver
+
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -7,16 +9,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_encode
 
-from canvas import view_name_dict
-from project_management.models import (
-    Heliostat,
-    LightSource,
-    Project,
-    Receiver,
-)
+
+import pathlib
 
 
-class ViewTests(TestCase):
+class ProjectPageTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
