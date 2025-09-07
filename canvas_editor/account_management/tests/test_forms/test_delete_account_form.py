@@ -1,12 +1,11 @@
+from django.test import TestCase
+
 from account_management.forms.delete_account_form import DeleteAccountForm
 from account_management.models import User
 from account_management.tests.test_constants import (
     SECURE_PASSWORD,
     WRONG_LOGIN_PASSWORD,
 )
-
-
-from django.test import TestCase
 
 
 class DeleteAccountFormTest(TestCase):
