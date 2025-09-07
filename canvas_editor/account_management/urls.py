@@ -1,48 +1,54 @@
 from django.urls import path
 
+from account_management.views.confirm_deletion_view import ConfirmDeletionView
+from account_management.views.delete_account_view import DeleteAccountView
+from account_management.views.get_user_info_view import GetUserInfoView
+from account_management.views.invalid_link_view import InvalidLinkView
+from account_management.views.login_view import LoginView
+from account_management.views.logout_view import LogoutView
+from account_management.views.password_forgotten_view import PasswordForgottenView
+from account_management.views.password_reset_view import PasswordResetView
+from account_management.views.registration_view import RegistrationView
+from account_management.views.update_account_view import UpdateAccountView
 from canvas import view_name_dict
 
-from . import views
-
 urlpatterns = [
-    path("", views.LoginView.as_view(), name=view_name_dict.login_view),
-    path(
-        "register/", views.RegistrationView.as_view(), name=view_name_dict.register_view
-    ),
-    path("logout/", views.LogoutView.as_view(), name=view_name_dict.logout_view),
+    path("", LoginView.as_view(), name=view_name_dict.login_view),
+    path("register/", RegistrationView.as_view(), name=view_name_dict.register_view),
+    path("logout/", LogoutView.as_view(), name=view_name_dict.logout_view),
     path(
         "update_account/",
-        views.UpdateAccountView.as_view(),
+        UpdateAccountView.as_view(),
         name=view_name_dict.updata_account_view,
     ),
     path(
         "delete_account/",
-        views.DeleteAccountView.as_view(),
+        DeleteAccountView.as_view(),
         name=view_name_dict.delete_account_view,
     ),
     path(
         "password_reset/<uidb64>/<token>/",
-        views.PasswordResetView.as_view(),
+        PasswordResetView.as_view(),
         name=view_name_dict.password_reset_view,
     ),
     path(
         "invalid_link/",
-        views.InvalidLinkView.as_view(),
+        InvalidLinkView.as_view(),
         name=view_name_dict.invalid_link_view,
     ),
     path(
         "confirm_deletion/<uidb64>/<token>/",
-        views.ConfirmDeletionView.as_view(),
+        ConfirmDeletionView.as_view(),
         name=view_name_dict.confirm_deletion_view,
     ),
     path(
         "password_forgotten_view/",
-        views.PasswordForgottenView.as_view(),
+        PasswordForgottenView.as_view(),
         name=view_name_dict.password_forgotten_view,
     ),
     path(
         "get_user_info/",
-        views.GetUserInfoView.as_view(),
+        GetUserInfoView.as_view(),
         name=view_name_dict.get_user_info_view,
     ),
 ]

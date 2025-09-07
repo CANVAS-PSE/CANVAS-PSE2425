@@ -45,3 +45,5 @@ folder_not_found_text = (
     "The folder ``{folder}`` selected to save the scenario does not exist. "
     "Please create the folder or adjust the file path before running again!"
 )
+
+project_name_must_be_unique = "The project name must be unique"

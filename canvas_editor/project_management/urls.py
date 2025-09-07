@@ -1,39 +1,44 @@
 from django.urls import path
 
 from canvas import view_name_dict
-
-from . import views
+from project_management.views.delete_project_view import DeleteProjectView
+from project_management.views.duplicate_project_view import DuplicateProjectView
+from project_management.views.projects_view import ProjectsView
+from project_management.views.share_project_view import ShareProjectView
+from project_management.views.shared_projects_view import SharedProjectView
+from project_management.views.toggle_favor_project_view import ToggleFavorProject
+from project_management.views.update_project_view import UpdateProjectView
 
 urlpatterns = [
-    path("", views.ProjectsView.as_view(), name=view_name_dict.projects_view),
+    path("", ProjectsView.as_view(), name=view_name_dict.projects_view),
     path(
         "updateProject/<str:project_name>",
-        views.UpdateProjectView.as_view(),
-        name="updateProject",
+        UpdateProjectView.as_view(),
+        name=view_name_dict.update_project_view,
     ),
     path(
         "deleteProject/<str:project_name>",
-        views.DeleteProjectView.as_view(),
-        name="deleteProject",
+        DeleteProjectView.as_view(),
+        name=view_name_dict.delete_project_view,
     ),
     path(
         "toggle_favor/<str:project_name>",
-        views.ToggleFavorProject.as_view(),
+        ToggleFavorProject.as_view(),
         name=view_name_dict.toggle_favor_project_view,
     ),
     path(
         "duplicateProject/<str:project_name>",
-        views.DuplicateProjectView.as_view(),
-        name="duplicateProject",
+        DuplicateProjectView.as_view(),
+        name=view_name_dict.duplicate_project_view,
     ),
     path(
         "shareProject/<str:project_name>",
-        views.ShareProjectView.as_view(),
-        name="shareProject",
+        ShareProjectView.as_view(),
+        name=view_name_dict.share_project_view,
     ),
     path(
         "sharedProjects/<str:uid>/<str:token>",
-        views.SharedProjectView.as_view(),
+        SharedProjectView.as_view(),
         name=view_name_dict.shared_projects_view,
     ),
 ]
