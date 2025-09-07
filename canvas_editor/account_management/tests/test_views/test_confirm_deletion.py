@@ -4,10 +4,17 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 
-from account_management.tests.test_constants import SECURE_PASSWORD
+from account_management.tests.test_constants import (
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
+)
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
+from canvas import path_dict, view_name_dict
 
 
 class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
@@ -28,16 +35,16 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
         self.confirm_deletion_url = reverse(
-            "confirm_deletion", args=[self.uid, self.token]
+            view_name_dict.confirm_deletion_view, args=[self.uid, self.token]
         )
 
     def test_get(self):
@@ -47,7 +54,7 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         Asserts that the correct template is used for the response.
         """
         self.assert_view_get(
-            self.confirm_deletion_url, "account_management/confirm_deletion.html"
+            self.confirm_deletion_url, path_dict.confirm_deletion_template
         )
 
     def test_post(self):
@@ -59,7 +66,7 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(self.confirm_deletion_url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 
     def test_post_invalid_token(self):
@@ -69,11 +76,14 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         Asserts that the response is a redirect to the invalid link page.
         """
         response = self.client.post(
-            reverse("confirm_deletion", args=[self.uid, "invalid_token"])
+            reverse(
+                view_name_dict.confirm_deletion_view,
+                args=[self.uid, view_name_dict.invalid_token_view],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
 
     def test_post_invalid_uid(self):
         """
@@ -82,8 +92,11 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         Asserts that the response is a redirect to the invalid link page.
         """
         response = self.client.post(
-            reverse("confirm_deletion", args=["invalid_uid", self.token])
+            reverse(
+                view_name_dict.confirm_deletion_view,
+                args=[view_name_dict.invalid_uid_view, self.token],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))

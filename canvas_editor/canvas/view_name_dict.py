@@ -4,13 +4,18 @@
 login_view = "login"
 register_view = "register"
 logout_view = "logout"
-updata_account_view = "update_account"
+update_account_view = "update_account"
 delete_account_view = "delete_account"
 password_reset_view = "password_reset"
 invalid_link_view = "invalid_link"
 confirm_deletion_view = "confirm_deletion"
 password_forgotten_view = "password_forgotten"
 get_user_info_view = "get_user_info"
+projects_view = "projects"
+invalid_token_view = "invalid_token"
+invalid_uid_view = "invalid_uid"
+editor_view = "editor"
+test_project_view = "test_project"
 
 # Autosave api
 

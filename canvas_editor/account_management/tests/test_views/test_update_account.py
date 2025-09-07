@@ -9,8 +9,20 @@ from django.urls import reverse
 from PIL import Image
 
 from account_management.models import UserProfile
-from account_management.tests.test_constants import SECURE_PASSWORD, UPDATED_PASSWORD
-from canvas import path_dict
+from canvas import message_dict, path_dict, view_name_dict
+from canvas.test_constants import (
+    NEW_TEST_EMAIL,
+    NEW_TEST_FIRST_NAME,
+    NEW_TEST_LAST_NAME,
+    SECURE_PASSWORD,
+    TEST2_EMAIL,
+    TEST2_FIRST_NAME,
+    TEST2_LAST_NAME,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    UPDATED_PASSWORD,
+)
 from project_management.models import Project
 
 
@@ -36,14 +48,14 @@ class UpdateAccountTest(TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_EMAIL,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
-        self.update_account_url = reverse("update_account")
+        self.update_account_url = reverse(view_name_dict.update_account_view)
 
     def test_post_not_authenticated(self):
         """
@@ -54,9 +66,9 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "new_test@mail.de",
+                "first_name": NEW_TEST_FIRST_NAME,
+                "last_name": NEW_TEST_LAST_NAME,
+                "email": NEW_TEST_EMAIL,
                 "old_password": SECURE_PASSWORD,
                 "new_password": UPDATED_PASSWORD,
                 "password_confirmation": UPDATED_PASSWORD,
@@ -72,7 +84,7 @@ class UpdateAccountTest(TestCase):
 
         Asserts that only POST requests are allowed for account updates.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.get(self.update_account_url)
 
         self.assertEqual(response.status_code, 405)
@@ -83,14 +95,14 @@ class UpdateAccountTest(TestCase):
 
         Asserts that the user's information is updated and the response is a redirect.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "new_test@mail.de",
+                "first_name": NEW_TEST_FIRST_NAME,
+                "last_name": NEW_TEST_LAST_NAME,
+                "email": NEW_TEST_EMAIL,
                 "old_password": SECURE_PASSWORD,
                 "new_password": UPDATED_PASSWORD,
                 "password_confirmation": UPDATED_PASSWORD,
@@ -99,11 +111,11 @@ class UpdateAccountTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "new_first_name")
-        self.assertEqual(self.user.last_name, "new_last_name")
+        self.assertEqual(self.user.first_name, NEW_TEST_FIRST_NAME)
+        self.assertEqual(self.user.last_name, NEW_TEST_LAST_NAME)
         self.assertTrue(self.user.check_password(UPDATED_PASSWORD))
-        self.assertEqual(self.user.email, "new_test@mail.de")
-        self.assertEqual(self.user.username, "new_test@mail.de")
+        self.assertEqual(self.user.email, NEW_TEST_EMAIL)
+        self.assertEqual(self.user.username, NEW_TEST_EMAIL)
 
     def test_post_invalid_data(self):
         """
@@ -112,34 +124,31 @@ class UpdateAccountTest(TestCase):
         Asserts that the user's information is not updated and an error message is shown.
         """
         User.objects.create_user(
-            username="test2@mail.de",
-            email="test2@mail.de",
+            username=TEST2_EMAIL,
+            email=TEST2_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test2_first_name",
-            last_name="test2_last_name",
+            first_name=TEST2_FIRST_NAME,
+            last_name=TEST2_LAST_NAME,
         )
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test2@mail.de",
+                "first_name": NEW_TEST_FIRST_NAME,
+                "last_name": NEW_TEST_LAST_NAME,
+                "email": TEST2_EMAIL,
             },
         )
 
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "test_first_name")
-        self.assertEqual(self.user.last_name, "test_last_name")
-        self.assertEqual(self.user.email, "test@mail.de")
+        self.assertEqual(self.user.first_name, TEST_FIRST_NAME)
+        self.assertEqual(self.user.last_name, TEST_LAST_NAME)
+        self.assertEqual(self.user.email, TEST_EMAIL)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any(
-                "This email address is already in use. Please try another." in str(msg)
-                for msg in messages
-            )
+            any(message_dict.email_already_in_use_text in str(msg) for msg in messages)
         )
 
     def test_post_from_projects_page(self):
@@ -148,14 +157,14 @@ class UpdateAccountTest(TestCase):
 
         Asserts that the user's information is updated and redirection occurs.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test@mail.de",
+                "first_name": NEW_TEST_FIRST_NAME,
+                "last_name": NEW_TEST_LAST_NAME,
+                "email": TEST_EMAIL,
             },
             HTTP_REFERER="/projects/",
         )
@@ -163,9 +172,9 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/projects/")
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "new_first_name")
-        self.assertEqual(self.user.last_name, "new_last_name")
-        self.assertEqual(self.user.email, "test@mail.de")
+        self.assertEqual(self.user.first_name, NEW_TEST_FIRST_NAME)
+        self.assertEqual(self.user.last_name, NEW_TEST_LAST_NAME)
+        self.assertEqual(self.user.email, TEST_EMAIL)
         self.assertTrue(self.user.check_password(SECURE_PASSWORD))
 
     def test_post_from_editor_page(self):
@@ -174,20 +183,20 @@ class UpdateAccountTest(TestCase):
 
         Asserts that the user's information is updated and redirection occurs.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         project = Project.objects.create(
-            name="test_project",
+            name=view_name_dict.test_project_view,
             owner=self.user,
         )
-        editor_url = reverse("editor", args=[project.name])
+        editor_url = reverse(view_name_dict.editor_view, args=[project.name])
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test@mail.de",
+                "first_name": NEW_TEST_FIRST_NAME,
+                "last_name": NEW_TEST_LAST_NAME,
+                "email": TEST_EMAIL,
             },
             HTTP_REFERER=editor_url,
         )
@@ -195,9 +204,9 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, editor_url)
         self.user.refresh_from_db()
-        self.assertEqual(self.user.first_name, "new_first_name")
-        self.assertEqual(self.user.last_name, "new_last_name")
-        self.assertEqual(self.user.email, "test@mail.de")
+        self.assertEqual(self.user.first_name, NEW_TEST_FIRST_NAME)
+        self.assertEqual(self.user.last_name, NEW_TEST_LAST_NAME)
+        self.assertEqual(self.user.email, TEST_EMAIL)
 
     def test_post_upload_profile_picture(self):
         """
@@ -205,7 +214,7 @@ class UpdateAccountTest(TestCase):
 
         Asserts that the profile picture is saved and the file path is correct.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         # create example picture
         image = Image.new("RGB", (100, 100), color="blue")
@@ -213,15 +222,17 @@ class UpdateAccountTest(TestCase):
         image.save(image_file, format="JPEG")
         image_file.seek(0)
         profile_picture = SimpleUploadedFile(
-            "profile_picture.jpg", image_file.read(), content_type="image/jpeg"
+            path_dict.profile_picture_jpg,
+            image_file.read(),
+            content_type=path_dict.profile_picture_content_type,
         )
 
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": "new_first_name",
-                "last_name": "new_last_name",
-                "email": "test@mail.de",
+                "first_name": NEW_TEST_FIRST_NAME,
+                "last_name": NEW_TEST_LAST_NAME,
+                "email": TEST_EMAIL,
                 "old_password": SECURE_PASSWORD,
                 "new_password": UPDATED_PASSWORD,
                 "password_confirmation": UPDATED_PASSWORD,
@@ -243,7 +254,7 @@ class UpdateAccountTest(TestCase):
 
         Asserts that the new image is saved and the old image is deleted.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         # First profile picture upload
         image1 = Image.new("RGB", (100, 100), color="blue")
@@ -251,7 +262,9 @@ class UpdateAccountTest(TestCase):
         image1.save(image_file1, format="JPEG")
         image_file1.seek(0)
         profile_picture1 = SimpleUploadedFile(
-            "old_profile_picture.jpg", image_file1.read(), content_type="image/jpeg"
+            path_dict.old_profile_picture_jpg,
+            image_file1.read(),
+            content_type=path_dict.profile_picture_content_type,
         )
 
         self.profile.profile_picture = profile_picture1
@@ -268,7 +281,9 @@ class UpdateAccountTest(TestCase):
         image2.save(image_file2, format="JPEG")
         image_file2.seek(0)
         new_profile_picture = SimpleUploadedFile(
-            "new_profile_picture.jpg", image_file2.read(), content_type="image/jpeg"
+            path_dict.new_profile_picture_jpg,
+            image_file2.read(),
+            content_type=path_dict.profile_picture_content_type,
         )
 
         response2 = self.client.post(
@@ -295,14 +310,16 @@ class UpdateAccountTest(TestCase):
 
         Asserts that the profile picture is set to the default and the old image is deleted.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         image = Image.new("RGB", (100, 100), color="blue")
         image_file = io.BytesIO()
         image.save(image_file, format="JPEG")
         image_file.seek(0)
         profile_picture = SimpleUploadedFile(
-            "profile_picture.jpg", image_file.read(), content_type="image/jpeg"
+            path_dict.profile_picture_jpg,
+            image_file.read(),
+            content_type=path_dict.profile_picture_content_type,
         )
 
         self.profile.profile_picture = profile_picture

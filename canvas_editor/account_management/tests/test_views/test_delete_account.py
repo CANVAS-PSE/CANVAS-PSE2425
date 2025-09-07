@@ -5,8 +5,13 @@ from django.urls import reverse
 
 from account_management.tests.test_constants import (
     NO_SPECIAL_CHAR_PASSWORD,
+    PASSWORD_FIELD,
     SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
 )
+from canvas import message_dict, view_name_dict
 
 
 class DeleteAccountTest(TestCase):
@@ -28,13 +33,13 @@ class DeleteAccountTest(TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_EMAIL,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
-        self.delete_account_url = reverse("delete_account")
+        self.delete_account_url = reverse(view_name_dict.delete_account_view)
 
     def test_get(self):
         """
@@ -42,7 +47,7 @@ class DeleteAccountTest(TestCase):
 
         Asserts that only POST requests are allowed for account deletion.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.get(self.delete_account_url)
 
         self.assertEqual(response.status_code, 405)
@@ -53,10 +58,10 @@ class DeleteAccountTest(TestCase):
 
         Asserts that the user is deleted, session is cleared, and redirection occurs.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
-            {"password": SECURE_PASSWORD},
+            {PASSWORD_FIELD: SECURE_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -70,18 +75,16 @@ class DeleteAccountTest(TestCase):
 
         Asserts that an error message is shown and the user is not deleted.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
-            {"password": NO_SPECIAL_CHAR_PASSWORD},
+            {PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any(
-                "The password you entered is incorrect." in str(msg) for msg in messages
-            )
+            any(message_dict.incorrect_password_text in str(msg) for msg in messages)
         )
         self.assertTrue(User.objects.filter(id=self.user.id).exists())
 
@@ -93,7 +96,7 @@ class DeleteAccountTest(TestCase):
         """
         response = self.client.post(
             self.delete_account_url,
-            {"password": SECURE_PASSWORD},
+            {PASSWORD_FIELD: SECURE_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)

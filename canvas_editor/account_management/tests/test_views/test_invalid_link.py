@@ -4,6 +4,7 @@ from django.urls import reverse
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
+from canvas import path_dict, view_name_dict
 
 
 class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
@@ -18,7 +19,7 @@ class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         """Set up the test client and invalid link URL for each test."""
         self.client = Client()
-        self.invalid_link_url = reverse("invalid_link")
+        self.invalid_link_url = reverse(view_name_dict.invalid_link_view)
 
     def test_get(self):
         """
@@ -26,9 +27,7 @@ class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
 
         Asserts that the correct template is used for the response.
         """
-        self.assert_view_get(
-            self.invalid_link_url, "account_management/invalid_link.html"
-        )
+        self.assert_view_get(self.invalid_link_url, path_dict.invalid_link_template)
 
     def test_post(self):
         """

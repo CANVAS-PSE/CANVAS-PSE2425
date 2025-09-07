@@ -2,7 +2,13 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from account_management.models import UserProfile
-from account_management.tests.test_constants import TEST_PASSWORD
+from account_management.tests.test_constants import (
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_PASSWORD,
+)
+from canvas.path_dict import user_1_profile_picture
 
 
 class TestSignals(TestCase):
@@ -11,10 +17,10 @@ class TestSignals(TestCase):
     def setUp(self) -> None:
         """Configure the testing environment for the tests."""
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            first_name="first_name",
-            last_name="last_name",
-            email="test@mail.de",
+            username=TEST_EMAIL,
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL,
             password=TEST_PASSWORD,
         )
 
@@ -27,7 +33,7 @@ class TestSignals(TestCase):
     def test_save_user_profile(self):
         """Test the automatic saving of the profile when saving the user."""
         user_profile = self.user.userprofile
-        user_profile.profile_picture = "users/1/custom.jpg"
+        user_profile.profile_picture = user_1_profile_picture
         self.user.save()
         updated_profile = UserProfile.objects.get(user=self.user)
-        self.assertEqual(updated_profile.profile_picture, "users/1/custom.jpg")
+        self.assertEqual(updated_profile.profile_picture, user_1_profile_picture)
