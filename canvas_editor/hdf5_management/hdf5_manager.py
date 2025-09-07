@@ -223,6 +223,7 @@ class HDF5Manager:
             key=ACTUATOR_NAME,
             type=config_dictionary.ideal_actuator_key,
             clockwise_axis_movement=False,
+            min_max_motor_positions=[0, 360],
         )
 
         # Include an ideal actuator.
@@ -230,6 +231,7 @@ class HDF5Manager:
             key=ACTUATOR_NAME_2,
             type=config_dictionary.ideal_actuator_key,
             clockwise_axis_movement=True,
+            min_max_motor_positions=[0, 360],
         )
 
         # Create a list of actuators.
