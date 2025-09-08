@@ -60,13 +60,13 @@ class LoginFormTest(FormTestMixin, TestCase):
                 EMAIL_FIELD: TEST_EMAIL_3,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, EMAIL_FIELD, message_dict.email_not_registered_text
         )
 
     def test_login_form_wrong_password(self):
         """Test case for LoginForm with wrong password."""
         form = self.create_form(**{PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD})
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, PASSWORD_FIELD, message_dict.incorrect_password_text
         )

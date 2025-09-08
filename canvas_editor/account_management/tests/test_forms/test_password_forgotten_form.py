@@ -47,6 +47,6 @@ class PasswordForgottenFormTest(FormTestMixin, TestCase):
     def test_password_forgotten_form_wrong_email(self):
         """Test case for PasswordForgottenForm with not existing email."""
         form = self.create_form(**{EMAIL_FIELD: TEST_EMAIL_3})
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, EMAIL_FIELD, message_dict.email_not_registered_text
         )

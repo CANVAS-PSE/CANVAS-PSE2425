@@ -52,6 +52,6 @@ class DeleteAccountFormTest(FormTestMixin, TestCase):
                 PASSWORD_FIELD: WRONG_LOGIN_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, PASSWORD_FIELD, message_dict.incorrect_password_text
         )

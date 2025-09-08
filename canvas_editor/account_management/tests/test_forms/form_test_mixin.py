@@ -21,7 +21,7 @@ class FormTestMixin:
         data.update(overrides)
         return self.form_class(user=self.user, data=data)
 
-    def assertFormErrorMessage(self, form, field, expected_message):
+    def assert_form_error_message(self, form, field, expected_message):
         """Assert that the form contains the expected error message for the given field."""
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors[field], [expected_message])

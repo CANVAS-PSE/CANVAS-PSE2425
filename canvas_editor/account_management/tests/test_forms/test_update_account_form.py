@@ -86,7 +86,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             password=SECURE_PASSWORD,
         )
         form = self.create_form_with_instance(**{EMAIL_FIELD: TEST_EMAIL_3})
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, EMAIL_FIELD, message_dict.email_already_in_use_text
         )
 
@@ -107,7 +107,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form,
             PASSWORD_CONFIRMATION_FIELD,
             message_dict.password_match_criterium_text,
@@ -124,7 +124,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: TOO_SHORT_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_length_criterium_text
         )
 
@@ -137,7 +137,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_UPPERCASE_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_uppercase_criterium_text
         )
 
@@ -152,7 +152,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_LOWERCASE_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_lowercase_criterium_text
         )
 
@@ -167,7 +167,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_NUMERIC_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_digit_criterium_text
         )
 
@@ -182,7 +182,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_SPECIAL_CHAR_PASSWORD,
             },
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_special_char_criterium_text
         )
 
@@ -195,7 +195,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
             },
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, OLD_PASSWORD_FIELD, message_dict.incorrect_password_text
         )
 
@@ -207,7 +207,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 EMAIL_FIELD: TEST_EMAIL_2,
             },
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, OLD_PASSWORD_FIELD, message_dict.current_password_prompt
         )
 
@@ -219,6 +219,6 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
                 NEW_PASSWORD_FIELD: EMPTY_FIELD,
             },
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.new_password_prompt
         )

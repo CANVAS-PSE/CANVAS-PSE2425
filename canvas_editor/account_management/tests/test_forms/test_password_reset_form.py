@@ -62,7 +62,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
         form = self.create_form(
             **{PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD}
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form,
             PASSWORD_CONFIRMATION_FIELD,
             message_dict.password_match_criterium_text,
@@ -76,7 +76,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: TOO_SHORT_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_length_criterium_text
         )
 
@@ -88,7 +88,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_UPPERCASE_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_uppercase_criterium_text
         )
 
@@ -100,7 +100,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_LOWERCASE_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_lowercase_criterium_text
         )
 
@@ -112,7 +112,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_NUMERIC_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_digit_criterium_text
         )
 
@@ -124,6 +124,6 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
                 PASSWORD_CONFIRMATION_FIELD: NO_SPECIAL_CHAR_PASSWORD,
             }
         )
-        self.assertFormErrorMessage(
+        self.assert_form_error_message(
             form, NEW_PASSWORD_FIELD, message_dict.password_special_char_criterium_text
         )
