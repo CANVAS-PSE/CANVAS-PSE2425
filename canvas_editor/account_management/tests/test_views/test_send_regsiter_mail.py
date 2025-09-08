@@ -5,8 +5,8 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.utils.http import urlsafe_base64_encode
 
-from account_management.tests.test_constants import COMPLETELY_WRONG_PASSWORD
 from account_management.views.registration_view import RegistrationView
+from canvas.test_constants import COMPLETELY_WRONG_PASSWORD
 
 
 class SendRegisterMailTest(TestCase):

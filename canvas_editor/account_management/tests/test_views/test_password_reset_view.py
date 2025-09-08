@@ -4,15 +4,15 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 
-from account_management.tests.test_constants import (
-    MISMATCHED_BUT_CORRECT_PASSWORD,
-    RESET_PASSWORD,
-    SECURE_PASSWORD,
-)
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
 from canvas import view_name_dict
+from canvas.test_constants import (
+    MISMATCHED_BUT_CORRECT_PASSWORD,
+    RESET_PASSWORD,
+    SECURE_PASSWORD,
+)
 
 
 class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):

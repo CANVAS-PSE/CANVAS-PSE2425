@@ -2,10 +2,10 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from account_management.tests.test_constants import SECURE_PASSWORD
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
+from canvas.test_constants import SECURE_PASSWORD
 
 
 class LoginTest(ParameterizedViewTestMixin, TestCase):

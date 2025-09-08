@@ -2,13 +2,13 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from account_management.models import UserProfile
-from account_management.tests.test_constants import (
+from canvas.path_dict import user_1_profile_picture
+from canvas.test_constants import (
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
     TEST_PASSWORD,
 )
-from canvas.path_dict import user_1_profile_picture
 
 
 class TestSignals(TestCase):

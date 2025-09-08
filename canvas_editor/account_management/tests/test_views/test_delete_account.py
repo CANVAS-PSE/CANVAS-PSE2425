@@ -3,7 +3,8 @@ from django.contrib.messages import get_messages
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from account_management.tests.test_constants import (
+from canvas import message_dict, view_name_dict
+from canvas.test_constants import (
     NO_SPECIAL_CHAR_PASSWORD,
     PASSWORD_FIELD,
     SECURE_PASSWORD,
@@ -11,7 +12,6 @@ from account_management.tests.test_constants import (
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
 )
-from canvas import message_dict, view_name_dict
 
 
 class DeleteAccountTest(TestCase):

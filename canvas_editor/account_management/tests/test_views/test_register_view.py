@@ -2,14 +2,14 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from account_management.tests.test_constants import (
-    MISMATCHED_BUT_CORRECT_PASSWORD,
-    SECURE_PASSWORD,
-)
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
 from canvas import view_name_dict
+from canvas.test_constants import (
+    MISMATCHED_BUT_CORRECT_PASSWORD,
+    SECURE_PASSWORD,
+)
 
 
 class RegisterViewTests(ParameterizedViewTestMixin, TestCase):

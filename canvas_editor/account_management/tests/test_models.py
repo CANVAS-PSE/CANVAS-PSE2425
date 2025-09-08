@@ -4,12 +4,12 @@ from django.templatetags.static import static
 from django.test import TestCase
 
 from account_management.models import UserProfile
-from account_management.tests.test_constants import (
+from canvas import path_dict
+from canvas.test_constants import (
     SECURE_PASSWORD,
     TEST_EMAIL,
     TEST_USERNAME,
 )
-from canvas import path_dict
 
 
 class UserProfileModelTest(TestCase):

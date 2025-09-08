@@ -2,47 +2,56 @@ from django.test import TestCase
 
 from account_management.forms.delete_account_form import DeleteAccountForm
 from account_management.models import User
-from account_management.tests.test_constants import (
+from canvas import message_dict
+from canvas.test_constants import (
+    EMPTY_FIELD,
+    PASSWORD_FIELD,
     SECURE_PASSWORD,
+    TEST_EMAIL_2,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
     WRONG_LOGIN_PASSWORD,
 )
 
+from .form_test_mixin import FormTestMixin
 
-class DeleteAccountFormTest(TestCase):
+
+class DeleteAccountFormTest(FormTestMixin, TestCase):
+    """Test cases for the DeleteAccountForm."""
+
+    form_class = DeleteAccountForm
+    default_data = {
+        PASSWORD_FIELD: SECURE_PASSWORD,
+    }
+
     def setUp(self):
+        """Set up a user instance for testing."""
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            username=TEST_EMAIL_2,
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
         )
+        self.user = self.user
 
     def test_delete_account_form_valid_data(self):
-        # Test case for valid data submission in DeleteAccountForm
-        form = DeleteAccountForm(
-            user=self.user,
-            data={
-                "password": SECURE_PASSWORD,
-            },
-        )
+        """Test case for valid data submission in DeleteAccountForm."""
+        form = self.create_form_with_user()
         self.assertTrue(form.is_valid())
 
     def test_delete_account_form_no_data(self):
-        # Test case for DeleteAccountForm with no data
-        form = DeleteAccountForm(user=self.user, data={})
+        """Test case for DeleteAccountForm with no data."""
+        form = self.create_form_with_user(**{PASSWORD_FIELD: EMPTY_FIELD})
         self.assertFalse(form.is_valid())
 
     def test_delete_account_form_wrong_password(self):
-        # Test case for DeleteAccountForm with wrong password
-        form = DeleteAccountForm(
-            user=self.user,
-            data={
-                "password": WRONG_LOGIN_PASSWORD,
-            },
+        """Test case for DeleteAccountForm with wrong password."""
+        form = self.create_form_with_user(
+            **{
+                PASSWORD_FIELD: WRONG_LOGIN_PASSWORD,
+            }
         )
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["password"],
-            ["The password you entered is incorrect."],
+        self.assertFormErrorMessage(
+            form, PASSWORD_FIELD, message_dict.incorrect_password_text
         )

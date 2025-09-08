@@ -1,127 +1,129 @@
+from django.test import TestCase
+
 from account_management.forms.password_reset_form import PasswordResetForm
 from account_management.models import User
-from account_management.tests.test_constants import (
+from canvas import message_dict
+from canvas.test_constants import (
+    EMPTY_FIELD,
     MISMATCHED_BUT_CORRECT_PASSWORD,
+    NEW_PASSWORD_FIELD,
     NO_LOWERCASE_PASSWORD,
     NO_NUMERIC_PASSWORD,
     NO_SPECIAL_CHAR_PASSWORD,
     NO_UPPERCASE_PASSWORD,
+    PASSWORD_CONFIRMATION_FIELD,
     SECURE_PASSWORD,
+    TEST_EMAIL_2,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
     TOO_SHORT_PASSWORD,
     UPDATED_PASSWORD,
 )
 
+from .form_test_mixin import FormTestMixin
 
-from django.test import TestCase
 
+class PasswordResetFormTest(FormTestMixin, TestCase):
+    """Test cases for the PasswordResetForm."""
 
-class PasswordResetFormTest(TestCase):
+    form_class = PasswordResetForm
+    default_data = {
+        NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
+        PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
+    }
+
     def setUp(self):
+        """Set up a user instance for testing."""
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            username=TEST_EMAIL_2,
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL_2,
             password=SECURE_PASSWORD,
         )
 
     def test_password_reset_form_valid_data(self):
-        # Test case for valid data submission in PasswordResetForm
-        form = PasswordResetForm(
-            data={
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": UPDATED_PASSWORD,
-            }
-        )
+        """Test case for valid data submission in PasswordResetForm."""
+        form = self.create_form()
         self.assertTrue(form.is_valid())
 
     def test_password_reset_form_no_data(self):
-        # Test case for PasswordResetForm with no data
-        form = PasswordResetForm(data={})
+        """Test case for PasswordResetForm with no data."""
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: EMPTY_FIELD,
+                PASSWORD_CONFIRMATION_FIELD: EMPTY_FIELD,
+            }
+        )
         self.assertFalse(form.is_valid())
 
     def test_password_reset_form_passwords_not_matching(self):
-        # Test case for PasswordResetForm where passwords do not match
-        form = PasswordResetForm(
-            data={
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
-            }
+        """Test case for PasswordResetForm where passwords do not match."""
+        form = self.create_form(
+            **{PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD}
         )
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["password_confirmation"],
-            ["The passwords you entered do not match. Please try again."],
+        self.assertFormErrorMessage(
+            form,
+            PASSWORD_CONFIRMATION_FIELD,
+            message_dict.password_match_criterium_text,
         )
 
     def test_password_reset_form_password_too_short(self):
-        # Test case for PasswordResetForm where password is too short
-        form = PasswordResetForm(
-            data={
-                "new_password": TOO_SHORT_PASSWORD,
-                "password_confirmation": TOO_SHORT_PASSWORD,
+        """Test case for PasswordResetForm where password is too short."""
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: TOO_SHORT_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: TOO_SHORT_PASSWORD,
             }
         )
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["new_password"],
-            ["Password must be at least 8 characters long."],
+        self.assertFormErrorMessage(
+            form, NEW_PASSWORD_FIELD, message_dict.password_length_criterium_text
         )
 
     def test_password_reset_form_password_no_uppercase(self):
-        # Test case for PasswordResetForm where password has no uppercase letter
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_UPPERCASE_PASSWORD,
-                "password_confirmation": NO_UPPERCASE_PASSWORD,
+        """Test case for PasswordResetForm where password has no uppercase letter."""
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_UPPERCASE_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_UPPERCASE_PASSWORD,
             }
         )
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["new_password"],
-            ["Password must contain at least one uppercase letter."],
+        self.assertFormErrorMessage(
+            form, NEW_PASSWORD_FIELD, message_dict.password_uppercase_criterium_text
         )
 
     def test_password_reset_form_password_no_lowercase(self):
-        # Test case for PasswordResetForm where password has no lowercase letter
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_LOWERCASE_PASSWORD,
-                "password_confirmation": NO_LOWERCASE_PASSWORD,
+        """Test case for PasswordResetForm where password has no lowercase letter."""
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_LOWERCASE_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_LOWERCASE_PASSWORD,
             }
         )
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["new_password"],
-            ["Password must contain at least one lowercase letter."],
+        self.assertFormErrorMessage(
+            form, NEW_PASSWORD_FIELD, message_dict.password_lowercase_criterium_text
         )
 
     def test_password_reset_form_password_no_number(self):
-        # Test case for PasswordResetForm where password has no number
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_NUMERIC_PASSWORD,
-                "password_confirmation": NO_NUMERIC_PASSWORD,
+        """Test case for PasswordResetForm where password has no number."""
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_NUMERIC_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_NUMERIC_PASSWORD,
             }
         )
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["new_password"],
-            ["Password must contain at least one digit."],
+        self.assertFormErrorMessage(
+            form, NEW_PASSWORD_FIELD, message_dict.password_digit_criterium_text
         )
 
     def test_password_reset_form_password_no_special_character(self):
-        # Test case for PasswordResetForm where password has no special character
-        form = PasswordResetForm(
-            data={
-                "new_password": NO_SPECIAL_CHAR_PASSWORD,
-                "password_confirmation": NO_SPECIAL_CHAR_PASSWORD,
+        """Test case for PasswordResetForm where password has no special character."""
+        form = self.create_form(
+            **{
+                NEW_PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: NO_SPECIAL_CHAR_PASSWORD,
             }
         )
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["new_password"],
-            [
-                "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
-            ],
+        self.assertFormErrorMessage(
+            form, NEW_PASSWORD_FIELD, message_dict.password_special_char_criterium_text
         )

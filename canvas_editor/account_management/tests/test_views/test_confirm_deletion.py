@@ -4,17 +4,17 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 
-from account_management.tests.test_constants import (
+from account_management.tests.test_views.parameterized_view_test_mixin import (
+    ParameterizedViewTestMixin,
+)
+from canvas import path_dict, view_name_dict
+from canvas.test_constants import (
     SECURE_PASSWORD,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
     TEST_USERNAME,
 )
-from account_management.tests.test_views.parameterized_view_test_mixin import (
-    ParameterizedViewTestMixin,
-)
-from canvas import path_dict, view_name_dict
 
 
 class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
