@@ -1,0 +1,8 @@
+ .../account_management/tests/test_constants.py     |  29 [31m----[m
+ .../account_management/tests/test_forms.py         |   2 [32m+[m[31m-[m
+ .../account_management/tests/test_models.py        |   2 [32m+[m[31m-[m
+ .../account_management/tests/test_signals.py       |   2 [32m+[m[31m-[m
+ .../account_management/tests/test_views.py         |   2 [32m+[m[31m-[m
+ canvas_editor/autosave_api/tests/test_views.py     | 161 [32m+++++++++++++[m[31m--------[m
+ canvas_editor/canvas/view_name_dict.py             |   4 [32m+[m
+ 7 files changed, 112 insertions(+), 90 deletions(-)
