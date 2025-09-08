@@ -19,7 +19,6 @@ profile_picture_jpg = "profile_picture.jpg"
 profile_picture_content_type = "image/jpeg"
 old_profile_picture_jpg = "old_profile_picture.jpg"
 new_profile_picture_jpg = "new_profile_picture.jpg"
-<<<<<<< Updated upstream
 register_template = "account_management/register.html"
 """Path to the registration template."""
 login_template = "account_management/login.html"
@@ -60,5 +59,3 @@ SCENARIO_EXT = ".h5"
 
 # Constants for HDF5 file paths
 TEST_STRAL_DATA_PATH = "hdf5_management/data/test_stral_data.binp"
-=======
->>>>>>> Stashed changes
