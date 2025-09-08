@@ -16,6 +16,10 @@ invalid_token_view = "invalid_token"
 invalid_uid_view = "invalid_uid"
 editor_view = "editor"
 test_project_view = "test_project"
+receiver_detail_view = "receiver_detail"
+project_list_view = "project_list"
+light_source_detail_view = "light_source_detail"
+heliostat_detail_view = "heliostat_detail"
 
 # Autosave api
 
