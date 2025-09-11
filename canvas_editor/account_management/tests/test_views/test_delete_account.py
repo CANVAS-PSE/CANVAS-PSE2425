@@ -65,7 +65,7 @@ class DeleteAccountTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
         self.assertNotIn("_auth_user_id", self.client.session)
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 

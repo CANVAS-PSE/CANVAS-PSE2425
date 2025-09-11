@@ -6,7 +6,16 @@ from django.test.client import RequestFactory
 from django.utils.http import urlsafe_base64_encode
 
 from account_management.views.registration_view import RegistrationView
-from canvas.test_constants import COMPLETELY_WRONG_PASSWORD
+from canvas import message_dict
+from canvas.test_constants import (
+    COMPLETELY_WRONG_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+)
 
 
 class SendRegisterMailTest(TestCase):
@@ -28,11 +37,11 @@ class SendRegisterMailTest(TestCase):
         """
         # Test if the registration email is sent correctly
         user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
             password=COMPLETELY_WRONG_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
 
         factory = RequestFactory()
@@ -44,9 +53,9 @@ class SendRegisterMailTest(TestCase):
         email = mail.outbox[0]
 
         assert (
-            email.subject == "CANVAS: Registration Confirmation"
+            email.subject == message_dict.registration_confirmation_subject
         )  # Verify email subject
-        assert email.to == ["test@example.com"]  # Verify recipient
+        assert email.to == [TEST_EMAIL]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)

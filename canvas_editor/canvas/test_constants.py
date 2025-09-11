@@ -4,13 +4,13 @@ TEST_USERNAME = "testuser"
 TEST_PASSWORD = "testpassword"
 TEST_PROJECT_DESCRIPTION = "Test project description"
 TEST_PROJECT_NAME = "testProject"
-
+TEST_EMAIL = "testuser@example.com"
+SECURE_PASSWORD = "SecurePass123!"
+# Constant
 
 # Constants for testing account management features in a Canvas project
 
-TEST_EMAIL = "testuser@example.com"
 
-SECURE_PASSWORD = "SecurePass123!"
 TOO_SHORT_PASSWORD = "Save-1"
 TEST_PASSWORD = "test"
 UPDATED_PASSWORD = "NewSecurePassword123!"
@@ -34,7 +34,6 @@ NEW_TEST_EMAIL = "new_test@mail.de"
 NEW_TEST_FIRST_NAME = "new_first_name"
 NEW_TEST_LAST_NAME = "new_last_name"
 NEW_TEST_PASSWORD = "testpassword"
-TEST_EMAIL_4 = "test@mail.de"
 
 IS_OPENID_USER = "is_openid_user"
 OPENID_PROVIDER_FIELD = "google"
@@ -73,6 +72,7 @@ FIRST_NAME_FIELD = "first_name"
 LAST_NAME_FIELD = "last_name"
 EMPTY_FIELD = ""
 WHITESPACE_FIELD = " "
+DELETE_PIC_FIELD = "delete_picture"
 
 # Constants for editor
 CONTENT_DISPOSITION_HEADER = "Content-Disposition"
@@ -120,7 +120,7 @@ PROJECT_NAME_WITH_WHITESPACE = " Test project 2 "
 PROJECT_DESCRIPTION_WITH_WHITESPACE = " Test project description "
 PROJECT_NAME_DUPLICATE_NAME = "Test project 2"
 
-# Constants for teseting project management features in a Canvas project
+# Constants for autosave_api tests
 
 HELIOSTAT_NAME = "Heliostat 1"
 LIGHT_SOURCE_NAME = "Light Source"

@@ -6,7 +6,14 @@ from django.test.client import RequestFactory
 from django.utils.http import urlsafe_base64_encode
 
 from account_management.views.password_forgotten_view import PasswordForgottenView
-from canvas.test_constants import SECURE_PASSWORD
+from canvas import message_dict
+from canvas.test_constants import (
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
+)
 
 
 class SendPasswordForgottenMailTest(TestCase):
@@ -27,11 +34,11 @@ class SendPasswordForgottenMailTest(TestCase):
         - The confirmation URL containing the UID and token is present in the email body.
         """
         user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
 
         factory = RequestFactory()
@@ -42,8 +49,10 @@ class SendPasswordForgottenMailTest(TestCase):
         assert len(mail.outbox) == 1  # Check if one email was sent
         email = mail.outbox[0]
 
-        assert email.subject == "Password Reset"  # Verify email subject
-        assert email.to == ["test@mail.de"]  # Verify recipient
+        assert (
+            email.subject == message_dict.password_reset_confirmation_subject
+        )  # Verify email subject
+        assert email.to == [TEST_EMAIL]  # Verify recipient
 
         uid = urlsafe_base64_encode(str(user.id).encode())
         token = default_token_generator.make_token(user)

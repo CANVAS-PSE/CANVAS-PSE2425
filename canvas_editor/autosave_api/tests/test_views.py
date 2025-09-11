@@ -70,7 +70,9 @@ class APITestCase(TestCase):
 
     def test_get_project_detail(self):
         """Test retrieving the details of a specific project."""
-        url = reverse("project_detail", kwargs={"pk": self.project.id})
+        url = reverse(
+            view_name_dict.project_detail_view, kwargs={"pk": self.project.id}
+        )
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.project.name)

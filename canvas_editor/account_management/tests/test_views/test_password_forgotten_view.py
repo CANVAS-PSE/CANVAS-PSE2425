@@ -6,7 +6,16 @@ from django.urls import reverse
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
-from canvas.test_constants import SECURE_PASSWORD
+from canvas import path_dict, view_name_dict
+from canvas.test_constants import (
+    EMAIL_FIELD,
+    SECURE_PASSWORD,
+    TEST2_EMAIL,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
+)
 
 
 class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
@@ -27,13 +36,13 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
-        self.password_forgotten_url = reverse("password_forgotten")
+        self.password_forgotten_url = reverse(view_name_dict.password_forgotten_view)
 
     def test_get(self):
         """
@@ -43,7 +52,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         self.assert_view_get(
             self.password_forgotten_url,
-            "account_management/password_forgotten.html",
+            path_dict.password_forgotten_template,
         )
 
     def test_post_valid_data(self):
@@ -54,11 +63,11 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.password_forgotten_url,
-            {"email": "test@mail.de"},
+            {EMAIL_FIELD: TEST_EMAIL},
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
 
     def test_post_invalid_data(self):
         """
@@ -68,7 +77,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.password_forgotten_url,
-            {"email": "test2@mail.de"},
+            {EMAIL_FIELD: TEST2_EMAIL},
         )
 
         self.assertEqual(response.status_code, 200)

@@ -5,7 +5,16 @@ from django.urls import reverse
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
-from canvas.test_constants import SECURE_PASSWORD
+from canvas import message_dict, path_dict, view_name_dict
+from canvas.test_constants import (
+    EMAIL_FIELD,
+    MAX_EMAIL,
+    PASSWORD_FIELD,
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+)
 
 
 class LoginViewTest(ParameterizedViewTestMixin, TestCase):
@@ -26,14 +35,14 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         Creates a test user for login tests.
         """
         self.client = Client()
-        self.login_url = reverse("login")
-        self.projects_url = reverse("projects")
+        self.login_url = reverse(view_name_dict.login_view)
+        self.projects_url = reverse(view_name_dict.projects_view)
         self.user = User.objects.create_user(
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            username="test@mail.de",
+            username=TEST_EMAIL,
         )
 
     def test_get(self):
@@ -42,7 +51,7 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
 
         Asserts that the correct template is used for the response.
         """
-        self.assert_view_get(self.login_url, "account_management/login.html")
+        self.assert_view_get(self.login_url, path_dict.login_template)
 
     def test_get_authenticated(self):
         """
@@ -61,12 +70,12 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.login_url,
             {
-                "email": "test@mail.de",
-                "password": SECURE_PASSWORD,
+                EMAIL_FIELD: TEST_EMAIL,
+                PASSWORD_FIELD: SECURE_PASSWORD,
             },
         )
 
-        user = User.objects.get(email="test@mail.de")
+        user = User.objects.get(email=TEST_EMAIL)
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.projects_url)
@@ -81,12 +90,12 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.login_url,
             {
-                "email": "max@mail.de",
-                "password": SECURE_PASSWORD,
+                EMAIL_FIELD: MAX_EMAIL,
+                PASSWORD_FIELD: SECURE_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/login.html")
+        self.assertTemplateUsed(response, path_dict.login_template)
         self.assertTrue(response.context["form"].errors)
-        self.assertContains(response, "This email address is not registered.")
+        self.assertContains(response, message_dict.email_not_registered_text)

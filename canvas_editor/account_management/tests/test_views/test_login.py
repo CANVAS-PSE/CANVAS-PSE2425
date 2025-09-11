@@ -5,7 +5,17 @@ from django.urls import reverse
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
-from canvas.test_constants import SECURE_PASSWORD
+from canvas import path_dict, view_name_dict
+from canvas.test_constants import (
+    EMAIL_FIELD,
+    MISMATCHED_BUT_CORRECT_PASSWORD,
+    PASSWORD_FIELD,
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
+)
 
 
 class LoginTest(ParameterizedViewTestMixin, TestCase):
@@ -26,13 +36,13 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
-        self.login_url = reverse("login")
+        self.login_url = reverse(view_name_dict.login_view)
 
     def test_get(self):
         """
@@ -40,7 +50,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
 
         Asserts that the correct template is used for the response.
         """
-        self.assert_view_get(self.login_url, "account_management/login.html")
+        self.assert_view_get(self.login_url, path_dict.login_template)
 
     def test_post_valid(self):
         """
@@ -50,7 +60,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.login_url,
-            {"email": "test@mail.de", "password": SECURE_PASSWORD},
+            {EMAIL_FIELD: TEST_EMAIL, PASSWORD_FIELD: SECURE_PASSWORD},
         )
 
         self.assertRedirects(response, reverse("projects"))
@@ -63,8 +73,8 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.login_url,
-            {"email": "test@mail.de", "password": "wrong_password"},
+            {EMAIL_FIELD: TEST_EMAIL, PASSWORD_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/login.html")
+        self.assertTemplateUsed(response, path_dict.login_template)

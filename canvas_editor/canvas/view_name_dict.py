@@ -22,6 +22,7 @@ light_source_detail_view = "light_source_detail"
 heliostat_detail_view = "heliostat_detail"
 
 # Autosave api
+project_detail_view = "project_detail"
 
 # editor
 download_view = "download"

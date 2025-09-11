@@ -2,7 +2,14 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from canvas.test_constants import SECURE_PASSWORD
+from canvas import view_name_dict
+from canvas.test_constants import (
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
+)
 
 
 class LogoutViewTest(TestCase):
@@ -21,16 +28,16 @@ class LogoutViewTest(TestCase):
         Creates a test user and logs them in for logout tests.
         """
         self.client = Client()
-        self.logout_url = reverse("logout")
-        self.login_url = reverse("login")
+        self.logout_url = reverse(view_name_dict.logout_view)
+        self.login_url = reverse(view_name_dict.login_view)
         self.user = User.objects.create_user(
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            username="test@mail.de",
+            username=TEST_USERNAME,
         )
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
     def test_get(self):
         """

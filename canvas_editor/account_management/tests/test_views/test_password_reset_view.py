@@ -7,11 +7,17 @@ from django.utils.http import urlsafe_base64_encode
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
-from canvas import view_name_dict
+from canvas import message_dict, path_dict, view_name_dict
 from canvas.test_constants import (
     MISMATCHED_BUT_CORRECT_PASSWORD,
+    NEW_PASSWORD_FIELD,
+    PASSWORD_CONFIRMATION_FIELD,
     RESET_PASSWORD,
     SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
 )
 
 
@@ -34,11 +40,11 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
@@ -52,9 +58,7 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
 
         Asserts that the correct template is used for the response.
         """
-        self.assert_view_get(
-            self.password_reset_url, "account_management/password_reset.html"
-        )
+        self.assert_view_get(self.password_reset_url, path_dict.password_reset_template)
 
     def test_post_valid_data(self):
         """
@@ -65,13 +69,13 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.password_reset_url,
             {
-                "new_password": RESET_PASSWORD,
-                "password_confirmation": RESET_PASSWORD,
+                NEW_PASSWORD_FIELD: RESET_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: RESET_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(RESET_PASSWORD))
         self.assertNotIn("_auth_user_id", self.client.session)
@@ -85,17 +89,15 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.password_reset_url,
             {
-                "new_password": RESET_PASSWORD,
-                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
+                NEW_PASSWORD_FIELD: RESET_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/password_reset.html")
+        self.assertTemplateUsed(response, path_dict.password_reset_template)
         self.assertTrue(response.context["form"].errors)
-        self.assertContains(
-            response, "The passwords you entered do not match. Please try again."
-        )
+        self.assertContains(response, message_dict.password_match_criterium_text)
 
     def test_post_invalid_token(self):
         """
@@ -104,11 +106,14 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         Asserts that the response is a redirect to the invalid link page.
         """
         response = self.client.post(
-            reverse("password_reset", args=[self.uid, "invalid_token"])
+            reverse(
+                view_name_dict.password_reset_view,
+                args=[self.uid, view_name_dict.invalid_token_view],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
 
     def test_post_invalid_uid(self):
         """
@@ -117,8 +122,11 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         Asserts that the response is a redirect to the invalid link page.
         """
         response = self.client.post(
-            reverse("password_reset", args=["invalid_uid", self.token])
+            reverse(
+                view_name_dict.password_reset_view,
+                args=[view_name_dict.invalid_uid_view, self.token],
+            )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("invalid_link"))
+        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))

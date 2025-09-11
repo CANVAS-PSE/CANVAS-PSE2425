@@ -11,9 +11,17 @@ from PIL import Image
 from account_management.models import UserProfile
 from canvas import message_dict, path_dict, view_name_dict
 from canvas.test_constants import (
+    DELETE_PIC_FIELD,
+    EMAIL_FIELD,
+    FIRST_NAME_FIELD,
+    LAST_NAME_FIELD,
+    NEW_PASSWORD_FIELD,
     NEW_TEST_EMAIL,
     NEW_TEST_FIRST_NAME,
     NEW_TEST_LAST_NAME,
+    OLD_PASSWORD_FIELD,
+    PASSWORD_CONFIRMATION_FIELD,
+    PROFILE_PIC_FIELD,
     SECURE_PASSWORD,
     TEST2_EMAIL,
     TEST2_FIRST_NAME,
@@ -66,12 +74,12 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": NEW_TEST_FIRST_NAME,
-                "last_name": NEW_TEST_LAST_NAME,
-                "email": NEW_TEST_EMAIL,
-                "old_password": SECURE_PASSWORD,
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": UPDATED_PASSWORD,
+                FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
+                LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
+                EMAIL_FIELD: NEW_TEST_EMAIL,
+                OLD_PASSWORD_FIELD: SECURE_PASSWORD,
+                NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
             },
         )
 
@@ -100,12 +108,12 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": NEW_TEST_FIRST_NAME,
-                "last_name": NEW_TEST_LAST_NAME,
-                "email": NEW_TEST_EMAIL,
-                "old_password": SECURE_PASSWORD,
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": UPDATED_PASSWORD,
+                FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
+                LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
+                EMAIL_FIELD: NEW_TEST_EMAIL,
+                OLD_PASSWORD_FIELD: SECURE_PASSWORD,
+                NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
             },
         )
 
@@ -135,9 +143,9 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": NEW_TEST_FIRST_NAME,
-                "last_name": NEW_TEST_LAST_NAME,
-                "email": TEST2_EMAIL,
+                FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
+                LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
+                EMAIL_FIELD: TEST2_EMAIL,
             },
         )
 
@@ -162,9 +170,9 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": NEW_TEST_FIRST_NAME,
-                "last_name": NEW_TEST_LAST_NAME,
-                "email": TEST_EMAIL,
+                FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
+                LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
+                EMAIL_FIELD: TEST_EMAIL,
             },
             HTTP_REFERER="/projects/",
         )
@@ -194,9 +202,9 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": NEW_TEST_FIRST_NAME,
-                "last_name": NEW_TEST_LAST_NAME,
-                "email": TEST_EMAIL,
+                FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
+                LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
+                EMAIL_FIELD: TEST_EMAIL,
             },
             HTTP_REFERER=editor_url,
         )
@@ -230,13 +238,13 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "first_name": NEW_TEST_FIRST_NAME,
-                "last_name": NEW_TEST_LAST_NAME,
-                "email": TEST_EMAIL,
-                "old_password": SECURE_PASSWORD,
-                "new_password": UPDATED_PASSWORD,
-                "password_confirmation": UPDATED_PASSWORD,
-                "profile_picture": profile_picture,
+                FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
+                LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
+                EMAIL_FIELD: TEST_EMAIL,
+                OLD_PASSWORD_FIELD: SECURE_PASSWORD,
+                NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
+                PROFILE_PIC_FIELD: profile_picture,
             },
         )
 
@@ -289,7 +297,7 @@ class UpdateAccountTest(TestCase):
         response2 = self.client.post(
             self.update_account_url,
             {
-                "profile_picture": new_profile_picture,
+                PROFILE_PIC_FIELD: new_profile_picture,
             },
         )
 
@@ -331,7 +339,7 @@ class UpdateAccountTest(TestCase):
         response = self.client.post(
             self.update_account_url,
             {
-                "delete_picture": "1",  # Set profile picture to default
+                DELETE_PIC_FIELD: "1",  # Set profile picture to default
             },
         )
 

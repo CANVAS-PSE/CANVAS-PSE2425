@@ -5,10 +5,21 @@ from django.urls import reverse
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
-from canvas import view_name_dict
+from canvas import message_dict, path_dict, view_name_dict
 from canvas.test_constants import (
+    EMAIL_FIELD,
+    FIRST_NAME_FIELD,
+    LAST_NAME_FIELD,
     MISMATCHED_BUT_CORRECT_PASSWORD,
+    PASSWORD_CONFIRMATION_FIELD,
+    PASSWORD_FIELD,
     SECURE_PASSWORD,
+    TEST2_EMAIL,
+    TEST2_FIRST_NAME,
+    TEST2_LAST_NAME,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
 )
 
 
@@ -33,18 +44,18 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         self.register_url = reverse(view_name_dict.register_view)
         self.projects_url = reverse(view_name_dict.projects_view)
         self.user = User.objects.create_user(
-            first_name="test_first_name",
-            last_name="test_last_name",
-            email="test@mail.de",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            username="test@mail.de",
+            username=TEST_EMAIL,
         )
         self.valid_user_data = {
-            "first_name": "test2_first_name",
-            "last_name": "test2_last_name",
-            "email": "test2@mail.de",
-            "password": SECURE_PASSWORD,
-            "password_confirmation": SECURE_PASSWORD,
+            FIRST_NAME_FIELD: TEST2_FIRST_NAME,
+            LAST_NAME_FIELD: TEST2_LAST_NAME,
+            EMAIL_FIELD: TEST2_EMAIL,
+            PASSWORD_FIELD: SECURE_PASSWORD,
+            PASSWORD_CONFIRMATION_FIELD: SECURE_PASSWORD,
         }
 
     def test_get(self):
@@ -53,7 +64,7 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
 
         Asserts that the correct template is used for the response.
         """
-        self.assert_view_get(self.register_url, "account_management/register.html")
+        self.assert_view_get(self.register_url, path_dict.register_template)
 
     def test_get_authenticated(self):
         """
@@ -73,7 +84,7 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
             self.register_url,
             self.valid_user_data,
         )
-        user = User.objects.get(email="test2@mail.de")
+        user = User.objects.get(email=TEST2_EMAIL)
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.projects_url)
@@ -88,17 +99,15 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.register_url,
             {
-                "first_name": "test_first_name",
-                "last_name": "test_last_name",
-                "email": "test@mail.de",
-                "password": SECURE_PASSWORD,
-                "password_confirmation": MISMATCHED_BUT_CORRECT_PASSWORD,
+                FIRST_NAME_FIELD: TEST_FIRST_NAME,
+                LAST_NAME_FIELD: TEST_LAST_NAME,
+                EMAIL_FIELD: TEST_EMAIL,
+                PASSWORD_FIELD: SECURE_PASSWORD,
+                PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD,
             },
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "account_management/register.html")
-        self.assertContains(
-            response, "The passwords you entered do not match. Please try again."
-        )
+        self.assertTemplateUsed(response, path_dict.register_template)
+        self.assertContains(response, message_dict.password_match_criterium_text)
         self.assertTrue(response.context["form"].errors)

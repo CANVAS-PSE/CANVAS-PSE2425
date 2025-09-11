@@ -1,4 +1,4 @@
-from canvas.test_constants import SECURE_PASSWORD, TEST_EMAIL_4
+from canvas.test_constants import SECURE_PASSWORD, TEST_EMAIL
 
 
 class ParameterizedViewTestMixin:
@@ -17,7 +17,7 @@ class ParameterizedViewTestMixin:
 
     def get_authenticated(self, url_name):
         """Test that an authenticated user is redirected to the projects page when accessing the register/login page."""
-        self.client.login(username=TEST_EMAIL_4, password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.get(url_name)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.projects_url)
