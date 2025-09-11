@@ -20,13 +20,13 @@ from canvas.test_constants import (
     NEW_LIGHT_SOURCE_NAME,
     NEW_PROJECT_NAME,
     NEW_RECEIVER_NAME,
-    NEW_TEST_PASSWORD,
     POSITION_COORDINATE,
     RECEIVER_LIST_NAME,
     RECEIVER_NAME,
     RECEIVER_TYPE,
     TEST_FLOAT_NUMBER,
     TEST_NUMBER,
+    TEST_PASSWORD,
     TEST_PROJECT_NAME,
     TEST_TYPE,
     TEST_USERNAME,
@@ -47,9 +47,9 @@ class APITestCase(TestCase):
         """Set up a test user, log in, and create a test project for use in all tests."""
         self.client = APIClient()
         self.user = User.objects.create_user(
-            username=TEST_USERNAME, password=NEW_TEST_PASSWORD
+            username=TEST_USERNAME, password=TEST_PASSWORD
         )
-        self.client.login(username=TEST_USERNAME, password=NEW_TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
         self.project = Project.objects.create(name=TEST_PROJECT_NAME, owner=self.user)
 
     def test_create_project(self):

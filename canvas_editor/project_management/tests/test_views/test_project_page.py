@@ -26,9 +26,9 @@ from canvas.test_constants import (
     SHARED_SUFFIX,
     TEST_PROJECT_DESCRIPTION_2,
     TEST_PROJECT_NAME_2,
+    TEST_USERNAME,
     UPDATED_DESCRIPTION,
     UPDATED_PROJECT_NAME,
-    USERNAME_PROJECT_PAGE_TEST,
 )
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
@@ -40,7 +40,7 @@ class ProjectPageTest(TestCase):
         """Set up a test user, log in, and create a test project for use in all tests."""
         self.client = Client()
         self.user = User.objects.create_user(
-            username=USERNAME_PROJECT_PAGE_TEST, password=SECURE_PASSWORD
+            username=TEST_USERNAME, password=SECURE_PASSWORD
         )
         self.project = Project.objects.create(
             name=PROJECT_NAME_PROJECT_PAGE_TEST,
@@ -50,7 +50,7 @@ class ProjectPageTest(TestCase):
         Heliostat.objects.create(project=self.project)
         Receiver.objects.create(project=self.project)
         LightSource.objects.create(project=self.project)
-        self.client.login(username=USERNAME_PROJECT_PAGE_TEST, password=SECURE_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         # urls
         self.projects_url = reverse(view_name_dict.projects_view)

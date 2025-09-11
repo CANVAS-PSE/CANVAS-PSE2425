@@ -15,8 +15,8 @@ from canvas.test_constants import (
     PASSWORD_FIELD,
     SECURE_PASSWORD,
     TEST2_EMAIL,
-    TEST2_FIRST_NAME,
-    TEST2_LAST_NAME,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
@@ -51,8 +51,8 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
             username=TEST_EMAIL,
         )
         self.valid_user_data = {
-            FIRST_NAME_FIELD: TEST2_FIRST_NAME,
-            LAST_NAME_FIELD: TEST2_LAST_NAME,
+            FIRST_NAME_FIELD: TEST_FIRST_NAME,
+            LAST_NAME_FIELD: TEST_LAST_NAME,
             EMAIL_FIELD: TEST2_EMAIL,
             PASSWORD_FIELD: SECURE_PASSWORD,
             PASSWORD_CONFIRMATION_FIELD: SECURE_PASSWORD,

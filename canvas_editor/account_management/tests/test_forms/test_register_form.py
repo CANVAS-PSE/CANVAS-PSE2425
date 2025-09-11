@@ -16,7 +16,7 @@ from canvas.test_constants import (
     PASSWORD_CONFIRMATION_FIELD,
     PASSWORD_FIELD,
     SECURE_PASSWORD,
-    TEST_EMAIL_2,
+    TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
     TOO_SHORT_PASSWORD,
@@ -32,7 +32,7 @@ class RegisterFormTest(FormTestMixin, TestCase):
     default_data = {
         FIRST_NAME_FIELD: TEST_FIRST_NAME,
         LAST_NAME_FIELD: TEST_LAST_NAME,
-        EMAIL_FIELD: TEST_EMAIL_2,
+        EMAIL_FIELD: TEST_EMAIL,
         PASSWORD_FIELD: SECURE_PASSWORD,
         PASSWORD_CONFIRMATION_FIELD: SECURE_PASSWORD,
     }
@@ -58,10 +58,10 @@ class RegisterFormTest(FormTestMixin, TestCase):
     def test_register_form_existing_mail(self):
         """Test case for RegisterForm with an already existing email."""
         User.objects.create_user(
-            username=TEST_EMAIL_2,
+            username=TEST_EMAIL,
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
-            email=TEST_EMAIL_2,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
         )
         form = self.create_form()

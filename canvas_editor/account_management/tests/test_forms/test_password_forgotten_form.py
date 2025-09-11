@@ -7,8 +7,8 @@ from canvas.test_constants import (
     EMAIL_FIELD,
     EMPTY_FIELD,
     SECURE_PASSWORD,
-    TEST_EMAIL_2,
-    TEST_EMAIL_3,
+    TEST_EMAIL,
+    NOT_EXISTING_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
 )
@@ -21,16 +21,16 @@ class PasswordForgottenFormTest(FormTestMixin, TestCase):
 
     form_class = PasswordForgottenForm
     default_data = {
-        EMAIL_FIELD: TEST_EMAIL_2,
+        EMAIL_FIELD: TEST_EMAIL,
     }
 
     def setUp(self):
         """Set up a user for testing."""
         self.user = User.objects.create_user(
-            username=TEST_EMAIL_2,
+            username=TEST_EMAIL,
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
-            email=TEST_EMAIL_2,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
         )
 
@@ -46,7 +46,7 @@ class PasswordForgottenFormTest(FormTestMixin, TestCase):
 
     def test_password_forgotten_form_wrong_email(self):
         """Test case for PasswordForgottenForm with not existing email."""
-        form = self.create_form(**{EMAIL_FIELD: TEST_EMAIL_3})
+        form = self.create_form(**{EMAIL_FIELD: NOT_EXISTING_EMAIL})
         self.assert_form_error_message(
             form, EMAIL_FIELD, message_dict.email_not_registered_text
         )

@@ -7,7 +7,7 @@ from canvas.test_constants import (
     EMPTY_FIELD,
     PASSWORD_FIELD,
     SECURE_PASSWORD,
-    TEST_EMAIL_2,
+    TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
     WRONG_LOGIN_PASSWORD,
@@ -27,10 +27,10 @@ class DeleteAccountFormTest(FormTestMixin, TestCase):
     def setUp(self):
         """Set up a user instance for testing."""
         self.user = User.objects.create_user(
-            username=TEST_EMAIL_2,
+            username=TEST_EMAIL,
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
-            email=TEST_EMAIL_2,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
         )
         self.user = self.user

@@ -16,7 +16,6 @@ from canvas.test_constants import (
     FIRST_NAME_FIELD,
     LAST_NAME_FIELD,
     NEW_PASSWORD_FIELD,
-    NEW_TEST_EMAIL,
     NEW_TEST_FIRST_NAME,
     NEW_TEST_LAST_NAME,
     OLD_PASSWORD_FIELD,
@@ -24,8 +23,6 @@ from canvas.test_constants import (
     PROFILE_PIC_FIELD,
     SECURE_PASSWORD,
     TEST2_EMAIL,
-    TEST2_FIRST_NAME,
-    TEST2_LAST_NAME,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
@@ -76,7 +73,7 @@ class UpdateAccountTest(TestCase):
             {
                 FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
                 LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
-                EMAIL_FIELD: NEW_TEST_EMAIL,
+                EMAIL_FIELD: TEST2_EMAIL,
                 OLD_PASSWORD_FIELD: SECURE_PASSWORD,
                 NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
@@ -110,7 +107,7 @@ class UpdateAccountTest(TestCase):
             {
                 FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
                 LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
-                EMAIL_FIELD: NEW_TEST_EMAIL,
+                EMAIL_FIELD: TEST2_EMAIL,
                 OLD_PASSWORD_FIELD: SECURE_PASSWORD,
                 NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
@@ -122,8 +119,8 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(self.user.first_name, NEW_TEST_FIRST_NAME)
         self.assertEqual(self.user.last_name, NEW_TEST_LAST_NAME)
         self.assertTrue(self.user.check_password(UPDATED_PASSWORD))
-        self.assertEqual(self.user.email, NEW_TEST_EMAIL)
-        self.assertEqual(self.user.username, NEW_TEST_EMAIL)
+        self.assertEqual(self.user.email, TEST2_EMAIL)
+        self.assertEqual(self.user.username, TEST2_EMAIL)
 
     def test_post_invalid_data(self):
         """
@@ -135,8 +132,8 @@ class UpdateAccountTest(TestCase):
             username=TEST2_EMAIL,
             email=TEST2_EMAIL,
             password=SECURE_PASSWORD,
-            first_name=TEST2_FIRST_NAME,
-            last_name=TEST2_LAST_NAME,
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 

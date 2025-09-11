@@ -10,10 +10,9 @@ from canvas.test_constants import (
     FIRST_NAME_FIELD,
     LAST_NAME_FIELD,
     MISMATCHED_BUT_CORRECT_PASSWORD,
-    NEW_EMAIL,
-    NEW_FIRST_NAME,
-    NEW_LAST_NAME,
     NEW_PASSWORD_FIELD,
+    NEW_TEST_FIRST_NAME,
+    NEW_TEST_LAST_NAME,
     NO_LOWERCASE_PASSWORD,
     NO_NUMERIC_PASSWORD,
     NO_SPECIAL_CHAR_PASSWORD,
@@ -22,8 +21,8 @@ from canvas.test_constants import (
     OPENID_PROVIDER_FIELD,
     PASSWORD_CONFIRMATION_FIELD,
     SECURE_PASSWORD,
-    TEST_EMAIL_2,
-    TEST_EMAIL_3,
+    TEST2_EMAIL,
+    TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_FIRST_NAME_2,
     TEST_LAST_NAME,
@@ -41,9 +40,9 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
 
     form_class = UpdateAccountForm
     default_data = {
-        FIRST_NAME_FIELD: NEW_FIRST_NAME,
-        LAST_NAME_FIELD: NEW_LAST_NAME,
-        EMAIL_FIELD: NEW_EMAIL,
+        FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
+        LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
+        EMAIL_FIELD: TEST_EMAIL,
         OLD_PASSWORD_FIELD: SECURE_PASSWORD,
         NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
         PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
@@ -52,10 +51,10 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
     def setUp(self):
         """Set up a user instance for testing."""
         self.user = User.objects.create_user(
-            username=TEST_EMAIL_2,
+            username=TEST_EMAIL,
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
-            email=TEST_EMAIL_2,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
         )
         self.instance = self.user
@@ -79,13 +78,13 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
     def test_update_account_form_existing_mail(self):
         """Test case for UpdateAccountForm with an already existing email."""
         User.objects.create_user(
-            username=TEST_EMAIL_3,
+            username=TEST2_EMAIL,
             first_name=TEST_FIRST_NAME_2,
             last_name=TEST_LAST_NAME_2,
-            email=TEST_EMAIL_3,
+            email=TEST2_EMAIL,
             password=SECURE_PASSWORD,
         )
-        form = self.create_form_with_instance(**{EMAIL_FIELD: TEST_EMAIL_3})
+        form = self.create_form_with_instance(**{EMAIL_FIELD: TEST2_EMAIL})
         self.assert_form_error_message(
             form, EMAIL_FIELD, message_dict.email_already_in_use_text
         )
@@ -103,7 +102,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
         """Test case for UpdateAccountForm where passwords do not match."""
         form = self.create_form_with_instance(
             **{
-                EMAIL_FIELD: NEW_EMAIL,
+                EMAIL_FIELD: TEST_EMAIL,
                 PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD,
             }
         )
@@ -119,7 +118,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             **{
                 FIRST_NAME_FIELD: TEST_FIRST_NAME,
                 LAST_NAME_FIELD: TEST_LAST_NAME,
-                EMAIL_FIELD: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
                 NEW_PASSWORD_FIELD: TOO_SHORT_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: TOO_SHORT_PASSWORD,
             }
@@ -132,7 +131,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
         """Test case for UpdateAccountForm where password has no uppercase letter."""
         form = self.create_form_with_instance(
             **{
-                NEW_EMAIL: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
                 NEW_PASSWORD_FIELD: NO_UPPERCASE_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: NO_UPPERCASE_PASSWORD,
             }
@@ -147,7 +146,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             **{
                 FIRST_NAME_FIELD: TEST_FIRST_NAME,
                 LAST_NAME_FIELD: TEST_LAST_NAME,
-                EMAIL_FIELD: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
                 NEW_PASSWORD_FIELD: NO_LOWERCASE_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: NO_LOWERCASE_PASSWORD,
             }
@@ -162,7 +161,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             **{
                 FIRST_NAME_FIELD: TEST_FIRST_NAME,
                 LAST_NAME_FIELD: TEST_LAST_NAME,
-                EMAIL_FIELD: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
                 NEW_PASSWORD_FIELD: NO_NUMERIC_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: NO_NUMERIC_PASSWORD,
             }
@@ -177,7 +176,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             **{
                 FIRST_NAME_FIELD: TEST_FIRST_NAME,
                 LAST_NAME_FIELD: TEST_LAST_NAME,
-                EMAIL_FIELD: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
                 NEW_PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: NO_SPECIAL_CHAR_PASSWORD,
             },
@@ -190,7 +189,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
         """Test case for UpdateAccountForm with wrong password."""
         form = self.create_form_with_instance(
             **{
-                EMAIL_FIELD: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
                 OLD_PASSWORD_FIELD: WRONG_LOGIN_PASSWORD,
                 NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
             },
@@ -204,7 +203,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
         form = self.create_form_with_instance(
             **{
                 OLD_PASSWORD_FIELD: EMPTY_FIELD,
-                EMAIL_FIELD: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
             },
         )
         self.assert_form_error_message(
@@ -215,7 +214,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
         """Test case for UpdateAccountForm with no new password."""
         form = self.create_form_with_instance(
             **{
-                EMAIL_FIELD: TEST_EMAIL_2,
+                EMAIL_FIELD: TEST_EMAIL,
                 NEW_PASSWORD_FIELD: EMPTY_FIELD,
             },
         )

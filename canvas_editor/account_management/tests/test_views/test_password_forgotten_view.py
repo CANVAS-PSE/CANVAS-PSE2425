@@ -9,8 +9,8 @@ from account_management.tests.test_views.parameterized_view_test_mixin import (
 from canvas import path_dict, view_name_dict
 from canvas.test_constants import (
     EMAIL_FIELD,
+    NOT_EXISTING_EMAIL,
     SECURE_PASSWORD,
-    TEST2_EMAIL,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
@@ -77,7 +77,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.password_forgotten_url,
-            {EMAIL_FIELD: TEST2_EMAIL},
+            {EMAIL_FIELD: NOT_EXISTING_EMAIL},
         )
 
         self.assertEqual(response.status_code, 200)

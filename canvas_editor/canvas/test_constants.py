@@ -3,9 +3,33 @@
 TEST_USERNAME = "testuser"
 TEST_PASSWORD = "testpassword"
 TEST_PROJECT_DESCRIPTION = "Test project description"
-TEST_PROJECT_NAME = "testProject"
+TEST_PROJECT_NAME = "test Project"
 TEST_EMAIL = "testuser@example.com"
 SECURE_PASSWORD = "SecurePass123!"
+
+# Field names
+DELETE_PICTURE_FIELD = "delete_picture"
+PROFILE_PIC_FIELD = "profile_picture"
+EMAIL_FIELD = "email"
+NEW_PASSWORD_FIELD = "new_password"
+PASSWORD_CONFIRMATION_FIELD = "password_confirmation"
+PASSWORD_FIELD = "password"
+OLD_PASSWORD_FIELD = "old_password"
+FIRST_NAME_FIELD = "first_name"
+LAST_NAME_FIELD = "last_name"
+EMPTY_FIELD = ""
+WHITESPACE_FIELD = " "
+DELETE_PIC_FIELD = "delete_picture"
+PROJECT_NAME_FIELD = "project_name"
+PREVIEW_FIELD = "preview"
+NAME_FIELD = "name"
+DESCRIPTION_FIELD = "description"
+OWNER_FIELD = "owner"
+POSITION_X_FIELD = "position_x"
+FILE_FIELD = "file"
+JOB_IDS_FIELD = "jobIDs"
+JOB_ID_FIELD = "jobID"
+
 # Constant
 
 # Constants for testing account management features in a Canvas project
@@ -25,24 +49,14 @@ MISMATCHED_BUT_CORRECT_PASSWORD_2 = "NewSecurePassword123!!!"
 WRONG_LOGIN_PASSWORD = "WrongPassword123!"
 TEST_FIRST_NAME = "test_first_name"
 TEST_LAST_NAME = "test_last_name"
-TEST2_FIRST_NAME = "test2_first_name"
-TEST2_LAST_NAME = "test2_last_name"
 TEST2_EMAIL = "test2@mail.de"
 MAX_EMAIL = "max@mail.de"
-TEST3_EMAIL = "test3@example.com"
-NEW_TEST_EMAIL = "new_test@mail.de"
 NEW_TEST_FIRST_NAME = "new_first_name"
 NEW_TEST_LAST_NAME = "new_last_name"
-NEW_TEST_PASSWORD = "testpassword"
 
 IS_OPENID_USER = "is_openid_user"
 OPENID_PROVIDER_FIELD = "google"
-
-TEST_EMAIL_2 = "test@mail.de"
-TEST_EMAIL_3 = "test2@mail.de"
-NEW_FIRST_NAME = "new_first_name"
-NEW_LAST_NAME = "new_last_name"
-NEW_EMAIL = "new_test@mail.de"
+NOT_EXISTING_EMAIL = "test2@mail.de"
 TEST_FIRST_NAME_2 = "test2_first_name"
 TEST_LAST_NAME_2 = "test2_last_name"
 
@@ -55,30 +69,16 @@ OLD_PROFILE_PICTURE_SURFIX = "old_profile_picture"
 NEW_PROFILE_PICTURE_JPG = "new_profile_picture.jpg"
 NEW_PROFILE_PICTURE_SURFIX = "new_profile_picture"
 PROFILE_PIC_SURFIX = "profile_picture"
-DELETE_PICTURE_FIELD = "delete_picture"
+
 CHECKBOX_TRUE = "1"
 CHECKBOX_FALSE = "0"
-PROFILE_PIC_FIELD = "profile_picture"
+
 FIRST_NAME_TEST_ENVIRONMENT = "first_name"
 LAST_NAME_TEST_ENVIRONMENT = "last_name"
 
-# Form field names
-EMAIL_FIELD = "email"
-NEW_PASSWORD_FIELD = "new_password"
-PASSWORD_CONFIRMATION_FIELD = "password_confirmation"
-PASSWORD_FIELD = "password"
-OLD_PASSWORD_FIELD = "old_password"
-FIRST_NAME_FIELD = "first_name"
-LAST_NAME_FIELD = "last_name"
-EMPTY_FIELD = ""
-WHITESPACE_FIELD = " "
-DELETE_PIC_FIELD = "delete_picture"
 
 # Constants for editor
 CONTENT_DISPOSITION_HEADER = "Content-Disposition"
-# Field names
-PROJECT_NAME_FIELD = "project_name"
-PREVIEW_FIELD = "preview"
 
 
 # Constants for testing HDF5 management features in a Canvas project
@@ -100,7 +100,6 @@ POSITION_COORDINATE_Z = 2
 CURVATURE_DEFAULT = 0.0
 
 # Constants for project_managment tests
-USERNAME_PROJECT_PAGE_TEST = "testuser"
 TEST_HELIOSTAT_NAME = "Heliostat"
 TEST_LIGHT_SOURCE_NAME = "Light source"
 TEST_RECEIVER_NAME = "Receiver"
@@ -165,20 +164,13 @@ LIGHT_SOURCE_DISTRIBUTION_TYPE = "normal"
 LIGHT_SOURCE_MEAN = 0
 LIGHT_SOURCE_COVARIANCE = 4.3681e-06
 
-# Field names
-NAME_FIELD = "name"
-DESCRIPTION_FIELD = "description"
-OWNER_FIELD = "owner"
-POSITION_X_FIELD = "position_x"
-FILE_FIELD = "file"
 
 # Constants for job interface tests
 JOB_INTERF_TEST_USERNAME = "testuser"
 JOB_INTERF_TEST_PASSWORD = "SecurePass123!"
 JOB_INTERF_TEST_PROJECT_NAME = "Test project"
 JOB_INTERF_TEST_PROJECT_DESCRIPTION = "Test project description"
-JOB_IDS_FIELD = "jobIDs"
-JOB_ID_FIELD = "jobID"
+
 STATUS = "status"
 PROGRESS = "progress"
 FINISHED = "Finished"

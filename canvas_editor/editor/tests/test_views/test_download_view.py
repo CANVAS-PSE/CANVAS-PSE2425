@@ -63,7 +63,8 @@ class DownloadViewTest(TestCase):
         # assert that response is a file response containing a hdf5 file
         self.assertTrue(response.has_header("Content-Disposition"))
         self.assertIn(
-            'attachment; filename="testProject.h5"', response["Content-Disposition"]
+            f'attachment; filename="{TEST_PROJECT_NAME}.h5"',
+            response["Content-Disposition"],
         )
 
         downloaded_hdf5_bytes = b"".join(response.streaming_content)

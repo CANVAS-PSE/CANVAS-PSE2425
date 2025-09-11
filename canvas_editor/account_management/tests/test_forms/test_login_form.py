@@ -9,8 +9,8 @@ from canvas.test_constants import (
     NO_SPECIAL_CHAR_PASSWORD,
     PASSWORD_FIELD,
     SECURE_PASSWORD,
-    TEST_EMAIL_2,
-    TEST_EMAIL_3,
+    TEST_EMAIL,
+    NOT_EXISTING_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
 )
@@ -23,17 +23,17 @@ class LoginFormTest(FormTestMixin, TestCase):
 
     form_class = LoginForm
     default_data = {
-        EMAIL_FIELD: TEST_EMAIL_2,
+        EMAIL_FIELD: TEST_EMAIL,
         PASSWORD_FIELD: SECURE_PASSWORD,
     }
 
     def setUp(self):
         """Set up a test user for the tests."""
         self.user = User.objects.create_user(
-            username=TEST_EMAIL_2,
+            username=TEST_EMAIL,
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
-            email=TEST_EMAIL_2,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
         )
 
@@ -57,7 +57,7 @@ class LoginFormTest(FormTestMixin, TestCase):
         """Test case for LoginForm with not existing email."""
         form = self.create_form(
             **{
-                EMAIL_FIELD: TEST_EMAIL_3,
+                EMAIL_FIELD: NOT_EXISTING_EMAIL,
             }
         )
         self.assert_form_error_message(
