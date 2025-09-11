@@ -14,7 +14,7 @@ get_user_info_view = "get_user_info"
 projects_view = "projects"
 invalid_token_view = "invalid_token"
 invalid_uid_view = "invalid_uid"
-editor_view = "editor"
+editor_view = "editor"  # also used in edito
 test_project_view = "test_project"
 receiver_detail_view = "receiver_detail"
 project_list_view = "project_list"
@@ -24,6 +24,8 @@ heliostat_detail_view = "heliostat_detail"
 # Autosave api
 
 # editor
+download_view = "download"
+upload_view = "upload"
 
 # job interface
 create_new_job_view = "createNewJob"

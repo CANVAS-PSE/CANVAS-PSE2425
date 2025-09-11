@@ -35,3 +35,7 @@ user_1_profile_picture = "users/1/custom.jpg"
 project_management_projects_template = "project_management/projects.html"
 """Path to the projects template."""
 hdf5_management_test_scenario_template = "hdf5_management/testScenarios/testScenario.h5"
+
+
+# Constants for editor
+empty_editor_image = "static/img/emptyEditor.png"

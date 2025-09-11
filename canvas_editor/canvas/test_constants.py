@@ -1,7 +1,15 @@
+# Common constants for tests
+
+TEST_USERNAME = "testuser"
+TEST_PASSWORD = "testpassword"
+TEST_PROJECT_DESCRIPTION = "Test project description"
+TEST_PROJECT_NAME = "testProject"
+
+
 # Constants for testing account management features in a Canvas project
 
 TEST_EMAIL = "testuser@example.com"
-TEST_USERNAME = "testuser"
+
 SECURE_PASSWORD = "SecurePass123!"
 TOO_SHORT_PASSWORD = "Save-1"
 TEST_PASSWORD = "test"
@@ -39,8 +47,7 @@ NEW_EMAIL = "new_test@mail.de"
 TEST_FIRST_NAME_2 = "test2_first_name"
 TEST_LAST_NAME_2 = "test2_last_name"
 
-TEST_PROJECT_DESCRIPTION = "Test project description"
-TEST_PROJECT_NAME = "test_project"
+
 TEST_PROJECT_NAME_2 = "test_project_2"
 TEST_PROFILE_PICTURE = "profile_picture.jpg"
 OLD_PROFILE_PICTURE_JPG = "old_profile_picture.jpg"
@@ -67,23 +74,12 @@ LAST_NAME_FIELD = "last_name"
 EMPTY_FIELD = ""
 WHITESPACE_FIELD = " "
 
-# Constants for teseting project management features in a Canvas project
+# Constants for editor
+CONTENT_DISPOSITION_HEADER = "Content-Disposition"
+# Field names
+PROJECT_NAME_FIELD = "project_name"
+PREVIEW_FIELD = "preview"
 
-HELIOSTAT_NAME = "Heliostat 1"
-LIGHT_SOURCE_NAME = "Light Source"
-RECEIVER_NAME = "Receiver 1"
-NEW_HELIOSTAT_NAME = "New Heliostat"
-NEW_LIGHT_SOURCE_NAME = "New Light Source"
-NEW_RECEIVER_NAME = "New Receiver"
-HELIOSTAT_LIST_NAME = "heliostat_list"
-LIGHT_SOURCE_LIST_NAME = "light_source_list"
-RECEIVER_LIST_NAME = "receiver_list"
-NEW_PROJECT_NAME = "New Project"
-POSITION_COORDINATE = 42
-RECEIVER_TYPE = "ideal"
-TEST_TYPE = "test"
-TEST_NUMBER = 42
-TEST_FLOAT_NUMBER = 4.2
 
 # Constants for testing HDF5 management features in a Canvas project
 ACTUATOR_NAME = "actuator_1"
@@ -123,6 +119,24 @@ PROJECT_NAME_PROJECT_PAGE_TEST_2 = "Test_project_2"
 PROJECT_NAME_WITH_WHITESPACE = " Test project 2 "
 PROJECT_DESCRIPTION_WITH_WHITESPACE = " Test project description "
 PROJECT_NAME_DUPLICATE_NAME = "Test project 2"
+
+# Constants for teseting project management features in a Canvas project
+
+HELIOSTAT_NAME = "Heliostat 1"
+LIGHT_SOURCE_NAME = "Light Source"
+RECEIVER_NAME = "Receiver 1"
+NEW_HELIOSTAT_NAME = "New Heliostat"
+NEW_LIGHT_SOURCE_NAME = "New Light Source"
+NEW_RECEIVER_NAME = "New Receiver"
+HELIOSTAT_LIST_NAME = "heliostat_list"
+LIGHT_SOURCE_LIST_NAME = "light_source_list"
+RECEIVER_LIST_NAME = "receiver_list"
+NEW_PROJECT_NAME = "New Project"
+POSITION_COORDINATE = 42
+RECEIVER_TYPE = "ideal"
+TEST_TYPE = "test"
+TEST_NUMBER = 42
+TEST_FLOAT_NUMBER = 4.2
 
 # Heliosat default values
 HELIOSTAT_POSITION_X = 0

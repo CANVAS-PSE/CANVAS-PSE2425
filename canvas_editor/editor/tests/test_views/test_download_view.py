@@ -1,5 +1,4 @@
-from project_management.models import Heliostat, LightSource, Project, Receiver
-
+import io
 
 import h5py
 from artist.util import config_dictionary
@@ -7,20 +6,32 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-
-import io
+from canvas import view_name_dict
+from canvas.test_constants import (
+    PROJECT_NAME_FIELD,
+    TEST_PASSWORD,
+    TEST_PROJECT_DESCRIPTION,
+    TEST_PROJECT_NAME,
+    TEST_USERNAME,
+)
+from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class DownloadViewTest(TestCase):
+    """Tests for the download view."""
+
     def setUp(self):
-        self.download = reverse("download", kwargs={"project_name": "testProject"})
-        user = User.objects.create_user(username="testuser", password="testpassword")
+        """Set up a test user, log in, and create a test project with components for use in all tests."""
+        self.download = reverse(
+            view_name_dict.download_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
+        )
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         self.client = Client()
-        self.client.login(username="testuser", password="testpassword")
+        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
 
         project = Project()
-        project.name = "testProject"
-        project.description = "This is a test project."
+        project.name = TEST_PROJECT_NAME
+        project.description = TEST_PROJECT_DESCRIPTION
         project.owner = user
         project.save()
 
@@ -46,6 +57,7 @@ class DownloadViewTest(TestCase):
         light_source.save()
 
     def test_download(self):
+        """Test downloading the project as an hdf5 file."""
         response = self.client.get(self.download)
 
         # assert that response is a file response containing a hdf5 file
@@ -79,6 +91,7 @@ class DownloadViewTest(TestCase):
                 self.assertEqual(42, light_sources[light_source]["number_of_rays"][()])
 
     def test_download_logged_out(self):
+        """Test that downloading the project when logged out redirects to login page."""
         self.client.logout()
         response = self.client.get(self.download)
         self.assertEqual(response.status_code, 302)
