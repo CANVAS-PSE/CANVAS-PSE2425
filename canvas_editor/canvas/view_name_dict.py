@@ -26,6 +26,7 @@ heliostat_detail_view = "heliostat_detail"
 # editor
 
 # job interface
+create_new_job_view = "createNewJob"
 
 # project management
 projects_view = "projects"
@@ -36,3 +37,4 @@ duplicate_project_view = "duplicateProject"
 share_project_view = "shareProject"
 shared_projects_view = "sharedProjects"
 projects_view = "projects"
+job_status_view = "jobStatus"
