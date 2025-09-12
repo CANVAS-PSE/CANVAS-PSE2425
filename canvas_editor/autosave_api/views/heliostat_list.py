@@ -1,16 +1,13 @@
-from autosave_api.serializers import HeliostatSerializer
-from project_management.models import Heliostat, Project
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import HeliostatSerializer
+from project_management.models import Heliostat, Project
+
 
 class HeliostatList(generics.ListCreateAPIView):
-    """
-    Creates a view to list all heliostats and create new ones.
-    """
+    """Creates a view to list all heliostats and create new ones."""
 
     serializer_class = HeliostatSerializer
 

@@ -1,16 +1,13 @@
-from autosave_api.serializers import SettingsSerializer
-from project_management.models import Settings
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import SettingsSerializer
+from project_management.models import Settings
+
 
 class SettingsDetail(generics.RetrieveUpdateAPIView):
-    """
-    Creates a view to list and update all settings.
-    """
+    """Creates a view to list and update all settings."""
 
     serializer_class = SettingsSerializer
 
@@ -26,7 +23,5 @@ class SettingsDetail(generics.RetrieveUpdateAPIView):
         return obj
 
     def get_queryset(self):
-        """
-        Return the settings for the project of the user.
-        """
+        """Return the settings for the project of the user."""
         return Settings.objects.filter(project__owner=self.request.user)

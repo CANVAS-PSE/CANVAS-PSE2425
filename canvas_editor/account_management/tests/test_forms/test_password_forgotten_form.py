@@ -1,9 +1,9 @@
+from django.test import TestCase
+
 from account_management.forms.password_forgotten_form import PasswordForgottenForm
 from account_management.models import User
 from account_management.tests.test_constants import SECURE_PASSWORD
-
-
-from django.test import TestCase
+from canvas import message_dict
 
 
 class PasswordForgottenFormTest(TestCase):
@@ -40,5 +40,5 @@ class PasswordForgottenFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["email"],
-            ["This email address is not registered."],
+            [message_dict.email_not_registered_text],
         )

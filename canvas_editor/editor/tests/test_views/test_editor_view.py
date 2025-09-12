@@ -1,9 +1,9 @@
-from project_management.models import Project
-
-
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
+
+from canvas import view_name_dict
+from project_management.models import Project
 
 
 class EditorViewTest(TestCase):
@@ -34,7 +34,9 @@ class EditorViewTest(TestCase):
         project.save()
 
     def test_get_method(self):
-        self.editor = reverse("editor", kwargs={"project_name": "testProject"})
+        self.editor = reverse(
+            view_name_dict.editor_view, kwargs={"project_name": "testProject"}
+        )
         response = self.client.get(self.editor)
 
         self.assertEqual(response.status_code, 200)
@@ -42,6 +44,8 @@ class EditorViewTest(TestCase):
 
     def test_get_method_logged_out(self):
         self.client.logout()
-        self.editor = reverse("editor", kwargs={"project_name": "testProject"})
+        self.editor = reverse(
+            view_name_dict.editor_view, kwargs={"project_name": "testProject"}
+        )
         response = self.client.get(self.editor)
         self.assertEqual(response.status_code, 302)

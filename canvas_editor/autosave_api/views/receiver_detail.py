@@ -1,16 +1,13 @@
-from autosave_api.serializers import ReceiverSerializer
-from project_management.models import Receiver
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import ReceiverSerializer
+from project_management.models import Receiver
+
 
 class ReceiverDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Creates a view of a specific receiver to retrieve, edit or delete it.
-    """
+    """Creates a view of a specific receiver to retrieve, edit or delete it."""
 
     serializer_class = ReceiverSerializer
 

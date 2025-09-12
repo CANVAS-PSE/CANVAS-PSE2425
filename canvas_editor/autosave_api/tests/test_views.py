@@ -10,6 +10,7 @@ from autosave_api.serializers import (
     LightSourceSerializer,
     ReceiverSerializer,
 )
+from canvas import view_name_dict
 from project_management.models import (
     Heliostat,
     LightSource,
@@ -33,7 +34,7 @@ class APITestCase(TestCase):
 
     def test_create_project(self):
         """Test creating a new project via the API."""
-        url = reverse("project_list")
+        url = reverse(view_name_dict.project_list_view)
         data = {"name": "New Project"}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -41,7 +42,7 @@ class APITestCase(TestCase):
 
     def test_get_projects(self):
         """Test retrieving the list of projects for the logged-in user."""
-        url = reverse("project_list")
+        url = reverse(view_name_dict.project_list_view)
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -49,7 +50,9 @@ class APITestCase(TestCase):
 
     def test_get_project_detail(self):
         """Test retrieving the details of a specific project."""
-        url = reverse("project_detail", kwargs={"pk": self.project.id})
+        url = reverse(
+            view_name_dict.project_detail_list_view, kwargs={"pk": self.project.id}
+        )
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.project.name)
@@ -67,7 +70,7 @@ class APITestCase(TestCase):
         heliostat.kinematic_type = "test"
         heliostat.save()
         url = reverse(
-            "heliostat_detail",
+            view_name_dict.heliostat_detail_view,
             kwargs={"project_id": self.project.id, "pk": heliostat.id},
         )
         response = self.client.get(url, format="json")
@@ -93,7 +96,8 @@ class APITestCase(TestCase):
         receiver.resolution_u = 42
         receiver.save()
         url = reverse(
-            "receiver_detail", kwargs={"project_id": self.project.id, "pk": receiver.id}
+            view_name_dict.receiver_detail_view,
+            kwargs={"project_id": self.project.id, "pk": receiver.id},
         )
         response = self.client.get(url, format="json")
 
@@ -112,7 +116,7 @@ class APITestCase(TestCase):
         light_source.save()
 
         url = reverse(
-            "light_source_detail",
+            view_name_dict.light_source_detail_view,
             kwargs={"project_id": self.project.id, "pk": light_source.id},
         )
         response = self.client.get(url, format="json")
@@ -122,7 +126,9 @@ class APITestCase(TestCase):
     def test_update_settings(self):
         """Test updating the settings for a project."""
         settings = Settings.objects.get(project=self.project)
-        url = reverse("settings_detail", kwargs={"project_id": self.project.id})
+        url = reverse(
+            view_name_dict.settings_detail_view, kwargs={"project_id": self.project.id}
+        )
         data = {"shadows": False, "fog": False}
         response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -143,9 +149,9 @@ class APITestCase(TestCase):
 
     @parameterized.expand(
         [
-            ("heliostat_list", "New Heliostat", Heliostat),
-            ("receiver_list", "New Receiver", Receiver),
-            ("light_source_list", "New Light source", LightSource),
+            (view_name_dict.heliostat_list_view, "New Heliostat", Heliostat),
+            (view_name_dict.receiver_list_view, "New Receiver", Receiver),
+            (view_name_dict.light_source_list_view, "New Light source", LightSource),
         ]
     )
     def test_create_object(self, url_list_name, data_name, model_class):
@@ -163,9 +169,9 @@ class APITestCase(TestCase):
 
     @parameterized.expand(
         [
-            (Heliostat, "Heliostat 1", "heliostat_list"),
-            (Receiver, "Receiver 1", "receiver_list"),
-            (LightSource, "Light source 1", "light_source_list"),
+            (Heliostat, "Heliostat 1", view_name_dict.heliostat_list_view),
+            (Receiver, "Receiver 1", view_name_dict.receiver_list_view),
+            (LightSource, "Light source 1", view_name_dict.light_source_list_view),
         ]
     )
     def test_get_objects(self, model_class, model_name, url_list_name):

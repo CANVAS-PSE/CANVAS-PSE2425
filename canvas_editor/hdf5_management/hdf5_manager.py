@@ -57,9 +57,7 @@ class HDF5Manager:
     # Returns the default value if the dataset is None or cannot be converted.
     @staticmethod
     def safe_val(x, default=0.0):
-        """
-        Safely extract the value from a dataset, returning a default if None or invalid.
-        """
+        """Safely extract the value from a dataset, returning a default if None or invalid."""
         if x is None:
             return default
         try:
@@ -78,7 +76,6 @@ class HDF5Manager:
             The project to be converted to an HDF5 file.
 
         """
-
         # Set up logger.
         set_logger_config()
 
@@ -122,14 +119,11 @@ class HDF5Manager:
         scenario_generator.generate_scenario()
 
     def _pick_device(self) -> torch.device:
-        """
-        Pick the device for tensor operations, either CPU or CUDA if available.
-        """
+        """Pick the device for tensor operations, either CPU or CUDA if available."""
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def _prepare_paths(self, user: User, project: Project) -> pathlib.Path:
         """Prepare the paths for saving the scenario file."""
-
         scenario_dir = pathlib.Path("./hdf5_management/scenarios")
         # Check if scenario folder exists
         os.makedirs(scenario_dir, exist_ok=True)
@@ -151,9 +145,7 @@ class HDF5Manager:
     def _create_surface_prototype_from_stral(
         self, device: torch.device
     ) -> SurfacePrototypeConfig:
-        """
-        Build the surface prototype configuration from a STRAL file.
-        """
+        """Build the surface prototype configuration from a STRAL file."""
         # Set CANVAS_ROOT
         canvas_root = settings.BASE_DIR
 
@@ -203,9 +195,7 @@ class HDF5Manager:
         return surface_prototype_config
 
     def _create_prototype_config(self, device: torch.device) -> PrototypeConfig:
-        """
-        Build the prototype configuration for the project.
-        """
+        """Build the prototype configuration for the project."""
 
         # Build the surface prototype from the STRAL file.
         surface_prototype_config = self._create_surface_prototype_from_stral(
@@ -251,9 +241,7 @@ class HDF5Manager:
         return prototype_config
 
     def _create_target_area_config(self, project: Project, device: torch.device):
-        """
-        Build the target area configuration for the project.
-        """
+        """Build the target area configuration for the project."""
 
         # Create list for target area (receiver) configs
         target_area_config_list = []
@@ -288,9 +276,7 @@ class HDF5Manager:
         return target_area_list_config
 
     def _create_light_source_config(self, project: Project, device: torch.device):
-        """
-        Build the light source configuration for the project.
-        """
+        """Build the light source configuration for the project."""
 
         # Create a list of light source configs
         light_source_list = []
@@ -314,9 +300,7 @@ class HDF5Manager:
         return light_source_list_config
 
     def _create_heliostat_config(self, project: Project, device: torch.device):
-        """
-        Build the heliostat configuration for the project.
-        """
+        """Build the heliostat configuration for the project."""
 
         # Note, not all individual heliostat parameters are provided here
 
@@ -375,9 +359,7 @@ class HDF5Manager:
             )
 
     def _create_heliostats_from_hdf5_file(self, h5f: h5py.File, new_project: Project):
-        """
-        Create heliostats from a HDF5 file.
-        """
+        """Create heliostats from a HDF5 file."""
 
         heliostats_group: h5py.Group = h5f.get(config_dictionary.heliostat_key)
         if heliostats_group is not None:
@@ -400,9 +382,7 @@ class HDF5Manager:
     def _create_light_sources_from_hdf5_file(
         self, h5f: h5py.File, new_project: Project
     ):
-        """
-        Create light sources from a HDF5 file.
-        """
+        """Create light sources from a HDF5 file."""
         light_sources_group: h5py.Group = h5f.get(config_dictionary.light_source_key)
         if light_sources_group is not None:
             for light_source_object in light_sources_group:
@@ -434,9 +414,7 @@ class HDF5Manager:
                 )
 
     def _create_receivers_from_hdf5_file(self, h5f: h5py.File, new_project: Project):
-        """
-        Create receivers from a HDF5 file.
-        """
+        """Create receivers from a HDF5 file."""
         receivers_group: h5py.Group = h5f.get(config_dictionary.target_area_key)
         if receivers_group is not None:
             for receiver_object in receivers_group:

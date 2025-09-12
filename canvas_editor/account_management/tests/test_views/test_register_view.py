@@ -9,7 +9,7 @@ from account_management.tests.test_constants import (
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
-from canvas import view_name_dict
+from canvas import message_dict, view_name_dict
 
 
 class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
@@ -98,7 +98,5 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "account_management/register.html")
-        self.assertContains(
-            response, "The passwords you entered do not match. Please try again."
-        )
+        self.assertContains(response, message_dict.password_match_criterium_text)
         self.assertTrue(response.context["form"].errors)

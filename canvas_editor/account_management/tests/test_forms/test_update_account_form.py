@@ -1,3 +1,6 @@
+from allauth.socialaccount.models import SocialAccount
+from django.test import TestCase
+
 from account_management.forms.update_account_form import UpdateAccountForm
 from account_management.models import User
 from account_management.tests.test_constants import (
@@ -11,10 +14,7 @@ from account_management.tests.test_constants import (
     UPDATED_PASSWORD,
     WRONG_LOGIN_PASSWORD,
 )
-
-
-from allauth.socialaccount.models import SocialAccount
-from django.test import TestCase
+from canvas import message_dict
 
 
 class UpdateAccountFormTest(TestCase):
@@ -74,7 +74,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["email"],
-            ["This email address is already in use. Please try another."],
+            [message_dict.email_already_in_use_text],
         )
 
     def test_update_account_form_openID_account(self):
@@ -108,7 +108,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password_confirmation"],
-            ["The passwords you entered do not match. Please try again."],
+            [message_dict.password_match_criterium_text],
         )
 
     def test_update_account_form_password_too_short(self):
@@ -127,7 +127,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must be at least 8 characters long."],
+            [message_dict.password_length_criterium_text],
         )
 
     def test_update_account_form_password_no_uppercase(self):
@@ -146,7 +146,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must contain at least one uppercase letter."],
+            [message_dict.password_uppercase_criterium_text],
         )
 
     def test_update_account_form_password_no_lowercase(self):
@@ -165,7 +165,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must contain at least one lowercase letter."],
+            [message_dict.password_lowercase_criterium_text],
         )
 
     def test_update_account_form_password_no_number(self):
@@ -184,7 +184,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must contain at least one digit."],
+            [message_dict.password_digit_criterium_text],
         )
 
     def test_update_account_form_password_no_special_character(self):
@@ -203,9 +203,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            [
-                "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
-            ],
+            [message_dict.password_special_char_criterium_text],
         )
 
     def test_update_account_form_wrong_password(self):
@@ -223,7 +221,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["old_password"],
-            ["The password you entered is incorrect."],
+            [message_dict.incorrect_password_text],
         )
 
     def test_update_account_form_no_old_password(self):
@@ -241,7 +239,7 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["old_password"],
-            ["Please enter your current password."],
+            [message_dict.enter_current_password_text],
         )
 
     def test_update_account_form_no_new_password(self):
@@ -258,5 +256,5 @@ class UpdateAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Please enter a new password."],
+            [message_dict.enter_new_password_text],
         )

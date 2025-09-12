@@ -1,3 +1,5 @@
+from django.test import TestCase
+
 from account_management.forms.password_reset_form import PasswordResetForm
 from account_management.models import User
 from account_management.tests.test_constants import (
@@ -10,9 +12,7 @@ from account_management.tests.test_constants import (
     TOO_SHORT_PASSWORD,
     UPDATED_PASSWORD,
 )
-
-
-from django.test import TestCase
+from canvas import message_dict
 
 
 class PasswordResetFormTest(TestCase):
@@ -51,7 +51,7 @@ class PasswordResetFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password_confirmation"],
-            ["The passwords you entered do not match. Please try again."],
+            [message_dict.password_match_criterium_text],
         )
 
     def test_password_reset_form_password_too_short(self):
@@ -65,7 +65,7 @@ class PasswordResetFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must be at least 8 characters long."],
+            [message_dict.password_length_criterium_text],
         )
 
     def test_password_reset_form_password_no_uppercase(self):
@@ -79,7 +79,7 @@ class PasswordResetFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must contain at least one uppercase letter."],
+            [message_dict.password_uppercase_criterium_text],
         )
 
     def test_password_reset_form_password_no_lowercase(self):
@@ -93,7 +93,7 @@ class PasswordResetFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must contain at least one lowercase letter."],
+            [message_dict.password_lowercase_criterium_text],
         )
 
     def test_password_reset_form_password_no_number(self):
@@ -107,7 +107,7 @@ class PasswordResetFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            ["Password must contain at least one digit."],
+            [message_dict.password_digit_criterium_text],
         )
 
     def test_password_reset_form_password_no_special_character(self):
@@ -121,7 +121,5 @@ class PasswordResetFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["new_password"],
-            [
-                "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
-            ],
+            [message_dict.password_special_char_criterium_text],
         )

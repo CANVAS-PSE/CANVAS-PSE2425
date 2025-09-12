@@ -1,12 +1,12 @@
+from django.test import TestCase
+
 from account_management.forms.login_form import LoginForm
 from account_management.models import User
 from account_management.tests.test_constants import (
     NO_SPECIAL_CHAR_PASSWORD,
     SECURE_PASSWORD,
 )
-
-
-from django.test import TestCase
+from canvas import message_dict
 
 
 class LoginFormTest(TestCase):
@@ -46,7 +46,7 @@ class LoginFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["email"],
-            ["This email address is not registered."],
+            [message_dict.email_not_registered_text],
         )
 
     def test_login_form_wrong_password(self):
@@ -60,5 +60,5 @@ class LoginFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            ["The password you entered is incorrect."],
+            [message_dict.incorrect_password_text],
         )

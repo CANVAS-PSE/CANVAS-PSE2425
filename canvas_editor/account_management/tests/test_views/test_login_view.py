@@ -6,6 +6,7 @@ from account_management.tests.test_constants import SECURE_PASSWORD
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
+from canvas import message_dict, view_name_dict
 
 
 class LoginViewTest(ParameterizedViewTestMixin, TestCase):
@@ -26,8 +27,8 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         Creates a test user for login tests.
         """
         self.client = Client()
-        self.login_url = reverse("login")
-        self.projects_url = reverse("projects")
+        self.login_url = reverse(view_name_dict.login_view)
+        self.projects_url = reverse(view_name_dict.projects_view)
         self.user = User.objects.create_user(
             first_name="test_first_name",
             last_name="test_last_name",
@@ -89,4 +90,4 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "account_management/login.html")
         self.assertTrue(response.context["form"].errors)
-        self.assertContains(response, "This email address is not registered.")
+        self.assertContains(response, message_dict.email_not_registered_text)

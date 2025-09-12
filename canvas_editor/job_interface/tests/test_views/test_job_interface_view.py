@@ -1,14 +1,13 @@
-from job_interface.models import Job
-from project_management.models import Heliostat, LightSource, Project, Receiver
-
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-
-from datetime import timedelta
+from canvas import view_name_dict
+from job_interface.models import Job
+from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class JobInterfaceViewTest(TestCase):
@@ -27,12 +26,14 @@ class JobInterfaceViewTest(TestCase):
         self.client.login(username="testuser", password="testpassword")
 
         # urls
-        self.createNewJob_url = reverse("createNewJob", args=[self.project.pk])
+        self.createNewJob_url = reverse(
+            view_name_dict.create_new_job_view, args=[self.project.pk]
+        )
         self.getJobStatus_url = reverse(
-            "jobStatus", args=[self.project.pk, self.job.pk]
+            view_name_dict.job_status_view, args=[self.project.pk, self.job.pk]
         )
 
-    def test_createNewJob_POST(self):
+    def test_create_new_job_post(self):
         response = self.client.post(self.createNewJob_url)
 
         self.assertEqual(response.status_code, 200)
@@ -44,28 +45,28 @@ class JobInterfaceViewTest(TestCase):
         self.assertEqual(Job.objects.last().owner, self.user)
         self.assertEqual(Job.objects.last().project, self.project)
 
-    def test_createNewJob_POST_logged_out(self):
+    def test_create_new_job_post_logged_out(self):
         self.client.logout()
 
         response = self.client.post(self.createNewJob_url)
 
         self.assertEqual(response.status_code, 302)
 
-    def test_createNewJob_GET(self):
+    def test_create_new_job_get(self):
         response = self.client.get(self.createNewJob_url)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["jobIDs"]), Job.objects.count())
         self.assertEqual(response.json()["jobIDs"][0], Job.objects.first().pk)
 
-    def test_createNewJob_GET_logged_out(self):
+    def test_create_new_job_get_logged_out(self):
         self.client.logout()
 
         response = self.client.get(self.createNewJob_url)
 
         self.assertEqual(response.status_code, 302)
 
-    def test_getJobStatus_GET_creatingHDF5(self):
+    def test_get_job_status_get_creating_hdf5(self):
         self.job.starting_time = timezone.now()
 
         response = self.client.get(self.getJobStatus_url)
@@ -80,7 +81,7 @@ class JobInterfaceViewTest(TestCase):
         )
         self.assertIsNone(response.json()["result"])
 
-    def test_getJobStatus_GET_aligningHeliostats(self):
+    def test_get_job_status_get_aligning_heliostats(self):
         self.job.starting_time = timezone.now() - timedelta(minutes=2.5)
         self.job.save()
 
@@ -96,7 +97,7 @@ class JobInterfaceViewTest(TestCase):
         )
         self.assertIsNone(response.json()["result"])
 
-    def test_getJobStatus_GET_finished(self):
+    def test_get_job_status_get_finished(self):
         self.job.starting_time = timezone.now() - timedelta(minutes=3)
         self.job.save()
 
@@ -112,14 +113,14 @@ class JobInterfaceViewTest(TestCase):
         )
         self.assertIsNotNone(response.json()["result"])
 
-    def test_getJobStatus_GET_logged_out(self):
+    def test_get_job_status_get_logged_out(self):
         self.client.logout()
 
         response = self.client.get(self.getJobStatus_url)
 
         self.assertEqual(response.status_code, 302)
 
-    def test_getJobStatus_DELETE(self):
+    def test_get_job_status_delete(self):
         response = self.client.delete(self.getJobStatus_url)
 
         self.assertEqual(response.status_code, 200)

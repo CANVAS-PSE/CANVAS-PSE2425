@@ -7,6 +7,7 @@ from account_management.tests.test_constants import SECURE_PASSWORD
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
+from canvas import view_name_dict
 
 
 class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
@@ -33,7 +34,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
         )
-        self.password_forgotten_url = reverse("password_forgotten")
+        self.password_forgotten_url = reverse(view_name_dict.password_forgotten_view)
 
     def test_get(self):
         """
@@ -58,7 +59,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
 
     def test_post_invalid_data(self):
         """
