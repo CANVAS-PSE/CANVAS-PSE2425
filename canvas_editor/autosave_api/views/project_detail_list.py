@@ -1,16 +1,13 @@
-from autosave_api.serializers import ProjectDetailSerializer
-from project_management.models import Project
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import ProjectDetailSerializer
+from project_management.models import Project
+
 
 class ProjectDetailList(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Creates a view to list a specific project, specified by the given pk in the url, where you can also delete the project.
-    """
+    """Creates a view to list a specific project, specified by the given pk in the url, where you can also delete the project."""
 
     serializer_class = ProjectDetailSerializer
 

@@ -1,8 +1,9 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
+from django.test import TestCase
+from django.utils import timezone
+
 from job_interface.models import Job
 from project_management.models import Project
-from django.utils import timezone
 
 
 class ModelTests(TestCase):

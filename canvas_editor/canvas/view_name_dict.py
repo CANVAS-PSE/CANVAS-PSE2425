@@ -13,10 +13,24 @@ password_forgotten_view = "password_forgotten"
 get_user_info_view = "get_user_info"
 
 # Autosave api
+heliostat_detail_view = "heliostat_detail"
+heliostat_list_view = "heliostat_list"
+light_source_detail_view = "light_source_detail"
+light_source_list_view = "light_source_list"
+project_detail_list_view = "project_detail"
+project_list_view = "project_list"
+receiver_detail_view = "receiver_detail"
+receiver_list_view = "receiver_list"
+settings_detail_view = "settings_detail"
 
 # editor
+editor_view = "editor"
+editor_download_view = "download"
+editor_preview_upload_view = "upload"
 
 # job interface
+create_new_job_view = "createNewJob"
+job_status_view = "jobStatus"
 
 # project management
 projects_view = "projects"

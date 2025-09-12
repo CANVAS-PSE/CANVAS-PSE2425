@@ -1,11 +1,10 @@
-from project_management.forms.project_form import ProjectForm
-from project_management.models import Project
-
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.generic import TemplateView
+
+from project_management.forms.project_form import ProjectForm
+from project_management.models import Project
 
 
 class EditorView(LoginRequiredMixin, TemplateView):

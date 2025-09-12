@@ -1,18 +1,20 @@
-from project_management.models import Project
-
+import os
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-
-import os
+from canvas import view_name_dict
+from project_management.models import Project
 
 
 class PreviewViewTest(TestCase):
     def setUp(self):
-        self.upload = reverse("upload", kwargs={"project_name": "testProject"})
+        self.upload = reverse(
+            view_name_dict.editor_preview_upload_view,
+            kwargs={"project_name": "testProject"},
+        )
         user = User.objects.create_user(username="testuser", password="testpassword")
         self.client = Client()
         self.client.login(username="testuser", password="testpassword")

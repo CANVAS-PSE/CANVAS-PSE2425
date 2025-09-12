@@ -1,16 +1,13 @@
-from autosave_api.serializers import LightSourceSerializer
-from project_management.models import LightSource
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import LightSourceSerializer
+from project_management.models import LightSource
+
 
 class LightSourceDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Creates a view to retrieve, update or delete a specific lightsource, defined by the given pk.
-    """
+    """Creates a view to retrieve, update or delete a specific lightsource, defined by the given pk."""
 
     serializer_class = LightSourceSerializer
 

@@ -1,3 +1,5 @@
+from django.test import TestCase
+
 from account_management.forms.register_form import RegisterForm
 from account_management.models import User
 from account_management.tests.test_constants import (
@@ -9,9 +11,7 @@ from account_management.tests.test_constants import (
     SECURE_PASSWORD,
     TOO_SHORT_PASSWORD,
 )
-
-
-from django.test import TestCase
+from canvas import message_dict
 
 
 class RegisterFormTest(TestCase):
@@ -54,7 +54,7 @@ class RegisterFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["email"],
-            ["This email address is already in use. Please try another."],
+            [message_dict.email_already_in_use_text],
         )
 
     def test_register_form_passwords_not_matching(self):
@@ -71,7 +71,7 @@ class RegisterFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            ["The passwords you entered do not match. Please try again."],
+            [message_dict.password_match_criterium_text],
         )
 
     def test_register_form_password_too_short(self):
@@ -88,7 +88,7 @@ class RegisterFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            ["Password must be at least 8 characters long."],
+            [message_dict.password_length_criterium_text],
         )
 
     def test_register_form_password_no_uppercase(self):
@@ -105,7 +105,7 @@ class RegisterFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            ["Password must contain at least one uppercase letter."],
+            [message_dict.password_uppercase_criterium_text],
         )
 
     def test_register_form_password_no_lowercase(self):
@@ -122,7 +122,7 @@ class RegisterFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            ["Password must contain at least one lowercase letter."],
+            [message_dict.password_lowercase_criterium_text],
         )
 
     def test_register_form_password_no_number(self):
@@ -139,7 +139,7 @@ class RegisterFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            ["Password must contain at least one digit."],
+            [message_dict.password_digit_criterium_text],
         )
 
     def test_register_form_password_no_special_character(self):
@@ -156,7 +156,5 @@ class RegisterFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            [
-                "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
-            ],
+            [message_dict.password_special_char_criterium_text],
         )

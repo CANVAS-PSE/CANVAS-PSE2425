@@ -10,7 +10,7 @@ from PIL import Image
 
 from account_management.models import UserProfile
 from account_management.tests.test_constants import SECURE_PASSWORD, UPDATED_PASSWORD
-from canvas import path_dict
+from canvas import message_dict, path_dict, view_name_dict
 from project_management.models import Project
 
 
@@ -43,7 +43,7 @@ class UpdateAccountTest(TestCase):
             last_name="test_last_name",
         )
         self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
-        self.update_account_url = reverse("update_account")
+        self.update_account_url = reverse(view_name_dict.updata_account_view)
 
     def test_post_not_authenticated(self):
         """
@@ -136,10 +136,7 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(self.user.email, "test@mail.de")
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any(
-                "This email address is already in use. Please try another." in str(msg)
-                for msg in messages
-            )
+            any(message_dict.email_already_in_use_text in str(msg) for msg in messages)
         )
 
     def test_post_from_projects_page(self):
@@ -161,7 +158,7 @@ class UpdateAccountTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/projects/")
+        self.assertRedirects(response, reverse(view_name_dict.projects_view))
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, "new_first_name")
         self.assertEqual(self.user.last_name, "new_last_name")

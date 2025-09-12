@@ -1,16 +1,13 @@
-from autosave_api.serializers import LightSourceSerializer
-from project_management.models import LightSource, Project
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import LightSourceSerializer
+from project_management.models import LightSource, Project
+
 
 class LightSourceList(generics.ListCreateAPIView):
-    """
-    Creates a view to list all light sources or to create a new one.
-    """
+    """Creates a view to list all light sources or to create a new one."""
 
     serializer_class = LightSourceSerializer
 

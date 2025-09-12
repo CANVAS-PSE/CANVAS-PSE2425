@@ -1,12 +1,12 @@
+from django.test import TestCase
+
 from account_management.forms.delete_account_form import DeleteAccountForm
 from account_management.models import User
 from account_management.tests.test_constants import (
     SECURE_PASSWORD,
     WRONG_LOGIN_PASSWORD,
 )
-
-
-from django.test import TestCase
+from canvas import message_dict
 
 
 class DeleteAccountFormTest(TestCase):
@@ -45,5 +45,5 @@ class DeleteAccountFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["password"],
-            ["The password you entered is incorrect."],
+            [message_dict.incorrect_password_text],
         )

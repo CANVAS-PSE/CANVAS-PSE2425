@@ -1,17 +1,16 @@
 from rest_framework import serializers
+
 from project_management.models import (
-    Project,
     Heliostat,
-    Receiver,
     LightSource,
+    Project,
+    Receiver,
     Settings,
 )
 
 
 class HeliostatSerializer(serializers.ModelSerializer):
-    """
-    Serializer to convert a heliostat into JSON or to convert JSON into a heliostat.
-    """
+    """Serializer to convert a heliostat into JSON or to convert JSON into a heliostat."""
 
     class Meta:
         model = Heliostat
@@ -19,9 +18,7 @@ class HeliostatSerializer(serializers.ModelSerializer):
 
 
 class ReceiverSerializer(serializers.ModelSerializer):
-    """
-    Serializer to convert a receiver into JSON or to convert JSON into a receiver.
-    """
+    """Serializer to convert a receiver into JSON or to convert JSON into a receiver."""
 
     class Meta:
         model = Receiver
@@ -29,9 +26,7 @@ class ReceiverSerializer(serializers.ModelSerializer):
 
 
 class LightSourceSerializer(serializers.ModelSerializer):
-    """
-    Serializer to convert a light source into JSON or to convert JSON into a light source.
-    """
+    """Serializer to convert a light source into JSON or to convert JSON into a light source."""
 
     class Meta:
         model = LightSource
@@ -39,9 +34,7 @@ class LightSourceSerializer(serializers.ModelSerializer):
 
 
 class SettingsSerializer(serializers.ModelSerializer):
-    """
-    Serializer to convert a settings object into JSON or to convert JSON into a settings object.
-    """
+    """Serializer to convert a settings object into JSON or to convert JSON into a settings object."""
 
     class Meta:
         model = Settings
@@ -49,9 +42,7 @@ class SettingsSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    """
-    Serializer to convert a project into JSON only containing name and id.
-    """
+    """Serializer to convert a project into JSON only containing name and id."""
 
     class Meta:
         model = Project
@@ -59,9 +50,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
-    """
-    Serializer to convert a project into JSON, containing all the linked foreign fields, or to convert JSON into a project.
-    """
+    """Serializer to convert a project into JSON, containing all the linked foreign fields, or to convert JSON into a project."""
 
     heliostats = HeliostatSerializer(many=True, read_only=True)
     receivers = ReceiverSerializer(many=True, read_only=True)

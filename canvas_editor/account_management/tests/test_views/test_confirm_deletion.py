@@ -8,6 +8,7 @@ from account_management.tests.test_constants import SECURE_PASSWORD
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
+from canvas import view_name_dict
 
 
 class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
@@ -37,7 +38,7 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
         self.confirm_deletion_url = reverse(
-            "confirm_deletion", args=[self.uid, self.token]
+            view_name_dict.confirm_deletion_view, args=[self.uid, self.token]
         )
 
     def test_get(self):
@@ -69,7 +70,9 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         Asserts that the response is a redirect to the invalid link page.
         """
         response = self.client.post(
-            reverse("confirm_deletion", args=[self.uid, "invalid_token"])
+            reverse(
+                view_name_dict.confirm_deletion_view, args=[self.uid, "invalid_token"]
+            )
         )
 
         self.assertEqual(response.status_code, 302)
@@ -82,7 +85,9 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         Asserts that the response is a redirect to the invalid link page.
         """
         response = self.client.post(
-            reverse("confirm_deletion", args=["invalid_uid", self.token])
+            reverse(
+                view_name_dict.confirm_deletion_view, args=["invalid_uid", self.token]
+            )
         )
 
         self.assertEqual(response.status_code, 302)

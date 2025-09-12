@@ -6,6 +6,7 @@ from account_management.tests.test_constants import SECURE_PASSWORD
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
+from canvas import view_name_dict
 
 
 class LoginTest(ParameterizedViewTestMixin, TestCase):
@@ -32,7 +33,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
         )
-        self.login_url = reverse("login")
+        self.login_url = reverse(view_name_dict.login_view)
 
     def test_get(self):
         """
@@ -53,7 +54,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
             {"email": "test@mail.de", "password": SECURE_PASSWORD},
         )
 
-        self.assertRedirects(response, reverse("projects"))
+        self.assertRedirects(response, reverse(view_name_dict.projects_view))
 
     def test_post_invalid(self):
         """

@@ -35,4 +35,4 @@ class ConfirmDeletionView(View):
         """Delete and logout the user."""
         logout(request)
         self.user.delete()
-        return redirect("login")
+        return redirect(view_name_dict.login_view)

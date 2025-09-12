@@ -1,5 +1,4 @@
-from project_management.models import Heliostat, LightSource, Project, Receiver
-
+import io
 
 import h5py
 from artist.util import config_dictionary
@@ -7,13 +6,15 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-
-import io
+from canvas import view_name_dict
+from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class DownloadViewTest(TestCase):
     def setUp(self):
-        self.download = reverse("download", kwargs={"project_name": "testProject"})
+        self.download = reverse(
+            view_name_dict.editor_download_view, kwargs={"project_name": "testProject"}
+        )
         user = User.objects.create_user(username="testuser", password="testpassword")
         self.client = Client()
         self.client.login(username="testuser", password="testpassword")

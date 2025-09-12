@@ -7,6 +7,7 @@ from account_management.tests.test_constants import (
     NO_SPECIAL_CHAR_PASSWORD,
     SECURE_PASSWORD,
 )
+from canvas import message_dict, view_name_dict
 
 
 class DeleteAccountTest(TestCase):
@@ -34,7 +35,7 @@ class DeleteAccountTest(TestCase):
             first_name="test_first_name",
             last_name="test_last_name",
         )
-        self.delete_account_url = reverse("delete_account")
+        self.delete_account_url = reverse(view_name_dict.delete_account_view)
 
     def test_get(self):
         """
@@ -60,7 +61,7 @@ class DeleteAccountTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("login"))
+        self.assertRedirects(response, reverse(view_name_dict.login_view))
         self.assertNotIn("_auth_user_id", self.client.session)
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 
@@ -79,9 +80,7 @@ class DeleteAccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         messages = list(get_messages(response.wsgi_request))
         self.assertTrue(
-            any(
-                "The password you entered is incorrect." in str(msg) for msg in messages
-            )
+            any(message_dict.incorrect_password_text in str(msg) for msg in messages)
         )
         self.assertTrue(User.objects.filter(id=self.user.id).exists())
 

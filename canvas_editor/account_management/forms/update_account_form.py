@@ -110,8 +110,8 @@ class UpdateAccountForm(forms.ModelForm):
         new_password = self.cleaned_data.get("new_password")
 
         if old_password and not new_password:
-            self.add_error("new_password", "Please enter a new password.")
+            self.add_error("new_password", message_dict.enter_new_password_text)
         if new_password and not old_password:
-            self.add_error("old_password", "Please enter your current password.")
+            self.add_error("old_password", message_dict.enter_current_password_text)
 
         return self.cleaned_data

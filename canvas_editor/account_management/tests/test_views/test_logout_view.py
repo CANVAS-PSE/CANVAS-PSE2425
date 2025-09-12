@@ -3,6 +3,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from account_management.tests.test_constants import SECURE_PASSWORD
+from canvas import view_name_dict
 
 
 class LogoutViewTest(TestCase):
@@ -21,8 +22,8 @@ class LogoutViewTest(TestCase):
         Creates a test user and logs them in for logout tests.
         """
         self.client = Client()
-        self.logout_url = reverse("logout")
-        self.login_url = reverse("login")
+        self.logout_url = reverse(view_name_dict.logout_view)
+        self.login_url = reverse(view_name_dict.login_view)
         self.user = User.objects.create_user(
             first_name="test_first_name",
             last_name="test_last_name",

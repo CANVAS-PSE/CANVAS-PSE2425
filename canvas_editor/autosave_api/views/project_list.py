@@ -1,16 +1,13 @@
-from autosave_api.serializers import ProjectSerializer
-from project_management.models import Project
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import ProjectSerializer
+from project_management.models import Project
+
 
 class ProjectList(generics.ListCreateAPIView):
-    """
-    Creates a view to list all of the projects of the user who's currently logged in, you can also create a new projectadd.
-    """
+    """Creates a view to list all of the projects of the user who's currently logged in, you can also create a new projectadd."""
 
     serializer_class = ProjectSerializer
 
