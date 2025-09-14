@@ -17,7 +17,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST
 
-from canvas import message_dict, path_dict, view_name_dict
+from canvas import message_dict, path_dict, settings, view_name_dict
 
 from .forms import (
     DeleteAccountForm,
@@ -93,7 +93,7 @@ def send_register_email(user, request) -> None:
     )
 
     to_email = user.email
-    email = EmailMessage(subject, message, to=[to_email])
+    email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
     email.content_subtype = "html"
     email.send()
 
@@ -251,7 +251,7 @@ def send_password_change_email(user, request) -> None:
     )
 
     to_email = user.email
-    email = EmailMessage(subject, message, to=[to_email])
+    email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
     email.content_subtype = "html"
     email.send()
 
@@ -368,6 +368,6 @@ def send_password_forgotten_email(user, request):
     )
 
     to_email = user.email
-    email = EmailMessage(subject, message, to=[to_email])
+    email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
     email.content_subtype = "html"
     email.send()
