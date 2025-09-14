@@ -8,6 +8,7 @@ from django.urls import reverse
 from canvas import view_name_dict
 from canvas.test_constants import (
     IS_OPENID_USER,
+    OPENID_PROVIDER_FIELD,
     SECURE_PASSWORD,
     TEST_EMAIL,
     TEST_USERNAME,
@@ -66,7 +67,7 @@ class GetUserInfoTest(TestCase):
         Asserts that the response status code is 200 and is_openid_user is True.
         """
         self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
-        SocialAccount.objects.create(user=self.user, provider="google")
+        SocialAccount.objects.create(user=self.user, provider=OPENID_PROVIDER_FIELD)
 
         response = self.client.get(self.get_user_info_url)
 

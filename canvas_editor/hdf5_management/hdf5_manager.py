@@ -27,18 +27,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 from canvas import message_dict, path_dict
-from canvas.test_constants import (
-    ACTUATOR_NAME,
-    ACTUATOR_NAME_2,
-    CURVATURE_DEFAULT,
-    HELIOSTAT_NAME_1,
-    HOMOGENEOUS_COORDINATE,
-    KINEMATIC_PROTOTYPE_CONFIG,
-    NURBS_FIT_SCHEDULER_PARAMS,
-    POSITION_COORDINATE_X,
-    POSITION_COORDINATE_Y,
-    POSITION_COORDINATE_Z,
-)
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
@@ -57,9 +45,7 @@ class HDF5Manager:
     # Returns the default value if the dataset is None or cannot be converted.
     @staticmethod
     def safe_val(x, default=0.0):
-        """
-        Safely extract the value from a dataset, returning a default if None or invalid.
-        """
+        """Safely extract the value from a dataset, returning a default if None or invalid."""
         if x is None:
             return default
         try:
@@ -78,7 +64,6 @@ class HDF5Manager:
             The project to be converted to an HDF5 file.
 
         """
-
         # Set up logger.
         set_logger_config()
 
@@ -122,14 +107,11 @@ class HDF5Manager:
         scenario_generator.generate_scenario()
 
     def _pick_device(self) -> torch.device:
-        """
-        Pick the device for tensor operations, either CPU or CUDA if available.
-        """
+        """Pick the device for tensor operations, either CPU or CUDA if available."""
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def _prepare_paths(self, user: User, project: Project) -> pathlib.Path:
         """Prepare the paths for saving the scenario file."""
-
         scenario_dir = pathlib.Path("./hdf5_management/scenarios")
         # Check if scenario folder exists
         os.makedirs(scenario_dir, exist_ok=True)
@@ -151,9 +133,7 @@ class HDF5Manager:
     def _create_surface_prototype_from_stral(
         self, device: torch.device
     ) -> SurfacePrototypeConfig:
-        """
-        Build the surface prototype configuration from a STRAL file.
-        """
+        """Build the surface prototype configuration from a STRAL file."""
         # Set CANVAS_ROOT
         canvas_root = settings.BASE_DIR
 
@@ -176,12 +156,19 @@ class HDF5Manager:
             [torch.empty(1, requires_grad=True)], lr=1e-3
         )
         nurbs_fit_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            nurbs_fit_optimizer, **NURBS_FIT_SCHEDULER_PARAMS
+            nurbs_fit_optimizer,
+            **{
+                "mode": "min",
+                "factor": 0.2,
+                "patience": 50,
+                "threshold": 1e-7,
+                "threshold_mode": "abs",
+            },
         )
 
         # Use this surface config for fitted deflectometry surfaces.
         surface_config = surface_generator.generate_fitted_surface_config(
-            heliostat_name=HELIOSTAT_NAME_1,
+            heliostat_name="heliostat_1",
             facet_translation_vectors=facet_translation_vectors,
             canting=canting,
             surface_points_with_facets_list=surface_points_with_facets_list,
@@ -203,10 +190,7 @@ class HDF5Manager:
         return surface_prototype_config
 
     def _create_prototype_config(self, device: torch.device) -> PrototypeConfig:
-        """
-        Build the prototype configuration for the project.
-        """
-
+        """Build the prototype configuration for the project."""
         # Build the surface prototype from the STRAL file.
         surface_prototype_config = self._create_surface_prototype_from_stral(
             device=device
@@ -215,12 +199,12 @@ class HDF5Manager:
         # Include the kinematic prototype configuration.
         kinematic_prototype_config = KinematicPrototypeConfig(
             type=config_dictionary.rigid_body_key,
-            initial_orientation=torch.tensor(KINEMATIC_PROTOTYPE_CONFIG),
+            initial_orientation=torch.tensor([0.0, 0.0, 1.0, 0.0]),
         )
 
         # Include an ideal actuator.
         actuator1_prototype = ActuatorConfig(
-            key=ACTUATOR_NAME,
+            key="actuator_1",
             type=config_dictionary.ideal_actuator_key,
             clockwise_axis_movement=False,
             min_max_motor_positions=[0, 360],
@@ -228,7 +212,7 @@ class HDF5Manager:
 
         # Include an ideal actuator.
         actuator2_prototype = ActuatorConfig(
-            key=ACTUATOR_NAME_2,
+            key="actuator_2",
             type=config_dictionary.ideal_actuator_key,
             clockwise_axis_movement=True,
             min_max_motor_positions=[0, 360],
@@ -288,10 +272,7 @@ class HDF5Manager:
         return target_area_list_config
 
     def _create_light_source_config(self, project: Project, device: torch.device):
-        """
-        Build the light source configuration for the project.
-        """
-
+        """Build the light source configuration for the project."""
         # Create a list of light source configs
         light_source_list = []
 
@@ -314,10 +295,7 @@ class HDF5Manager:
         return light_source_list_config
 
     def _create_heliostat_config(self, project: Project, device: torch.device):
-        """
-        Build the heliostat configuration for the project.
-        """
-
+        """Build the heliostat configuration for the project."""
         # Note, not all individual heliostat parameters are provided here
 
         # Generate the surface configuration.
@@ -338,7 +316,7 @@ class HDF5Manager:
                         heliostat.position_x,
                         heliostat.position_y,
                         heliostat.position_z,
-                        HOMOGENEOUS_COORDINATE,
+                        1.0,
                     ],
                     device=device,
                 ),
@@ -375,19 +353,16 @@ class HDF5Manager:
             )
 
     def _create_heliostats_from_hdf5_file(self, h5f: h5py.File, new_project: Project):
-        """
-        Create heliostats from a HDF5 file.
-        """
-
+        """Create heliostats from a HDF5 file."""
         heliostats_group: h5py.Group = h5f.get(config_dictionary.heliostat_key)
         if heliostats_group is not None:
             for heliostat_object in heliostats_group:
                 heliostat = heliostats_group[heliostat_object]
 
                 position = heliostat[config_dictionary.heliostat_position]
-                position_x = position[POSITION_COORDINATE_X]
-                position_y = position[POSITION_COORDINATE_Y]
-                position_z = position[POSITION_COORDINATE_Z]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
 
                 Heliostat.objects.create(
                     project=new_project,
@@ -400,9 +375,7 @@ class HDF5Manager:
     def _create_light_sources_from_hdf5_file(
         self, h5f: h5py.File, new_project: Project
     ):
-        """
-        Create light sources from a HDF5 file.
-        """
+        """Create light sources from a HDF5 file."""
         light_sources_group: h5py.Group = h5f.get(config_dictionary.light_source_key)
         if light_sources_group is not None:
             for light_source_object in light_sources_group:
@@ -443,14 +416,14 @@ class HDF5Manager:
                 receiver = receivers_group[receiver_object]
 
                 position = receiver[config_dictionary.target_area_position_center]
-                position_x = position[POSITION_COORDINATE_X]
-                position_y = position[POSITION_COORDINATE_Y]
-                position_z = position[POSITION_COORDINATE_Z]
+                position_x = position[0]
+                position_y = position[1]
+                position_z = position[2]
 
                 normal = receiver[config_dictionary.target_area_normal_vector]
-                normal_x = normal[POSITION_COORDINATE_X]
-                normal_y = normal[POSITION_COORDINATE_Y]
-                normal_z = normal[POSITION_COORDINATE_Z]
+                normal_x = normal[0]
+                normal_y = normal[1]
+                normal_z = normal[2]
 
                 plane_e = receiver[config_dictionary.target_area_plane_e]
                 plane_u = receiver[config_dictionary.target_area_plane_u]
@@ -459,8 +432,8 @@ class HDF5Manager:
                 curv_e_ds = receiver.get(config_dictionary.target_area_curvature_e)
                 curv_u_ds = receiver.get(config_dictionary.target_area_curvature_u)
 
-                curvature_e = HDF5Manager.safe_val(curv_e_ds, default=CURVATURE_DEFAULT)
-                curvature_u = HDF5Manager.safe_val(curv_u_ds, default=CURVATURE_DEFAULT)
+                curvature_e = HDF5Manager.safe_val(curv_e_ds, default=0.0)
+                curvature_u = HDF5Manager.safe_val(curv_u_ds, default=0.0)
 
                 Receiver.objects.create(
                     project=new_project,

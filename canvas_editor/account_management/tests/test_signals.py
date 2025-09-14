@@ -7,7 +7,7 @@ from canvas.test_constants import (
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
-    TEST_PASSWORD,
+    SECURE_PASSWORD,
 )
 
 
@@ -21,7 +21,7 @@ class TestSignals(TestCase):
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
             email=TEST_EMAIL,
-            password=TEST_PASSWORD,
+            password=SECURE_PASSWORD,
         )
 
     def test_create_user_profile(self):

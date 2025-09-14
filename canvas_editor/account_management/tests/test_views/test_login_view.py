@@ -8,12 +8,12 @@ from account_management.tests.test_views.parameterized_view_test_mixin import (
 from canvas import message_dict, path_dict, view_name_dict
 from canvas.test_constants import (
     EMAIL_FIELD,
-    MAX_EMAIL,
     PASSWORD_FIELD,
     SECURE_PASSWORD,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
+    WRONG_EMAIL,
 )
 
 
@@ -90,7 +90,7 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(
             self.login_url,
             {
-                EMAIL_FIELD: MAX_EMAIL,
+                EMAIL_FIELD: WRONG_EMAIL,
                 PASSWORD_FIELD: SECURE_PASSWORD,
             },
         )

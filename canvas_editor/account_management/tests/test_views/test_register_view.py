@@ -14,12 +14,10 @@ from canvas.test_constants import (
     PASSWORD_CONFIRMATION_FIELD,
     PASSWORD_FIELD,
     SECURE_PASSWORD,
-    TEST2_EMAIL,
-    TEST_FIRST_NAME,
-    TEST_LAST_NAME,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
+    WRONG_EMAIL,
 )
 
 
@@ -53,7 +51,7 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         self.valid_user_data = {
             FIRST_NAME_FIELD: TEST_FIRST_NAME,
             LAST_NAME_FIELD: TEST_LAST_NAME,
-            EMAIL_FIELD: TEST2_EMAIL,
+            EMAIL_FIELD: WRONG_EMAIL,
             PASSWORD_FIELD: SECURE_PASSWORD,
             PASSWORD_CONFIRMATION_FIELD: SECURE_PASSWORD,
         }
@@ -84,7 +82,7 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
             self.register_url,
             self.valid_user_data,
         )
-        user = User.objects.get(email=TEST2_EMAIL)
+        user = User.objects.get(email=WRONG_EMAIL)
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.projects_url)

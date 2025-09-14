@@ -22,11 +22,11 @@ from canvas.test_constants import (
     PASSWORD_CONFIRMATION_FIELD,
     PROFILE_PIC_FIELD,
     SECURE_PASSWORD,
-    TEST2_EMAIL,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
     UPDATED_PASSWORD,
+    WRONG_EMAIL,
 )
 from project_management.models import Project
 
@@ -73,7 +73,7 @@ class UpdateAccountTest(TestCase):
             {
                 FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
                 LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
-                EMAIL_FIELD: TEST2_EMAIL,
+                EMAIL_FIELD: WRONG_EMAIL,
                 OLD_PASSWORD_FIELD: SECURE_PASSWORD,
                 NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
@@ -107,7 +107,7 @@ class UpdateAccountTest(TestCase):
             {
                 FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
                 LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
-                EMAIL_FIELD: TEST2_EMAIL,
+                EMAIL_FIELD: WRONG_EMAIL,
                 OLD_PASSWORD_FIELD: SECURE_PASSWORD,
                 NEW_PASSWORD_FIELD: UPDATED_PASSWORD,
                 PASSWORD_CONFIRMATION_FIELD: UPDATED_PASSWORD,
@@ -119,8 +119,8 @@ class UpdateAccountTest(TestCase):
         self.assertEqual(self.user.first_name, NEW_TEST_FIRST_NAME)
         self.assertEqual(self.user.last_name, NEW_TEST_LAST_NAME)
         self.assertTrue(self.user.check_password(UPDATED_PASSWORD))
-        self.assertEqual(self.user.email, TEST2_EMAIL)
-        self.assertEqual(self.user.username, TEST2_EMAIL)
+        self.assertEqual(self.user.email, WRONG_EMAIL)
+        self.assertEqual(self.user.username, WRONG_EMAIL)
 
     def test_post_invalid_data(self):
         """
@@ -129,8 +129,8 @@ class UpdateAccountTest(TestCase):
         Asserts that the user's information is not updated and an error message is shown.
         """
         User.objects.create_user(
-            username=TEST2_EMAIL,
-            email=TEST2_EMAIL,
+            username=WRONG_EMAIL,
+            email=WRONG_EMAIL,
             password=SECURE_PASSWORD,
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
@@ -142,7 +142,7 @@ class UpdateAccountTest(TestCase):
             {
                 FIRST_NAME_FIELD: NEW_TEST_FIRST_NAME,
                 LAST_NAME_FIELD: NEW_TEST_LAST_NAME,
-                EMAIL_FIELD: TEST2_EMAIL,
+                EMAIL_FIELD: WRONG_EMAIL,
             },
         )
 

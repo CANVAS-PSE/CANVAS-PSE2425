@@ -24,9 +24,9 @@ from canvas.test_constants import (
     RECEIVER_LIST_NAME,
     RECEIVER_NAME,
     RECEIVER_TYPE,
+    SECURE_PASSWORD,
     TEST_FLOAT_NUMBER,
     TEST_NUMBER,
-    TEST_PASSWORD,
     TEST_PROJECT_NAME,
     TEST_TYPE,
     TEST_USERNAME,
@@ -47,9 +47,9 @@ class APITestCase(TestCase):
         """Set up a test user, log in, and create a test project for use in all tests."""
         self.client = APIClient()
         self.user = User.objects.create_user(
-            username=TEST_USERNAME, password=TEST_PASSWORD
+            username=TEST_USERNAME, password=SECURE_PASSWORD
         )
-        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
         self.project = Project.objects.create(name=TEST_PROJECT_NAME, owner=self.user)
 
     def test_create_project(self):

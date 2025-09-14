@@ -21,14 +21,12 @@ from canvas.test_constants import (
     OPENID_PROVIDER_FIELD,
     PASSWORD_CONFIRMATION_FIELD,
     SECURE_PASSWORD,
-    TEST2_EMAIL,
     TEST_EMAIL,
     TEST_FIRST_NAME,
-    TEST_FIRST_NAME_2,
     TEST_LAST_NAME,
-    TEST_LAST_NAME_2,
     TOO_SHORT_PASSWORD,
     UPDATED_PASSWORD,
+    WRONG_EMAIL,
     WRONG_LOGIN_PASSWORD,
 )
 
@@ -78,13 +76,13 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
     def test_update_account_form_existing_mail(self):
         """Test case for UpdateAccountForm with an already existing email."""
         User.objects.create_user(
-            username=TEST2_EMAIL,
-            first_name=TEST_FIRST_NAME_2,
-            last_name=TEST_LAST_NAME_2,
-            email=TEST2_EMAIL,
+            username=WRONG_EMAIL,
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
+            email=WRONG_EMAIL,
             password=SECURE_PASSWORD,
         )
-        form = self.create_form_with_instance(**{EMAIL_FIELD: TEST2_EMAIL})
+        form = self.create_form_with_instance(**{EMAIL_FIELD: WRONG_EMAIL})
         self.assert_form_error_message(
             form, EMAIL_FIELD, message_dict.email_already_in_use_text
         )

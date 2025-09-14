@@ -9,7 +9,7 @@ from canvas import path_dict, view_name_dict
 from canvas.test_constants import (
     PREVIEW_FIELD,
     PROJECT_NAME_FIELD,
-    TEST_PASSWORD,
+    SECURE_PASSWORD,
     TEST_PROJECT_DESCRIPTION,
     TEST_PROJECT_NAME,
     TEST_USERNAME,
@@ -25,9 +25,11 @@ class PreviewViewTest(TestCase):
         self.upload = reverse(
             view_name_dict.upload_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
         )
-        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
+        user = User.objects.create_user(
+            username=TEST_USERNAME, password=SECURE_PASSWORD
+        )
         self.client = Client()
-        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         project = Project()
         project.name = TEST_PROJECT_NAME

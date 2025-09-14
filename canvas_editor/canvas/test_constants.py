@@ -1,7 +1,6 @@
 # Common constants for tests
 
 TEST_USERNAME = "testuser"
-TEST_PASSWORD = "testpassword"
 TEST_PROJECT_DESCRIPTION = "Test project description"
 TEST_PROJECT_NAME = "test Project"
 TEST_EMAIL = "testuser@example.com"
@@ -33,10 +32,8 @@ JOB_ID_FIELD = "jobID"
 # Constant
 
 # Constants for testing account management features in a Canvas project
-
-
+# Passwords
 TOO_SHORT_PASSWORD = "Save-1"
-TEST_PASSWORD = "test"
 UPDATED_PASSWORD = "NewSecurePassword123!"
 RESET_PASSWORD = "SecurePass1234!"
 NO_SPECIAL_CHAR_PASSWORD = "SecurePass123"
@@ -47,57 +44,17 @@ MISMATCHED_BUT_CORRECT_PASSWORD = "NewSecurePassword123!!"
 NO_NUMERIC_PASSWORD = "SecurePassword!"
 MISMATCHED_BUT_CORRECT_PASSWORD_2 = "NewSecurePassword123!!!"
 WRONG_LOGIN_PASSWORD = "WrongPassword123!"
+
 TEST_FIRST_NAME = "test_first_name"
 TEST_LAST_NAME = "test_last_name"
-TEST2_EMAIL = "test2@mail.de"
-MAX_EMAIL = "max@mail.de"
-NEW_TEST_FIRST_NAME = "new_first_name"
-NEW_TEST_LAST_NAME = "new_last_name"
+NEW_TEST_FIRST_NAME = "new_first_name"  # for update account form tests
+NEW_TEST_LAST_NAME = "new_last_name"  # for update account form tests
+WRONG_EMAIL = "test2@mail.de"
 
 IS_OPENID_USER = "is_openid_user"
 OPENID_PROVIDER_FIELD = "google"
-NOT_EXISTING_EMAIL = "test2@mail.de"
-TEST_FIRST_NAME_2 = "test2_first_name"
-TEST_LAST_NAME_2 = "test2_last_name"
-
-
-TEST_PROJECT_NAME_2 = "test_project_2"
-TEST_PROFILE_PICTURE = "profile_picture.jpg"
-OLD_PROFILE_PICTURE_JPG = "old_profile_picture.jpg"
-PROFILE_PIC_PREFIX = "users"
-OLD_PROFILE_PICTURE_SURFIX = "old_profile_picture"
-NEW_PROFILE_PICTURE_JPG = "new_profile_picture.jpg"
-NEW_PROFILE_PICTURE_SURFIX = "new_profile_picture"
-PROFILE_PIC_SURFIX = "profile_picture"
-
 CHECKBOX_TRUE = "1"
 CHECKBOX_FALSE = "0"
-
-FIRST_NAME_TEST_ENVIRONMENT = "first_name"
-LAST_NAME_TEST_ENVIRONMENT = "last_name"
-
-
-# Constants for editor
-CONTENT_DISPOSITION_HEADER = "Content-Disposition"
-
-
-# Constants for testing HDF5 management features in a Canvas project
-ACTUATOR_NAME = "actuator_1"
-ACTUATOR_NAME_2 = "actuator_2"
-HELIOSTAT_NAME_1 = "heliostat_1"
-NURBS_FIT_SCHEDULER_PARAMS = {
-    "mode": "min",
-    "factor": 0.2,
-    "patience": 50,
-    "threshold": 1e-7,
-    "threshold_mode": "abs",
-}
-KINEMATIC_PROTOTYPE_CONFIG = [0.0, 0.0, 1.0, 0.0]
-HOMOGENEOUS_COORDINATE = 1.0
-POSITION_COORDINATE_X = 0
-POSITION_COORDINATE_Y = 1
-POSITION_COORDINATE_Z = 2
-CURVATURE_DEFAULT = 0.0
 
 # Constants for project_managment tests
 TEST_HELIOSTAT_NAME = "Heliostat"
@@ -110,7 +67,6 @@ TEST_PROJECT_DESCRIPTION_2 = "Another test project description"
 TEST_PROJECT_NAME_2 = "another_test_project"
 COPY_SUFFIX = "_copy"
 SHARED_SUFFIX = "_shared"
-OBJECTS_COUNT_TEST = 2
 PROJECT_NAME_PROJECT_PAGE_TEST = "Test_project"
 PROJECT_DESCRIPTION_PROJECT_PAGE_TEST = "Test project description"
 PROJECT_DESCRIPTION_PROJECT_PAGE_TEST_2 = "Test project description"
@@ -165,11 +121,7 @@ LIGHT_SOURCE_MEAN = 0
 LIGHT_SOURCE_COVARIANCE = 4.3681e-06
 
 
-# Constants for job interface tests
-JOB_INTERF_TEST_USERNAME = "testuser"
-JOB_INTERF_TEST_PASSWORD = "SecurePass123!"
-JOB_INTERF_TEST_PROJECT_NAME = "Test project"
-JOB_INTERF_TEST_PROJECT_DESCRIPTION = "Test project description"
+# job interface
 
 STATUS = "status"
 PROGRESS = "progress"

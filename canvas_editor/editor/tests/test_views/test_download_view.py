@@ -9,7 +9,7 @@ from django.urls import reverse
 from canvas import view_name_dict
 from canvas.test_constants import (
     PROJECT_NAME_FIELD,
-    TEST_PASSWORD,
+    SECURE_PASSWORD,
     TEST_PROJECT_DESCRIPTION,
     TEST_PROJECT_NAME,
     TEST_USERNAME,
@@ -25,9 +25,11 @@ class DownloadViewTest(TestCase):
         self.download = reverse(
             view_name_dict.download_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
         )
-        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
+        user = User.objects.create_user(
+            username=TEST_USERNAME, password=SECURE_PASSWORD
+        )
         self.client = Client()
-        self.client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         project = Project()
         project.name = TEST_PROJECT_NAME

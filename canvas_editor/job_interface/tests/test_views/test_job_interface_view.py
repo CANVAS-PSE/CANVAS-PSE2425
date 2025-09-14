@@ -10,10 +10,10 @@ from canvas.test_constants import (
     FINISHED,
     JOB_ID_FIELD,
     JOB_IDS_FIELD,
-    JOB_INTERF_TEST_PASSWORD,
-    JOB_INTERF_TEST_PROJECT_DESCRIPTION,
-    JOB_INTERF_TEST_PROJECT_NAME,
-    JOB_INTERF_TEST_USERNAME,
+    SECURE_PASSWORD,
+    TEST_PROJECT_DESCRIPTION,
+    TEST_PROJECT_NAME,
+    TEST_USERNAME,
     PROGRESS,
     RESULT,
     STATUS,
@@ -29,20 +29,18 @@ class JobInterfaceViewTest(TestCase):
         """Set up a test user, log in, and create a test project and job for use in all tests."""
         self.client = Client()
         self.user = User.objects.create_user(
-            username=JOB_INTERF_TEST_USERNAME, password=JOB_INTERF_TEST_PASSWORD
+            username=TEST_USERNAME, password=SECURE_PASSWORD
         )
         self.project = Project.objects.create(
-            name=JOB_INTERF_TEST_PROJECT_NAME,
-            description=JOB_INTERF_TEST_PROJECT_DESCRIPTION,
+            name=TEST_PROJECT_NAME,
+            description=TEST_PROJECT_DESCRIPTION,
             owner=self.user,
         )
         Heliostat.objects.create(project=self.project)
         Receiver.objects.create(project=self.project)
         LightSource.objects.create(project=self.project)
         self.job = Job.objects.create(owner=self.user, project=self.project)
-        self.client.login(
-            username=JOB_INTERF_TEST_USERNAME, password=JOB_INTERF_TEST_PASSWORD
-        )
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         # urls
         self.createNewJob_url = reverse(

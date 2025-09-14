@@ -8,9 +8,9 @@ from canvas.test_constants import (
     EMPTY_FIELD,
     SECURE_PASSWORD,
     TEST_EMAIL,
-    NOT_EXISTING_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
+    WRONG_EMAIL,
 )
 
 from .form_test_mixin import FormTestMixin
@@ -46,7 +46,7 @@ class PasswordForgottenFormTest(FormTestMixin, TestCase):
 
     def test_password_forgotten_form_wrong_email(self):
         """Test case for PasswordForgottenForm with not existing email."""
-        form = self.create_form(**{EMAIL_FIELD: NOT_EXISTING_EMAIL})
+        form = self.create_form(**{EMAIL_FIELD: WRONG_EMAIL})
         self.assert_form_error_message(
             form, EMAIL_FIELD, message_dict.email_not_registered_text
         )

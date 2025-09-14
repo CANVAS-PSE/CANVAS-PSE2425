@@ -3,8 +3,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 from canvas.test_constants import (
-    JOB_INTERF_TEST_PROJECT_DESCRIPTION,
-    JOB_INTERF_TEST_PROJECT_NAME,
+    TEST_PROJECT_DESCRIPTION,
+    TEST_PROJECT_NAME,
 )
 from job_interface.models import Job
 from project_management.models import Project
@@ -37,8 +37,8 @@ class ModelTests(TestCase):
     def test_job_owner_and_project_given(self):
         """Test creating a job with both the owner and project given."""
         project = Project.objects.create(
-            name=JOB_INTERF_TEST_PROJECT_NAME,
-            description=JOB_INTERF_TEST_PROJECT_DESCRIPTION,
+            name=TEST_PROJECT_NAME,
+            description=TEST_PROJECT_DESCRIPTION,
             owner=self.user,
         )
         job = Job.objects.create(owner=self.user, project=project)

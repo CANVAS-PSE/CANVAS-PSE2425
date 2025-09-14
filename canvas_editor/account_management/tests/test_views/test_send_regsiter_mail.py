@@ -13,8 +13,6 @@ from canvas.test_constants import (
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
     TEST_USERNAME,
-    TEST_FIRST_NAME,
-    TEST_LAST_NAME,
 )
 
 
