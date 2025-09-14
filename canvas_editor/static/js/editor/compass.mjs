@@ -5,6 +5,7 @@
 import {
   ArrowHelper,
   BoxGeometry,
+  Camera,
   CanvasTexture,
   Color,
   Mesh,
@@ -15,6 +16,7 @@ import {
   SpriteMaterial,
   Vector3,
   Vector4,
+  WebGLRenderer,
 } from "three";
 
 /**
@@ -44,7 +46,7 @@ class CompassAxisArrow extends Object3D {
       1,
       color,
       0.3,
-      0.3
+      0.3,
     );
     this.add(this.arrow);
 
@@ -89,15 +91,15 @@ class CompassAxisArrow extends Object3D {
 }
 
 /**
- *
+ * Compass axis with a circle at the end instead of the arrow head
  */
 class CompassAxisCircle extends Object3D {
   /**
-   *
-   * @param axisId
-   * @param color
-   * @param label
-   * @param axisWidth
+   * Create a new compass axis with a circle at the end
+   * @param {"x" | "y" | "z"} axisId the id of the axis
+   * @param {Color} color the color of the axis
+   * @param {string} label the label of the axis
+   * @param {number} axisWidth the width of the axis
    */
   constructor(axisId, color, label, axisWidth = 0.05) {
     super();
@@ -107,7 +109,7 @@ class CompassAxisCircle extends Object3D {
     const axisGeometry = new BoxGeometry(0.8, axisWidth, axisWidth).translate(
       0.4,
       0,
-      0
+      0,
     );
     this.axis = new Mesh(axisGeometry, this.getAxisMaterial(color));
 
@@ -134,7 +136,7 @@ class CompassAxisCircle extends Object3D {
   }
 
   /**
-   *
+   * Disposes the compass
    */
   dispose() {
     this.axis.material.dispose();
@@ -147,8 +149,9 @@ class CompassAxisCircle extends Object3D {
   }
 
   /**
-   *
-   * @param point
+   * Set the opacity of the end of an axis
+   * Depending if the positive or negative part is present
+   * @param {Vector3} point the current point of the axis
    */
   setOpacity(point) {
     // set opacity so the "hidden" part of the axis is partially transparent
@@ -162,25 +165,27 @@ class CompassAxisCircle extends Object3D {
   }
 
   /**
-   *
-   * @param point
+   * Update the point of of an axis
+   * @param {Vector3} point the current point for the given axis
    */
   update(point) {
     this.setOpacity(point);
   }
 
   /**
-   *
-   * @param color
+   * Get the material for the axis based on the color
+   * @param {import("three").ColorRepresentation} color the color of the axis
+   * @returns {MeshBasicMaterial} the material for the axis
    */
   getAxisMaterial(color) {
     return new MeshBasicMaterial({ color: color, toneMapped: false });
   }
 
   /**
-   *
-   * @param color
-   * @param text
+   * Create sprite material based on the given color and text
+   * @param {Color} color the color of the sprite
+   * @param {string} text the text for the sprite
+   * @returns {SpriteMaterial} the material for the sprite
    */
   getSpriteMaterial(color, text = null) {
     const canvas = document.createElement("canvas");
@@ -208,20 +213,21 @@ class CompassAxisCircle extends Object3D {
 }
 
 /**
- *
+ * Represents an view helper inside the canvas
  */
 class ViewHelper extends Object3D {
   /**
-   *
-   * @param camera
-   * @param domElement
-   * @param size
-   * @param style
+   * Create a new view helper
+   * @param {Camera} camera the camera in use
+   * @param {HTMLElement} domElement the element where the canvas is rendered
+   * @param {number} size the size of the viewhelper
+   * @param {"arrows" | "circles"} style the style
    */
   constructor(camera, domElement, size = 128, style = "arrows") {
     super();
     this.camera = camera;
     this.domElement = domElement;
+    this.style = style;
 
     this.orthoCamera = new OrthographicCamera(-2, 2, 2, -2, 0, 4);
     this.orthoCamera.position.set(0, 0, 2);
@@ -248,8 +254,8 @@ class ViewHelper extends Object3D {
   }
 
   /**
-   *
-   * @param renderer
+   * Render function, gets called every frame
+   * @param {WebGLRenderer} renderer the renderer in use
    */
   render(renderer) {
     this.quaternion.copy(this.camera.quaternion).invert();
@@ -258,9 +264,14 @@ class ViewHelper extends Object3D {
     this.point.set(0, 0, 1);
     this.point.applyQuaternion(this.camera.quaternion);
 
-    this.xAxis.update(this.point);
-    this.yAxis.update(this.point);
-    this.zAxis.update(this.point);
+    if (this.style == "circles") {
+      //@ts-expect-error
+      this.xAxis.update(this.point);
+      //@ts-expect-error
+      this.yAxis.update(this.point);
+      //@ts-expect-error
+      this.zAxis.update(this.point);
+    }
 
     let previousViewport = new Vector4();
     renderer.getViewport(previousViewport); // save current viewport to reset later
@@ -277,7 +288,7 @@ class ViewHelper extends Object3D {
   }
 
   /**
-   *
+   * Dispose the viewhelper
    */
   dispose() {
     this.geometry.dispose();

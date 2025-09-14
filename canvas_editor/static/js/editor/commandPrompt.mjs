@@ -127,14 +127,15 @@ export class CommandPrompt {
   }
 
   /**
-   *
+   * Hide the command prompt
    */
   hide() {
     this.#modal.hide();
   }
 
   /**
-   *
+   * Open the command prompt
+   * Also closes all other modals
    */
   #openCommandPrompt() {
     // Prevent that the command prompt closes the loading modal
@@ -149,6 +150,7 @@ export class CommandPrompt {
         Modal.getInstance(modal).hide();
       }
     });
+
     this.#modal.toggle();
     if (document.getElementById("commandPrompt").classList.contains("show")) {
       this.#commandInput.value = "";
@@ -278,7 +280,9 @@ export class CommandPrompt {
   }
 
   /**
-   *
+   * Get the commands that are currently available
+   * Means all commands that can be executed with the given search input
+   * @returns {PromptCommand[]} array of all available commands
    */
   get currentlyAvailableCommands() {
     return this.#currentlyAvailabeCommands;

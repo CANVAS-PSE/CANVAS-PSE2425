@@ -72,7 +72,7 @@ export class DuplicateReceiverCommand extends SingleObjectCommand {
   constructor(receiver) {
     super();
     this.#receiver = receiver;
-    this.#newPosition = this.#receiver.getPosition().clone();
+    this.#newPosition = this.#receiver.lastPosition.clone();
     this.#newPosition.add(new THREE.Vector3(0, 0, -35));
     this.#receiverCopy = new Receiver(
       this.#receiver.objectName == "" || !this.#receiver.objectName

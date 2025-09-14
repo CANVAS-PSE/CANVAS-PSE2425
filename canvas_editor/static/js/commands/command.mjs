@@ -6,7 +6,7 @@
  */
 
 /**
- *
+ * Interface describing a command in it's raw form.
  */
 export class Command {
   /**
