@@ -4,10 +4,10 @@ from django.test import TestCase
 from account_management.models import UserProfile
 from canvas.path_dict import user_1_profile_picture
 from canvas.test_constants import (
+    SECURE_PASSWORD,
     TEST_EMAIL,
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
-    SECURE_PASSWORD,
 )
 
 
