@@ -8,7 +8,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.views.generic.edit import FormView
 
 from account_management.forms.password_forgotten_form import PasswordForgottenForm
-from canvas import view_name_dict
+from canvas import settings, view_name_dict
 
 
 class PasswordForgottenView(FormView):
@@ -43,7 +43,7 @@ class PasswordForgottenView(FormView):
         )
 
         to_email = user.email
-        email = EmailMessage(subject, message, to=[to_email])
+        email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
         email.send()
 
     def form_invalid(self, form):
