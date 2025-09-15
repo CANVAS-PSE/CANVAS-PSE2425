@@ -40,3 +40,10 @@ email_not_registered_text = "This email address is not registered."
 
 account_created_text = "Your account has been updated successfully."
 """Message shown when account is created successfully."""
+
+folder_not_found_text = (
+    "The folder ``{folder}`` selected to save the scenario does not exist. "
+    "Please create the folder or adjust the file path before running again!"
+)
+
+project_name_must_be_unique = "The project name must be unique"

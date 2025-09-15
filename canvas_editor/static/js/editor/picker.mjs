@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { CanvasObject, Receiver } from "objects";
 import { ItemDeletedEvent } from "deleteCommands";
 import { ItemCreatedEvent } from "createCommands";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
+import { CanvasObject } from "canvasObject";
+import { Receiver } from "receiver";
 
 export const Mode = Object.freeze({
   NONE: "none",

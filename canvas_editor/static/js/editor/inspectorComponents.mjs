@@ -1,4 +1,5 @@
-import { CanvasObject } from "objects";
+import { CanvasObject } from "canvasObject";
+
 /**
  * Represents a single component of the inspector
  */

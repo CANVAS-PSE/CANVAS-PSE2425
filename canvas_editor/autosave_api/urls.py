@@ -1,16 +1,15 @@
 from django.urls import path
 
-from .views import (
-    HeliostatDetail,
-    HeliostatList,
-    LightSourceDetail,
-    LightSourceList,
-    ProjectDetailList,
-    ProjectList,
-    ReceiverDetail,
-    ReceiverList,
-    SettingsDetail,
-)
+from autosave_api.views.heliostat_detail import HeliostatDetail
+from autosave_api.views.heliostat_list import HeliostatList
+from autosave_api.views.light_source_detail import LightSourceDetail
+from autosave_api.views.light_source_list import LightSourceList
+from autosave_api.views.project_detail_list import ProjectDetailList
+from autosave_api.views.project_list import ProjectList
+from autosave_api.views.receiver_detail import ReceiverDetail
+from autosave_api.views.receiver_list import ReceiverList
+from autosave_api.views.settings_detail import SettingsDetail
+
 
 urlpatterns = [
     path("projects/", ProjectList.as_view(), name="project_list"),

@@ -10,12 +10,15 @@ import { ObjectManager } from "objectManager";
 import { QuickSelector } from "quickSelector";
 import { JobInterface } from "jobInterface";
 import { Inspector } from "inspectorClass";
-import { Heliostat, Receiver, LightSource, Terrain } from "objects";
 import { CommandPrompt } from "commandPrompt";
 import { PreviewHandler } from "previewHandler";
 import { ModeSelector } from "modeSelector";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { LightSource } from "lightSource";
+import { Receiver } from "receiver";
+import { Terrain } from "terrain";
+import { Heliostat } from "heliostat";
 
 /**
  *

@@ -6,7 +6,11 @@
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "paths": {
-      "objects": ["static/js/editor/objects.mjs"],
+      "canvasObject": ["static/js/editor/objects/canvasObject.mjs"],
+      "heliostat": ["static/js/editor/objects/heliostat.mjs"],
+      "receiver": ["static/js/editor/objects/receiver.mjs"],
+      "lightSource": ["static/js/editor/objects/lightSource.mjs"],
+      "terrain": ["static/js/editor/objects/terrain.mjs"],
       "compass": ["static/js/editor/compass.mjs"],
       "command": ["static/js/commands/command.mjs"],
       "undoRedoHandler": ["static/js/commands/undoRedoHandler.mjs"],

@@ -1,12 +1,14 @@
 import { Picker } from "picker";
 import { UndoRedoHandler } from "undoRedoHandler";
-import { Heliostat, Receiver, LightSource } from "objects";
 import { Vector3 } from "three";
 import {
   CreateReceiverCommand,
   CreateHeliostatCommand,
   CreateLightSourceCommand,
 } from "createCommands";
+import { Heliostat } from "heliostat";
+import { LightSource } from "lightSource";
+import { Receiver } from "receiver";
 
 /**
  * Class to manage the objects in the scene

@@ -1,7 +1,10 @@
 import { SingleObjectCommand } from "singleObjectCommands";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
-import { Heliostat, Receiver, LightSource, CanvasObject } from "objects";
 import * as THREE from "three";
+import { CanvasObject } from "canvasObject";
+import { Heliostat } from "heliostat";
+import { LightSource } from "lightSource";
+import { Receiver } from "receiver";
 
 /**
  * Event that signals that an item got updated
