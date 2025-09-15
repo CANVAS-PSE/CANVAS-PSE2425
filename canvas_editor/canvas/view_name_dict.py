@@ -14,7 +14,6 @@ get_user_info_view = "get_user_info"
 projects_view = "projects"
 invalid_token_view = "invalid_token"
 invalid_uid_view = "invalid_uid"
-editor_view = "editor"  # also used in edito
 test_project_view = "test_project"
 receiver_detail_view = "receiver_detail"
 project_list_view = "project_list"
@@ -22,14 +21,24 @@ light_source_detail_view = "light_source_detail"
 heliostat_detail_view = "heliostat_detail"
 
 # Autosave api
-project_detail_view = "project_detail"
+heliostat_detail_view = "heliostat_detail"
+heliostat_list_view = "heliostat_list"
+light_source_detail_view = "light_source_detail"
+light_source_list_view = "light_source_list"
+project_detail_list_view = "project_detail"
+project_list_view = "project_list"
+receiver_detail_view = "receiver_detail"
+receiver_list_view = "receiver_list"
+settings_detail_view = "settings_detail"
 
 # editor
 download_view = "download"
 upload_view = "upload"
+editor_view = "editor"
 
 # job interface
 create_new_job_view = "createNewJob"
+job_status_view = "jobStatus"
 
 # project management
 projects_view = "projects"
@@ -40,4 +49,3 @@ duplicate_project_view = "duplicateProject"
 share_project_view = "shareProject"
 shared_projects_view = "sharedProjects"
 projects_view = "projects"
-job_status_view = "jobStatus"
