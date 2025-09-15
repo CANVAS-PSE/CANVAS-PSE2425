@@ -9,44 +9,56 @@ from autosave_api.views.project_list import ProjectList
 from autosave_api.views.receiver_detail import ReceiverDetail
 from autosave_api.views.receiver_list import ReceiverList
 from autosave_api.views.settings_detail import SettingsDetail
-
+from canvas.view_name_dict import (
+    heliostat_detail_view,
+    heliostat_list_view,
+    light_source_detail_view,
+    light_source_list_view,
+    project_detail_list_view,
+    project_list_view,
+    receiver_detail_view,
+    receiver_list_view,
+    settings_detail_view,
+)
 
 urlpatterns = [
-    path("projects/", ProjectList.as_view(), name="project_list"),
-    path("projects/<int:pk>/", ProjectDetailList.as_view(), name="project_detail"),
+    path("projects/", ProjectList.as_view(), name=project_list_view),
+    path(
+        "projects/<int:pk>/", ProjectDetailList.as_view(), name=project_detail_list_view
+    ),
     path(
         "projects/<int:project_id>/heliostats/",
         HeliostatList.as_view(),
-        name="heliostat_list",
+        name=heliostat_list_view,
     ),
     path(
         "projects/<int:project_id>/heliostats/<int:pk>/",
         HeliostatDetail.as_view(),
-        name="heliostat_detail",
+        name=heliostat_detail_view,
     ),
     path(
         "projects/<int:project_id>/receivers/",
         ReceiverList.as_view(),
-        name="receiver_list",
+        name=receiver_list_view,
     ),
     path(
         "projects/<int:project_id>/receivers/<int:pk>/",
         ReceiverDetail.as_view(),
-        name="receiver_detail",
+        name=receiver_detail_view,
     ),
     path(
         "projects/<int:project_id>/light_sources/",
         LightSourceList.as_view(),
-        name="light_source_list",
+        name=light_source_list_view,
     ),
     path(
         "projects/<int:project_id>/light_sources/<int:pk>/",
         LightSourceDetail.as_view(),
-        name="light_source_detail",
+        name=light_source_detail_view,
     ),
     path(
         "projects/<int:project_id>/settings/",
         SettingsDetail.as_view(),
-        name="settings_detail",
+        name=settings_detail_view,
     ),
 ]

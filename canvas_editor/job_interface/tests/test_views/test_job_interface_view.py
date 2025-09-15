@@ -102,6 +102,7 @@ class JobInterfaceViewTest(TestCase):
 
     def test_create_new_job_get_logged_out(self):
         """Test that retrieving all job IDs via GET request when logged out redirects to login page."""
+        
         self.client.logout()
 
         response = self.client.get(self.createNewJob_url)
@@ -130,6 +131,7 @@ class JobInterfaceViewTest(TestCase):
 
     def test_get_job_status_get_logged_out(self):
         """Test that retrieving job status via GET request when logged out redirects to login page."""
+        
         self.client.logout()
 
         response = self.client.get(self.getJobStatus_url)
@@ -138,6 +140,7 @@ class JobInterfaceViewTest(TestCase):
 
     def test_get_job_status_delete(self):
         """Test deleting a job via DELETE request."""
+
         response = self.client.delete(self.getJobStatus_url)
 
         self.assertEqual(response.status_code, 200)

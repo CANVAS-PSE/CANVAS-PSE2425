@@ -175,7 +175,7 @@ class UpdateAccountTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/projects/")
+        self.assertRedirects(response, reverse(view_name_dict.projects_view))
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, NEW_TEST_FIRST_NAME)
         self.assertEqual(self.user.last_name, NEW_TEST_LAST_NAME)

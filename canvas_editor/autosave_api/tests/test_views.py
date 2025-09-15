@@ -147,7 +147,9 @@ class APITestCase(TestCase):
     def test_update_settings(self):
         """Test updating the settings for a project."""
         settings = Settings.objects.get(project=self.project)
-        url = reverse("settings_detail", kwargs={"project_id": self.project.id})
+        url = reverse(
+            view_name_dict.settings_detail_view, kwargs={"project_id": self.project.id}
+        )
         data = {"shadows": False, "fog": False}
         response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)

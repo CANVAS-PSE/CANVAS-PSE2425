@@ -63,7 +63,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
             {EMAIL_FIELD: TEST_EMAIL, PASSWORD_FIELD: SECURE_PASSWORD},
         )
 
-        self.assertRedirects(response, reverse("projects"))
+        self.assertRedirects(response, reverse(view_name_dict.projects_view))
 
     def test_post_invalid(self):
         """

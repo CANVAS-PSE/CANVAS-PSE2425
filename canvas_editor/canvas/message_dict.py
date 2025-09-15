@@ -29,6 +29,12 @@ password_special_char_criterium_text = (
 password_special_characters = "!@#$%^&*()-_+=<>?/"
 """String of allowed special characters for passwords."""
 
+enter_new_password_text = "Please enter a new password."
+"""Message indicating that the user should also enter a new password."""
+
+enter_current_password_text = "Please enter your current password."
+"""Message indicating that the user should enter their current password."""
+
 incorrect_password_text = "The password you entered is incorrect."
 """Message shown when an incorrect password is entered."""
 

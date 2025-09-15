@@ -1,14 +1,12 @@
-from hdf5_management.hdf5_manager import HDF5Manager
-from project_management.models import Project
-
+from pathlib import Path
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 
-
-from pathlib import Path
+from hdf5_management.hdf5_manager import HDF5Manager
+from project_management.models import Project
 
 
 class DownloadView(LoginRequiredMixin, View):

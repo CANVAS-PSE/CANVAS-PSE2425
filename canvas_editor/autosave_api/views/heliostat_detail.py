@@ -1,16 +1,13 @@
-from autosave_api.serializers import HeliostatSerializer
-from project_management.models import Heliostat
-
-
 from rest_framework import generics
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from autosave_api.serializers import HeliostatSerializer
+from project_management.models import Heliostat
+
 
 class HeliostatDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Creates a view to retrieve, edit or delete a specific heliostat, defined by the pk in the url.
-    """
+    """Creates a view to retrieve, edit or delete a specific heliostat, defined by the pk in the url."""
 
     serializer_class = HeliostatSerializer
 

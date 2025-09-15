@@ -235,9 +235,7 @@ class HDF5Manager:
         return prototype_config
 
     def _create_target_area_config(self, project: Project, device: torch.device):
-        """
-        Build the target area configuration for the project.
-        """
+        """Build the target area configuration for the project."""
 
         # Create list for target area (receiver) configs
         target_area_config_list = []
@@ -407,9 +405,7 @@ class HDF5Manager:
                 )
 
     def _create_receivers_from_hdf5_file(self, h5f: h5py.File, new_project: Project):
-        """
-        Create receivers from a HDF5 file.
-        """
+        """Create receivers from a HDF5 file."""
         receivers_group: h5py.Group = h5f.get(config_dictionary.target_area_key)
         if receivers_group is not None:
             for receiver_object in receivers_group:
