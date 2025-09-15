@@ -23,7 +23,8 @@ class DownloadViewTest(TestCase):
     def setUp(self):
         """Set up a test user, log in, and create a test project with components for use in all tests."""
         self.download = reverse(
-            view_name_dict.download_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
+            view_name_dict.editor_download_view,
+            kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME},
         )
         user = User.objects.create_user(
             username=TEST_USERNAME, password=SECURE_PASSWORD

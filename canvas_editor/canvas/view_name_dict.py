@@ -32,9 +32,9 @@ receiver_list_view = "receiver_list"
 settings_detail_view = "settings_detail"
 
 # editor
-download_view = "download"
 upload_view = "upload"
 editor_view = "editor"
+editor_download_view = "download"
 
 # job interface
 create_new_job_view = "createNewJob"
