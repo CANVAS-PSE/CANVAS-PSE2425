@@ -30,6 +30,7 @@ project_list_view = "project_list"
 receiver_detail_view = "receiver_detail"
 receiver_list_view = "receiver_list"
 settings_detail_view = "settings_detail"
+project_detail_view = "project_detail"
 
 # editor
 upload_view = "upload"
