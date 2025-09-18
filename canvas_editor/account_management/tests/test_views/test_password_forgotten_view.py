@@ -3,11 +3,19 @@ from django.core import mail
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from account_management.tests.test_constants import SECURE_PASSWORD
 from account_management.tests.test_views.parameterized_view_test_mixin import (
     ParameterizedViewTestMixin,
 )
-from canvas import view_name_dict
+from canvas import path_dict, view_name_dict
+from canvas.test_constants import (
+    EMAIL_FIELD,
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
+    TEST_USERNAME,
+    WRONG_EMAIL,
+)
 
 
 class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
@@ -28,11 +36,11 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_USERNAME,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.password_forgotten_url = reverse(view_name_dict.password_forgotten_view)
 
@@ -44,7 +52,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         self.assert_view_get(
             self.password_forgotten_url,
-            "account_management/password_forgotten.html",
+            path_dict.password_forgotten_template,
         )
 
     def test_post_valid_data(self):
@@ -55,7 +63,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.password_forgotten_url,
-            {"email": "test@mail.de"},
+            {EMAIL_FIELD: TEST_EMAIL},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -69,7 +77,7 @@ class PasswordForgottenViewTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             self.password_forgotten_url,
-            {"email": "test2@mail.de"},
+            {EMAIL_FIELD: WRONG_EMAIL},
         )
 
         self.assertEqual(response.status_code, 200)

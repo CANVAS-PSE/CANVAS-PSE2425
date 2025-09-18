@@ -1,6 +1,4 @@
-from canvas import view_name_dict
-from project_management.models import Heliostat, LightSource, Project, Receiver
-
+import pathlib
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -9,23 +7,50 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_encode
 
-
-import pathlib
+from canvas import path_dict, view_name_dict
+from canvas.test_constants import (
+    COPY_SUFFIX,
+    DESCRIPTION_FIELD,
+    EMPTY_FIELD,
+    FILE_FIELD,
+    NAME_FIELD,
+    OWNER_FIELD,
+    PROJECT_DESCRIPTION_PROJECT_PAGE_TEST,
+    PROJECT_DESCRIPTION_PROJECT_PAGE_TEST_2,
+    PROJECT_DESCRIPTION_WITH_WHITESPACE,
+    PROJECT_NAME_DUPLICATE_NAME,
+    PROJECT_NAME_PROJECT_PAGE_TEST,
+    PROJECT_NAME_PROJECT_PAGE_TEST_2,
+    PROJECT_NAME_WITH_WHITESPACE,
+    SECURE_PASSWORD,
+    SHARED_SUFFIX,
+    TEST_PROJECT_DESCRIPTION_2,
+    TEST_PROJECT_NAME_2,
+    TEST_USERNAME,
+    UPDATED_DESCRIPTION,
+    UPDATED_PROJECT_NAME,
+)
+from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class ProjectPageTest(TestCase):
+    """Tests for the project management views."""
+
     def setUp(self):
+        """Set up a test user, log in, and create a test project for use in all tests."""
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", password="testpassword"
+            username=TEST_USERNAME, password=SECURE_PASSWORD
         )
         self.project = Project.objects.create(
-            name="Test_project", description="Test project description", owner=self.user
+            name=PROJECT_NAME_PROJECT_PAGE_TEST,
+            description=PROJECT_DESCRIPTION_PROJECT_PAGE_TEST,
+            owner=self.user,
         )
         Heliostat.objects.create(project=self.project)
         Receiver.objects.create(project=self.project)
         LightSource.objects.create(project=self.project)
-        self.client.login(username="testuser", password="testpassword")
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         # urls
         self.projects_url = reverse(view_name_dict.projects_view)
@@ -52,86 +77,98 @@ class ProjectPageTest(TestCase):
             ],
         )
 
-    def test_project_GET(self):
+    def test_project_get(self):
+        """Test that the projects view loads correctly for a logged-in user."""
         response = self.client.get(self.projects_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "project_management/projects.html")
+        self.assertTemplateUsed(
+            response, path_dict.project_management_projects_template
+        )
 
-    def test_projects_GET_logged_out(self):
+    def test_projects_get_logged_out(self):
+        """Test that the projects view redirects to the login page for a logged-out user."""
         self.client.logout()
 
         response = self.client.get(self.projects_url)
 
         self.assertEqual(response.status_code, 302)
 
-    def test_projects_POST_no_file(self):
+    def test_projects_post_no_file(self):
+        """Test creating a new project via POST request without a file."""
         response = self.client.post(
             self.projects_url,
             {
-                "name": "Test project 2",
-                "description": "Test project description",
-                "owner": self.user.id,
+                NAME_FIELD: TEST_PROJECT_NAME_2,
+                DESCRIPTION_FIELD: TEST_PROJECT_DESCRIPTION_2,
+                OWNER_FIELD: self.user.id,
             },
         )
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, "Test_project_2")
-        self.assertEqual(Project.objects.last().description, "Test project description")
+        self.assertEqual(Project.objects.last().name, TEST_PROJECT_NAME_2)
+        self.assertEqual(Project.objects.last().description, TEST_PROJECT_DESCRIPTION_2)
         self.assertEqual(Project.objects.last().owner, self.user)
 
-    def test_projects_POST_no_file_name_duplicate(self):
+    def test_projects_post_no_file_name_duplicate(self):
+        """Test creating a new project via POST request without a file and a duplicate name."""
         response = self.client.post(
             self.projects_url,
             {
-                "name": "Test project",
-                "description": "Test project description",
-                "owner": self.user.id,
+                NAME_FIELD: PROJECT_NAME_PROJECT_PAGE_TEST,
+                DESCRIPTION_FIELD: PROJECT_DESCRIPTION_PROJECT_PAGE_TEST,
+                OWNER_FIELD: self.user.id,
             },
         )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Project.objects.count(), 1)
-        self.assertEqual(Project.objects.last().name, "Test_project")
-        self.assertEqual(Project.objects.last().description, "Test project description")
+        self.assertEqual(Project.objects.last().name, PROJECT_NAME_PROJECT_PAGE_TEST)
+        self.assertEqual(
+            Project.objects.last().description, PROJECT_DESCRIPTION_PROJECT_PAGE_TEST
+        )
         self.assertEqual(Project.objects.last().owner, self.user)
 
-    def test_projects_POST_with_file(self):
+    def test_projects_post_with_file(self):
+        """Test creating a new project via POST request with a file."""
         file_path = (
             pathlib.Path(settings.BASE_DIR)
-            / "hdf5_management/testScenarios/testScenario.h5"
+            / path_dict.hdf5_management_test_scenario_template
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
                 self.projects_url,
                 {
-                    "name": "Test project 2",
-                    "description": "Test project description",
-                    "owner": self.user.id,
-                    "file": file,
+                    NAME_FIELD: PROJECT_NAME_PROJECT_PAGE_TEST_2,
+                    DESCRIPTION_FIELD: PROJECT_DESCRIPTION_PROJECT_PAGE_TEST_2,
+                    OWNER_FIELD: self.user.id,
+                    FILE_FIELD: file,
                 },
             )
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, "Test_project_2")
-        self.assertEqual(Project.objects.last().description, "Test project description")
+        self.assertEqual(Project.objects.last().name, PROJECT_NAME_PROJECT_PAGE_TEST_2)
+        self.assertEqual(
+            Project.objects.last().description, PROJECT_DESCRIPTION_PROJECT_PAGE_TEST_2
+        )
         self.assertEqual(Project.objects.last().owner, self.user)
 
-    def test_projects_POST_with_file_name_duplicate(self):
+    def test_projects_post_with_file_name_duplicate(self):
+        """Test creating a new project via POST request with a file and a duplicate name."""
         file_path = (
             pathlib.Path(settings.BASE_DIR)
-            / "hdf5_management/testScenarios/testScenario.h5"
+            / path_dict.hdf5_management_test_scenario_template
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
                 self.projects_url,
                 {
-                    "name": "Test project",
-                    "description": "Test project description",
-                    "owner": self.user.id,
-                    "file": file,
+                    NAME_FIELD: PROJECT_NAME_PROJECT_PAGE_TEST,
+                    DESCRIPTION_FIELD: PROJECT_DESCRIPTION_PROJECT_PAGE_TEST,
+                    OWNER_FIELD: self.user.id,
+                    FILE_FIELD: file,
                 },
             )
 
@@ -139,26 +176,29 @@ class ProjectPageTest(TestCase):
         self.assertEqual(Project.objects.count(), 1)
         self.assertTemplateUsed(response, "project_management/projects.html")
 
-    def test_projects_POST_with_file_space_in_name(self):
+    def test_projects_post_with_file_space_in_name(self):
+        """Test creating a new project via POST request with a file and spaces in the name."""
         file_path = (
             pathlib.Path(settings.BASE_DIR)
-            / "hdf5_management/testScenarios/testScenario.h5"
+            / path_dict.hdf5_management_test_scenario_template
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
                 self.projects_url,
                 {
-                    "name": " Test project 2 ",
-                    "description": " Test project description ",
-                    "owner": self.user.id,
-                    "file": file,
+                    NAME_FIELD: PROJECT_NAME_WITH_WHITESPACE,
+                    DESCRIPTION_FIELD: PROJECT_DESCRIPTION_WITH_WHITESPACE,
+                    OWNER_FIELD: self.user.id,
+                    FILE_FIELD: file,
                 },
             )
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, "Test_project_2")
-        self.assertEqual(Project.objects.last().description, "Test project description")
+        self.assertEqual(Project.objects.last().name, PROJECT_NAME_PROJECT_PAGE_TEST_2)
+        self.assertEqual(
+            Project.objects.last().description, PROJECT_DESCRIPTION_PROJECT_PAGE_TEST
+        )
         self.assertEqual(Project.objects.last().owner, self.user)
         self.assertEqual(
             Project.objects.last().heliostats.count(), 3
@@ -176,111 +216,116 @@ class ProjectPageTest(TestCase):
             Project.objects.last().light_sources.count(), 1
         )  # Number of receivers in the testScenario.h5 file
 
-    def test_projects_POST_no_data(self):
+    def test_projects_post_no_data(self):
+        """Test creating a new project via POST request without any data."""
         response = self.client.post(self.projects_url)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Project.objects.count(), 1)
 
-    def test_update_project_POST_name_description_changed(self):
+    def test_update_project_post_name_description_changed(self):
+        """Test updating a project via POST request with changed name and description."""
         response = self.client.post(
             self.update_project_url,
             {
-                "name": "Updated Test project",
-                "description": "Updated Test project description",
-                "owner": self.user.id,
+                NAME_FIELD: UPDATED_PROJECT_NAME,
+                DESCRIPTION_FIELD: UPDATED_DESCRIPTION,
+                OWNER_FIELD: self.user.id,
             },
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Updated_Test_project")
+        self.assertEqual(Project.objects.first().name, UPDATED_PROJECT_NAME)
+        self.assertEqual(Project.objects.first().description, UPDATED_DESCRIPTION)
+        self.assertEqual(Project.objects.count(), 1)
+
+    def test_update_project_post_name_description_changed_description_is_empty(self):
+        """Test updating a project via POST request with changed name and empty description."""
+        response = self.client.post(
+            self.update_project_url,
+            {
+                NAME_FIELD: UPDATED_PROJECT_NAME,
+                OWNER_FIELD: self.user.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Project.objects.first().name, UPDATED_PROJECT_NAME)
+        self.assertEqual(Project.objects.first().description, EMPTY_FIELD)
+        self.assertEqual(Project.objects.count(), 1)
+
+    def test_update_project_post_name_not_changed(self):
+        """Test updating a project via POST request with unchanged name."""
+        response = self.client.post(
+            self.update_project_url,
+            {
+                NAME_FIELD: PROJECT_NAME_PROJECT_PAGE_TEST,
+                DESCRIPTION_FIELD: UPDATED_DESCRIPTION,
+                OWNER_FIELD: self.user.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Project.objects.first().name, PROJECT_NAME_PROJECT_PAGE_TEST)
+        self.assertEqual(Project.objects.first().description, UPDATED_DESCRIPTION)
+        self.assertEqual(Project.objects.count(), 1)
+
+    def test_update_project_post_description_not_changed(self):
+        """Test updating a project via POST request with unchanged description."""
+        response = self.client.post(
+            self.update_project_url,
+            {
+                NAME_FIELD: UPDATED_PROJECT_NAME,
+                DESCRIPTION_FIELD: PROJECT_DESCRIPTION_PROJECT_PAGE_TEST,
+                OWNER_FIELD: self.user.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Project.objects.first().name, UPDATED_PROJECT_NAME)
         self.assertEqual(
-            Project.objects.first().description, "Updated Test project description"
+            Project.objects.first().description, PROJECT_DESCRIPTION_PROJECT_PAGE_TEST
         )
         self.assertEqual(Project.objects.count(), 1)
 
-    def test_update_project_POST_name_description_changed_description_is_empty(self):
-        response = self.client.post(
-            self.update_project_url,
-            {
-                "name": "Updated Test project",
-                "owner": self.user.id,
-            },
-        )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Updated_Test_project")
-        self.assertEqual(Project.objects.first().description, "")
-        self.assertEqual(Project.objects.count(), 1)
-
-    def test_update_project_POST_name_not_changed(self):
-        response = self.client.post(
-            self.update_project_url,
-            {
-                "name": "Test project",
-                "description": "Updated Test project description",
-                "owner": self.user.id,
-            },
-        )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Test_project")
-        self.assertEqual(
-            Project.objects.first().description, "Updated Test project description"
-        )
-        self.assertEqual(Project.objects.count(), 1)
-
-    def test_update_project_POST_description_not_changed(self):
-        response = self.client.post(
-            self.update_project_url,
-            {
-                "name": "Updated Test project",
-                "description": "Test project description",
-                "owner": self.user.id,
-            },
-        )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.first().name, "Updated_Test_project")
-        self.assertEqual(
-            Project.objects.first().description, "Test project description"
-        )
-        self.assertEqual(Project.objects.count(), 1)
-
-    def test_update_project_POST_name_duplicate(self):
+    def test_update_project_post_name_duplicate(self):
+        """Test updating a project via POST request with a duplicate name."""
         Project.objects.create(
-            name="Test_project_2",
-            description="Test project description",
+            name=PROJECT_NAME_PROJECT_PAGE_TEST_2,
+            description=PROJECT_DESCRIPTION_PROJECT_PAGE_TEST,
             owner=self.user,
         )
 
         response = self.client.post(
             self.update_project_url,
             {
-                "name": "Test project 2",
-                "owner": self.user.id,
+                NAME_FIELD: PROJECT_NAME_DUPLICATE_NAME,
+                OWNER_FIELD: self.user.id,
             },
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Project.objects.last().name, "Test_project_2")
+        self.assertEqual(Project.objects.last().name, PROJECT_NAME_PROJECT_PAGE_TEST_2)
         self.assertEqual(
-            Project.objects.first().description, "Test project description"
+            Project.objects.first().description, PROJECT_DESCRIPTION_PROJECT_PAGE_TEST
         )
         self.assertEqual(Project.objects.count(), 2)
 
-    def test_update_project_GET(self):
+    def test_update_project_get(self):
+        """Test that a GET request to the update project view is not allowed."""
         response = self.client.get(self.update_project_url)
 
         self.assertEqual(response.status_code, 405)
 
-    def test_delete_project_POST(self):
+    def test_delete_project_post(self):
+        """Test deleting a project."""
         response = self.client.post(self.delete_project_url)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 0)
 
-    def test_toggle_favor_project_post(self):
+    def test_toggle_favorite_project_post(self):
+        """Test toggling the favorite status of a project."""
         response = self.client.post(self.toogle_favor_project_url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.last().favorite, True)
@@ -289,12 +334,13 @@ class ProjectPageTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.last().favorite, False)
 
-    def test_duplicate_project_POST(self):
+    def test_duplicate_project_post(self):
+        """Test duplicating a project."""
         response = self.client.post(self.duplicate_project_url)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, self.project.name + "_copy")
+        self.assertEqual(Project.objects.last().name, self.project.name + COPY_SUFFIX)
         self.assertEqual(Project.objects.last().description, self.project.description)
         self.assertNotEqual(Project.objects.last().pk, self.project.pk)
         self.assertEqual(
@@ -322,7 +368,8 @@ class ProjectPageTest(TestCase):
             Project.objects.last(),
         )
 
-    def test_shareProject_POST(self):
+    def test_share_project_post(self):
+        """Test sharing a project."""
         response = self.client.post(self.share_project_url)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(
@@ -333,35 +380,39 @@ class ProjectPageTest(TestCase):
             <= 3
         )
 
-    def test_sharedProjects_GET(self):
+    def test_shared_projects_get(self):
+        """Test accessing the shared projects view after sharing a project."""
         self.client.post(self.share_project_url)
         response = self.client.get(self.shared_projects_url)
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "project_management/sharedProject.html")
 
-    def test_sharedProjects_wrong_values(self):
+    def test_shared_projects_wrong_values(self):
+        """Test accessing the shared projects view with wrong uidb64 and/or project name."""
         response = self.client.get(
             reverse(
                 "sharedProjects",
-                args=["2", "name"],
+                args=["2", NAME_FIELD],
             )
         )
 
         self.assertEqual(response.status_code, 404)
 
-    def test_sharedProjects_not_shared(self):
+    def test_shared_projects_not_shared(self):
+        """Test accessing the shared projects view without sharing a project first."""
         response = self.client.get(self.shared_projects_url)
 
         self.assertEqual(response.status_code, 404)
 
-    def test_sharedProjects_POST(self):
+    def test_shared_projects_post(self):
+        """Test the sharing of a project and creating a duplicate for the accessing user."""
         self.client.post(self.share_project_url)
         response = self.client.post(self.shared_projects_url)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Project.objects.count(), 2)
-        self.assertEqual(Project.objects.last().name, self.project.name + "_shared")
+        self.assertEqual(Project.objects.last().name, self.project.name + SHARED_SUFFIX)
         self.assertEqual(Project.objects.last().description, self.project.description)
         self.assertNotEqual(Project.objects.last().pk, self.project.pk)
         self.assertEqual(
