@@ -35,6 +35,7 @@ settings_detail_view = "settings_detail"
 upload_view = "upload"
 editor_view = "editor"
 editor_download_view = "download"
+editor_preview_upload_view = "upload"
 
 # job interface
 create_new_job_view = "createNewJob"
