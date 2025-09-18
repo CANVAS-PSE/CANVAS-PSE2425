@@ -16,7 +16,7 @@ URLS_TO_VIEWS = [
     (view_name_dict.login_view, (), LoginView),
     (view_name_dict.register_view, (), RegistrationView),
     (view_name_dict.logout_view, (), LogoutView),
-    (view_name_dict.updata_account_view, (), UpdateAccountView),
+    (view_name_dict.update_account_view, (), UpdateAccountView),
     (view_name_dict.delete_account_view, (), DeleteAccountView),
     (view_name_dict.password_reset_view, ("uidb64", "token"), PasswordResetView),
     (view_name_dict.invalid_link_view, (), InvalidLinkView),

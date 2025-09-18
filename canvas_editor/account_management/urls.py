@@ -19,7 +19,7 @@ urlpatterns = [
     path(
         "update_account/",
         UpdateAccountView.as_view(),
-        name=view_name_dict.updata_account_view,
+        name=view_name_dict.update_account_view,
     ),
     path(
         "delete_account/",

@@ -5,7 +5,14 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from account_management.tests.test_constants import SECURE_PASSWORD
+from canvas import view_name_dict
+from canvas.test_constants import (
+    IS_OPENID_USER,
+    OPENID_PROVIDER_FIELD,
+    SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_USERNAME,
+)
 
 
 class GetUserInfoTest(TestCase):
@@ -26,9 +33,9 @@ class GetUserInfoTest(TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="testuser", email="test@mail.de", password=SECURE_PASSWORD
+            username=TEST_USERNAME, email=TEST_EMAIL, password=SECURE_PASSWORD
         )
-        self.get_user_info_url = reverse("get_user_info")
+        self.get_user_info_url = reverse(view_name_dict.get_user_info_view)
 
     def test_get_user_info_not_authenticated(self):
         """
@@ -46,12 +53,12 @@ class GetUserInfoTest(TestCase):
 
         Asserts that the response status code is 200 and is_openid_user is False.
         """
-        self.client.login(username="testuser", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
         response = self.client.get(self.get_user_info_url)
 
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
-        self.assertFalse(response_data["is_openid_user"])
+        self.assertFalse(response_data[IS_OPENID_USER])
 
     def test_get_user_info_authenticated_with_socialaccount(self):
         """
@@ -59,11 +66,11 @@ class GetUserInfoTest(TestCase):
 
         Asserts that the response status code is 200 and is_openid_user is True.
         """
-        self.client.login(username="testuser", password=SECURE_PASSWORD)
-        SocialAccount.objects.create(user=self.user, provider="google")
+        self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
+        SocialAccount.objects.create(user=self.user, provider=OPENID_PROVIDER_FIELD)
 
         response = self.client.get(self.get_user_info_url)
 
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
-        self.assertTrue(response_data["is_openid_user"])
+        self.assertTrue(response_data[IS_OPENID_USER])

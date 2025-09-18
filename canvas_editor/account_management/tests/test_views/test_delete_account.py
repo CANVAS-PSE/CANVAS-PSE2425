@@ -3,9 +3,14 @@ from django.contrib.messages import get_messages
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from account_management.tests.test_constants import (
+from canvas import message_dict, view_name_dict
+from canvas.test_constants import (
     NO_SPECIAL_CHAR_PASSWORD,
+    PASSWORD_FIELD,
     SECURE_PASSWORD,
+    TEST_EMAIL,
+    TEST_FIRST_NAME,
+    TEST_LAST_NAME,
 )
 from canvas import message_dict, view_name_dict
 
@@ -29,11 +34,11 @@ class DeleteAccountTest(TestCase):
         """
         self.client = Client()
         self.user = User.objects.create_user(
-            username="test@mail.de",
-            email="test@mail.de",
+            username=TEST_EMAIL,
+            email=TEST_EMAIL,
             password=SECURE_PASSWORD,
-            first_name="test_first_name",
-            last_name="test_last_name",
+            first_name=TEST_FIRST_NAME,
+            last_name=TEST_LAST_NAME,
         )
         self.delete_account_url = reverse(view_name_dict.delete_account_view)
 
@@ -43,7 +48,7 @@ class DeleteAccountTest(TestCase):
 
         Asserts that only POST requests are allowed for account deletion.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.get(self.delete_account_url)
 
         self.assertEqual(response.status_code, 405)
@@ -54,10 +59,10 @@ class DeleteAccountTest(TestCase):
 
         Asserts that the user is deleted, session is cleared, and redirection occurs.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
-            {"password": SECURE_PASSWORD},
+            {PASSWORD_FIELD: SECURE_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -71,10 +76,10 @@ class DeleteAccountTest(TestCase):
 
         Asserts that an error message is shown and the user is not deleted.
         """
-        self.client.login(username="test@mail.de", password=SECURE_PASSWORD)
+        self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
         response = self.client.post(
             self.delete_account_url,
-            {"password": NO_SPECIAL_CHAR_PASSWORD},
+            {PASSWORD_FIELD: NO_SPECIAL_CHAR_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
@@ -92,7 +97,7 @@ class DeleteAccountTest(TestCase):
         """
         response = self.client.post(
             self.delete_account_url,
-            {"password": SECURE_PASSWORD},
+            {PASSWORD_FIELD: SECURE_PASSWORD},
         )
 
         self.assertEqual(response.status_code, 302)
