@@ -183,11 +183,10 @@ LOGOUT_REDIRECT_URL = "/"
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # Email settings
-# TODO: Update to canvas-editor@scc.kit.edu
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "canvas.service.desk@gmail.com"
-EMAIL_FROM = "canvas.service.desk@gmail.com"
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_HOST = "smtp.kit.edu"
 EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_FROM = "canvas-editor@scc.kit.edu"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")

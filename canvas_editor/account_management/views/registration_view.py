@@ -10,7 +10,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.views.generic.edit import FormView
 
 from account_management.forms.register_form import RegisterForm
-from canvas import view_name_dict
+from canvas import settings, view_name_dict
 
 
 class RegistrationView(FormView):
@@ -48,7 +48,7 @@ class RegistrationView(FormView):
         )
 
         to_email = user.email
-        email = EmailMessage(subject, message, to=[to_email])
+        email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
         email.send()
 
     def dispatch(self, request, *args, **kwargs):

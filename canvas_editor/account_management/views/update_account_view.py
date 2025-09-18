@@ -11,7 +11,7 @@ from django.views import View
 
 from account_management.forms.update_account_form import UpdateAccountForm
 from account_management.models import UserProfile
-from canvas import message_dict, path_dict, view_name_dict
+from canvas import message_dict, path_dict, settings, view_name_dict
 
 
 class UpdateAccountView(LoginRequiredMixin, View):
@@ -56,7 +56,7 @@ class UpdateAccountView(LoginRequiredMixin, View):
         )
 
         to_email = user.email
-        email = EmailMessage(subject, message, to=[to_email])
+        email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
         email.send()
 
     def post(self, request):
