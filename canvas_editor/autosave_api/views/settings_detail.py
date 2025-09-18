@@ -17,6 +17,7 @@ class SettingsDetail(generics.RetrieveUpdateAPIView):
 
     # Overwrite the default get_object function to not use the primary key, but select the settings object by the corresponding project
     def get_object(self):
+        """Return the settings for the project of the user."""
         project_id = self.kwargs["project_id"]
         queryset = self.get_queryset()
         obj = generics.get_object_or_404(queryset, project__id=project_id)

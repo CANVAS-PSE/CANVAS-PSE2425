@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.views import View
 
-from project_management.models import Project
 from canvas import view_name_dict
+from project_management.models import Project
 
 
 class ShareProjectView(LoginRequiredMixin, View):

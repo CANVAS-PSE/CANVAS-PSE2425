@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.utils.http import urlsafe_base64_encode
 from django.views.generic import ListView
 
-from canvas import message_dict, view_name_dict
+from canvas import message_dict
 from hdf5_management.hdf5_manager import HDF5Manager
 from project_management.forms.project_form import ProjectForm
 from project_management.models import Project
@@ -64,6 +64,7 @@ class ProjectsView(LoginRequiredMixin, ListView):
             hdf5_manager.create_project_from_hdf5_file(project_file, new_project)
 
     def post(self, request):
+        """Create a new project if the form is valid and the name is unique."""
         # Initialize the form with POST and FILE data
         form = ProjectForm(request.POST, request.FILES)
 

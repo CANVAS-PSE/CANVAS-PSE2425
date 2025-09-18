@@ -16,5 +16,6 @@ class ProjectDetailList(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        """Get the projects that belong to the user making the request."""
         # Select only the projects the user owns
         return Project.objects.filter(owner=self.request.user)

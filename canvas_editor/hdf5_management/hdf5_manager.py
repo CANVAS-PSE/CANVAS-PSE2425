@@ -236,7 +236,6 @@ class HDF5Manager:
 
     def _create_target_area_config(self, project: Project, device: torch.device):
         """Build the target area configuration for the project."""
-
         # Create list for target area (receiver) configs
         target_area_config_list = []
 

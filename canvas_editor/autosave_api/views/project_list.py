@@ -17,8 +17,10 @@ class ProjectList(generics.ListCreateAPIView):
 
     # Overwrite the default function to use the request user as the owner of the project and also create a new settings object
     def perform_create(self, serializer):
+        """Save the new project with the user making the request as the owner."""
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
+        """Get the projects that belong to the user making the request."""
         # Select only the projects the user owns
         return Project.objects.filter(owner=self.request.user)

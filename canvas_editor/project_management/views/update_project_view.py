@@ -1,7 +1,3 @@
-from canvas import view_name_dict, message_dict
-from project_management.forms.update_project_form import UpdateProjectForm
-from project_management.models import Project
-
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -9,6 +5,9 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import FormView
 
+from canvas import message_dict, view_name_dict
+from project_management.forms.update_project_form import UpdateProjectForm
+from project_management.models import Project
 from project_management.views.utils import is_name_unique
 
 

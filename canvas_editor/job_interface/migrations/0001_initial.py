@@ -7,6 +7,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """Initial migration for job_interface app."""
 
     initial = True
 

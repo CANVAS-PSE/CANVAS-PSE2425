@@ -1,11 +1,12 @@
-from project_management.forms.utils import validate_symbols
-
-
 from django import forms
 from django.core.exceptions import ValidationError
 
+from project_management.forms.utils import validate_symbols
+
 
 class ProjectForm(forms.Form):
+    """Form to create or edit a project."""
+
     name = forms.CharField(
         max_length=100,
         validators=[validate_symbols],
@@ -14,7 +15,7 @@ class ProjectForm(forms.Form):
         max_length=500, required=False, widget=forms.TextInput()
     )
 
-    def _validate_file(file):
+    def _validate_file(self, file):
         # Check if a file is uploaded
         if not file:
             return file

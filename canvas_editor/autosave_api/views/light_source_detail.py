@@ -16,4 +16,5 @@ class LightSourceDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        """Get the lightsources that belong to the user making the request."""
         return LightSource.objects.filter(project__owner=self.request.user)
