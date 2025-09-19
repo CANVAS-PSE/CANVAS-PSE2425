@@ -6,13 +6,13 @@ import { ObjectManager } from "objectManager";
  */
 
 /**
- *
+ * Class representing the quick selector menu in the editor.
  */
 export class QuickSelector {
   #objectManager;
 
   /**
-   *
+   * Creates a new quick selector menu.
    * @param {ObjectManager} objectManager - The ObjectManager instance to manage the creation of objects.
    */
   constructor(objectManager) {

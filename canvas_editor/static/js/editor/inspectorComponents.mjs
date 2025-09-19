@@ -1,15 +1,18 @@
 import { CanvasObject } from "canvasObject";
+import { abstractClassError, methodMustBeImplementedError } from "message_dict";
+import { abs } from "three/src/nodes/TSL.js";
 
 /**
  * Represents a single component of the inspector
  */
 export class InspectorComponent {
   /**
-   *
+   * Creates a new inspector component.
+   * @throws {Error} if trying to instantiate this abstract class directly
    */
   constructor() {
     if (new.target == InspectorComponent) {
-      throw new Error("This class is abstract an cannot be instantiated.");
+      throw new Error(abstractClassError(InspectorComponent));
     }
   }
 
@@ -18,18 +21,15 @@ export class InspectorComponent {
    * @throws {Error} if this method is not implemented in a subclass
    */
   render() {
-    throw new Error(
-      "The render method must be implemented in every subclass of InspectorComponent",
-    );
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
-   *
+   * Disables the border around the component
+   * @throws {Error} if this method is not implemented in a subclass
    */
   disableBorder() {
-    throw new Error(
-      "The disableBorder method must be implemented in every subclass of InspectorComponent",
-    );
+    throw new Error(methodMustBeImplementedError);
   }
 }
 
@@ -57,7 +57,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     fieldType,
     getFieldValueFunc,
     saveFunc,
-    InputLimitBottom,
+    InputLimitBottom
   ) {
     super();
     this.#fieldName = fieldName;
@@ -69,7 +69,8 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -115,7 +116,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Disables the border around the component
    */
   disableBorder() {
     this.#hasBorder = false;
@@ -142,7 +143,8 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -189,7 +191,7 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
       "bg-body",
       "rounded-3",
       "gap-2",
-      "accordion-body",
+      "accordion-body"
     );
     bodyWrapper.appendChild(body);
 
@@ -229,7 +231,8 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -268,7 +271,7 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Disables the border around the component
    */
   disableBorder() {
     this.#hasBorder = false;
@@ -302,7 +305,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
     max,
     getFieldValueFunc,
     saveFunc,
-    step = undefined,
+    step = undefined
   ) {
     super();
     this.#fieldName = fieldName;
@@ -315,7 +318,8 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -325,7 +329,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
       "p-2",
       "bg-body",
       "rounded-3",
-      "gap-2",
+      "gap-2"
     );
     if (this.#hasBorder) {
       wrapper.classList.add("border");
@@ -390,7 +394,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Disables the border around the component
    */
   disableBorder() {
     this.#hasBorder = false;
@@ -419,7 +423,8 @@ export class HeaderInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -441,7 +446,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
       "d-flex",
       "gap-1",
       "bg-body",
-      "px-2",
+      "px-2"
     );
     buttonWrapper.appendChild(buttonBackground);
     wrapper.appendChild(buttonWrapper);

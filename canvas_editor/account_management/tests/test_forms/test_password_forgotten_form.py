@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from account_management.forms.password_forgotten_form import PasswordForgottenForm
 from account_management.models import User
-from canvas import message_dict
+from canvas.message_dict import email_not_registered_text
 from canvas.test_constants import (
     EMAIL_FIELD,
     EMPTY_FIELD,
@@ -47,6 +47,4 @@ class PasswordForgottenFormTest(FormTestMixin, TestCase):
     def test_password_forgotten_form_wrong_email(self):
         """Test case for PasswordForgottenForm with not existing email."""
         form = self.create_form(**{EMAIL_FIELD: WRONG_EMAIL})
-        self.assert_form_error_message(
-            form, EMAIL_FIELD, message_dict.email_not_registered_text
-        )
+        self.assert_form_error_message(form, EMAIL_FIELD, email_not_registered_text)

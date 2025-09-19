@@ -2,6 +2,7 @@
  * Adapted from three@0.163.0/examples/jsm/helpers/ViewHelper.js, Copyright 2010-2024 Three.js Authors, MIT License
  */
 
+import { invalidCompassStyleError } from "message_dict";
 import {
   ArrowHelper,
   BoxGeometry,
@@ -46,7 +47,7 @@ class CompassAxisArrow extends Object3D {
       1,
       color,
       0.3,
-      0.3,
+      0.3
     );
     this.add(this.arrow);
 
@@ -109,7 +110,7 @@ class CompassAxisCircle extends Object3D {
     const axisGeometry = new BoxGeometry(0.8, axisWidth, axisWidth).translate(
       0.4,
       0,
-      0,
+      0
     );
     this.axis = new Mesh(axisGeometry, this.getAxisMaterial(color));
 
@@ -243,7 +244,7 @@ class ViewHelper extends Object3D {
       this.yAxis = new CompassAxisArrow("y", new Color("#8adb00"), "U");
       this.zAxis = new CompassAxisArrow("z", new Color("#2c8fff"), "E");
     } else {
-      throw new Error("Invalid compass style " + style);
+      throw new Error(invalidCompassStyleError + style);
     }
     for (const axis of [this.xAxis, this.yAxis, this.zAxis]) {
       this.add(axis);

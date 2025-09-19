@@ -2,7 +2,14 @@ from django.test import TestCase
 
 from account_management.forms.password_reset_form import PasswordResetForm
 from account_management.models import User
-from canvas import message_dict
+from canvas.message_dict import (
+    password_digit_criterium_text,
+    password_length_criterium_text,
+    password_lowercase_criterium_text,
+    password_match_criterium_text,
+    password_special_char_criterium_text,
+    password_uppercase_criterium_text,
+)
 from canvas.test_constants import (
     EMPTY_FIELD,
     MISMATCHED_BUT_CORRECT_PASSWORD,
@@ -65,7 +72,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
         self.assert_form_error_message(
             form,
             PASSWORD_CONFIRMATION_FIELD,
-            message_dict.password_match_criterium_text,
+            password_match_criterium_text,
         )
 
     def test_password_reset_form_password_too_short(self):
@@ -77,7 +84,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, message_dict.password_length_criterium_text
+            form, NEW_PASSWORD_FIELD, password_length_criterium_text
         )
 
     def test_password_reset_form_password_no_uppercase(self):
@@ -89,7 +96,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, message_dict.password_uppercase_criterium_text
+            form, NEW_PASSWORD_FIELD, password_uppercase_criterium_text
         )
 
     def test_password_reset_form_password_no_lowercase(self):
@@ -101,7 +108,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, message_dict.password_lowercase_criterium_text
+            form, NEW_PASSWORD_FIELD, password_lowercase_criterium_text
         )
 
     def test_password_reset_form_password_no_number(self):
@@ -113,7 +120,7 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, message_dict.password_digit_criterium_text
+            form, NEW_PASSWORD_FIELD, password_digit_criterium_text
         )
 
     def test_password_reset_form_password_no_special_character(self):
@@ -125,5 +132,5 @@ class PasswordResetFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, message_dict.password_special_char_criterium_text
+            form, NEW_PASSWORD_FIELD, password_special_char_criterium_text
         )

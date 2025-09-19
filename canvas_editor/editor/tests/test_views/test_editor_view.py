@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from canvas import view_name_dict
 from canvas.test_constants import (
     PROJECT_NAME_FIELD,
     SECURE_PASSWORD,
@@ -10,6 +9,7 @@ from canvas.test_constants import (
     TEST_PROJECT_NAME,
     TEST_USERNAME,
 )
+from canvas.view_name_dict import editor_view
 from project_management.models import Project
 
 
@@ -46,7 +46,7 @@ class EditorViewTest(TestCase):
     def test_get_method(self):
         """Test the GET method of the editor view."""
         self.editor = reverse(
-            view_name_dict.editor_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
+            editor_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
         )
         response = self.client.get(self.editor)
 
@@ -57,7 +57,7 @@ class EditorViewTest(TestCase):
         """Test that accessing the editor view when logged out redirects to login page."""
         self.client.logout()
         self.editor = reverse(
-            view_name_dict.editor_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
+            editor_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
         )
         response = self.client.get(self.editor)
         self.assertEqual(response.status_code, 302)

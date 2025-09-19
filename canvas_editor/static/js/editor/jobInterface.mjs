@@ -3,7 +3,7 @@ import { SaveAndLoadHandler } from "saveAndLoadHandler";
 let apiUrl = window.location.origin;
 
 /**
- *
+ * Interface for managing jobs within a project.
  */
 export class JobInterface {
   #jobInterfaceBody;
@@ -14,7 +14,7 @@ export class JobInterface {
   #jobList = [];
 
   /**
-   *
+   * Creates a new JobInterface for managing jobs within a project.
    * @param {number} projectID - The ID of the project for which jobs are being managed.
    */
   constructor(projectID) {
@@ -53,7 +53,7 @@ export class JobInterface {
   }
 
   /**
-   *
+   * Creates a new job by sending a POST request to the server and updates the job list.
    */
   #createNewJob() {
     fetch(apiUrl + "/jobs/" + this.#projectID + "/", {
@@ -81,7 +81,7 @@ export class JobInterface {
   }
 
   /**
-   *
+   * Deletes a job from the job list and sends a DELETE request to the server.
    * @param {Job} job the job you want to delete
    */
   deleteJob(job) {
@@ -104,7 +104,7 @@ export class JobInterface {
   }
 
   /**
-   *
+   * Fetches all jobs associated with the project and populates the job list.
    */
   #getJobs() {
     fetch(apiUrl + "/jobs/" + this.#projectID + "/")
@@ -126,7 +126,7 @@ export class JobInterface {
 }
 
 /**
- *
+ * Represents a job element in the job interface.
  */
 export class Job extends HTMLElement {
   #id;
@@ -140,10 +140,10 @@ export class Job extends HTMLElement {
   #resultButton;
 
   /**
-   *
-   * @param jobInterface
-   * @param jobID
-   * @param projectID
+   * Creates a new Job element.
+   * @param {JobInterface} jobInterface the job interface this job belongs to
+   * @param {string} jobID the ID of the job
+   * @param {string} projectID the ID of the project
    */
   constructor(jobInterface, jobID, projectID) {
     super();
@@ -155,7 +155,7 @@ export class Job extends HTMLElement {
   }
 
   /**
-   *
+   * Creates the HTML structure for the job element.
    */
   #createJobElement() {
     this.classList.add(
@@ -164,7 +164,7 @@ export class Job extends HTMLElement {
       "d-flex",
       "p-2",
       "gap-2",
-      "align-items-center",
+      "align-items-center"
     );
 
     const jobName = document.createElement("div");
@@ -185,7 +185,7 @@ export class Job extends HTMLElement {
     this.#progressElem.setAttribute("role", "progressbar");
     this.#progressElem.setAttribute(
       "aria-valuenow",
-      (this.#progress * 100).toString(),
+      (this.#progress * 100).toString()
     );
     this.#progressElem.setAttribute("aria-valuemin", "0");
     this.#progressElem.setAttribute("aria-valuemax", "100");
@@ -198,7 +198,7 @@ export class Job extends HTMLElement {
       "btn",
       "btn-primary",
       "text-nowrap",
-      "rouned-3",
+      "rouned-3"
     );
     this.#resultButton.innerHTML = "View Result";
     this.#resultButton.classList.add("d-none");
@@ -214,7 +214,7 @@ export class Job extends HTMLElement {
   }
 
   /**
-   *
+   * Fetches the current status of the job from the server and updates the UI accordingly.
    */
   fetchStatus() {
     if (!this.#isFinished) {
@@ -224,7 +224,7 @@ export class Job extends HTMLElement {
           this.#statusElem.innerHTML = "Status: " + data["status"];
           this.#progressElem.setAttribute(
             "aria-valuenow",
-            (data["progress"] * 100).toString(),
+            (data["progress"] * 100).toString()
           );
           this.#progressElem.style.width = data["progress"] * 100 + "%";
           if (data["progress"] >= 1) {
@@ -240,7 +240,8 @@ export class Job extends HTMLElement {
   }
 
   /**
-   *
+   * Gets the job ID.
+   * @returns {string} the job ID
    */
   get jobID() {
     return this.#id;

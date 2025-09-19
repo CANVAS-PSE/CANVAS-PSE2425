@@ -1,3 +1,5 @@
+import { abstractClassError } from "message_dict";
+
 /**
  * This class serves as a base class for all specific command types.
  * It defines the structure for executing and undoing actions within the system.
@@ -16,7 +18,7 @@ export class Command {
    */
   constructor() {
     if (new.target === Command) {
-      throw new Error("Cannot instantiate abstract class Command directly");
+      throw new Error(abstractClassError(Command));
     }
   }
 
@@ -27,7 +29,7 @@ export class Command {
    */
   execute() {
     throw new Error(
-      "Abstract method 'execute' must be implemented by subclass",
+      "Abstract method 'execute' must be implemented by subclass"
     );
   }
 

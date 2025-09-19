@@ -26,19 +26,13 @@ from artist.util import config_dictionary, set_logger_config
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from canvas import message_dict, path_dict
+from canvas.message_dict import folder_not_found_text
+from canvas.path_dict import SCENARIO_FILE_SUFFIX, TEST_STRAL_DATA_PATH
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class HDF5Manager:
-    """Manages hdf5 file. Creates or reads hdf5 files compatible with ARTIST.
-
-    Methods
-    -------
-    create_hdf5_file
-    create_project_from_hdf5_file
-
-    """
+    """Manages hdf5 file. Creates or reads hdf5 files compatible with ARTIST."""
 
     # Helper function to safely extract values from datasets
     # in case they are None or not in the expected format.
@@ -118,14 +112,12 @@ class HDF5Manager:
 
         # The following parameter is the name of the scenario.
         scenario_path = pathlib.Path(
-            f"{scenario_dir}/{user.id}_{project.name}{path_dict.SCENARIO_FILE_SUFFIX}"
+            f"{scenario_dir}/{user.id}_{project.name}{SCENARIO_FILE_SUFFIX}"
         )
         # This checks to make sure the path you defined is valid and a scenario HDF5 can be saved there.
         if not pathlib.Path(scenario_path).parent.is_dir():
             raise FileNotFoundError(
-                message_dict.folder_not_found_text.format(
-                    pathlib.Path(scenario_path).parent
-                )
+                folder_not_found_text.format(pathlib.Path(scenario_path).parent)
             )
 
         return scenario_path
@@ -137,7 +129,7 @@ class HDF5Manager:
         # Set CANVAS_ROOT
         canvas_root = settings.BASE_DIR
 
-        stral_file_path = canvas_root / path_dict.TEST_STRAL_DATA_PATH
+        stral_file_path = canvas_root / TEST_STRAL_DATA_PATH
 
         (
             facet_translation_vectors,

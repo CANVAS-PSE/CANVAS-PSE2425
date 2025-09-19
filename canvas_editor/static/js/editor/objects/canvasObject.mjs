@@ -2,6 +2,7 @@ import { InspectorComponent } from "inspectorComponents";
 import { Object3D, Vector3 } from "three";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { methodMustBeImplementedError } from "message_dict";
 
 /**
  * Represents a Object in CANVAS
@@ -22,10 +23,10 @@ export class CanvasObject extends Object3D {
    * Get a list of inspector components used for this object
    * @abstract
    * @throws {Error}  Throws an error if the method is not implemented in subclasses.
-   * @returns {InspectorComponent[]} an array of the inspector components
+   * @returns {InspectorComponent[]} must be implemented in all subclasses
    */
   get inspectorComponents() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -34,7 +35,7 @@ export class CanvasObject extends Object3D {
    */
   // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateAndSaveObjectName(name) {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -43,7 +44,7 @@ export class CanvasObject extends Object3D {
    */
   // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateAndSaveObjectPosition(position) {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -52,7 +53,7 @@ export class CanvasObject extends Object3D {
    */
   // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateAndSaveObjectRotation(rotation) {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -61,7 +62,7 @@ export class CanvasObject extends Object3D {
    */
   // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updatePosition(position) {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -70,20 +71,20 @@ export class CanvasObject extends Object3D {
    */
   // eslint-disable-next-line no-unused-vars -- required for interface compatibility
   updateRotation(rotation) {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
    * Duplicates the object
    */
   duplicate() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
   /**
    * Deletes the object
    */
   delete() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -93,7 +94,7 @@ export class CanvasObject extends Object3D {
    * @returns {string[]} array containing all reotable axis.
    */
   get rotatableAxis() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -103,7 +104,7 @@ export class CanvasObject extends Object3D {
    * @returns {boolean} wether the object is movable
    */
   get isMovable() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -113,7 +114,7 @@ export class CanvasObject extends Object3D {
    * @returns {boolean} wether the object is selectable
    */
   get isSelectable() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -123,7 +124,7 @@ export class CanvasObject extends Object3D {
    * @returns {THREE.Vector3} the old position of the object
    */
   get lastPosition() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -133,7 +134,7 @@ export class CanvasObject extends Object3D {
    * @returns {THREE.Vector3} the old rotation of the object
    */
   get lastRotation() {
-    throw new Error("This method must be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 }
 

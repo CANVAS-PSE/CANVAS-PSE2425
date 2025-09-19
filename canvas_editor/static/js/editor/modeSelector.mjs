@@ -31,18 +31,18 @@ export class ModeSelector {
   }
 
   /**
-   *
+   * Adds event listeners to the tab buttons and keyboard shortcuts.
    */
   #addEventListeners() {
     // Add event listeners to the tab buttons to switch modes when clicked
     this.#tabButtons[Mode.NONE].addEventListener("click", () =>
-      this.#switchToMode(Mode.NONE),
+      this.#switchToMode(Mode.NONE)
     );
     this.#tabButtons[Mode.MOVE].addEventListener("click", () =>
-      this.#switchToMode(Mode.MOVE),
+      this.#switchToMode(Mode.MOVE)
     );
     this.#tabButtons[Mode.ROTATE].addEventListener("click", () =>
-      this.#switchToMode(Mode.ROTATE),
+      this.#switchToMode(Mode.ROTATE)
     );
 
     window.addEventListener("keydown", (event) => {
@@ -57,10 +57,9 @@ export class ModeSelector {
     });
   }
 
-  // Switches the mode of the picker and updates the UI.
   /**
-   *
-   * @param mode
+   * Switches the mode of the picker and updates the UI.
+   * @param {string} mode the mode to switch to
    */
   #switchToMode(mode) {
     this.#mode = mode;

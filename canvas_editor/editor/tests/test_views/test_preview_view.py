@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from canvas import path_dict, view_name_dict
+from canvas.path_dict import empty_editor_image
 from canvas.test_constants import (
     PREVIEW_FIELD,
     PROJECT_NAME_FIELD,
@@ -14,6 +14,7 @@ from canvas.test_constants import (
     TEST_PROJECT_NAME,
     TEST_USERNAME,
 )
+from canvas.view_name_dict import upload_view
 from project_management.models import Project
 
 
@@ -23,7 +24,7 @@ class PreviewViewTest(TestCase):
     def setUp(self):
         """Set up a test user, log in, and create a test project for use in all tests."""
         self.upload = reverse(
-            view_name_dict.upload_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
+            upload_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
         )
         user = User.objects.create_user(
             username=TEST_USERNAME, password=SECURE_PASSWORD
@@ -39,7 +40,7 @@ class PreviewViewTest(TestCase):
 
     def test_upload(self):
         """Test uploading a preview image for a project."""
-        test_file_path = os.path.join(settings.BASE_DIR, path_dict.empty_editor_image)
+        test_file_path = os.path.join(settings.BASE_DIR, empty_editor_image)
         with open(test_file_path, "rb") as hdf5_file:
             data = {
                 PREVIEW_FIELD: hdf5_file,

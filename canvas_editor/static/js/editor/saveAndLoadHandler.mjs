@@ -1,5 +1,6 @@
 import { Heliostat } from "heliostat";
 import { LightSource } from "lightSource";
+import { projectIdRequiredError } from "message_dict";
 import { Receiver } from "receiver";
 
 /**
@@ -33,9 +34,7 @@ export class SaveAndLoadHandler {
   static getInstance(projectId = null) {
     if (!SaveAndLoadHandler.#instance) {
       if (!projectId) {
-        throw new Error(
-          "When executing get instance for the first time the project id is needed",
-        );
+        throw new Error(projectIdRequiredError);
       }
       SaveAndLoadHandler.#instance = new SaveAndLoadHandler(projectId);
     }

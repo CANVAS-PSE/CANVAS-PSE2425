@@ -4,7 +4,7 @@ from django.templatetags.static import static
 from django.test import TestCase
 
 from account_management.models import UserProfile
-from canvas import path_dict
+from canvas.path_dict import default_profile_pic
 from canvas.test_constants import (
     SECURE_PASSWORD,
     TEST_EMAIL,
@@ -28,7 +28,7 @@ class UserProfileModelTest(TestCase):
         """Test the fields of the automatically generated user profile on user creation."""
         self.assertEqual(self.profile.user, self.user)
         self.assertFalse(bool(self.profile.profile_picture))
-        self.assertEqual(self.profile.image_url, static(path_dict.default_profile_pic))
+        self.assertEqual(self.profile.image_url, static(default_profile_pic))
 
     def test_user_profile_str(self):
         """Test the __str__ method of the user profile."""

@@ -5,7 +5,6 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from canvas import view_name_dict
 from canvas.test_constants import (
     JOB_ID_FIELD,
     JOB_IDS_FIELD,
@@ -17,6 +16,7 @@ from canvas.test_constants import (
     TEST_PROJECT_NAME,
     TEST_USERNAME,
 )
+from canvas.view_name_dict import create_new_job_view, job_status_view
 from job_interface.models import Job
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
@@ -42,11 +42,9 @@ class JobInterfaceViewTest(TestCase):
         self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         # urls
-        self.createNewJob_url = reverse(
-            view_name_dict.create_new_job_view, args=[self.project.pk]
-        )
+        self.createNewJob_url = reverse(create_new_job_view, args=[self.project.pk])
         self.getJobStatus_url = reverse(
-            view_name_dict.job_status_view, args=[self.project.pk, self.job.pk]
+            job_status_view, args=[self.project.pk, self.job.pk]
         )
 
     def _assert_job_status(self, delta_minutes, expected_status, expect_result):

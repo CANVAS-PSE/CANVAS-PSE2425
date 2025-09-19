@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from canvas import view_name_dict
 from canvas.test_constants import (
     PROJECT_NAME_FIELD,
     SECURE_PASSWORD,
@@ -14,6 +13,7 @@ from canvas.test_constants import (
     TEST_PROJECT_NAME,
     TEST_USERNAME,
 )
+from canvas.view_name_dict import editor_download_view
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
@@ -23,7 +23,7 @@ class DownloadViewTest(TestCase):
     def setUp(self):
         """Set up a test user, log in, and create a test project with components for use in all tests."""
         self.download = reverse(
-            view_name_dict.editor_download_view,
+            editor_download_view,
             kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME},
         )
         user = User.objects.create_user(

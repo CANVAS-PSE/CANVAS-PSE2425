@@ -1,7 +1,9 @@
 import { Modal } from "bootstrap";
 import { CommandPrompt } from "commandPrompt";
+import { abstractClassError, methodMustBeImplementedError } from "message_dict";
 import { ObjectManager } from "objectManager";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
+import { abs } from "three/src/nodes/TSL.js";
 
 /**
  * Parent class of all prompt commands
@@ -32,7 +34,7 @@ export class PromptCommand extends HTMLElement {
       "px-2",
       "d-flex",
       "justify-content-between",
-      "align-items-center",
+      "align-items-center"
     );
     this.style.cursor = "pointer";
 
@@ -57,27 +59,30 @@ export class PromptCommand extends HTMLElement {
     // select this element on hover
     this.addEventListener("mousemove", () => {
       this.#commandPrompt.selectCommand(
-        this.#commandPrompt.currentlyAvailableCommands.indexOf(this),
+        this.#commandPrompt.currentlyAvailableCommands.indexOf(this)
       );
     });
   }
 
   /**
-   *
+   * Returns the name of the command.
+   * @returns {string} the name of the command
    */
   get commandName() {
     return this.#commandName;
   }
 
   /**
-   *
+   * Returns the length of the occurence that got selected by the searching algorithm.
+   * @returns {number|null} the length of the occurence or null if no occurence got selected
    */
   get occurenceLength() {
     return this.#occurenceLength;
   }
 
   /**
-   *
+   * Sets the length of the occurence that got selected by the searching algorithm.
+   * @param {number|null} length the length of the occurence or null if no occurence got selected
    */
   set occurenceLength(length) {
     this.#occurenceLength = length;
@@ -121,14 +126,14 @@ export class PromptCommand extends HTMLElement {
   }
 
   /**
-   *
+   * Selects this command (adds a background color).
    */
   select() {
     this.classList.add("bg-primary");
   }
 
   /**
-   *
+   * Unselects this command (removes the background color).
    */
   unselect() {
     this.classList.remove("bg-primary");
@@ -138,12 +143,12 @@ export class PromptCommand extends HTMLElement {
    * Executes the prompt command.
    */
   execute() {
-    throw new Error("This method needs to be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 }
 
 /**
- *
+ * Parent class for all theme related prompt commands
  */
 export class ThemePromptCommand extends PromptCommand {
   /**
@@ -153,18 +158,17 @@ export class ThemePromptCommand extends PromptCommand {
    */
   constructor(description, commandPrompt) {
     if (new.target === ThemePromptCommand) {
-      throw new Error(
-        "Cannot instantiate abstract class ThemePromptCommand directly",
-      );
+      throw new Error(abstractClassError(ThemePromptCommand));
     }
     super(description, commandPrompt);
   }
 
   /**
-   *
+   * Executes the theme command.
+   * @throws {Error} if the method is not implemented in a subclass
    */
   execute() {
-    throw new Error("This method needs to be implemented in all subclasses");
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
@@ -181,7 +185,7 @@ export class ThemePromptCommand extends PromptCommand {
         "data-bs-theme",
         window.matchMedia("(prefers-color-scheme: dark)").matches
           ? "dark"
-          : "light",
+          : "light"
       );
     } else {
       document.documentElement.setAttribute("data-bs-theme", theme);
@@ -224,7 +228,7 @@ export class LightModePromptCommand extends ThemePromptCommand {
   }
 
   /**
-   *
+   * Executes the light mode command.
    */
   execute() {
     this.setTheme("light");
@@ -244,7 +248,7 @@ export class DarkModePromptCommand extends ThemePromptCommand {
   }
 
   /**
-   *
+   * Executes the dark mode command.
    */
   execute() {
     this.setTheme("dark");
@@ -264,7 +268,7 @@ export class AutoModePromptCommand extends ThemePromptCommand {
   }
 
   /**
-   *
+   * Executes the auto mode command.
    */
   execute() {
     this.setTheme("auto");
@@ -287,7 +291,7 @@ export class AddHeliostatPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the add heliostat command.
    */
   execute() {
     this.#objectManager.createHeliostat();
@@ -310,7 +314,7 @@ export class AddReceiverPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the add receiver command.
    */
   execute() {
     this.#objectManager.createReceiver();
@@ -333,7 +337,7 @@ export class AddLightSourcePromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the add light source command.
    */
   execute() {
     this.#objectManager.createLightSource();
@@ -353,7 +357,7 @@ export class ToggleFullscreenPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the toggle fullscreen command.
    */
   execute() {
     if (navigator.userAgent.indexOf("Safari") > -1) {
@@ -386,7 +390,7 @@ export class ExportProjectPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the export project command.
    */
   execute() {
     let modal = new Modal(document.getElementById("loadingModal"));
@@ -436,7 +440,7 @@ export class RenderProjectPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the render project command.
    */
   execute() {
     const jobModal = new Modal(document.getElementById("startJobModal"));
@@ -463,7 +467,7 @@ export class OpenSettingsPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the open settings command.
    */
   execute() {
     const settingsModal = new Modal(document.getElementById("settings"));
@@ -484,11 +488,11 @@ export class OpenJobInterfacePromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the open job interface command.
    */
   execute() {
     const jobInterfaceModal = new Modal(
-      document.getElementById("jobInterface"),
+      document.getElementById("jobInterface")
     );
     jobInterfaceModal.show();
 
@@ -513,11 +517,11 @@ export class OpenKeybindsPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the open keybindings command.
    */
   execute() {
     const keybindingsModal = new Modal(
-      document.getElementById("keyboardModal"),
+      document.getElementById("keyboardModal")
     );
     keybindingsModal.show();
   }
@@ -536,7 +540,7 @@ export class LogoutPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the logout command.
    */
   execute() {
     fetch(window.location.origin + "/logout/", {
@@ -564,11 +568,11 @@ export class NewProjectPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the new project command.
    */
   execute() {
     const newProjectModal = new Modal(
-      document.getElementById("createNewProject"),
+      document.getElementById("createNewProject")
     );
     newProjectModal.show();
 
@@ -593,7 +597,7 @@ export class OpenProjectPromptCommand extends PromptCommand {
   }
 
   /**
-   *
+   * Executes the open project command.
    */
   execute() {
     const newProjectModal = new Modal(document.getElementById("openProject"));
@@ -607,36 +611,36 @@ customElements.define("dark-mode-prompt-command", DarkModePromptCommand);
 customElements.define("auto-mode-prompt-command", AutoModePromptCommand);
 customElements.define(
   "add-heliostat-prompt-command",
-  AddHeliostatPromptCommand,
+  AddHeliostatPromptCommand
 );
 customElements.define("add-receiver-prompt-command", AddReceiverPromptCommand);
 customElements.define(
   "add-light-source-prompt-command",
-  AddLightSourcePromptCommand,
+  AddLightSourcePromptCommand
 );
 customElements.define(
   "toggle-fullscreen-prompt-command",
-  ToggleFullscreenPromptCommand,
+  ToggleFullscreenPromptCommand
 );
 customElements.define(
   "export-project-prompt-command",
-  ExportProjectPromptCommand,
+  ExportProjectPromptCommand
 );
 customElements.define(
   "render-project-prompt-command",
-  RenderProjectPromptCommand,
+  RenderProjectPromptCommand
 );
 customElements.define(
   "open-settings-prompt-command",
-  OpenSettingsPromptCommand,
+  OpenSettingsPromptCommand
 );
 customElements.define(
   "open-job-interface-prompt-command",
-  OpenJobInterfacePromptCommand,
+  OpenJobInterfacePromptCommand
 );
 customElements.define(
   "open-keybings-prompt-command",
-  OpenKeybindsPromptCommand,
+  OpenKeybindsPromptCommand
 );
 customElements.define("logout-prompt-command", LogoutPromptCommand);
 customElements.define("new-project-prompt-command", NewProjectPromptCommand);

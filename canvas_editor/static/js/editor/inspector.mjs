@@ -4,7 +4,8 @@ import { ItemUpdatedEvent } from "updateCommands";
 import { CanvasObject } from "canvasObject";
 
 /**
- *
+ * Represents the inspector panel in the editor.
+ * @class Inspector
  */
 export class Inspector {
   #picker;
@@ -36,7 +37,7 @@ export class Inspector {
         ) {
           this.#render();
         }
-      },
+      }
     );
 
     canvas.addEventListener(
@@ -47,14 +48,14 @@ export class Inspector {
           event.detail.item == this.#objectList[0]
         )
           this.#render();
-      },
+      }
     );
 
     this.#render();
   }
 
   /**
-   *
+   * Renders the inspector panel.
    */
   #render() {
     this.#objectList = this.#picker.getSelectedObjects();
@@ -66,7 +67,7 @@ export class Inspector {
       wrapper.classList.add(
         "text-secondary",
         "d-flex",
-        "justify-content-center",
+        "justify-content-center"
       );
       wrapper.innerHTML = "Select an object by clicking on it";
       this.#inspectorElem.appendChild(wrapper);
@@ -84,7 +85,7 @@ export class Inspector {
       wrapper.classList.add(
         "text-secondary",
         "d-flex",
-        "justify-content-center",
+        "justify-content-center"
       );
       wrapper.innerHTML = "Multi selection is not yet supported :(";
       this.#inspectorElem.appendChild(wrapper);

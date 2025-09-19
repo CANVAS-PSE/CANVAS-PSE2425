@@ -19,9 +19,20 @@ import { LightSource } from "lightSource";
 import { Receiver } from "receiver";
 import { Terrain } from "terrain";
 import { Heliostat } from "heliostat";
+import { projectIdRequiredError } from "message_dict";
+import {
+  skyboxNxPath,
+  skyboxNyPath,
+  skyboxNzPath,
+  skyboxPxPath,
+  skyboxPyPath,
+  skyboxPzPath,
+} from "path_dict";
 
 /**
- *
+ * Represents the main editor class.
+ * @class Editor
+ * @classdesc This is the main class of the editor. It holds all the other classes and manages the threejs scene.
  */
 export class Editor {
   /** @type {Editor} */
@@ -63,8 +74,8 @@ export class Editor {
   #lightsourceList = [];
 
   /**
-   *
-   * @param projectId
+   * Private constructor for the singleton pattern. Use Editor.getInstance() instead.
+   * @param {number} projectId the id of the project
    */
   constructor(/** @type {number}*/ projectId) {
     if (Editor.#instance) {
@@ -85,14 +96,14 @@ export class Editor {
       this.#camera,
       this.#transformControls,
       this.#selectionBox,
-      this.#selectableGroup,
+      this.#selectableGroup
     );
     this.#overview = new OverviewHandler(this.#picker);
     this.#projectSettingManager = new ProjectSettingsManager();
     this.#projectSettingManager.initialize();
     this.#objectManager = new ObjectManager(
       this.#picker,
-      this.#undoRedoHandler,
+      this.#undoRedoHandler
     );
     this.#navbar = new Navbar(this.#objectManager);
     this.#quickSelector = new QuickSelector(this.#objectManager);
@@ -115,9 +126,7 @@ export class Editor {
   static getInstance(projectId = null) {
     if (!Editor.#instance) {
       if (!projectId) {
-        throw new Error(
-          "When executing get instance for the first time the project id is needed",
-        );
+        throw new Error(projectIdRequiredError);
       }
       Editor.#instance = new Editor(projectId);
     }
@@ -125,7 +134,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Starts the animation loop.
    */
   animate() {
     requestAnimationFrame(() => this.animate());
@@ -133,7 +142,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Renders the scene.
    */
   render() {
     this.#selectionBox.update();
@@ -143,7 +152,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Updates the aspect ratio of the camera.
    */
   updateAspectRatio() {
     this.#camera.aspect = this.#canvas.offsetWidth / this.#canvas.offsetHeight;
@@ -151,7 +160,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Handles the window resize event.
    */
   onWindowResize() {
     this.updateAspectRatio();
@@ -160,7 +169,8 @@ export class Editor {
   }
 
   /**
-   *
+   * Sets up the threejs scene.
+   * @returns {Editor} the editor instance for chaining
    */
   #setUpScene() {
     this.#canvas = document.getElementById("canvas");
@@ -171,7 +181,7 @@ export class Editor {
       75,
       this.#canvas.clientWidth / this.#canvas.clientHeight,
       0.1,
-      2000,
+      2000
     );
     this.#camera.position.set(130, 50, 0);
 
@@ -189,12 +199,12 @@ export class Editor {
     //set up empty scene
     this.#skyboxLoader = new THREE.CubeTextureLoader();
     this.#skybox = this.#skyboxLoader.load([
-      "/static/img/skybox/px.png",
-      "/static/img/skybox/nx.png",
-      "/static/img/skybox/py.png",
-      "/static/img/skybox/ny.png",
-      "/static/img/skybox/pz.png",
-      "/static/img/skybox/nz.png",
+      skyboxPxPath,
+      skyboxNxPath,
+      skyboxPyPath,
+      skyboxNyPath,
+      skyboxPzPath,
+      skyboxNzPath,
     ]);
     this.#scene.background = this.#skybox;
     this.#scene.fog = new THREE.Fog(0xdde0e0, 100, 2200);
@@ -224,7 +234,7 @@ export class Editor {
       this.#camera,
       this.#renderer.domElement,
       200,
-      "circles",
+      "circles"
     );
 
     this.#selectionBox = new THREE.BoxHelper();
@@ -233,13 +243,13 @@ export class Editor {
     // controls
     this.#transformControls = new TransformControls(
       this.#camera,
-      this.#renderer.domElement,
+      this.#renderer.domElement
     );
     this.#transformControls.setColors(
       new THREE.Color("#ff7f9a"),
       new THREE.Color("#c2ee00"),
       new THREE.Color("#73c5ff"),
-      new THREE.Color("#FFFF00"),
+      new THREE.Color("#FFFF00")
     );
     this.#scene.add(this.#transformControls.getHelper());
 
@@ -291,9 +301,9 @@ export class Editor {
         new THREE.Vector3(
           heliostat.position_x,
           heliostat.position_y,
-          heliostat.position_z,
+          heliostat.position_z
         ),
-        heliostat.id,
+        heliostat.id
       );
       this.#selectableGroup.add(tmp);
       this.#heliostatList.push(tmp);
@@ -305,12 +315,12 @@ export class Editor {
         new THREE.Vector3(
           receiver.position_x,
           receiver.position_y,
-          receiver.position_z,
+          receiver.position_z
         ),
         new THREE.Vector3(
           receiver.normal_x,
           receiver.normal_y,
-          receiver.normal_z,
+          receiver.normal_z
         ),
         receiver.towerType,
         receiver.plane_e,
@@ -319,7 +329,7 @@ export class Editor {
         receiver.resolution_u,
         receiver.curvature_e,
         receiver.curvature_u,
-        receiver.id,
+        receiver.id
       );
       this.#selectableGroup.add(tmp);
       this.#receiverList.push(tmp);
@@ -333,7 +343,7 @@ export class Editor {
         lightsource.distribution_type,
         lightsource.mean,
         lightsource.covariance,
-        lightsource.id,
+        lightsource.id
       );
       this.#selectableGroup.add(tmp);
       this.#lightsourceList.push(tmp);
@@ -438,6 +448,7 @@ export class Editor {
   }
 
   /**
+   * Gets all the placed objects in the scene.
    * @returns {{heliostatList: Heliostat[], receiverList: Receiver[], lightsourceList: LightSource[]}} an array containing all placed objects.
    */
   get objects() {
