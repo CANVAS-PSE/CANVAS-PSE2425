@@ -33,7 +33,6 @@ class DeleteAccountFormTest(FormTestMixin, TestCase):
             email=TEST_EMAIL,
             password=SECURE_PASSWORD,
         )
-        self.user = self.user
 
     def test_delete_account_form_valid_data(self):
         """Test case for valid data submission in DeleteAccountForm."""
