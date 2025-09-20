@@ -37,7 +37,7 @@ export class Inspector {
         ) {
           this.#render();
         }
-      }
+      },
     );
 
     canvas.addEventListener(
@@ -48,7 +48,7 @@ export class Inspector {
           event.detail.item == this.#objectList[0]
         )
           this.#render();
-      }
+      },
     );
 
     this.#render();
@@ -67,7 +67,7 @@ export class Inspector {
       wrapper.classList.add(
         "text-secondary",
         "d-flex",
-        "justify-content-center"
+        "justify-content-center",
       );
       wrapper.innerHTML = "Select an object by clicking on it";
       this.#inspectorElem.appendChild(wrapper);
@@ -85,7 +85,7 @@ export class Inspector {
       wrapper.classList.add(
         "text-secondary",
         "d-flex",
-        "justify-content-center"
+        "justify-content-center",
       );
       wrapper.innerHTML = "Multi selection is not yet supported :(";
       this.#inspectorElem.appendChild(wrapper);

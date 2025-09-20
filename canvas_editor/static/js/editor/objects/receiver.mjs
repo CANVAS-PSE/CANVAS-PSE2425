@@ -95,7 +95,7 @@ export class Receiver extends CanvasObject {
     resolutionU,
     curvatureE,
     curvatureU,
-    apiID = null
+    apiID = null,
   ) {
     super(receiverName);
     // place the 3D object
@@ -125,7 +125,7 @@ export class Receiver extends CanvasObject {
           ? this.objectName
           : "Receiver",
       (name) => this.updateAndSaveObjectName(name),
-      this
+      this,
     );
 
     const nCoordinate = new SingleFieldInspectorComponent(
@@ -137,11 +137,11 @@ export class Receiver extends CanvasObject {
           new UpdateReceiverCommand(
             this,
             "position",
-            new Vector3(newValue, this.position.y, this.position.z)
-          )
+            new Vector3(newValue, this.position.y, this.position.z),
+          ),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     const uCoordinate = new SingleFieldInspectorComponent(
@@ -153,11 +153,11 @@ export class Receiver extends CanvasObject {
           new UpdateReceiverCommand(
             this,
             "position",
-            new Vector3(this.position.x, newValue, this.position.z)
-          )
+            new Vector3(this.position.x, newValue, this.position.z),
+          ),
         );
       },
-      0
+      0,
     );
 
     const eCoordinate = new SingleFieldInspectorComponent(
@@ -169,11 +169,11 @@ export class Receiver extends CanvasObject {
           new UpdateReceiverCommand(
             this,
             "position",
-            new Vector3(this.position.x, this.position.y, newValue)
-          )
+            new Vector3(this.position.x, this.position.y, newValue),
+          ),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     this.#positionComponent = new MultiFieldInspectorComponent("Position", [
@@ -191,11 +191,11 @@ export class Receiver extends CanvasObject {
           new UpdateReceiverCommand(
             this,
             "normalVector",
-            new Vector3(newValue, this.normalVector.y, this.normalVector.z)
-          )
+            new Vector3(newValue, this.normalVector.y, this.normalVector.z),
+          ),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     const uNormalVector = new SingleFieldInspectorComponent(
@@ -207,11 +207,11 @@ export class Receiver extends CanvasObject {
           new UpdateReceiverCommand(
             this,
             "normalVector",
-            new Vector3(this.normalVector.x, newValue, this.normalVector.z)
-          )
+            new Vector3(this.normalVector.x, newValue, this.normalVector.z),
+          ),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     const eNormalVector = new SingleFieldInspectorComponent(
@@ -223,16 +223,16 @@ export class Receiver extends CanvasObject {
           new UpdateReceiverCommand(
             this,
             "normalVector",
-            new Vector3(this.normalVector.x, this.normalVector.y, newValue)
-          )
+            new Vector3(this.normalVector.x, this.normalVector.y, newValue),
+          ),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     this.#normalVectorComponent = new MultiFieldInspectorComponent(
       "Normal Vector",
-      [nNormalVector, uNormalVector, eNormalVector]
+      [nNormalVector, uNormalVector, eNormalVector],
     );
 
     this.#towerTypeComponent = new SelectFieldInspectorComponent(
@@ -241,9 +241,9 @@ export class Receiver extends CanvasObject {
       () => this.towerType,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(this, "towerType", newValue)
+          new UpdateReceiverCommand(this, "towerType", newValue),
         );
-      }
+      },
     );
 
     const eCurvature = new SingleFieldInspectorComponent(
@@ -252,10 +252,10 @@ export class Receiver extends CanvasObject {
       () => this.curvatureE,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(this, "curvatureE", newValue)
+          new UpdateReceiverCommand(this, "curvatureE", newValue),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     const uCurvature = new SingleFieldInspectorComponent(
@@ -264,10 +264,10 @@ export class Receiver extends CanvasObject {
       () => this.curvatureU,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(this, "curvatureU", newValue)
+          new UpdateReceiverCommand(this, "curvatureU", newValue),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     this.#curvatureComponent = new MultiFieldInspectorComponent("Curvature", [
@@ -281,10 +281,10 @@ export class Receiver extends CanvasObject {
       () => this.planeE,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(this, "planeE", newValue)
+          new UpdateReceiverCommand(this, "planeE", newValue),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     const uPlane = new SingleFieldInspectorComponent(
@@ -293,10 +293,10 @@ export class Receiver extends CanvasObject {
       () => this.planeU,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(this, "planeU", newValue)
+          new UpdateReceiverCommand(this, "planeU", newValue),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     this.#planeComponent = new MultiFieldInspectorComponent("Plane", [
@@ -310,10 +310,10 @@ export class Receiver extends CanvasObject {
       () => this.resolutionE,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(this, "resolutionE", newValue)
+          new UpdateReceiverCommand(this, "resolutionE", newValue),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     const uResolution = new SingleFieldInspectorComponent(
@@ -322,10 +322,10 @@ export class Receiver extends CanvasObject {
       () => this.resolutionU,
       (newValue) => {
         this.#undoRedoHandler.executeCommand(
-          new UpdateReceiverCommand(this, "resolutionU", newValue)
+          new UpdateReceiverCommand(this, "resolutionU", newValue),
         );
       },
-      -Infinity
+      -Infinity,
     );
 
     this.#resolutionComponent = new MultiFieldInspectorComponent("Resolution", [
@@ -348,7 +348,7 @@ export class Receiver extends CanvasObject {
    */
   updateAndSaveObjectPosition(position) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateReceiverCommand(this, "position", position)
+      new UpdateReceiverCommand(this, "position", position),
     );
   }
 
@@ -368,7 +368,7 @@ export class Receiver extends CanvasObject {
    */
   updateAndSaveObjectName(name) {
     this.#undoRedoHandler.executeCommand(
-      new UpdateReceiverCommand(this, "objectName", name)
+      new UpdateReceiverCommand(this, "objectName", name),
     );
   }
 

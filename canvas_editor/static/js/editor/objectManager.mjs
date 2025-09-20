@@ -60,7 +60,7 @@ export class ObjectManager {
       0,
       0,
       0,
-      0
+      0,
     );
     this.#undoRedoHandler.executeCommand(new CreateReceiverCommand(receiver));
 
@@ -77,10 +77,10 @@ export class ObjectManager {
       "sun",
       "normal",
       1,
-      1
+      1,
     );
     this.#undoRedoHandler.executeCommand(
-      new CreateLightSourceCommand(lightSource)
+      new CreateLightSourceCommand(lightSource),
     );
     this.#picker.setSelection([lightSource]);
   }

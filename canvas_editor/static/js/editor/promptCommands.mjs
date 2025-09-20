@@ -33,7 +33,7 @@ export class PromptCommand extends HTMLElement {
       "px-2",
       "d-flex",
       "justify-content-between",
-      "align-items-center"
+      "align-items-center",
     );
     this.style.cursor = "pointer";
 
@@ -58,7 +58,7 @@ export class PromptCommand extends HTMLElement {
     // select this element on hover
     this.addEventListener("mousemove", () => {
       this.#commandPrompt.selectCommand(
-        this.#commandPrompt.currentlyAvailableCommands.indexOf(this)
+        this.#commandPrompt.currentlyAvailableCommands.indexOf(this),
       );
     });
   }
@@ -184,7 +184,7 @@ export class ThemePromptCommand extends PromptCommand {
         "data-bs-theme",
         window.matchMedia("(prefers-color-scheme: dark)").matches
           ? "dark"
-          : "light"
+          : "light",
       );
     } else {
       document.documentElement.setAttribute("data-bs-theme", theme);
@@ -491,7 +491,7 @@ export class OpenJobInterfacePromptCommand extends PromptCommand {
    */
   execute() {
     const jobInterfaceModal = new Modal(
-      document.getElementById("jobInterface")
+      document.getElementById("jobInterface"),
     );
     jobInterfaceModal.show();
 
@@ -520,7 +520,7 @@ export class OpenKeybindsPromptCommand extends PromptCommand {
    */
   execute() {
     const keybindingsModal = new Modal(
-      document.getElementById("keyboardModal")
+      document.getElementById("keyboardModal"),
     );
     keybindingsModal.show();
   }
@@ -571,7 +571,7 @@ export class NewProjectPromptCommand extends PromptCommand {
    */
   execute() {
     const newProjectModal = new Modal(
-      document.getElementById("createNewProject")
+      document.getElementById("createNewProject"),
     );
     newProjectModal.show();
 
@@ -610,36 +610,36 @@ customElements.define("dark-mode-prompt-command", DarkModePromptCommand);
 customElements.define("auto-mode-prompt-command", AutoModePromptCommand);
 customElements.define(
   "add-heliostat-prompt-command",
-  AddHeliostatPromptCommand
+  AddHeliostatPromptCommand,
 );
 customElements.define("add-receiver-prompt-command", AddReceiverPromptCommand);
 customElements.define(
   "add-light-source-prompt-command",
-  AddLightSourcePromptCommand
+  AddLightSourcePromptCommand,
 );
 customElements.define(
   "toggle-fullscreen-prompt-command",
-  ToggleFullscreenPromptCommand
+  ToggleFullscreenPromptCommand,
 );
 customElements.define(
   "export-project-prompt-command",
-  ExportProjectPromptCommand
+  ExportProjectPromptCommand,
 );
 customElements.define(
   "render-project-prompt-command",
-  RenderProjectPromptCommand
+  RenderProjectPromptCommand,
 );
 customElements.define(
   "open-settings-prompt-command",
-  OpenSettingsPromptCommand
+  OpenSettingsPromptCommand,
 );
 customElements.define(
   "open-job-interface-prompt-command",
-  OpenJobInterfacePromptCommand
+  OpenJobInterfacePromptCommand,
 );
 customElements.define(
   "open-keybings-prompt-command",
-  OpenKeybindsPromptCommand
+  OpenKeybindsPromptCommand,
 );
 customElements.define("logout-prompt-command", LogoutPromptCommand);
 customElements.define("new-project-prompt-command", NewProjectPromptCommand);

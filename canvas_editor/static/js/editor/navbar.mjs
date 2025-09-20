@@ -38,7 +38,7 @@ export class Navbar {
        */
       fullscreen.onclick = (
         /* eslint-disable-next-line no-unused-vars */
-        _
+        _,
       ) => {
         if (document.webkitFullscreenElement === null) {
           document.documentElement.webkitRequestFullscreen();

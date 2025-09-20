@@ -56,7 +56,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
     fieldType,
     getFieldValueFunc,
     saveFunc,
-    InputLimitBottom
+    InputLimitBottom,
   ) {
     super();
     this.#fieldName = fieldName;
@@ -190,7 +190,7 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
       "bg-body",
       "rounded-3",
       "gap-2",
-      "accordion-body"
+      "accordion-body",
     );
     bodyWrapper.appendChild(body);
 
@@ -304,7 +304,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
     max,
     getFieldValueFunc,
     saveFunc,
-    step = undefined
+    step = undefined,
   ) {
     super();
     this.#fieldName = fieldName;
@@ -328,7 +328,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
       "p-2",
       "bg-body",
       "rounded-3",
-      "gap-2"
+      "gap-2",
     );
     if (this.#hasBorder) {
       wrapper.classList.add("border");
@@ -445,7 +445,7 @@ export class HeaderInspectorComponent extends InspectorComponent {
       "d-flex",
       "gap-1",
       "bg-body",
-      "px-2"
+      "px-2",
     );
     buttonWrapper.appendChild(buttonBackground);
     wrapper.appendChild(buttonWrapper);

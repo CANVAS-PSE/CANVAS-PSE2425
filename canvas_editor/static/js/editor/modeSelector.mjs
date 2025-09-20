@@ -36,13 +36,13 @@ export class ModeSelector {
   #addEventListeners() {
     // Add event listeners to the tab buttons to switch modes when clicked
     this.#tabButtons[Mode.NONE].addEventListener("click", () =>
-      this.#switchToMode(Mode.NONE)
+      this.#switchToMode(Mode.NONE),
     );
     this.#tabButtons[Mode.MOVE].addEventListener("click", () =>
-      this.#switchToMode(Mode.MOVE)
+      this.#switchToMode(Mode.MOVE),
     );
     this.#tabButtons[Mode.ROTATE].addEventListener("click", () =>
-      this.#switchToMode(Mode.ROTATE)
+      this.#switchToMode(Mode.ROTATE),
     );
 
     window.addEventListener("keydown", (event) => {

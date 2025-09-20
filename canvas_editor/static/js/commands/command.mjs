@@ -29,7 +29,7 @@ export class Command {
    */
   execute() {
     throw new Error(
-      "Abstract method 'execute' must be implemented by subclass"
+      "Abstract method 'execute' must be implemented by subclass",
     );
   }
 

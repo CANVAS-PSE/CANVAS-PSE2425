@@ -164,7 +164,7 @@ export class Job extends HTMLElement {
       "d-flex",
       "p-2",
       "gap-2",
-      "align-items-center"
+      "align-items-center",
     );
 
     const jobName = document.createElement("div");
@@ -185,7 +185,7 @@ export class Job extends HTMLElement {
     this.#progressElem.setAttribute("role", "progressbar");
     this.#progressElem.setAttribute(
       "aria-valuenow",
-      (this.#progress * 100).toString()
+      (this.#progress * 100).toString(),
     );
     this.#progressElem.setAttribute("aria-valuemin", "0");
     this.#progressElem.setAttribute("aria-valuemax", "100");
@@ -198,7 +198,7 @@ export class Job extends HTMLElement {
       "btn",
       "btn-primary",
       "text-nowrap",
-      "rouned-3"
+      "rouned-3",
     );
     this.#resultButton.innerHTML = "View Result";
     this.#resultButton.classList.add("d-none");
@@ -224,7 +224,7 @@ export class Job extends HTMLElement {
           this.#statusElem.innerHTML = "Status: " + data["status"];
           this.#progressElem.setAttribute(
             "aria-valuenow",
-            (data["progress"] * 100).toString()
+            (data["progress"] * 100).toString(),
           );
           this.#progressElem.style.width = data["progress"] * 100 + "%";
           if (data["progress"] >= 1) {
