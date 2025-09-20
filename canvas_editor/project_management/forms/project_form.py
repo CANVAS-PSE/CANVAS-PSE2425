@@ -15,8 +15,10 @@ class ProjectForm(forms.Form):
         max_length=500, required=False, widget=forms.TextInput()
     )
 
-    def _validate_file(self, file):
+    def clean_file(self):
+        """Validate the uploaded file."""
         # Check if a file is uploaded
+        file = self.cleaned_data.get("file")
         if not file:
             return file
 
@@ -33,7 +35,6 @@ class ProjectForm(forms.Form):
 
     file = forms.FileField(
         required=False,
-        validators=[_validate_file],
         widget=forms.ClearableFileInput(
             attrs={"class": "form-control", "accept": ".h5"}
         ),

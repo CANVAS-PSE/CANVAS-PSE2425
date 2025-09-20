@@ -1,6 +1,5 @@
 import { CanvasObject } from "canvasObject";
 import { abstractClassError, methodMustBeImplementedError } from "message_dict";
-import { abs } from "three/src/nodes/TSL.js";
 
 /**
  * Represents a single component of the inspector

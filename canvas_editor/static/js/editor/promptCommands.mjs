@@ -3,7 +3,6 @@ import { CommandPrompt } from "commandPrompt";
 import { abstractClassError, methodMustBeImplementedError } from "message_dict";
 import { ObjectManager } from "objectManager";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
-import { abs } from "three/src/nodes/TSL.js";
 
 /**
  * Parent class of all prompt commands
