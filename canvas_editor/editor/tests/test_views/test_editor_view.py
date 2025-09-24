@@ -14,18 +14,7 @@ from project_management.models import Project
 
 
 class EditorViewTest(TestCase):
-    """Test suite for the EditorView.
-
-    This test suite includes tests for both GET and POST methods of the editor view.
-    It ensures that the editor view behaves correctly when accessed and when form data is submitted.
-
-    Methods
-    -------
-    setUp(self):
-        Set up the test environment by creating a user and a project.
-    test_get_method(self):
-        Test the GET method of the editor view to ensure it returns the correct status code and context data.
-    """
+    """Tests for the editor view. Mainly tests if the view is reachable and if the correct project is loaded."""
 
     def setUp(self):
         """Set up a test user and a test project for use in all tests."""
