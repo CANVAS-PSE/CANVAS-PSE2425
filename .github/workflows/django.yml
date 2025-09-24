@@ -33,17 +33,17 @@ jobs:
         run: |
           mkdir -p ../reports
 
-          # Tests with coverage + JUnit XML report
           coverage run manage.py test \
             --noinput \
             --verbosity=2 \
             --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner \
-            --output-dir ../reports
+            --pattern="test*.py"
 
-          # Coverage report
+          mv TEST-*.xml ../reports/ || true
+
           coverage xml -o ../reports/coverage.xml
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports
+          name: test-reports-py${{ matrix.python-version }}
           path: reports/**/*.xml
