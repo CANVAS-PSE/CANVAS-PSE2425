@@ -3,9 +3,10 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode
 from django.views import View
 
@@ -47,16 +48,20 @@ class UpdateAccountView(LoginRequiredMixin, View):
         # Create the URL for the password change page
         password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
 
-        message = render_to_string(
+        html_message = render_to_string(
             "account_management/accounts/password_change_confirmation_email.html",
             {
                 "user": user,
                 "password_reset_url": password_reset_url,
             },
         )
+        text_message = strip_tags(html_message)
 
         to_email = user.email
-        email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
+        email = EmailMultiAlternatives(
+            subject, text_message, settings.EMAIL_FROM, [to_email]
+        )
+        email.attach_alternative(html_message, "text/html")
         email.send()
 
     def post(self, request):

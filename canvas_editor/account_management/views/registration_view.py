@@ -1,11 +1,12 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode
 from django.views.generic.edit import FormView
 
@@ -39,16 +40,20 @@ class RegistrationView(FormView):
         # Create the URL for the password change page
         delete_account_url = f"{base_url}confirm_deletion/{uid}/{token}/"
 
-        message = render_to_string(
+        html_message = render_to_string(
             "account_management/accounts/account_creation_confirmation_email.html",
             {
                 "user": user,
                 "delete_account_url": delete_account_url,
             },
         )
+        text_message = strip_tags(html_message)
 
         to_email = user.email
-        email = EmailMessage(subject, message, settings.EMAIL_FROM, [to_email])
+        email = EmailMultiAlternatives(
+            subject, text_message, settings.EMAIL_FROM, [to_email]
+        )
+        email.attach_alternative(html_message, "text/html")
         email.send()
 
     def dispatch(self, request, *args, **kwargs):
