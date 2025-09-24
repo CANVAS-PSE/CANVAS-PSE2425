@@ -2,7 +2,7 @@ name: Django CI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "checkout test_coverage_report"]
   pull_request:
     branches: ["main"]
 
@@ -31,4 +31,19 @@ jobs:
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
-          python manage.py test
+          mkdir -p ../reports
+
+          # Tests with coverage + JUnit XML report
+          coverage run manage.py test \
+            --noinput \
+            --verbosity=2 \
+            --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner \
+            --output-dir ../reports
+
+          # Coverage report
+          coverage xml -o ../reports/coverage.xml
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: reports/**/*.xml
