@@ -14,3 +14,4 @@ mypy
 pre-commit
 ruff
 parameterized
+unittest-xml-reporting
