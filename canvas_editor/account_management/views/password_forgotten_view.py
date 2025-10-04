@@ -1,14 +1,15 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode
 from django.views.generic.edit import FormView
 
 from account_management.forms.password_forgotten_form import PasswordForgottenForm
-from canvas import view_name_dict
+from canvas import settings, view_name_dict
 
 
 class PasswordForgottenView(FormView):
@@ -34,16 +35,20 @@ class PasswordForgottenView(FormView):
         # Create the URL for the password change page
         password_reset_url = f"{base_url}password_reset/{uid}/{token}/"
 
-        message = render_to_string(
+        html_message = render_to_string(
             "account_management/accounts/password_forgotten_email.html",
             {
                 "user": user,
                 "password_reset_url": password_reset_url,
             },
         )
+        text_message = strip_tags(html_message)
 
         to_email = user.email
-        email = EmailMessage(subject, message, to=[to_email])
+        email = EmailMultiAlternatives(
+            subject, text_message, settings.EMAIL_FROM, [to_email]
+        )
+        email.attach_alternative(html_message, "text/html")
         email.send()
 
     def form_invalid(self, form):
