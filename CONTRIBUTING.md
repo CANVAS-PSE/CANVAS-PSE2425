@@ -17,16 +17,17 @@ By participating, you can help improve the project and make it even better :rais
    Till we completely merged to a pyproject.toml you need to run the following commands:
 
    ```bash
-   # Python
+   # Python environment
    python3 -m venv <insert/path/to/your/venv>
    source <insert/path/to/your/venv/bin/activate>
-   python -m pip install -r requirements.txts
-
-   # JavaScript
-   npm install
 
    # Pre commit hooks
    pre-commit install
+
+   # Dev tools
+   cd canvas_editor/
+   python -m pip install -r requirements.txt
+   npm install
    ```
 
 3. **Open a new issue or choose an existing one**: When opening a new issue choose a fitting label. Assign yourself to the chosen or new issue.
@@ -138,8 +139,10 @@ By participating, you can help improve the project and make it even better :rais
 7. **Push Changes**: Push your changes to your fork on GitHub:
 
    ```bash
-   git push origin features/your-feature-name
+   git push
    ```
+
+   As the remote branch is already linked
 
 8. **Open a Pull Request**: Open a pull request for this branch. The issue should be linked automatically.
 
