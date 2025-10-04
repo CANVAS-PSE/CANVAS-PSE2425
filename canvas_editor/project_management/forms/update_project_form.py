@@ -1,13 +1,16 @@
+from django import forms
+from django.forms import ModelForm
+
 from project_management.forms.utils import validate_symbols
 from project_management.models import Project
 
 
-from django import forms
-from django.forms import ModelForm
-
-
 class UpdateProjectForm(ModelForm):
+    """Form to update a project's name and description."""
+
     class Meta:
+        """Meta class for UpdateProjectForm."""
+
         model = Project
         fields = ["name", "description"]
 

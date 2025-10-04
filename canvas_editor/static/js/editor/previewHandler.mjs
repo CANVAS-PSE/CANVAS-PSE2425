@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { SaveAndLoadHandler } from "saveAndLoadHandler";
+import { errorUploadingFile } from "message_dict";
 
 /**
  * Handles the genertion of project previews of the editor page
@@ -67,7 +68,7 @@ export class PreviewHandler {
         "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     }).catch((error) => {
-      console.error("Error uploading file:", error);
+      console.error(errorUploadingFile, error);
     });
   }
 }

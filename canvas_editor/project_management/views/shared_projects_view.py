@@ -7,8 +7,8 @@ from django.utils import timezone
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
-from project_management.models import Project
 from canvas import view_name_dict
+from project_management.models import Project
 
 
 class SharedProjectView(LoginRequiredMixin, View):

@@ -19,9 +19,20 @@ import { LightSource } from "lightSource";
 import { Receiver } from "receiver";
 import { Terrain } from "terrain";
 import { Heliostat } from "heliostat";
+import { projectIdRequiredError } from "message_dict";
+import {
+  skyboxNxPath,
+  skyboxNyPath,
+  skyboxNzPath,
+  skyboxPxPath,
+  skyboxPyPath,
+  skyboxPzPath,
+} from "path_dict";
 
 /**
- *
+ * Represents the main editor class.
+ * @class Editor
+ * @classdesc This is the main class of the editor. It holds all the other classes and manages the threejs scene.
  */
 export class Editor {
   /** @type {Editor} */
@@ -63,8 +74,8 @@ export class Editor {
   #lightsourceList = [];
 
   /**
-   *
-   * @param projectId
+   * Private constructor for the singleton pattern. Use Editor.getInstance() instead.
+   * @param {number} projectId the id of the project
    */
   constructor(/** @type {number}*/ projectId) {
     if (Editor.#instance) {
@@ -115,9 +126,7 @@ export class Editor {
   static getInstance(projectId = null) {
     if (!Editor.#instance) {
       if (!projectId) {
-        throw new Error(
-          "When executing get instance for the first time the project id is needed",
-        );
+        throw new Error(projectIdRequiredError);
       }
       Editor.#instance = new Editor(projectId);
     }
@@ -125,7 +134,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Starts the animation loop.
    */
   animate() {
     requestAnimationFrame(() => this.animate());
@@ -133,7 +142,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Renders the scene.
    */
   render() {
     this.#selectionBox.update();
@@ -143,7 +152,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Updates the aspect ratio of the camera.
    */
   updateAspectRatio() {
     this.#camera.aspect = this.#canvas.offsetWidth / this.#canvas.offsetHeight;
@@ -151,7 +160,7 @@ export class Editor {
   }
 
   /**
-   *
+   * Handles the window resize event.
    */
   onWindowResize() {
     this.updateAspectRatio();
@@ -160,7 +169,8 @@ export class Editor {
   }
 
   /**
-   *
+   * Sets up the threejs scene.
+   * @returns {Editor} the editor instance for chaining
    */
   #setUpScene() {
     this.#canvas = document.getElementById("canvas");
@@ -189,12 +199,12 @@ export class Editor {
     //set up empty scene
     this.#skyboxLoader = new THREE.CubeTextureLoader();
     this.#skybox = this.#skyboxLoader.load([
-      "/static/img/skybox/px.png",
-      "/static/img/skybox/nx.png",
-      "/static/img/skybox/py.png",
-      "/static/img/skybox/ny.png",
-      "/static/img/skybox/pz.png",
-      "/static/img/skybox/nz.png",
+      skyboxPxPath,
+      skyboxNxPath,
+      skyboxPyPath,
+      skyboxNyPath,
+      skyboxPzPath,
+      skyboxNzPath,
     ]);
     this.#scene.background = this.#skybox;
     this.#scene.fog = new THREE.Fog(0xdde0e0, 100, 2200);
@@ -438,6 +448,7 @@ export class Editor {
   }
 
   /**
+   * Gets all the placed objects in the scene.
    * @returns {{heliostatList: Heliostat[], receiverList: Receiver[], lightsourceList: LightSource[]}} an array containing all placed objects.
    */
   get objects() {

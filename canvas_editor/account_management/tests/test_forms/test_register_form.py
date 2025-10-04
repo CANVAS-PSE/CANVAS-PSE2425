@@ -2,7 +2,15 @@ from django.test import TestCase
 
 from account_management.forms.register_form import RegisterForm
 from account_management.models import User
-from canvas import message_dict
+from canvas.message_dict import (
+    email_already_in_use_text,
+    password_digit_criterium_text,
+    password_length_criterium_text,
+    password_lowercase_criterium_text,
+    password_match_criterium_text,
+    password_special_char_criterium_text,
+    password_uppercase_criterium_text,
+)
 from canvas.test_constants import (
     EMAIL_FIELD,
     EMPTY_FIELD,
@@ -65,9 +73,7 @@ class RegisterFormTest(FormTestMixin, TestCase):
             password=SECURE_PASSWORD,
         )
         form = self.create_form()
-        self.assert_form_error_message(
-            form, EMAIL_FIELD, message_dict.email_already_in_use_text
-        )
+        self.assert_form_error_message(form, EMAIL_FIELD, email_already_in_use_text)
 
     def test_register_form_passwords_not_matching(self):
         """Test case for RegisterForm where passwords do not match."""
@@ -75,7 +81,7 @@ class RegisterFormTest(FormTestMixin, TestCase):
             **{PASSWORD_CONFIRMATION_FIELD: MISMATCHED_BUT_CORRECT_PASSWORD}
         )
         self.assert_form_error_message(
-            form, PASSWORD_FIELD, message_dict.password_match_criterium_text
+            form, PASSWORD_FIELD, password_match_criterium_text
         )
 
     def test_register_form_password_too_short(self):
@@ -87,7 +93,7 @@ class RegisterFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, PASSWORD_FIELD, message_dict.password_length_criterium_text
+            form, PASSWORD_FIELD, password_length_criterium_text
         )
 
     def test_register_form_password_no_uppercase(self):
@@ -99,7 +105,7 @@ class RegisterFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, PASSWORD_FIELD, message_dict.password_uppercase_criterium_text
+            form, PASSWORD_FIELD, password_uppercase_criterium_text
         )
 
     def test_register_form_password_no_lowercase(self):
@@ -111,7 +117,7 @@ class RegisterFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, PASSWORD_FIELD, message_dict.password_lowercase_criterium_text
+            form, PASSWORD_FIELD, password_lowercase_criterium_text
         )
 
     def test_register_form_password_no_number(self):
@@ -123,7 +129,7 @@ class RegisterFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, PASSWORD_FIELD, message_dict.password_digit_criterium_text
+            form, PASSWORD_FIELD, password_digit_criterium_text
         )
 
     def test_register_form_password_no_special_character(self):
@@ -135,5 +141,5 @@ class RegisterFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, PASSWORD_FIELD, message_dict.password_special_char_criterium_text
+            form, PASSWORD_FIELD, password_special_char_criterium_text
         )

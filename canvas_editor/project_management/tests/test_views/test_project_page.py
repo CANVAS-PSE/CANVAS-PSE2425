@@ -7,7 +7,10 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import urlsafe_base64_encode
 
-from canvas import path_dict, view_name_dict
+from canvas.path_dict import (
+    hdf5_management_test_scenario_template,
+    project_management_projects_template,
+)
 from canvas.test_constants import (
     COPY_SUFFIX,
     DESCRIPTION_FIELD,
@@ -29,6 +32,15 @@ from canvas.test_constants import (
     TEST_USERNAME,
     UPDATED_DESCRIPTION,
     UPDATED_PROJECT_NAME,
+)
+from canvas.view_name_dict import (
+    delete_project_view,
+    duplicate_project_view,
+    projects_view,
+    share_project_view,
+    shared_projects_view,
+    toggle_favor_project_view,
+    update_project_view,
 )
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
@@ -53,24 +65,18 @@ class ProjectPageTest(TestCase):
         self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         # urls
-        self.projects_url = reverse(view_name_dict.projects_view)
-        self.update_project_url = reverse(
-            view_name_dict.update_project_view, args=[self.project.name]
-        )
+        self.projects_url = reverse(projects_view)
+        self.update_project_url = reverse(update_project_view, args=[self.project.name])
         self.toogle_favor_project_url = reverse(
-            view_name_dict.toggle_favor_project_view, args=[self.project.name]
+            toggle_favor_project_view, args=[self.project.name]
         )
-        self.delete_project_url = reverse(
-            view_name_dict.delete_project_view, args=[self.project.name]
-        )
+        self.delete_project_url = reverse(delete_project_view, args=[self.project.name])
         self.duplicate_project_url = reverse(
-            view_name_dict.duplicate_project_view, args=[self.project.name]
+            duplicate_project_view, args=[self.project.name]
         )
-        self.share_project_url = reverse(
-            view_name_dict.share_project_view, args=[self.project.name]
-        )
+        self.share_project_url = reverse(share_project_view, args=[self.project.name])
         self.shared_projects_url = reverse(
-            view_name_dict.shared_projects_view,
+            shared_projects_view,
             args=[
                 urlsafe_base64_encode(str(self.user.pk).encode()),
                 urlsafe_base64_encode(str(self.project.name).encode()),
@@ -82,9 +88,7 @@ class ProjectPageTest(TestCase):
         response = self.client.get(self.projects_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, path_dict.project_management_projects_template
-        )
+        self.assertTemplateUsed(response, project_management_projects_template)
 
     def test_projects_get_logged_out(self):
         """Test that the projects view redirects to the login page for a logged-out user."""
@@ -133,8 +137,7 @@ class ProjectPageTest(TestCase):
     def test_projects_post_with_file(self):
         """Test creating a new project via POST request with a file."""
         file_path = (
-            pathlib.Path(settings.BASE_DIR)
-            / path_dict.hdf5_management_test_scenario_template
+            pathlib.Path(settings.BASE_DIR) / hdf5_management_test_scenario_template
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
@@ -158,8 +161,7 @@ class ProjectPageTest(TestCase):
     def test_projects_post_with_file_name_duplicate(self):
         """Test creating a new project via POST request with a file and a duplicate name."""
         file_path = (
-            pathlib.Path(settings.BASE_DIR)
-            / path_dict.hdf5_management_test_scenario_template
+            pathlib.Path(settings.BASE_DIR) / hdf5_management_test_scenario_template
         )
         with open(file_path, "rb") as file:
             response = self.client.post(
@@ -179,8 +181,7 @@ class ProjectPageTest(TestCase):
     def test_projects_post_with_file_space_in_name(self):
         """Test creating a new project via POST request with a file and spaces in the name."""
         file_path = (
-            pathlib.Path(settings.BASE_DIR)
-            / path_dict.hdf5_management_test_scenario_template
+            pathlib.Path(settings.BASE_DIR) / hdf5_management_test_scenario_template
         )
         with open(file_path, "rb") as file:
             response = self.client.post(

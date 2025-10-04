@@ -6,7 +6,7 @@ import { Picker } from "picker";
 import { Receiver } from "receiver";
 
 /**
- *
+ * Class to manage the overview panel in the editor.
  */
 export class OverviewHandler {
   #editor;
@@ -92,7 +92,7 @@ export class OverviewHandler {
   }
 
   /**
-   *
+   * Renders the overview panel.
    */
   #render() {
     // clear the list
@@ -308,7 +308,7 @@ export class OverviewHandler {
   }
 
   /**
-   *
+   * Handles user input in the overview panel.
    */
   #handleUserInput() {
     document

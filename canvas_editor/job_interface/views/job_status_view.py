@@ -9,7 +9,10 @@ from project_management.models import Project
 
 
 class JobStatusView(LoginRequiredMixin, View):
+    """View to get the status of a specific job."""
+
     def get(self, request, job_id, project_id):
+        """Get the status of the specified job."""
         project = get_object_or_404(Project, owner=request.user, pk=project_id)
         job = get_object_or_404(Job, pk=job_id, owner=request.user, project=project)
 
@@ -41,6 +44,7 @@ class JobStatusView(LoginRequiredMixin, View):
         )
 
     def delete(self, request, job_id, project_id):
+        """Delete the specified job."""
         project = get_object_or_404(Project, owner=request.user, pk=project_id)
         job = get_object_or_404(Job, pk=job_id, owner=request.user, project=project)
         job.delete()

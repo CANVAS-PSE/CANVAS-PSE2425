@@ -1,5 +1,6 @@
 import { CanvasObject } from "canvasObject";
 import { Command } from "command";
+import { abstractClassError } from "message_dict";
 
 /**
  * This class is designed for operations that target multiple 'SelectableObject' instances.
@@ -20,9 +21,7 @@ export class BulkObjectCommand extends Command {
     super();
     this.#objects = objects;
     if (new.target === BulkObjectCommand) {
-      throw new Error(
-        "Cannot instantiate abstract class BulkObjectCommand directly",
-      );
+      throw new Error(abstractClassError(BulkObjectCommand));
     }
   }
 }

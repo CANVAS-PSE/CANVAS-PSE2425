@@ -6,11 +6,16 @@ import { SaveAndLoadHandler } from "saveAndLoadHandler";
  * Right now, it only manages graphics settings like shadows and fog.
  */
 export class ProjectSettingsManager {
+  /** @type {HTMLElement} */
   #environmentSettingsEntry;
+  /** @type {HTMLElement} */
   #graphicsSettingsEntry;
+  /** @type {HTMLElement} */
   #otherSettingsEntry;
 
+  /** @type {boolean} */
   #shadowEnabled;
+  /** @type {boolean} */
   #fogEnabled;
   #editor;
   #saveAndLoadHandler;
@@ -68,17 +73,11 @@ export class ProjectSettingsManager {
         key: "shadow",
         enabled: this.#shadowEnabled,
         /**
-         *
-         * @param val
-         */
-        store: (val) => {
-          this.#shadowEnabled = val;
-        },
-        /**
-         *
-         * @param val
+         * Enable or disable the shadows
+         * @param {boolean} val whether the shadows are enabled
          */
         apply: (val) => {
+          this.#shadowEnabled = val;
           this.#editor.setShadows(val);
         },
       },
@@ -87,28 +86,25 @@ export class ProjectSettingsManager {
         key: "fog",
         enabled: this.#fogEnabled,
         /**
-         *
-         * @param val
-         */
-        store: (val) => {
-          this.#fogEnabled = val;
-        },
-        /**
-         *
-         * @param val
+         * Enable or disable the fog.
+         * @param {boolean} val whether the fog is enables
          */
         apply: (val) => {
+          this.#fogEnabled = val;
           this.#editor.setFog(val);
         },
       },
     ];
 
-    graphicSettings.forEach(({ label, key, enabled, store, apply }) => {
-      const checkbox = this.#createCheckbox(label, enabled, (isChecked) => {
-        store(isChecked);
-        apply(isChecked);
-        this.#saveAndLoadHandler.updateSettings(key, enabled);
-      });
+    graphicSettings.forEach(({ label, key, enabled, apply }) => {
+      const checkbox = this.#createCheckbox(
+        label,
+        enabled,
+        (/** @type {boolean} */ isChecked) => {
+          apply(isChecked);
+          this.#saveAndLoadHandler.updateSettings(key, enabled);
+        },
+      );
       this.#graphicsSettingsEntry.appendChild(checkbox);
     });
   }

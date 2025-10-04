@@ -31,7 +31,7 @@ export class ModeSelector {
   }
 
   /**
-   *
+   * Adds event listeners to the tab buttons and keyboard shortcuts.
    */
   #addEventListeners() {
     // Add event listeners to the tab buttons to switch modes when clicked
@@ -57,10 +57,9 @@ export class ModeSelector {
     });
   }
 
-  // Switches the mode of the picker and updates the UI.
   /**
-   *
-   * @param mode
+   * Switches the mode of the picker and updates the UI.
+   * @param {string} mode the mode to switch to
    */
   #switchToMode(mode) {
     this.#mode = mode;

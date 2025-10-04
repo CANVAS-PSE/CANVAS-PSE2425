@@ -12,7 +12,6 @@ from canvas.test_constants import (
     TEST_FIRST_NAME,
     TEST_LAST_NAME,
 )
-from canvas import message_dict, view_name_dict
 
 
 class DeleteAccountTest(TestCase):

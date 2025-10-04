@@ -1,15 +1,17 @@
 import { CanvasObject } from "canvasObject";
+import { abstractClassError, methodMustBeImplementedError } from "message_dict";
 
 /**
  * Represents a single component of the inspector
  */
 export class InspectorComponent {
   /**
-   *
+   * Creates a new inspector component.
+   * @throws {Error} if trying to instantiate this abstract class directly
    */
   constructor() {
     if (new.target == InspectorComponent) {
-      throw new Error("This class is abstract an cannot be instantiated.");
+      throw new Error(abstractClassError(InspectorComponent));
     }
   }
 
@@ -18,18 +20,15 @@ export class InspectorComponent {
    * @throws {Error} if this method is not implemented in a subclass
    */
   render() {
-    throw new Error(
-      "The render method must be implemented in every subclass of InspectorComponent",
-    );
+    throw new Error(methodMustBeImplementedError);
   }
 
   /**
-   *
+   * Disables the border around the component
+   * @throws {Error} if this method is not implemented in a subclass
    */
   disableBorder() {
-    throw new Error(
-      "The disableBorder method must be implemented in every subclass of InspectorComponent",
-    );
+    throw new Error(methodMustBeImplementedError);
   }
 }
 
@@ -69,7 +68,8 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -115,7 +115,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Disables the border around the component
    */
   disableBorder() {
     this.#hasBorder = false;
@@ -142,7 +142,8 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -229,7 +230,8 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -268,7 +270,7 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Disables the border around the component
    */
   disableBorder() {
     this.#hasBorder = false;
@@ -315,7 +317,8 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");
@@ -390,7 +393,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Disables the border around the component
    */
   disableBorder() {
     this.#hasBorder = false;
@@ -419,7 +422,8 @@ export class HeaderInspectorComponent extends InspectorComponent {
   }
 
   /**
-   *
+   * Renders the component and also adds the necessary logic to updating and saving.
+   * @returns {HTMLElement} the rendered component
    */
   render() {
     const wrapper = document.createElement("div");

@@ -1,4 +1,5 @@
 import { Command } from "command";
+import { abstractClassError } from "message_dict";
 
 /**
  * This class is designed for operations that target a single 'SelectableObject' instance.
@@ -11,9 +12,7 @@ export class SingleObjectCommand extends Command {
   constructor() {
     super();
     if (new.target === SingleObjectCommand) {
-      throw new Error(
-        "Cannot instantiate abstract class SingleObjectCommand directly",
-      );
+      throw new Error(abstractClassError(SingleObjectCommand));
     }
   }
 }

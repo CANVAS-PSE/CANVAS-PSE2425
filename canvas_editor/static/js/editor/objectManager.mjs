@@ -17,7 +17,7 @@ import { Receiver } from "receiver";
  */
 
 /**
- *
+ * Class to manage the objects in the scene
  */
 export class ObjectManager {
   #picker;

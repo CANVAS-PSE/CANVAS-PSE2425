@@ -12,6 +12,7 @@ import { Object3D, Vector3 } from "three";
 import { UndoRedoHandler } from "undoRedoHandler";
 import { UpdateReceiverCommand } from "updateCommands";
 import * as THREE from "three";
+import { towerBasePath, towerTopPath } from "path_dict";
 
 /**
  * Class that represents the receiver object
@@ -443,7 +444,7 @@ export class ReceiverBase extends Object3D {
    */
   constructor() {
     super();
-    loadGltf("/static/models/towerBase.glb", this, true);
+    loadGltf(towerBasePath, this, true);
   }
 }
 /**
@@ -455,6 +456,6 @@ export class ReceiverTop extends Object3D {
    */
   constructor() {
     super();
-    loadGltf("/static/models/towerTop.glb", this, true);
+    loadGltf(towerTopPath, this, true);
   }
 }

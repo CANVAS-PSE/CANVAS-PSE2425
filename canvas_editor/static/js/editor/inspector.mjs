@@ -4,7 +4,8 @@ import { ItemUpdatedEvent } from "updateCommands";
 import { CanvasObject } from "canvasObject";
 
 /**
- *
+ * Represents the inspector panel in the editor.
+ * @class Inspector
  */
 export class Inspector {
   #picker;
@@ -54,7 +55,7 @@ export class Inspector {
   }
 
   /**
-   *
+   * Renders the inspector panel.
    */
   #render() {
     this.#objectList = this.#picker.getSelectedObjects();

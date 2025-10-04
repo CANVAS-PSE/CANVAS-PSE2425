@@ -17,6 +17,7 @@ class ReceiverList(generics.ListCreateAPIView):
 
     # Overwrite the default function to use the project defined by the project_id in the url for saving the heliostat
     def perform_create(self, serializer):
+        """Save the new receiver with the project defined by the project_id in the url."""
         project_id = self.kwargs["project_id"]
         project = generics.get_object_or_404(
             Project, id=project_id, owner=self.request.user
@@ -24,6 +25,7 @@ class ReceiverList(generics.ListCreateAPIView):
         serializer.save(project=project)
 
     def get_queryset(self):
+        """Get the receivers that belong to the user making the request and the project defined by the project_id in the url."""
         project_id = self.kwargs["project_id"]
         return Receiver.objects.filter(
             project__id=project_id, project__owner=self.request.user

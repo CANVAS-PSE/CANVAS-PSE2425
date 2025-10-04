@@ -5,13 +5,13 @@ import { ObjectManager } from "objectManager";
  */
 
 /**
- *
+ * Class representing the navigation bar in the editor.
  */
 export class Navbar {
   #objectManager;
 
   /**
-   *
+   * Creates a new Navbar instance.
    * @param {ObjectManager} objectManager - The ObjectManager instance that manages the objects in the scene.
    */
   constructor(objectManager) {
@@ -33,8 +33,8 @@ export class Navbar {
     // Safari
     if (navigator.userAgent.indexOf("Safari") > -1) {
       /**
-       *
-       * @param _
+       * Handles the click event for the fullscreen button.
+       * @param {MouseEvent} _ - The click event
        */
       fullscreen.onclick = (
         /* eslint-disable-next-line no-unused-vars */
@@ -50,8 +50,8 @@ export class Navbar {
     }
 
     /**
-     *
-     * @param _
+     * Handles the click event for the fullscreen button.
+     * @param {MouseEvent} _ - The click event
      */
     fullscreen.onclick = (_) => {
       if (document.fullscreenElement === null) {
@@ -70,7 +70,7 @@ export class Navbar {
     let createNewProject = document.getElementById("createNewProject");
 
     /**
-     *
+     * Resets the form fields in the create new project modal.
      */
     function resetModalForm() {
       const form = createNewProject.querySelector("form");
@@ -120,7 +120,7 @@ export class Navbar {
     const content = document.getElementById("clientContent");
 
     /**
-     *
+     * Resets the form fields in the keybindings modal.
      */
     function resetModalForm() {
       select.value = "";

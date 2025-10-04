@@ -4,6 +4,8 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """Alter 'favorite' field in Project model from CharField to BooleanField."""
+
     dependencies = [
         ("project_management", "0001_initial"),
     ]

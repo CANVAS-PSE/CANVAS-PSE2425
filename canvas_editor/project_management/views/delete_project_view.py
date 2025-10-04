@@ -1,10 +1,8 @@
-from canvas import view_name_dict
-
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.views import View
 
+from canvas import view_name_dict
 from project_management.models import Project
 
 

@@ -10,7 +10,8 @@
   "use strict";
 
   /**
-   *
+   * Get the currently stored theme.
+   * @returns {string} the current theme
    */
   const getStoredTheme = () => localStorage.getItem("theme");
   /**
@@ -21,7 +22,8 @@
   const setStoredTheme = (theme) => localStorage.setItem("theme", theme);
 
   /**
-   *
+   * Get the preferred theme of the user
+   * @returns {string} the preferred theme
    */
   const getPreferredTheme = () => {
     const storedTheme = getStoredTheme();

@@ -1,7 +1,10 @@
+from typing import Any
+
+
 class FormTestMixin:
     """A mixin class for form tests."""
 
-    default_data = {}
+    default_data: dict[str, Any] = {}
 
     def create_form(self, **overrides):
         """Create a form instance with the given overrides."""
