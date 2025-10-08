@@ -3,11 +3,11 @@
         <a class="dropdown-toggle d-flex align-items-center link-body-emphasis text-decoration-none"
            data-bs-toggle="dropdown"
            aria-expanded="false">
-            <strong class="me-2">{{ request.user.first_name }}</strong>
+            <strong class="me-2">{{ request.user.username }}</strong>
         </a>
         <ul class="dropdown-menu text-small">
             <div class="px-3 gap-1">
-                <p class="m-0">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                <p class="m-0">{{ request.user.username }}</p>
                 <p class="text-secondary m-0">{{ request.user.email }}</p>
             </div>
             <li>

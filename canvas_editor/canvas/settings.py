@@ -37,7 +37,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 # Application definition
 
-SITE_ID = 2
+SITE_ID = 1
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.github",
     "django_cleanup.apps.CleanupConfig",
+    "canvas",
     "editor",
     "autosave_api",
     "job_interface",
@@ -194,7 +195,12 @@ LOGOUT_REDIRECT_URL = "/accounts/login/"
 # Signup
 ACCOUNT_SIGNUP_FIELDS = ["username*", "email*", "password1*", "password2*"]
 
+# Login
+ACCOUNT_LOGIN_METHODS = {"email"}
+
 # Email verification
+# INFO: To change the name and website displayed in the emails, you need to update the
+#       site name and URL in the Django admin page.
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -215,3 +221,4 @@ EMAIL_USE_TLS = True
 EMAIL_FROM = "canvas-editor@scc.kit.edu"
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = "canvas-editor@scc.kit.edu"
