@@ -51,3 +51,7 @@ duplicate_project_view = "duplicateProject"
 share_project_view = "shareProject"
 shared_projects_view = "sharedProjects"
 projects_view = "projects"
+
+# user settings
+change_username = "change_username"
+appearance = "appearance"

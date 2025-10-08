@@ -24,7 +24,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path(r"", include("project_management.urls")),
-    # path(r"", include("account_management.urls")),
+    path(r"settings/", include("user_settings.urls")),
     path(r"api/", include("autosave_api.urls")),
     path(r"jobs/", include("job_interface.urls")),
     path(r"admin/", admin.site.urls),

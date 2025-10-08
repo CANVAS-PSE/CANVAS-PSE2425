@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "django_cleanup.apps.CleanupConfig",
     "canvas",
     "editor",
+    "user_settings",
     "autosave_api",
     "job_interface",
     "project_management",
