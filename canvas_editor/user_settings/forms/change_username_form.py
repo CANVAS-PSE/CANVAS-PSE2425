@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import Form
 
+from canvas import message_dict
+
 
 class ChangeUsernameForm(Form):
     """Form for the username change."""
@@ -13,9 +15,7 @@ class ChangeUsernameForm(Form):
         username = self.cleaned_data["new_username"]
 
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError(
-                "The username already exists. Please choose a different one."
-            )
+            raise forms.ValidationError(message_dict.invalid_new_username_text)
 
         return username
 

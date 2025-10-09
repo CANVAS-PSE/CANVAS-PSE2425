@@ -201,7 +201,7 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 
 # Email verification
 # INFO: To change the name and website displayed in the emails, you need to update the
-#       site name and URL in the Django admin page.
+#       site name and URL in the Django admin page. Is handled by the migration in the canvas app.
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 SOCIALACCOUNT_LOGIN_ON_GET = True

@@ -1,3 +1,5 @@
+<!-- Base template for all settings. Contains a sidebar with categories and a content block for the actual settings -->
+<!-- Most of them are provided by the allauth package -->
 {% extends "base.html" %}
 {% load allauth %}
 {% block body %}
@@ -78,15 +80,15 @@
                     <div class="pt-4">
                         {% for message in messages %}
                             {% element alert level=message.tags %}
-                                {% slot message %}
-                                    {{ message }}
-                                {% endslot %}
-                            {% endelement %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {% block content %}{% endblock %}
+                            {% slot message %}
+                            {{ message }}
+                        {% endslot %}
+                    {% endelement %}
+                {% endfor %}
             </div>
-        </main>
+        {% endif %}
+        {% block content %}{% endblock %}
     </div>
+</main>
+</div>
 {% endblock %}

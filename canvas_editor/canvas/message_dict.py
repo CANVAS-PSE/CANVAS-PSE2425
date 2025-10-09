@@ -67,3 +67,9 @@ password_change_confirmation_subject = "Password Change Confirmation"
 """ Message shown in the subject line of the password change confirmation email. """
 password_reset_confirmation_subject = "Password Reset"
 """ Message shown in the subject line of the password reset confirmation email. """
+
+# User settings
+changed_username_text = "Username updated"
+invalid_new_username_text = (
+    "The username already exists. Please choose a different one."
+)

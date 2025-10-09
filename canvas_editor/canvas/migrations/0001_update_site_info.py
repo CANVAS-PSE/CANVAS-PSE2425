@@ -15,7 +15,11 @@ def update_default_site(apps: StateApps, _) -> None:
 
 
 class Migration(migrations.Migration):
-    """Migration to execute the default site update function."""
+    """Migration to execute the default site update function.
+
+    Used to automatically set up the correct name and URL for the website. The URL and site name are used by allauth to display
+    in the emails send to the user.
+    """
 
     dependencies = [
         ("sites", "0001_initial"),

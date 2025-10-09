@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import FormView
 
-from canvas import view_name_dict
+from canvas import message_dict, view_name_dict
 from user_settings.forms.change_username_form import ChangeUsernameForm
 
 
@@ -25,6 +25,6 @@ class ChangeUsernameView(LoginRequiredMixin, FormView):
         self.request.user.username = form.cleaned_data["new_username"]
         self.request.user.save()
 
-        messages.success(self.request, "Username updated")
+        messages.success(self.request, message_dict.changed_username_text)
 
         return super().form_valid(form)
