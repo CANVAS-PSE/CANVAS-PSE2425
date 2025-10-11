@@ -31,7 +31,7 @@ jobs:
         run: |
           mkdir -p ../reports
 
-          coverage run manage.py test \
+          coverage run manage.py test src/ \
             --noinput \
             --verbosity=2 \
             --testrunner=xmlrunner.extra.djangotestrunner.XMLTestRunner \
