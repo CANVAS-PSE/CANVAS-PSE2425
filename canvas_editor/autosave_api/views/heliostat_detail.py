@@ -7,7 +7,7 @@ from project_management.models import Heliostat
 
 
 class HeliostatDetail(generics.RetrieveUpdateDestroyAPIView):
-    """Creates a view to retrieve, edit or delete a specific heliostat, defined by the pk in the url."""
+    """Creates a view to retrieve, edit or delete a specific heliostat, defined by the given pk in the url."""
 
     serializer_class = HeliostatSerializer
 
