@@ -4,36 +4,67 @@ version = "1.0-beta"
 description = "An web-based 3D editor for ARTIST"
 readme = "README.md"
 requires-python = ">=3.10"
+dependencies = [
+  "django",
+  "djangorestframework",
+  "artist-csp @ git+https://github.com/ARTIST-Association/ARTIST.git",
+  "torch",
+  "requests",
+  "django-cleanup",
+  "django-allauth",
+  "PyJWT",
+  "python-dotenv",
+  "cryptography",
+  "Pillow",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy",
+  "ruff",
+  "pre-commit",
+  "coverage",
+  "parameterized",
+  "unittest-xml-reporting",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# This line tells Setuptools to look in the src/ directory for packages.
+package-dir = { "" = "src" }
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".ipynb_checkpoints",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pyenv",
-    ".pytest_cache",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    ".vscode",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "site-packages",
-    "venv",
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".ipynb_checkpoints",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".pyenv",
+  ".pytest_cache",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  ".vscode",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "site-packages",
+  "venv",
 ]
 
 # Same as Black.
@@ -92,3 +123,37 @@ convention = "numpy"
 [tool.djlint]
 profile = "django"
 
+[tool.coverage]
+[tool.coverage.run]
+omit = [
+  "*/migrations/*",
+  "*/tests/*",
+  "*/admin.py",
+  "*/apps.py",
+  "*/wsgi.py",
+  "*/__init__.py",
+  "/tmp/*",
+  "/var/tmp/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  # Have to re-enable the standard pragma
+  "pragma: no cover",
+
+  # Don't complain about missing debug-only code:
+  "def __repr__",
+  "if self\\.debug",
+
+  # Don't complain if tests don't hit defensive assertion code:
+  "raise AssertionError",
+  "raise NotImplementedError",
+
+  # Don't complain if non-runnable code isn't run:
+  "if __name__ == .__main__.:",
+
+  # Ignore logging statements
+  "import logging",
+  "logging\\.basicConfig",
+  "logging\\.getLogger",
+]

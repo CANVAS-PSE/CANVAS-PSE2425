@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse

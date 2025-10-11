@@ -15,6 +15,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = BASE_DIR.parent
 HDF5_SCENARIO_DIR = BASE_DIR / "hdf5_management" / "scenarios"
 
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "canvas",
     "editor",
     "autosave_api",
     "job_interface",

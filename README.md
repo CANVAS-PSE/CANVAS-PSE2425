@@ -21,19 +21,18 @@ git clone https://github.com/ARTIST-Association/CANVAS.git
 
 # install requirements
 cd CANVAS-PSE2425/
-pip install -r requirements.txt
+pip install -e ."[dev]"
 
 # Installing Pre-commit Hooks
 pre-commit install
 
-# add the .env file to the root of the canvas_editor folder
+# add the .env file to the root folder
 # containing debug variable, client_id + secret_key for OpenID, email-host password, etc.
 
 # configure the database
-cd canvas_editor/
 python manage.py migrate
 
-# Install npm dependencies
+# Install npm dependencies, only for types and linters
 npm install
 
 # start the server
