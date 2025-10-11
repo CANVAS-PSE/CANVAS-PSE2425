@@ -2,7 +2,7 @@
   "compilerOptions": {
     "checkJs": true,
     "target": "ES2016",
-    "baseUrl": ".",
+    "baseUrl": "src/",
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "paths": {

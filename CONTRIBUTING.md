@@ -25,8 +25,7 @@ By participating, you can help improve the project and make it even better :rais
    pre-commit install
 
    # Dev tools
-   cd canvas_editor/
-   python -m pip install -r requirements.txt
+   pip install -e ".[dev]"
    npm install
    ```
 
