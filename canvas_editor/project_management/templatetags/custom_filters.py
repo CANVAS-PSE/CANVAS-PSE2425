@@ -6,7 +6,10 @@ register = template.Library()
 
 @register.filter(name="truncate_with_end")
 def truncate_with_end(value, length):
-    """Truncate the string to the given length and add the last 3 characters after '...'."""
+    """Truncate the string to the given length and add the last 3 characters after '...'.
+
+    Can be used inside of Django templates.
+    """
     if len(value) > length:
         truncated = value[: length - 4]  # Subtract 3 for the ellipsis
         end = value[-4:]  # Get the last 3 characters
