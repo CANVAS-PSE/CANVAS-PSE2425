@@ -1,6 +1,6 @@
-import { CommandManager } from "./lib/command/CommandManager.mjs";
-import { PropertyCommand } from "./lib/command/commands/PropertyCommand.mjs";
-import { Observable } from "./lib/Observable.mjs";
+import { CommandManager } from "./model/lib/command/CommandManager.mjs";
+import { PropertyCommand } from "./model/lib/command/commands/PropertyCommand.mjs";
+import { Observable } from "./model/lib/Observable.mjs";
 
 /**
  * @typedef {object} TestProps
@@ -12,25 +12,29 @@ import { Observable } from "./lib/Observable.mjs";
  */
 
 /**
- * te
+ * test 2 2
  * @augments {Observable<TestProps, TestSignalsNames>}
  */
 export class Test extends Observable {
   name;
 
+  /** test */
   constructor() {
     super();
     this.name = "test";
   }
 
+  /** test */
   fight() {
     this.notify("testSignal");
   }
 }
 
+/** test */
 export class Editor {
   test;
 
+  /** test */
   constructor() {
     document.getElementById("loadingScreen").classList.add("d-none");
     this.test = new Test();

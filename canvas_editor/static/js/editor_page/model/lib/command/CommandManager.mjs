@@ -1,5 +1,8 @@
 import { Observable } from "../Observable.mjs";
-import { ICommand } from "./commands/ICommand.mjs";
+
+/**
+ * @import {ICommand} from './commands/ICommand.mjs'
+ */
 
 /**
  * @typedef {object} CommandManagerProps

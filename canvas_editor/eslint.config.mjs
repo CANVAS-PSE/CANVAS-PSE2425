@@ -5,11 +5,16 @@ import globals from "globals";
 
 export default defineConfig([
   js.configs.recommended,
-  jsdoc.configs["flat/recommended"],
+  jsdoc.configs["flat/recommended-typescript-flavor"],
   {
     languageOptions: { globals: globals.browser },
   },
   {
+    settings: {
+      jsdoc: {
+        mode: "typescript",
+      },
+    },
     rules: {
       "jsdoc/require-jsdoc": [
         "warn",

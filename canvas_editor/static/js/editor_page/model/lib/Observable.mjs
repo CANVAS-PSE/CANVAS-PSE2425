@@ -1,12 +1,12 @@
 /**
  * Base class that provides property subscription and connection to signals of the class.
- * @template {{[key: string]: any}} PropertyBag Type that contains all properties of the extending class.
+ * @template {{[key: string]: any}} Properties Type that contains all properties of the extending class.
  * @template {string} SignalNames Type with all signal names of the extending class.
  */
 export class Observable {
   /**
    * @protected
-   * @type {Map<keyof PropertyBag, Set<(newValue: any) => void>>}
+   * @type {Map<keyof Properties, Set<(newValue: any) => void>>}
    */
   _propertySubscribers = new Map();
 
@@ -30,7 +30,7 @@ export class Observable {
        * Notify all subscribers of the property of the new change.
        * @param {Observable} target the target of the set trap call.
        * @param {string} property the property of the set trap call.
-       * @param {PropertyBag[keyof PropertyBag]} value the new value for the property.
+       * @param {any} value the new value for the property.
        * @returns {boolean} whether the set was successful
        */
       set(target, property, value) {
@@ -53,9 +53,9 @@ export class Observable {
 
   /**
    * Subscribe to changes of the given property.
-   * @template {keyof PropertyBag} K
+   * @template {keyof Properties} K
    * @param {K} propertyName The name of the property you want to subscribe to.
-   * @param {(newValue: PropertyBag[K]) => void} callback The callback function that is called when the property changes.
+   * @param {(newValue: Properties[K]) => void} callback The callback function that is called when the property changes.
    * @returns {() => void} Function to unsubscribe from future changes.
    */
   subscribe(propertyName, callback) {
