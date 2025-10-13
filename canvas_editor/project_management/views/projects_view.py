@@ -8,7 +8,8 @@ from django.views.generic import ListView
 
 from canvas import message_dict
 from hdf5_management.hdf5_manager import HDF5Manager
-from project_management.forms.project_form import ProjectForm
+from project_management.forms.create_project_form import CreateProjectForm
+from project_management.forms.update_project_form import UpdateProjectForm
 from project_management.models import Project
 from project_management.views.utils import is_name_unique
 
@@ -20,19 +21,6 @@ class ProjectsView(LoginRequiredMixin, ListView):
     template_name = "project_management/projects.html"
     context_object_name = "projects"
 
-    def get_queryset(self):
-        """Get a list of all projects of this user.
-
-        Sorts them by data, and adds the necessary attributes for sharing.
-        """
-        queryset = Project.objects.filter(owner=self.request.user).order_by(
-            "-last_edited"
-        )
-        for project in queryset:
-            project.uid = self._generate_uid(self.request)
-            project.token = self._generate_token(project.name)
-        return queryset
-
     @staticmethod
     def _generate_uid(request):
         return urlsafe_base64_encode(str(request.user.id).encode())
@@ -40,12 +28,6 @@ class ProjectsView(LoginRequiredMixin, ListView):
     @staticmethod
     def _generate_token(project_name):
         return urlsafe_base64_encode(str(project_name).encode())
-
-    def get_context_data(self, **kwargs):
-        """Add the ProjectForm to the context."""
-        context = super().get_context_data(**kwargs)
-        context["form"] = ProjectForm()
-        return context
 
     @staticmethod
     def _create_project(
@@ -63,16 +45,40 @@ class ProjectsView(LoginRequiredMixin, ListView):
             hdf5_manager = HDF5Manager()
             hdf5_manager.create_project_from_hdf5_file(project_file, new_project)
 
+    def get_context_data(self, **kwargs):
+        """Add the ProjectForm to the context."""
+        context = super().get_context_data(**kwargs)
+        context["form"] = CreateProjectForm()
+        context["only_favorites"] = "only_favorites" in self.request.GET
+        return context
+
+    def get_queryset(self):
+        """Get a list of all projects of this user.
+
+        Sorts them by data, and adds the necessary attributes for sharing.
+        """
+        queryset = Project.objects.filter(owner=self.request.user).order_by(
+            "-last_edited"
+        )
+
+        # Filtering query parameter in the url
+        if "only_favorites" in self.request.GET:
+            queryset = queryset.filter(favorite=True)
+
+        for project in queryset:
+            project.uid = self._generate_uid(self.request)
+            project.token = self._generate_token(project.name)
+            project.update_form = UpdateProjectForm()
+        return queryset
+
     def post(self, request):
         """Create a new project if the form is valid and the name is unique."""
         # Initialize the form with POST and FILE data
-        form = ProjectForm(request.POST, request.FILES)
+        form = CreateProjectForm(request.POST, request.FILES)
 
         # Check if form is valid before proceeding
-        if form.is_valid() and is_name_unique(
-            request.user, form.cleaned_data["name"].strip().replace(" ", "_")
-        ):
-            project_name = form.cleaned_data["name"].strip().replace(" ", "_")
+        if form.is_valid() and is_name_unique(request.user, form.cleaned_data["name"]):
+            project_name = form.cleaned_data["name"]
             project_file = request.FILES.get("file")
             project_description = form.cleaned_data.get("description", "").strip()
 

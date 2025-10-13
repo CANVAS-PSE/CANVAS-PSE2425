@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from project_management.forms.utils import validate_symbols
 
 
-class ProjectForm(forms.Form):
+class CreateProjectForm(forms.Form):
     """Form to create or edit a project."""
 
     name = forms.CharField(
@@ -14,6 +14,10 @@ class ProjectForm(forms.Form):
     description = forms.CharField(
         max_length=500, required=False, widget=forms.TextInput()
     )
+
+    def clean_name(self):
+        """Replace all spaces with underscores in the name."""
+        return str(self.cleaned_data.get("name")).strip().replace(" ", "_")
 
     def clean_file(self):
         """Validate the uploaded file."""

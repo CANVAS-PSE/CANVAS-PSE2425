@@ -1,24 +1,17 @@
-import { abstractClassError } from "message_dict";
-
-/**
- * This class serves as a base class for all specific command types.
- * It defines the structure for executing and undoing actions within the system.
- * Subclasses extend this class to implement the unique logic for each specific command.
- * @throws {Error} When the method is not implemented by a subclass.
- */
-
 /**
  * Interface describing a command in it's raw form.
  */
-export class Command {
+export class ICommand {
   /**
    * Initializes a new instance of the Command class.
    * Throws an error if an attempt is made to instantiate the abstract class directly.
    * @throws {Error} When attempting to instantiate the abstract class directly.
    */
   constructor() {
-    if (new.target === Command) {
-      throw new Error(abstractClassError(Command));
+    if (new.target === ICommand) {
+      throw new Error(
+        "This class is abstract and can not be instantiated directly",
+      );
     }
   }
 
