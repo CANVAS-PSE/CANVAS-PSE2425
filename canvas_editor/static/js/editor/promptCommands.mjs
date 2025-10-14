@@ -128,14 +128,15 @@ export class PromptCommand extends HTMLElement {
    * Selects this command (adds a background color).
    */
   select() {
-    this.classList.add("bg-primary");
+    this.classList.add("bg-primary", "text-white");
+    this.scrollIntoView({ block: "nearest" });
   }
 
   /**
    * Unselects this command (removes the background color).
    */
   unselect() {
-    this.classList.remove("bg-primary");
+    this.classList.remove("bg-primary", "text-white");
   }
 
   /**

@@ -184,7 +184,6 @@ export class CommandPrompt {
    */
   selectCommand(selectedIndex = this.#selectedIndex) {
     if (this.#selectedCommand) {
-      this.#selectedCommand.classList.remove("text-white");
       this.#selectedCommand.unselect();
     }
 
@@ -195,8 +194,6 @@ export class CommandPrompt {
     //@ts-ignore
     this.#selectedCommand = this.#commandListElem.children[this.#selectedIndex];
     this.#selectedCommand.select();
-    this.#selectedCommand.classList.add("text-white");
-    this.#selectedCommand.scrollIntoView({ block: "nearest" });
   }
 
   /**
