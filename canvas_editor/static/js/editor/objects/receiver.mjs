@@ -395,7 +395,7 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   * Get wether the object is movable or notjh
+   * Get whether the object is movable or not
    * @returns {boolean} wether the object is movable
    */
   get isMovable() {
