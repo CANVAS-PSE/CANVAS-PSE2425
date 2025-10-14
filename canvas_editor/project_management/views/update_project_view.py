@@ -1,14 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils import timezone
 from django.views.generic import FormView
 
-from canvas import message_dict, view_name_dict
+from canvas import view_name_dict
 from project_management.forms.update_project_form import UpdateProjectForm
 from project_management.models import Project
-from project_management.views.utils import is_name_unique
 
 
 class UpdateProjectView(LoginRequiredMixin, FormView):
@@ -40,18 +37,6 @@ class UpdateProjectView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         """Handle valid update project form."""
-        project = Project.objects.get(
-            owner=self.request.user, name=self.kwargs["project_name"]
-        )
-        form_name = form.cleaned_data["name"].strip().replace(" ", "_")
-        form_description = form.cleaned_data.get("description", "")
-        if is_name_unique(self.request.user, form_name) or form_name == project.name:
-            project.last_edited = timezone.now()
-            project.name = form_name
-            project.description = form_description if form_description else ""
-            project.save()
-            return HttpResponseRedirect(reverse(view_name_dict.projects_view))
-        else:
-            messages.error(self.request, message_dict.project_name_must_be_unique)
+        form.save()
 
         return super().form_valid(form)
