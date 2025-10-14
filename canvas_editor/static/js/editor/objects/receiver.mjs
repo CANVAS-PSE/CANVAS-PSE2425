@@ -39,7 +39,7 @@ export class Receiver extends CanvasObject {
    */
   planeU;
   /**
-   * The resoultion of the target area in east direction.
+   * The resolution of the target area in east direction.
    */
   resolutionE;
   /**
