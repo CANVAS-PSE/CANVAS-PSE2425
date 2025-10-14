@@ -49,7 +49,7 @@ export class LightSource extends CanvasObject {
 
   /**
    * Create the light source object
-   * @param {string} lightSourceName the name of the lightsource
+   * @param {string} lightSourceName the name of the light source
    * @param {number} numberOfRays the number of rays the light source has
    * @param {string} lightSourceType the type of the light source
    * @param {string} distributionType the type of the distribution
@@ -170,23 +170,23 @@ export class LightSource extends CanvasObject {
   }
 
   /**
-   * Returns whether the lightsource is rotatable or not
-   * @returns {string[]} false, as the lightsource is not rotatable
+   * Returns whether the light source is rotatable or not
+   * @returns {string[]} false, as the light source is not rotatable
    */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
   /**
-   * Returns whether the lightsource is movable or not
-   * @returns {boolean} false, as the lightsource is movable
+   * Returns whether the light source is movable or not
+   * @returns {boolean} false, as the light source is movable
    */
   get isMovable() {
     return this.#isMovable;
   }
 
   /**
-   * Get wether the object is selectable
+   * Get whether the object is selectable
    * @returns {boolean} if the object is selectable
    */
   get isSelectable() {

@@ -5,7 +5,7 @@ import { Receiver } from "receiver";
 
 /**
  * Provides a wrapper for the API
- * Contains a methods for every databank manipulation needed.
+ * Contains a methods for every database manipulation needed.
  */
 export class SaveAndLoadHandler {
   /** @type {SaveAndLoadHandler} */
@@ -19,7 +19,7 @@ export class SaveAndLoadHandler {
    */
   constructor(projectId = null) {
     if (SaveAndLoadHandler.#instance) {
-      throw new Error("Can notcreate class directly, use getInstance instead");
+      throw new Error("Cannot create class directly, use getInstance instead");
     }
     SaveAndLoadHandler.#instance = this;
     this.#projectID = projectId;
@@ -28,7 +28,7 @@ export class SaveAndLoadHandler {
 
   /**
    * Gets the current saveAndLoadHandler instance in use
-   * @param {number} [projectId] the id of the project, only needed for the first instanciation
+   * @param {number} [projectId] the id of the project, only needed for the first instantiation
    * @returns {SaveAndLoadHandler} the saveAndLoadHandler in use
    */
   static getInstance(projectId = null) {
@@ -42,7 +42,7 @@ export class SaveAndLoadHandler {
   }
 
   /**
-   * Returns a Json representation of the project defined by the project_id
+   * Returns a JSON representation of the project defined by the project_id
    * @returns {Promise<JSON>} A JSON representation of the project
    */
   async getProjectData() {
@@ -51,7 +51,7 @@ export class SaveAndLoadHandler {
   }
 
   /**
-   * Creates a databank entry for the given heliostat
+   * Creates a database entry for the given heliostat
    * @param {Heliostat} heliostat Is the heliostat you want an entry for
    * @returns {Promise<JSON>} JSON representation of the new heliostat.
    */
@@ -70,7 +70,7 @@ export class SaveAndLoadHandler {
   }
 
   /**
-   * Creates a databank entry for the given receiver
+   * Creates a database entry for the given receiver
    * @param {Receiver} receiver Is the receiver you want an entry for
    * @returns {Promise<JSON>} JSON representation of the new receiver.
    */
@@ -98,21 +98,21 @@ export class SaveAndLoadHandler {
   }
 
   /**
-   * Creates a databank entry for the given lightsource
-   * @param {LightSource} lightsource Is the lightsource you want an entry for
-   * @returns {Promise<JSON>} JSON representation of the new lightsource.
+   * Creates a database entry for the given light source
+   * @param {LightSource} lightSource Is the light source you want an entry for
+   * @returns {Promise<JSON>} JSON representation of the new light source.
    */
-  async createLightSource(lightsource) {
+  async createLightSource(lightSource) {
     const url =
       this.#baseAPIUrl + "projects/" + this.#projectID + "/light_sources/";
 
     const body = {
-      name: lightsource.objectName,
-      number_of_rays: lightsource.numberOfRays,
-      lightsource_type: lightsource.lightSourceType,
-      distribution_type: lightsource.distributionType,
-      mean: lightsource.distributionMean,
-      covariance: lightsource.distributionCovariance,
+      name: lightSource.objectName,
+      number_of_rays: lightSource.numberOfRays,
+      lightsource_type: lightSource.lightSourceType,
+      distribution_type: lightSource.distributionType,
+      mean: lightSource.distributionMean,
+      covariance: lightSource.distributionCovariance,
     };
 
     return this.#makeApiCall(url, "POST", body);
@@ -164,12 +164,12 @@ export class SaveAndLoadHandler {
 
   // Object deletion
   /**
-   * Deletes the given lightsource from the backend
-   * @param {LightSource} lightsource Is the lightsource you want to delete
-   * @returns {Promise<JSON>} Resolves when the lightsource is deleted
+   * Deletes the given light source from the backend
+   * @param {LightSource} lightSource Is the light source you want to delete
+   * @returns {Promise<JSON>} Resolves when the light source is deleted
    */
-  async deleteLightsource(lightsource) {
-    if (!lightsource.apiID) {
+  async deleteLightsource(lightSource) {
+    if (!lightSource.apiID) {
       return;
     }
 
@@ -178,7 +178,7 @@ export class SaveAndLoadHandler {
       "projects/" +
       this.#projectID +
       "/light_sources/" +
-      lightsource.apiID +
+      lightSource.apiID +
       "/";
 
     return this.#makeApiCall(url, "DELETE");
@@ -254,12 +254,12 @@ export class SaveAndLoadHandler {
   }
 
   /**
-   * Updates the given lightsource in the backend
-   * @param {LightSource} lightsource Is the updated lightsource from the frontend
+   * Updates the given light source in the backend
+   * @param {LightSource} lightSource Is the updated light source from the frontend
    * @returns {Promise<JSON>} JSON representation of the updated light source
    */
-  async updateLightsource(lightsource) {
-    if (!lightsource.apiID) {
+  async updateLightsource(lightSource) {
+    if (!lightSource.apiID) {
       return;
     }
 
@@ -268,17 +268,17 @@ export class SaveAndLoadHandler {
       "projects/" +
       this.#projectID +
       "/light_sources/" +
-      lightsource.apiID +
+      lightSource.apiID +
       "/";
 
     const body = {
-      id: lightsource.apiID,
-      name: lightsource.objectName,
-      number_of_rays: lightsource.numberOfRays,
-      lightsource_type: lightsource.lightSourceType,
-      distribution_type: lightsource.distributionType,
-      mean: lightsource.distributionMean,
-      covariance: lightsource.distributionCovariance,
+      id: lightSource.apiID,
+      name: lightSource.objectName,
+      number_of_rays: lightSource.numberOfRays,
+      lightsource_type: lightSource.lightSourceType,
+      distribution_type: lightSource.distributionType,
+      mean: lightSource.distributionMean,
+      covariance: lightSource.distributionCovariance,
     };
 
     return this.#makeApiCall(url, "PUT", body);
@@ -286,7 +286,7 @@ export class SaveAndLoadHandler {
 
   // Settings updating
   /**
-   * Updates the settings accroding to the given changes
+   * Updates the settings according to the given changes
    * @param {string} attribute the attribute you want to change
    * @param {any} newValue the new value of the attribute
    * @returns {Promise<JSON>} JSON of all the project settings
@@ -302,7 +302,7 @@ export class SaveAndLoadHandler {
   }
 
   /**
-   * Utiltiy function that gets the cookie specified by the name
+   * Utility function that gets the cookie specified by the name
    * @param {string} name The name of the cookie you want to get.
    * @returns {string|null} the cookie or null if it couldn't be found.
    */

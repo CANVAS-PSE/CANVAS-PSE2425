@@ -99,7 +99,7 @@ export class JobInterface {
         "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     }).catch((error) => {
-      console.error("Error deleting new job:", error);
+      console.error("Error deleting job:", error);
     });
   }
 

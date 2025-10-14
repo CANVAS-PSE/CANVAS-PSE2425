@@ -221,7 +221,7 @@ class ViewHelper extends Object3D {
    * Create a new view helper
    * @param {Camera} camera the camera in use
    * @param {HTMLElement} domElement the element where the canvas is rendered
-   * @param {number} size the size of the viewhelper
+   * @param {number} size the size of the view helper
    * @param {"arrows" | "circles"} style the style
    */
   constructor(camera, domElement, size = 128, style = "arrows") {
@@ -289,7 +289,7 @@ class ViewHelper extends Object3D {
   }
 
   /**
-   * Dispose the viewhelper
+   * Dispose the view helper
    */
   dispose() {
     this.geometry.dispose();

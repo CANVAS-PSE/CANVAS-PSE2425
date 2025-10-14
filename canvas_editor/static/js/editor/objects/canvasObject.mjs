@@ -101,7 +101,7 @@ export class CanvasObject extends Object3D {
    * Returns whether the object is movable or not
    * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
-   * @returns {boolean} wether the object is movable
+   * @returns {boolean} whether the object is movable
    */
   get isMovable() {
     throw new Error(methodMustBeImplementedError);
@@ -111,7 +111,7 @@ export class CanvasObject extends Object3D {
    * Returns whether an object is selectable or not
    * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
-   * @returns {boolean} wether the object is selectable
+   * @returns {boolean} whether the object is selectable
    */
   get isSelectable() {
     throw new Error(methodMustBeImplementedError);
@@ -142,7 +142,7 @@ export class CanvasObject extends Object3D {
  * Load a mesh from a gltf file.
  * @param {string} path the path of the file.
  * @param {THREE.Object3D} object the object you want to add the mesh to.
- * @param {boolean} castShadows wether the mesh should cast shadows or not.
+ * @param {boolean} castShadows whether the mesh should cast shadows or not.
  */
 export function loadGltf(path, object, castShadows) {
   const loader = new GLTFLoader();

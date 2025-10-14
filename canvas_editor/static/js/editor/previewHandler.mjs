@@ -3,7 +3,7 @@ import { SaveAndLoadHandler } from "saveAndLoadHandler";
 import { errorUploadingFile } from "message_dict";
 
 /**
- * Handles the genertion of project previews of the editor page
+ * Handles the generation of project previews of the editor page
  */
 export class PreviewHandler {
   #renderer;
@@ -32,13 +32,13 @@ export class PreviewHandler {
 
     // save preview every 5s for the first 30s and then every 30s
     // using events like 'beforeunload', doesn't really seem to work with the navigation buttons of the browser, and also causes freezing some times
-    const shortIntervall = setInterval(() => {
+    const shortInterval = setInterval(() => {
       this.#savePreview();
     }, 5000);
 
-    // deactivate the first intervall and activate the second
+    // deactivate the first interval and activate the second
     setTimeout(() => {
-      clearInterval(shortIntervall);
+      clearInterval(shortInterval);
       setInterval(() => {
         this.#savePreview();
       }, 30000);

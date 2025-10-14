@@ -9,7 +9,7 @@ import { SaveAndLoadHandler } from "saveAndLoadHandler";
  */
 export class PromptCommand extends HTMLElement {
   #commandName;
-  #occurenceLength = null;
+  #occurrenceLength = null;
   /**
    * @type {number[]}
    */
@@ -21,7 +21,7 @@ export class PromptCommand extends HTMLElement {
    * Creates a new prompt command
    * @param {string} name the name of the command
    * @param {CommandPrompt} commandPrompt the command prompt in use for this command
-   * @param {string} [keybind] the keybind of the command
+   * @param {string} [keybind] the keybinding of the command
    */
   constructor(name, commandPrompt, keybind = null) {
     super();
@@ -72,35 +72,35 @@ export class PromptCommand extends HTMLElement {
   }
 
   /**
-   * Returns the length of the occurence that got selected by the searching algorithm.
-   * @returns {number|null} the length of the occurence or null if no occurence got selected
+   * Returns the length of the occurrence that got selected by the searching algorithm.
+   * @returns {number|null} the length of the occurrence or null if no occurrence got selected
    */
-  get occurenceLength() {
-    return this.#occurenceLength;
+  get occurrenceLength() {
+    return this.#occurrenceLength;
   }
 
   /**
-   * Sets the length of the occurence that got selected by the searching algorithm.
-   * @param {number|null} length the length of the occurence or null if no occurence got selected
+   * Sets the length of the occurrence that got selected by the searching algorithm.
+   * @param {number|null} length the length of the occurrence or null if no occurrence got selected
    */
-  set occurenceLength(length) {
-    this.#occurenceLength = length;
+  set occurrenceLength(length) {
+    this.#occurrenceLength = length;
   }
 
   /**
-   * Returns an array of all indexes of characters that got selected by the searchring algorithm.
-   * Use for hightlighting them.
+   * Returns an array of all indexes of characters that got selected by the searching algorithm.
+   * Use for highlighting them.
    * @param {number[]} chars is an array of char indexes you want to be selected
    */
   set selectedChars(chars) {
     this.#selectedChars = chars;
     if (this.#selectedChars !== null) {
       if (this.#selectedChars.length > 1) {
-        this.#occurenceLength =
+        this.#occurrenceLength =
           this.#selectedChars[this.#selectedChars.length - 1] -
           this.#selectedChars[0];
       } else {
-        this.#occurenceLength = 0;
+        this.#occurrenceLength = 0;
       }
     }
   }
@@ -153,7 +153,7 @@ export class ThemePromptCommand extends PromptCommand {
   /**
    * Create a new theme command
    * @param {string} description the description of the command
-   * @param {CommandPrompt} commandPrompt the commandprompt in use
+   * @param {CommandPrompt} commandPrompt the command prompt in use
    */
   constructor(description, commandPrompt) {
     if (new.target === ThemePromptCommand) {
@@ -321,7 +321,7 @@ export class AddReceiverPromptCommand extends PromptCommand {
 }
 
 /**
- * Prompt command to add a lightsource to the scene
+ * Prompt command to add a light source to the scene
  */
 export class AddLightSourcePromptCommand extends PromptCommand {
   #objectManager;
@@ -377,7 +377,7 @@ export class ToggleFullscreenPromptCommand extends PromptCommand {
 }
 
 /**
- * Prompt command to export the current project
+ * Prompt command to open the new job pane to the current project
  */
 export class ExportProjectPromptCommand extends PromptCommand {
   /**

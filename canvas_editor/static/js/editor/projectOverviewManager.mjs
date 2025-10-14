@@ -52,7 +52,7 @@ export class ProjectOverviewManager {
   }
 
   /**
-   * Handle the favorite filterting functionality
+   * Handle the favorite filtering functionality
    */
   #handleFavoriteFilter() {
     const favoriteSwitchWrapper = document.createElement("div");

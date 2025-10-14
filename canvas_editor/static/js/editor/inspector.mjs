@@ -79,7 +79,7 @@ export class Inspector {
         this.#inspectorElem.appendChild(component.render());
       });
     }
-    // Multiselection
+    // Multi selection
     else {
       const wrapper = document.createElement("div");
       wrapper.classList.add(

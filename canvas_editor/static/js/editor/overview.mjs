@@ -258,7 +258,7 @@ export class OverviewHandler {
    * Creates an entry for the given light source
    * @param {LightSource} object the light source you want to create an entry for
    * @param {boolean} selected determines if the object is selected or not
-   * @returns {HTMLElement} lightsourceEntry - the html element for the light source
+   * @returns {HTMLElement} lightSourceEntry - the html element for the light source
    */
   #createLightsourceEntry(object, selected) {
     // create the html element to render

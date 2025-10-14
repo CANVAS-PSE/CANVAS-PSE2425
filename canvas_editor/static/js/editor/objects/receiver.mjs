@@ -396,15 +396,15 @@ export class Receiver extends CanvasObject {
 
   /**
    * Get whether the object is movable or not
-   * @returns {boolean} wether the object is movable
+   * @returns {boolean} whether the object is movable
    */
   get isMovable() {
     return this.#isMovable;
   }
 
   /**
-   * Get wether the object is selectable
-   * @returns {boolean} wether the object is selectable
+   * Get whether the object is selectable
+   * @returns {boolean} whether the object is selectable
    */
   get isSelectable() {
     return true;

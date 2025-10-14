@@ -87,7 +87,7 @@ export class Editor {
 
     this.#saveAndLoadHandler = SaveAndLoadHandler.getInstance(this.#projectId);
 
-    // initate ThreeJs scene
+    // initiate ThreeJs scene
     this.#setUpScene();
 
     // initiate needed classes
@@ -120,7 +120,7 @@ export class Editor {
 
   /**
    * Gets the current editor instance in use
-   * @param {number} [projectId] the id of the project, only needed for the first instanciation
+   * @param {number} [projectId] the id of the project, only needed for the first instantiation
    * @returns {Editor} the saveAndLoadHandler in use
    */
   static getInstance(projectId = null) {
@@ -169,7 +169,7 @@ export class Editor {
   }
 
   /**
-   * Sets up the threejs scene.
+   * Sets up the ThreeJs scene.
    * @returns {Editor} the editor instance for chaining
    */
   #setUpScene() {
@@ -185,11 +185,11 @@ export class Editor {
     );
     this.#camera.position.set(130, 50, 0);
 
-    // since we render multiple times (scene and compass), we need to clear the pre#previewRenderer manually
     this.#renderer = new THREE.WebGLRenderer({
       antialias: true,
     });
 
+    // since we render multiple times (scene and compass), we need to clear the renderer manually
     this.#renderer.autoClear = false;
 
     this.#renderer.shadowMap.enabled = true;
@@ -407,7 +407,7 @@ export class Editor {
 
   /**
    * Adds the given light source to the scene and saves it.
-   * @param {LightSource} lightsource the lightsource you want to add.
+   * @param {LightSource} lightsource the light source you want to add.
    */
   async addLightsource(lightsource) {
     this.#selectableGroup.add(lightsource);

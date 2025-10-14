@@ -8,7 +8,7 @@ from project_management.models import (
     Settings,
 )
 
-# Regestering all models
+# Registering all models
 admin.site.register(Project)
 admin.site.register(Heliostat)
 admin.site.register(Receiver)
