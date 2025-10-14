@@ -1,8 +1,12 @@
-{% extends 'base.html' %} {% load static %} {% block style %} {{ block.super }}
-<link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
-{% endblock %} {% block script %}
-<script src="{% static 'js/darkmode.js' %}"></script>
-<script type="importmap">
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    {{ block.super }}
+    <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block script %}
+    <script src="{% static 'js/darkmode.js' %}"></script>
+    <script type="importmap">
   {
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.module.js",
@@ -45,54 +49,55 @@
       "path_dict": "{% static 'js/path_dict.js' %}"
     }
   }
-</script>
-<script type="module">
+    </script>
+    <script type="module">
   import { Editor } from "{% static 'js/editor/editor.mjs' %}";
 
   window.addEventListener("DOMContentLoaded", (_) => {
     const editor = Editor.getInstance("{{ project_id }}");
     editor.loadProject();
   });
-</script>
-{% endblock %} {% block body %}
-<!-- loading animation -->
-{% include "editor/loadingAnimation.html" %}
-<!-- message system -->
-{% include "editor/messageSystem.html" %}
-<!-- HDF5 Creation Modal -->
-{% include "editor/modals/hdf5CreationModal.html" %}
-<!--settings modal-->
-{% include "settings.html" %}
-<!--job interface modal-->
-{% include "editor/modals/jobInterface.html" %}
-<!-- command prompt modal-->
-{% include "editor/modals/commandPromptModal.html" %}
-<!-- create new project modal -->
-{% include "editor/modals/createNewProjectModal.html" %}
-<!-- open existing project modal -->
-{% include "editor/modals/openExistingProjectModal.html" %}
-<!-- keybindings modal -->
-{% include "editor/modals/keybindingsModal.html" %}
-<!-- about modal -->
-{% include "editor/modals/aboutModal.html" %}
-<!-- main content -->
-<div class="container-fluid d-flex flex-column min-vh-100 p-0">
-  <!-- navigation bar -->
-  {% include "editor/navbar.html" %}
-  <!-- main editor pane -->
-  <main class="d-flex flex-row flex-fill">
-    <!-- canvas -->
-    <div
-      class="mb-2 mx-0 ms-2 overflow-hidden rounded-3 shadow position-relative"
-      id="canvas"
-    >
-      <!--mode selector-->
-      {% include "editor/modeSelector.html" %}
-      <!--quick settings-->
-      {% include "editor/quickSettings.html" %}
+    </script>
+{% endblock %}
+{% block body %}
+    <!-- loading animation -->
+    {% include "editor/loadingAnimation.html" %}
+    <!-- message system -->
+    {% include "editor/messageSystem.html" %}
+    <!-- HDF5 Creation Modal -->
+    {% include "editor/modals/hdf5CreationModal.html" %}
+    <!--settings modal-->
+    {% include "settings.html" %}
+    <!--job interface modal-->
+    {% include "editor/modals/jobInterface.html" %}
+    <!-- command prompt modal-->
+    {% include "editor/modals/commandPromptModal.html" %}
+    <!-- create new project modal -->
+    {% include "editor/modals/createNewProjectModal.html" %}
+    <!-- open existing project modal -->
+    {% include "editor/modals/openExistingProjectModal.html" %}
+    <!-- confirm modal to download the project -->
+    {% include "editor/modals/confirmDownloadModal.html" %}
+    <!-- keybindings modal -->
+    {% include "editor/modals/keybindingsModal.html" %}
+    <!-- about modal -->
+    {% include "editor/modals/aboutModal.html" %}
+    <!-- main content -->
+    <div class="container-fluid d-flex flex-column min-vh-100 p-0">
+        <!-- navigation bar -->
+        {% include "editor/navbar.html" %}
+        <!-- main editor pane -->
+        <main class="d-flex flex-row flex-fill">
+            <!-- canvas -->
+            <div class="mb-2 mx-0 ms-2 overflow-hidden rounded-3 shadow position-relative"
+                 id="canvas">
+                <!--mode selector-->
+                {% include "editor/modeSelector.html" %}
+                <!--quick settings-->
+                {% include "editor/quickSettings.html" %}
+            </div>
+            <!-- sidebar -->
+            {% include "editor/sidebar/sidebar.html" %}
+        </main>
     </div>
-    <!-- sidebar -->
-    {% include "editor/sidebar/sidebar.html" %}
-  </main>
-</div>
 {% endblock body %}
