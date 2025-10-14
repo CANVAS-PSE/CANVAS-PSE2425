@@ -186,7 +186,7 @@ export class Heliostat extends CanvasObject {
 
   /**
    * Get the current position of the object
-   * @returns {THREE.Vector3} the positon of the object
+   * @returns {THREE.Vector3} the position of the object
    */
   get lastPosition() {
     return this.#lastPosition;
