@@ -22,7 +22,7 @@ class EditorView(LoginRequiredMixin, TemplateView):
         project.last_edited = timezone.now()
         project.save()
 
-        create_project_form = ProjectForm()
+        create_new_project_form = ProjectForm()
         all_projects = Project.objects.filter(owner=request.user).order_by(
             "-last_edited"
         )
@@ -31,7 +31,7 @@ class EditorView(LoginRequiredMixin, TemplateView):
             {
                 "project_id": project.pk,
                 "project_name": project.name,
-                "createProjectForm": create_project_form,
+                "create_new_project_form": create_new_project_form,
                 "projects": all_projects,
             }
         )

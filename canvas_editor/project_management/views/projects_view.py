@@ -44,7 +44,7 @@ class ProjectsView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         """Add the ProjectForm to the context."""
         context = super().get_context_data(**kwargs)
-        context["form"] = ProjectForm()
+        context["create_new_project_form"] = ProjectForm()
         return context
 
     @staticmethod
@@ -89,5 +89,5 @@ class ProjectsView(LoginRequiredMixin, ListView):
                     messages.error(request, f"Error in {field.label}: {error}")
 
             context = self.get_context_data(object_list=self.get_queryset())
-            context["form"] = form
+            context["create_new_project_form"] = form
             return render(request, "project_management/projects.html", context)
