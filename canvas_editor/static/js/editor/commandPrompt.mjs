@@ -234,7 +234,7 @@ export class CommandPrompt {
       );
     }
 
-    // render new availabe commands
+    // render new available commands
     this.#currentlyAvailabeCommands.forEach((command) => {
       this.#commandListElem.appendChild(command);
       command.formatCommandName();
