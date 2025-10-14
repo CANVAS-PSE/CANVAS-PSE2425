@@ -27,7 +27,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 from canvas.message_dict import folder_not_found_text
-from canvas.path_dict import SCENARIO_FILE_SUFFIX, TEST_STRAL_DATA_PATH
+from canvas.path_dict import SCENARIO_EXT, SCENARIO_FILE_SUFFIX, TEST_STRAL_DATA_PATH
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
@@ -47,7 +47,7 @@ class HDF5Manager:
         except TypeError:
             return x
 
-    def create_hdf5_file(self, user: User, project: Project) -> None:
+    def create_hdf5_file(self, user: User, project: Project) -> pathlib.Path:
         """Create a HDF5 file for the given project.
 
         Parameters
@@ -57,6 +57,10 @@ class HDF5Manager:
         project : Project
             The project to be converted to an HDF5 file.
 
+        Return:
+        -------
+        Path
+            The path to where the hdf5 file is stored
         """
         # Set up logger.
         set_logger_config()
@@ -99,6 +103,8 @@ class HDF5Manager:
         )
         # Generate the scenario and save it to the specified HDF5 file.
         scenario_generator.generate_scenario()
+
+        return scenario_path.with_suffix(SCENARIO_EXT)
 
     def _pick_device(self) -> torch.device:
         """Pick the device for tensor operations, either CPU or CUDA if available."""
