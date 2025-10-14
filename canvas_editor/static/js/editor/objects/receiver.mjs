@@ -387,8 +387,8 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   * Get all rotable axis
-   * @returns {string[]} containing all rotable axis
+   * Get all rotatable axis
+   * @returns {string[]} containing all rotatable axis
    */
   get rotatableAxis() {
     return this.#rotatableAxis;
