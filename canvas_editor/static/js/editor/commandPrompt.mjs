@@ -258,7 +258,7 @@ export class CommandPrompt {
   }
 
   /**
-   * Calculates the first occuring intervall that contains all letters in the input in the correct order
+   * Calculates the first occurring interval that contains all letters in the input in the correct order
    * @param {string} input the input
    * @param {string} compareTo the string you want to compare against
    * @returns {number[] | null} containing all the indexes of the letter in the 'compareTo' parameter, or null if no match is found
