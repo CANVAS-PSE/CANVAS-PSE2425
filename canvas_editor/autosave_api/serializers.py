@@ -1,3 +1,11 @@
+"""Contains all the serializers for the autosave api.
+
+They are used to convert the models into JSON and back.
+A detail serializer of a model is used when the normal serializer doesn't serialize all attributs
+of the model, in most cases those would be foreign fields.
+The meta class defines the model used by serializer and also the fields that should be serialized.
+"""
+
 from rest_framework import serializers
 
 from project_management.models import (
@@ -60,7 +68,10 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
-    """Serializer to convert a project into JSON, containing all the linked foreign fields, or to convert JSON into a project."""
+    """Serializer to convert a project into JSON or to convert JSON into a project.
+
+    The ProjectDetailSerializer contains all the linked foreign fields not included in the ProjectSerializer.
+    """
 
     heliostats = HeliostatSerializer(many=True, read_only=True)
     receivers = ReceiverSerializer(many=True, read_only=True)
