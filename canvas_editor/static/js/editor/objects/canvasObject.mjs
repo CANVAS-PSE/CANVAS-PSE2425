@@ -91,7 +91,7 @@ export class CanvasObject extends Object3D {
    * Returns the axis on which the object is rotatable
    * @abstract
    * @throws {Error} - Throws an error if the method is not implemented in subclasses.
-   * @returns {string[]} array containing all reotable axis.
+   * @returns {string[]} array containing all rotatable axis.
    */
   get rotatableAxis() {
     throw new Error(methodMustBeImplementedError);
