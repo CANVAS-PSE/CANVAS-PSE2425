@@ -14,8 +14,7 @@ class DownloadView(LoginRequiredMixin, View):
         """Create and download the hdf5 file."""
         project = get_object_or_404(Project, name=project_name, owner=request.user)
 
-        hdf5_manager = HDF5Manager()
-        path = hdf5_manager.create_hdf5_file(request.user, project)
+        path = HDF5Manager.create_hdf5_file(request.user, project)
 
         f = open(path, "rb")
         response = FileResponse(f, as_attachment=True, filename=project_name + ".h5")

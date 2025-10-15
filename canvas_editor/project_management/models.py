@@ -64,14 +64,12 @@ class Receiver(models.Model):
     position_y = models.FloatField(default=50)
     position_z = models.FloatField(default=0)
 
+    # The default values of the target area match the ones used in the tutorial of ARTIST
+    # https://artist.readthedocs.io/en/latest/tutorial_generating_scenario.html#generating-a-scenario-with-stral-data
     normal_x = models.FloatField(default=0)
     normal_y = models.FloatField(default=1)
     normal_z = models.FloatField(default=0)
-
     receiver_type = models.CharField(max_length=50, default="planar")
-
-    # The default size and resolution of the target area match the ones used in the tutorial of ARTIST
-    # https://artist.readthedocs.io/en/latest/tutorial_generating_scenario.html#generating-a-scenario-with-stral-data
     plane_e = models.FloatField(default=8.629666667)
     plane_u = models.FloatField(default=7.0)
     resolution_e = models.IntegerField(default=256)
@@ -93,12 +91,12 @@ class LightSource(models.Model):
         Project, related_name="light_sources", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=200, blank=True, default="Light source")
+
+    # The default values of the light source match the ones used in the tutorial of ARTIST
+    # https://artist.readthedocs.io/en/latest/tutorial_generating_scenario.html#generating-a-scenario-with-stral-data
     number_of_rays = models.IntegerField(default=100)
     light_source_type = models.CharField(max_length=50, default="sun")
     distribution_type = models.CharField(max_length=50, default="normal")
-
-    # The default covariance and mean of the light source match the ones used in the tutorial of ARTIST
-    # https://artist.readthedocs.io/en/latest/tutorial_generating_scenario.html#generating-a-scenario-with-stral-data
     mean = models.FloatField(default=0)
     covariance = models.FloatField(default=4.3681e-06)
 
