@@ -29,11 +29,13 @@ class ProjectsView(LoginRequiredMixin, ListView):
             project.update_form = UpdateProjectForm(instance=project)
         return queryset
 
-    def _generate_uid(self, request):
+    @staticmethod
+    def _generate_uid(request):
         """Generate an url safe encoding of the user id."""
         return urlsafe_base64_encode(str(request.user.id).encode())
 
-    def _generate_token(self, project_name):
+    @staticmethod
+    def _generate_token(project_name):
         """Generate an url safe encoding of the project name."""
         return urlsafe_base64_encode(str(project_name).encode())
 
