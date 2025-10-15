@@ -54,7 +54,11 @@ class CreateProjectForm(forms.ModelForm):
         return file
 
     def save(self, commit=True):
-        """Overwrite the default save method for this form."""
+        """Expand the default save method.
+
+        Adds missing owner and last edited field values.
+        Imports the data if a file is given.
+        """
         new_project = super().save(commit=False)
         new_project.last_edited = timezone.now()
         new_project.owner = self.user

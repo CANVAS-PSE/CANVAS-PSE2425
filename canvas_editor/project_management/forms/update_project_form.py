@@ -16,10 +16,12 @@ class UpdateProjectForm(ModelForm):
         fields = ["name", "description"]
 
     def clean_name(self):
-        """Check whether the name contains any special characters."""
+        """Check whether the name contains any special characters and if the new name is unique."""
         project_name = str(self.cleaned_data.get("name")).strip().replace(" ", "_")
 
-        if not is_name_unique(self.instance.owner, project_name):
+        if (project_name != self.instance.name) and not is_name_unique(
+            self.instance.owner, project_name
+        ):
             raise ValidationError(message_dict.project_name_must_be_unique)
 
         return validate_symbols(project_name)
