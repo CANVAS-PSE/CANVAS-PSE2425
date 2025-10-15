@@ -15,6 +15,16 @@ class ProjectsView(LoginRequiredMixin, ListView):
     template_name = "project_management/projects.html"
     context_object_name = "projects"
 
+    @staticmethod
+    def _generate_uid(request):
+        """Generate an url safe encoding of the user id."""
+        return urlsafe_base64_encode(str(request.user.id).encode())
+
+    @staticmethod
+    def _generate_token(project_name):
+        """Generate an url safe encoding of the project name."""
+        return urlsafe_base64_encode(str(project_name).encode())
+
     def get_queryset(self):
         """Get a list of all projects of this user.
 
@@ -28,16 +38,6 @@ class ProjectsView(LoginRequiredMixin, ListView):
             project.token = self._generate_token(project.name)
             project.update_form = UpdateProjectForm(instance=project)
         return queryset
-
-    @staticmethod
-    def _generate_uid(request):
-        """Generate an url safe encoding of the user id."""
-        return urlsafe_base64_encode(str(request.user.id).encode())
-
-    @staticmethod
-    def _generate_token(project_name):
-        """Generate an url safe encoding of the project name."""
-        return urlsafe_base64_encode(str(project_name).encode())
 
     def get_context_data(self, **kwargs):
         """Add the ProjectForm to the context."""

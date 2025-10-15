@@ -3,7 +3,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -36,7 +36,7 @@ class UpdateAccountView(LoginRequiredMixin, View):
         profile.save()
 
     @staticmethod
-    def send_password_change_email(user, request) -> None:
+    def _send_password_change_email(user, request) -> None:
         """Send an email to the user to confirm that their password has been changed."""
         subject = "Password Change Confirmation"
 
@@ -83,7 +83,7 @@ class UpdateAccountView(LoginRequiredMixin, View):
             if old_password and new_password:
                 user.set_password(new_password)
                 update_session_auth_hash(request, user)
-                self.send_password_change_email(user, request)
+                self._send_password_change_email(user, request)
 
             self._update_profile_picture(
                 user=user,

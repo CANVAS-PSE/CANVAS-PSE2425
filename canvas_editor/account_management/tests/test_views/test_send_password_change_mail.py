@@ -44,7 +44,7 @@ class SendPasswordChangeMailTest(TestCase):
         factory = RequestFactory()
         request = factory.get("/")
 
-        UpdateAccountView.send_password_change_email(user, request)
+        UpdateAccountView._send_password_change_email(user, request)
 
         assert len(mail.outbox) == 1  # Check if one email was sent
         email = mail.outbox[0]
