@@ -17,7 +17,7 @@ class Project(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="projects")
 
     class Meta:
-        """Secifies that the name and owner field must be unique together."""
+        """Specifies that the name and owner field must be unique together."""
 
         # Make each combination of owner and project name unique
         unique_together = [["name", "owner"]]
@@ -68,8 +68,10 @@ class Receiver(models.Model):
     normal_y = models.FloatField(default=1)
     normal_z = models.FloatField(default=0)
 
-    receiver_type = models.CharField(max_length=300, default="planar")
+    receiver_type = models.CharField(max_length=50, default="planar")
 
+    # The default size and resolution of the target area match the ones used in the tutorial of ARTIST
+    # https://artist.readthedocs.io/en/latest/tutorial_generating_scenario.html#generating-a-scenario-with-stral-data
     plane_e = models.FloatField(default=8.629666667)
     plane_u = models.FloatField(default=7.0)
     resolution_e = models.IntegerField(default=256)
@@ -92,8 +94,11 @@ class LightSource(models.Model):
     )
     name = models.CharField(max_length=200, blank=True, default="Light source")
     number_of_rays = models.IntegerField(default=100)
-    light_source_type = models.CharField(max_length=300, default="sun")
-    distribution_type = models.CharField(max_length=300, default="normal")
+    light_source_type = models.CharField(max_length=50, default="sun")
+    distribution_type = models.CharField(max_length=50, default="normal")
+
+    # The default covariance and mean of the light source match the ones used in the tutorial of ARTIST
+    # https://artist.readthedocs.io/en/latest/tutorial_generating_scenario.html#generating-a-scenario-with-stral-data
     mean = models.FloatField(default=0)
     covariance = models.FloatField(default=4.3681e-06)
 
