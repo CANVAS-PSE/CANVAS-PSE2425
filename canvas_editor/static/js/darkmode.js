@@ -7,9 +7,22 @@
 (() => {
   "use strict";
 
+  /**
+   * Gets the stored theme from localStorage
+   * @returns {string|null} stored theme
+   */
   const getStoredTheme = () => localStorage.getItem("theme");
+  /**
+   * Sets the stored theme in localStorage
+   * @param {string} theme theme to store
+   * @returns {void}
+   */
   const setStoredTheme = (theme) => localStorage.setItem("theme", theme);
 
+  /**
+   * checks for stored theme and if not found, uses system preference
+   * @returns {string} preferred theme
+   */
   const getPreferredTheme = () => {
     const storedTheme = getStoredTheme();
     if (storedTheme) {
@@ -21,6 +34,10 @@
       : "light";
   };
 
+  /**
+   *
+   * @param {string}theme theme to set
+   */
   const setTheme = (theme) => {
     if (theme === "auto") {
       document.documentElement.setAttribute(
@@ -36,6 +53,10 @@
 
   setTheme(getPreferredTheme());
 
+  /**
+   *
+   * @param {string} theme theme to show
+   */
   const showActiveTheme = (theme) => {
     const themeSwitcher = document.querySelector("#theme-switcher");
 

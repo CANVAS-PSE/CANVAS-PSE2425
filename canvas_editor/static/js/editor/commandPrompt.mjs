@@ -35,7 +35,7 @@ export class CommandPrompt {
   /**
    * @type {PromptCommand[]}
    */
-  #currentlyAvailabeCommands = [];
+  #currentlyAvailableCommands = [];
   #modal;
   #selectedIndex = 0;
   /**
@@ -156,9 +156,9 @@ export class CommandPrompt {
       this.#commandInput.value = "";
       this.#commandListElem.innerHTML = "";
       this.#commandInput.focus();
-      this.#currentlyAvailabeCommands = this.#commandList;
-      this.#currentlyAvailabeCommands.forEach((command) => {
-        command.occurenceLength = null;
+      this.#currentlyAvailableCommands = this.#commandList;
+      this.#currentlyAvailableCommands.forEach((command) => {
+        command.occurrenceLength = null;
         command.selectedChars = null;
         this.#commandListElem.appendChild(command);
         command.formatCommandName();
@@ -184,7 +184,6 @@ export class CommandPrompt {
    */
   selectCommand(selectedIndex = this.#selectedIndex) {
     if (this.#selectedCommand) {
-      this.#selectedCommand.classList.remove("text-white");
       this.#selectedCommand.unselect();
     }
 
@@ -195,47 +194,45 @@ export class CommandPrompt {
     //@ts-ignore
     this.#selectedCommand = this.#commandListElem.children[this.#selectedIndex];
     this.#selectedCommand.select();
-    this.#selectedCommand.classList.add("text-white");
-    this.#selectedCommand.scrollIntoView({ block: "nearest" });
   }
 
   /**
    * Updates the command prompt for the updated input given by the user.
    */
   #updateCommandPrompt() {
-    this.#currentlyAvailabeCommands = [];
+    this.#currentlyAvailableCommands = [];
     this.#commandListElem.innerHTML = "";
 
     // reset the values for each command
     this.#commandList.forEach((command) => {
-      command.occurenceLength = null;
+      command.occurrenceLength = null;
       command.selectedChars = null;
     });
 
     // when no input is given -> render all commands
     if (this.#commandInput.value.length == 0) {
-      this.#currentlyAvailabeCommands = this.#commandList;
+      this.#currentlyAvailableCommands = this.#commandList;
     } else {
       // calculate the new available commands
       this.#commandList.forEach((command) => {
-        command.selectedChars = this.#calculateFirstOccuringIntervall(
+        command.selectedChars = this.#calculateFirstOccurringInterval(
           this.#commandInput.value.toLowerCase(),
           command.commandName.toLowerCase(),
         );
 
-        if (command.occurenceLength !== null) {
-          this.#currentlyAvailabeCommands.push(command);
+        if (command.occurrenceLength !== null) {
+          this.#currentlyAvailableCommands.push(command);
         }
       });
 
-      this.#currentlyAvailabeCommands.sort(
+      this.#currentlyAvailableCommands.sort(
         (command1, command2) =>
-          command1.occurenceLength - command2.occurenceLength,
+          command1.occurrenceLength - command2.occurrenceLength,
       );
     }
 
-    // render new availabe commands
-    this.#currentlyAvailabeCommands.forEach((command) => {
+    // render new available commands
+    this.#currentlyAvailableCommands.forEach((command) => {
       this.#commandListElem.appendChild(command);
       command.formatCommandName();
     });
@@ -251,19 +248,19 @@ export class CommandPrompt {
       }
       const noCommands = document.createElement("i");
       noCommands.classList.add("text-secondary");
-      noCommands.innerHTML = "No commands available";
+      noCommands.innerHTML = "No matching commands available";
 
       this.#commandListElem.appendChild(noCommands);
     }
   }
 
   /**
-   * Calculates the first occuring intervall that contains all letters in the input in the correct order
+   * Calculates the first occurring interval that contains all letters in the input in the correct order
    * @param {string} input the input
    * @param {string} compareTo the string you want to compare against
    * @returns {number[] | null} containing all the indexes of the letter in the 'compareTo' parameter, or null if no match is found
    */
-  #calculateFirstOccuringIntervall(input, compareTo) {
+  #calculateFirstOccurringInterval(input, compareTo) {
     const indexList = [];
 
     let lastSeenIndex = 0;
@@ -285,6 +282,6 @@ export class CommandPrompt {
    * @returns {PromptCommand[]} array of all available commands
    */
   get currentlyAvailableCommands() {
-    return this.#currentlyAvailabeCommands;
+    return this.#currentlyAvailableCommands;
   }
 }

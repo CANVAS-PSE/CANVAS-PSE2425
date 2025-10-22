@@ -7,7 +7,10 @@ from project_management.models import Project
 
 
 class UploadPreviewView(LoginRequiredMixin, View):
-    """Updates the preview of the project."""
+    """Updates the preview of the project.
+
+    Is used by the previewHandler in the editor page to update the auto-generated preview of the project.
+    """
 
     def post(self, request, project_name):
         """Upload the previed for this project."""

@@ -247,7 +247,7 @@ export class Picker {
     if (!this.#isDragging) {
       this.#onClick(event);
     } else if (this.#transformControls.object) {
-      // also checks if the object was moved or if the camara was adjusted
+      // also checks if the object was moved or if the camera was adjusted
       if (
         this.#transformControls.mode === "translate" &&
         this.#selectedObject.isMovable &&
@@ -341,10 +341,6 @@ export class Picker {
     this.#selectedObjects = [];
   }
 
-  /*
-   * Updates the selection based on the ctrlKey
-   * @param {Boolean} ctrlKey The state of the ctrlKey
-   */
   /**
    * Handles the updating of the selection when the user uses the ctrl key and clicks
    * @param {boolean} ctrlKey if the ctrl key is pressed

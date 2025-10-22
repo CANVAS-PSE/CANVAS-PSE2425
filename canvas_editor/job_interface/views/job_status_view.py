@@ -8,6 +8,7 @@ from job_interface.models import Job
 from project_management.models import Project
 
 
+# INFO: This is currently mocked, so that the frontend works correctly.
 class JobStatusView(LoginRequiredMixin, View):
     """View to get the status of a specific job."""
 

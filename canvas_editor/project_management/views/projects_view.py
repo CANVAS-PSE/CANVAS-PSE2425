@@ -20,19 +20,6 @@ class ProjectsView(LoginRequiredMixin, ListView):
     template_name = "project_management/projects.html"
     context_object_name = "projects"
 
-    def get_queryset(self):
-        """Get a list of all projects of this user.
-
-        Sorts them by data, and adds the necessary attributes for sharing.
-        """
-        queryset = Project.objects.filter(owner=self.request.user).order_by(
-            "-last_edited"
-        )
-        for project in queryset:
-            project.uid = self._generate_uid(self.request)
-            project.token = self._generate_token(project.name)
-        return queryset
-
     @staticmethod
     def _generate_uid(request):
         return urlsafe_base64_encode(str(request.user.id).encode())
@@ -40,12 +27,6 @@ class ProjectsView(LoginRequiredMixin, ListView):
     @staticmethod
     def _generate_token(project_name):
         return urlsafe_base64_encode(str(project_name).encode())
-
-    def get_context_data(self, **kwargs):
-        """Add the ProjectForm to the context."""
-        context = super().get_context_data(**kwargs)
-        context["form"] = ProjectForm()
-        return context
 
     @staticmethod
     def _create_project(
@@ -60,8 +41,26 @@ class ProjectsView(LoginRequiredMixin, ListView):
         new_project.save()
 
         if project_file is not None:
-            hdf5_manager = HDF5Manager()
-            hdf5_manager.create_project_from_hdf5_file(project_file, new_project)
+            HDF5Manager.create_project_from_hdf5_file(project_file, new_project)
+
+    def get_queryset(self):
+        """Get a list of all projects of this user.
+
+        Sorts them by data, and adds the necessary attributes for sharing.
+        """
+        queryset = Project.objects.filter(owner=self.request.user).order_by(
+            "-last_edited"
+        )
+        for project in queryset:
+            project.uid = self._generate_uid(self.request)
+            project.token = self._generate_token(project.name)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        """Add the ProjectForm to the context."""
+        context = super().get_context_data(**kwargs)
+        context["create_new_project_form"] = ProjectForm()
+        return context
 
     def post(self, request):
         """Create a new project if the form is valid and the name is unique."""
@@ -89,5 +88,5 @@ class ProjectsView(LoginRequiredMixin, ListView):
                     messages.error(request, f"Error in {field.label}: {error}")
 
             context = self.get_context_data(object_list=self.get_queryset())
-            context["form"] = form
+            context["create_new_project_form"] = form
             return render(request, "project_management/projects.html", context)

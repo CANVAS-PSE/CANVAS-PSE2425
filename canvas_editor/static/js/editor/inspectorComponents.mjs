@@ -101,7 +101,7 @@ export class SingleFieldInspectorComponent extends InspectorComponent {
       }
     });
 
-    // handle keybinds
+    // handle keybindings
     input.addEventListener("keyup", (event) => {
       if (event.key == "Escape") {
         input.value = this.#getFieldValueFunc();
@@ -132,8 +132,8 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
 
   /**
    * Creates a new multi field component.
-   * @param {string} title is the title of the field
-   * @param {InspectorComponent[]} componentList ar the single fields bundeled in the multi field
+   * @param {string} title is the title of the field.
+   * @param {InspectorComponent[]} componentList contains all the single field that should be bundled in the multi field component.
    */
   constructor(title, componentList) {
     super();
@@ -204,7 +204,7 @@ export class MultiFieldInspectorComponent extends InspectorComponent {
 }
 
 /**
- * A select field component is a dropdown were the user can choose out of a number of predefined values.
+ * A select field component is a drop-down-menu were the user can choose out of a number of predefined values.
  */
 export class SelectFieldInspectorComponent extends InspectorComponent {
   #fieldName;
@@ -248,7 +248,7 @@ export class SelectFieldInspectorComponent extends InspectorComponent {
     const select = document.createElement("select");
     select.classList.add("form-select", "rounded-1");
 
-    // Populate the dropdown with options
+    // Populate the drop-down-menu with options
     this.#options.forEach((option) => {
       const optionElement = document.createElement("option");
       optionElement.value = option.value;
@@ -379,7 +379,7 @@ export class SliderFieldInspectorComponent extends InspectorComponent {
       slider.value = this.#getFieldValueFunc();
     });
 
-    // handle keybinds
+    // handle keybindings
     input.addEventListener("keyup", (event) => {
       if (event.key == "Escape") {
         input.value = this.#getFieldValueFunc();

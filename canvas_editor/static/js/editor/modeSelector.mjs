@@ -15,7 +15,7 @@ export class ModeSelector {
   #tabButtons;
 
   /**
-   * Creates a new mode selector intance.
+   * Creates a new mode selector instance.
    * @param {Picker} picker the picker in use
    */
   constructor(picker) {

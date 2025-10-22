@@ -112,7 +112,7 @@ export class Navbar {
 
   /**
    * Sets up the keybindings modal functionality.
-   * This method adds an event listener to the client select dropdown
+   * This method adds an event listener to the client select drop-down-menu
    * and updates the content based on the selected client type.
    */
   #setUpKeybindings() {

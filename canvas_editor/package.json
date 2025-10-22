@@ -1,10 +1,10 @@
 {
   "name": "canvas_editor",
-  "version": "1.0.0",
-  "description": "",
-  "license": "ISC",
+  "version": "1.0-beta",
+  "description": "3D editor for the AI-enhanced differentiable Ray Tracer ARTIST",
+  "license": "MIT",
   "author": "",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {},
   "devDependencies": {
     "@eslint/js": "^9.33.0",

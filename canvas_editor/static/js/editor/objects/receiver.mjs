@@ -39,7 +39,7 @@ export class Receiver extends CanvasObject {
    */
   planeU;
   /**
-   * The resoultion of the target area in east direction.
+   * The resolution of the target area in east direction.
    */
   resolutionE;
   /**
@@ -387,24 +387,24 @@ export class Receiver extends CanvasObject {
   }
 
   /**
-   * Get all rotable axis
-   * @returns {string[]} containing all rotable axis
+   * Get all rotatable axis
+   * @returns {string[]} containing all rotatable axis
    */
   get rotatableAxis() {
     return this.#rotatableAxis;
   }
 
   /**
-   * Get wether the object is movable or notjh
-   * @returns {boolean} wether the object is movable
+   * Get whether the object is movable or not
+   * @returns {boolean} whether the object is movable
    */
   get isMovable() {
     return this.#isMovable;
   }
 
   /**
-   * Get wether the object is selectable
-   * @returns {boolean} wether the object is selectable
+   * Get whether the object is selectable
+   * @returns {boolean} whether the object is selectable
    */
   get isSelectable() {
     return true;

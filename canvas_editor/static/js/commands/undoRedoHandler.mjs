@@ -6,7 +6,7 @@ import { Command } from "command";
  */
 export class UndoRedoHandler {
   /** @type {UndoRedoHandler} */
-  static #intance;
+  static #instance;
 
   /**
    * A stack that stores commands that have been executed.
@@ -28,10 +28,10 @@ export class UndoRedoHandler {
    * Sets up the undo and redo stacks with a maximum size of 100 commands each.
    */
   constructor() {
-    if (UndoRedoHandler.#intance) {
+    if (UndoRedoHandler.#instance) {
       throw new Error("Can not create class directly, use getInstance instead");
     }
-    UndoRedoHandler.#intance = this;
+    UndoRedoHandler.#instance = this;
 
     this.#undoStack = [];
     this.#redoStack = [];
@@ -44,10 +44,10 @@ export class UndoRedoHandler {
    * @returns {UndoRedoHandler} the udno redo handler in use
    */
   static getInstance() {
-    if (!UndoRedoHandler.#intance) {
-      UndoRedoHandler.#intance = new UndoRedoHandler();
+    if (!UndoRedoHandler.#instance) {
+      UndoRedoHandler.#instance = new UndoRedoHandler();
     }
-    return UndoRedoHandler.#intance;
+    return UndoRedoHandler.#instance;
   }
 
   /**
