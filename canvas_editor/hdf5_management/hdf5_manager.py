@@ -5,7 +5,7 @@ import pathlib
 
 import h5py
 import torch
-from artist.data_loader import stral_loader
+from artist.data_parser import stral_scenario_parser
 from artist.scenario.configuration_classes import (
     ActuatorConfig,
     ActuatorPrototypeConfig,
@@ -146,7 +146,7 @@ class HDF5Manager:
             canting,
             surface_points_with_facets_list,
             surface_normals_with_facets_list,
-        ) = stral_loader.extract_stral_deflectometry_data(
+        ) = stral_scenario_parser.extract_stral_deflectometry_data(
             stral_file_path=stral_file_path, device=device
         )
 
