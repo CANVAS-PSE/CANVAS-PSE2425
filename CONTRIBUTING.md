@@ -5,13 +5,13 @@ By participating, you can help improve the project and make it even better :rais
 
 ## How to Contribute
 
-1. **Clone the repository**: Clone the repository to your local machine using Git :octocat::
+1. **Fork the Repository**: Click the "Fork" button at the top right corner of this repository's page to create your own copy.
 
+2. **Clone Your Fork**: Clone your forked repository to your local machine using Git :octocat::
    ```bash
    git clone https://github.com/ARTIST-Association/CANVAS.git
-   ```
-
-2. **Install all development dependencies** in a separate python virtual environment from the main branch of your repo.
+   ``
+3. **Install all development dependencies** in a separate python virtual environment from the main branch of your repo.
    This will put a number of pre-commit hooks, for code linting and code style for both Python and JavaScript, into place.
    It will also install tools like ruff and ESLint, used for development.
    Till we completely merged to a pyproject.toml you need to run the following commands:
@@ -30,10 +30,11 @@ By participating, you can help improve the project and make it even better :rais
    npm install
    ```
 
-3. **Open a new issue or choose an existing one**: When opening a new issue choose a fitting label. Assign yourself to the chosen or new issue.
-   If the issue is bigger, feel free to create a task list, and even new sub-issues.
-
-4. **Create a Branch**: Create a new branch associated with the issue via the GitHub website and follow the instructions.
+4. **Create a Branch**: Create a new branch for your contribution. Choose a descriptive name. Depending on what you want
+   to work on, prepend either of the following prefixes, `features`, `maintenance`, `bugfix`, or `hotfix`. Example:
+   ```bash
+   git checkout -b features/your-feature-name
+   ```
 
 5. **Make Changes**: Make your desired changes to the codebase. Please stick to the following guidelines:
 
@@ -139,12 +140,26 @@ By participating, you can help improve the project and make it even better :rais
 7. **Push Changes**: Push your changes to your fork on GitHub:
 
    ```bash
-   git push
+   git push origin features/your-feature-name
    ```
 
    As the remote branch is already linked
 
-8. **Open a Pull Request**: Open a pull request for this branch. The issue should be linked automatically.
+
+8. **Rebase Onto Current Main:** Rebase your feature branch onto the current main branch of the original repo. 
+   This will include any changes that might have been pushed into the main in the meantime and resolve possible conflicts.
+   To sync your fork with the original upstream repo, check out [this page](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
+   or follow the steps below. Note that before you can sync your fork with an upstream repo, you must configure a remote that points to the upstream repository in Git.
+   ```
+   cd <path/to/your/local/project/fork>
+   git fetch upstream
+   git checkout main
+   git merge upstream/main
+   git rebase main features/your-feature-name
+   ```
+
+9. **Open a Pull Request**: Go to the [original repository](https://github.com/ARTIST-Association/CANVAS.git) and click the "New Pull Request" button. Follow the guidelines in the template to submit your pull request.
+
 
 ## Code of Conduct
 
