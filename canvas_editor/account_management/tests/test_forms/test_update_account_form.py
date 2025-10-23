@@ -8,12 +8,12 @@ from canvas.message_dict import (
     email_already_in_use_text,
     incorrect_password_text,
     new_password_prompt,
-    password_digit_criterium_text,
-    password_length_criterium_text,
-    password_lowercase_criterium_text,
-    password_match_criterium_text,
-    password_special_char_criterium_text,
-    password_uppercase_criterium_text,
+    password_digit_criterion_text,
+    password_length_criterion_text,
+    password_lowercase_criterion_text,
+    password_match_criterion_text,
+    password_special_char_criterion_text,
+    password_uppercase_criterion_text,
 )
 from canvas.test_constants import (
     EMAIL_FIELD,
@@ -116,7 +116,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
         self.assert_form_error_message(
             form,
             PASSWORD_CONFIRMATION_FIELD,
-            password_match_criterium_text,
+            password_match_criterion_text,
         )
 
     def test_update_account_form_password_too_short(self):
@@ -131,7 +131,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, password_length_criterium_text
+            form, NEW_PASSWORD_FIELD, password_length_criterion_text
         )
 
     def test_update_account_form_password_no_uppercase(self):
@@ -144,7 +144,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, password_uppercase_criterium_text
+            form, NEW_PASSWORD_FIELD, password_uppercase_criterion_text
         )
 
     def test_update_account_form_password_no_lowercase(self):
@@ -159,7 +159,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, password_lowercase_criterium_text
+            form, NEW_PASSWORD_FIELD, password_lowercase_criterion_text
         )
 
     def test_update_account_form_password_no_number(self):
@@ -174,7 +174,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             }
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, password_digit_criterium_text
+            form, NEW_PASSWORD_FIELD, password_digit_criterion_text
         )
 
     def test_update_account_form_password_no_special_character(self):
@@ -189,7 +189,7 @@ class UpdateAccountFormTest(FormTestMixin, TestCase):
             },
         )
         self.assert_form_error_message(
-            form, NEW_PASSWORD_FIELD, password_special_char_criterium_text
+            form, NEW_PASSWORD_FIELD, password_special_char_criterion_text
         )
 
     def test_update_account_form_wrong_password(self):

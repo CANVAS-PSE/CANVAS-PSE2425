@@ -1,27 +1,27 @@
-# Account specifiy messages
+# Account specific messages
 
-password_length_criterium_text = "Password must be at least 8 characters long."
+password_length_criterion_text = "Password must be at least 8 characters long."
 """Message for minimum password length requirement."""
 
-password_digit_criterium_text = "Password must contain at least one digit."
+password_digit_criterion_text = "Password must contain at least one digit."
 """Message for requiring at least one digit in the password."""
 
-password_uppercase_criterium_text = (
+password_uppercase_criterion_text = (
     "Password must contain at least one uppercase letter."
 )
 """Message for requiring at least one uppercase letter in the password."""
 
-password_lowercase_criterium_text = (
+password_lowercase_criterion_text = (
     "Password must contain at least one lowercase letter."
 )
 """Message for requiring at least one lowercase letter in the password."""
 
-password_match_criterium_text = (
+password_match_criterion_text = (
     "The passwords you entered do not match. Please try again."
 )
 """Message shown when password entries do not match."""
 
-password_special_char_criterium_text = (
+password_special_char_criterion_text = (
     "Password must contain at least one special character (!@#$%^&*()-_+=<>?/)."
 )
 """Message for requiring at least one special character in the password."""

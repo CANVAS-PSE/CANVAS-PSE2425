@@ -13,7 +13,7 @@ class UploadPreviewView(LoginRequiredMixin, View):
     """
 
     def post(self, request, project_name):
-        """Upload the previed for this project."""
+        """Upload the preview for this project."""
         project = get_object_or_404(Project, name=project_name, owner=request.user)
         file = request.FILES["preview"]
 

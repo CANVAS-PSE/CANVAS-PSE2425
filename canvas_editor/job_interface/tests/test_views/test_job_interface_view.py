@@ -24,6 +24,9 @@ from project_management.models import Heliostat, LightSource, Project, Receiver
 class JobInterfaceViewTest(TestCase):
     """Tests for the job interface views."""
 
+    # Note: These tests rely on a mocked job interface. Progress and status updates are simulated
+    # based on elapsed time rather than actual backend computations.
+
     def setUp(self):
         """Set up a test user, log in, and create a test project and job for use in all tests."""
         self.client = Client()

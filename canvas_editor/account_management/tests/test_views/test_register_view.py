@@ -107,5 +107,5 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, path_dict.register_template)
-        self.assertContains(response, message_dict.password_match_criterium_text)
+        self.assertContains(response, message_dict.password_match_criterion_text)
         self.assertTrue(response.context["form"].errors)

@@ -58,7 +58,7 @@ class HDF5Manager:
         project : Project
             The project to be converted to an HDF5 file.
 
-        Return:
+        Returns
         -------
         Path
             The path to where the hdf5 file is stored

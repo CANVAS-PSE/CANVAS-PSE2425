@@ -97,7 +97,7 @@ class PasswordResetViewTest(ParameterizedViewTestMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, path_dict.password_reset_template)
         self.assertTrue(response.context["form"].errors)
-        self.assertContains(response, message_dict.password_match_criterium_text)
+        self.assertContains(response, message_dict.password_match_criterion_text)
 
     def test_post_invalid_token(self):
         """
