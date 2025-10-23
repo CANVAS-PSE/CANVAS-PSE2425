@@ -14,13 +14,13 @@ from project_management.views.utils import is_name_unique
 class UpdateProjectView(LoginRequiredMixin, FormView):
     """Hanlde updating of a project."""
 
-    template_name = view_name_dict.projects_view
+    template_name = view_name_dict.project_projects_view
     form_class = UpdateProjectForm
     http_method_names = ["post"]
 
     def get_success_url(self):
         """Get the url of the projects view at runtime."""
-        return reverse(view_name_dict.projects_view)
+        return reverse(view_name_dict.project_projects_view)
 
     def get_form_kwargs(self):
         """Add the instance to the forms key word arguments."""
@@ -50,7 +50,7 @@ class UpdateProjectView(LoginRequiredMixin, FormView):
             project.name = form_name
             project.description = form_description if form_description else ""
             project.save()
-            return HttpResponseRedirect(reverse(view_name_dict.projects_view))
+            return HttpResponseRedirect(reverse(view_name_dict.project_projects_view))
         else:
             messages.error(self.request, message_dict.project_name_must_be_unique)
 

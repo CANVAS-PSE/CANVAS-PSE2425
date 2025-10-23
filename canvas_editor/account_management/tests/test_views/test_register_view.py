@@ -39,8 +39,8 @@ class RegisterViewTests(ParameterizedViewTestMixin, TestCase):
         Creates a test user and prepares valid registration data.
         """
         self.client = Client()
-        self.register_url = reverse(view_name_dict.register_view)
-        self.projects_url = reverse(view_name_dict.projects_view)
+        self.register_url = reverse(view_name_dict.account_register_view)
+        self.projects_url = reverse(view_name_dict.account_projects_view)
         self.user = User.objects.create_user(
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,

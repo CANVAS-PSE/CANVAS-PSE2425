@@ -39,7 +39,7 @@ class DeleteAccountTest(TestCase):
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
         )
-        self.delete_account_url = reverse(view_name_dict.delete_account_view)
+        self.delete_account_url = reverse(view_name_dict.account_delete_account_view)
 
     def test_get(self):
         """
@@ -65,7 +65,7 @@ class DeleteAccountTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(view_name_dict.login_view))
+        self.assertRedirects(response, reverse(view_name_dict.account_login_view))
         self.assertNotIn("_auth_user_id", self.client.session)
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 

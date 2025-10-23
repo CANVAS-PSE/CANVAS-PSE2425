@@ -44,7 +44,7 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         self.uid = urlsafe_base64_encode(str(self.user.id).encode())
         self.token = default_token_generator.make_token(self.user)
         self.confirm_deletion_url = reverse(
-            view_name_dict.confirm_deletion_view, args=[self.uid, self.token]
+            view_name_dict.account_confirm_deletion_view, args=[self.uid, self.token]
         )
 
     def test_get(self):
@@ -66,7 +66,7 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         response = self.client.post(self.confirm_deletion_url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(view_name_dict.login_view))
+        self.assertRedirects(response, reverse(view_name_dict.account_login_view))
         self.assertFalse(User.objects.filter(id=self.user.id).exists())
 
     def test_post_invalid_token(self):
@@ -77,13 +77,15 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             reverse(
-                view_name_dict.confirm_deletion_view,
-                args=[self.uid, view_name_dict.invalid_token_view],
+                view_name_dict.account_confirm_deletion_view,
+                args=[self.uid, view_name_dict.account_invalid_token_view],
             )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
+        self.assertRedirects(
+            response, reverse(view_name_dict.account_invalid_link_view)
+        )
 
     def test_post_invalid_uid(self):
         """
@@ -93,10 +95,12 @@ class ConfirmDeletionTest(ParameterizedViewTestMixin, TestCase):
         """
         response = self.client.post(
             reverse(
-                view_name_dict.confirm_deletion_view,
-                args=[view_name_dict.invalid_uid_view, self.token],
+                view_name_dict.account_confirm_deletion_view,
+                args=[view_name_dict.account_invalid_uid_view, self.token],
             )
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(view_name_dict.invalid_link_view))
+        self.assertRedirects(
+            response, reverse(view_name_dict.account_invalid_link_view)
+        )

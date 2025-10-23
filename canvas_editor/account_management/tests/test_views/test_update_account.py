@@ -60,7 +60,7 @@ class UpdateAccountTest(TestCase):
             last_name=TEST_LAST_NAME,
         )
         self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
-        self.update_account_url = reverse(view_name_dict.update_account_view)
+        self.update_account_url = reverse(view_name_dict.account_update_account_view)
 
     def test_post_not_authenticated(self):
         """
@@ -175,7 +175,7 @@ class UpdateAccountTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(view_name_dict.projects_view))
+        self.assertRedirects(response, reverse(view_name_dict.account_projects_view))
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, NEW_TEST_FIRST_NAME)
         self.assertEqual(self.user.last_name, NEW_TEST_LAST_NAME)
@@ -191,7 +191,7 @@ class UpdateAccountTest(TestCase):
         self.client.login(username=TEST_EMAIL, password=SECURE_PASSWORD)
 
         project = Project.objects.create(
-            name=view_name_dict.test_project_view,
+            name=view_name_dict.account_test_project_view,
             owner=self.user,
         )
         editor_url = reverse(view_name_dict.editor_view, args=[project.name])
