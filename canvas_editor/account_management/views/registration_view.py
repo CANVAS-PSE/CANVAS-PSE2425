@@ -1,7 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
@@ -25,7 +25,7 @@ class RegistrationView(FormView):
 
     def get_success_url(self):
         """Get the url that the user gets redirected to on success."""
-        return reverse(view_name_dict.projects_view)
+        return reverse(view_name_dict.account_projects_view)
 
     @staticmethod
     def send_register_email(user, request) -> None:
@@ -59,7 +59,7 @@ class RegistrationView(FormView):
     def dispatch(self, request, *args, **kwargs):
         """Deside where to dispatch this request to or to redirect to the projects overview."""
         if request.user.is_authenticated:
-            return redirect(view_name_dict.projects_view)
+            return redirect(view_name_dict.account_projects_view)
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form) -> HttpResponse:

@@ -35,8 +35,8 @@ class LoginViewTest(ParameterizedViewTestMixin, TestCase):
         Creates a test user for login tests.
         """
         self.client = Client()
-        self.login_url = reverse(view_name_dict.login_view)
-        self.projects_url = reverse(view_name_dict.projects_view)
+        self.login_url = reverse(view_name_dict.account_login_view)
+        self.projects_url = reverse(view_name_dict.account_projects_view)
         self.user = User.objects.create_user(
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,

@@ -28,8 +28,8 @@ class LogoutViewTest(TestCase):
         Creates a test user and logs them in for logout tests.
         """
         self.client = Client()
-        self.logout_url = reverse(view_name_dict.logout_view)
-        self.login_url = reverse(view_name_dict.login_view)
+        self.logout_url = reverse(view_name_dict.account_logout_view)
+        self.login_url = reverse(view_name_dict.account_login_view)
         self.user = User.objects.create_user(
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,

@@ -42,7 +42,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
             first_name=TEST_FIRST_NAME,
             last_name=TEST_LAST_NAME,
         )
-        self.login_url = reverse(view_name_dict.login_view)
+        self.login_url = reverse(view_name_dict.account_login_view)
 
     def test_get(self):
         """
@@ -63,7 +63,7 @@ class LoginTest(ParameterizedViewTestMixin, TestCase):
             {EMAIL_FIELD: TEST_EMAIL, PASSWORD_FIELD: SECURE_PASSWORD},
         )
 
-        self.assertRedirects(response, reverse(view_name_dict.projects_view))
+        self.assertRedirects(response, reverse(view_name_dict.account_projects_view))
 
     def test_post_invalid(self):
         """

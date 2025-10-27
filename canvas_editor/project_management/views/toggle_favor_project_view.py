@@ -14,4 +14,4 @@ class ToggleFavorProject(LoginRequiredMixin, View):
         project = get_object_or_404(Project, owner=request.user, name=project_name)
         project.favorite = False if project.favorite else True
         project.save(update_fields=["favorite"])
-        return redirect(view_name_dict.projects_view)
+        return redirect(view_name_dict.project_projects_view)

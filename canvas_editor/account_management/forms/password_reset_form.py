@@ -21,23 +21,23 @@ class PasswordResetForm(forms.Form):
         new_password = str(self.cleaned_data.get("new_password"))
 
         if len(new_password) < 8:
-            self.add_error("new_password", message_dict.password_length_criterium_text)
+            self.add_error("new_password", message_dict.password_length_criterion_text)
         if not any(char.isdigit() for char in new_password):
-            self.add_error("new_password", message_dict.password_digit_criterium_text)
+            self.add_error("new_password", message_dict.password_digit_criterion_text)
         if not any(char.isupper() for char in new_password):
             self.add_error(
-                "new_password", message_dict.password_uppercase_criterium_text
+                "new_password", message_dict.password_uppercase_criterion_text
             )
         if not any(char.islower() for char in new_password):
             self.add_error(
-                "new_password", message_dict.password_lowercase_criterium_text
+                "new_password", message_dict.password_lowercase_criterion_text
             )
         if not any(
             char in message_dict.password_special_characters for char in new_password
         ):
             self.add_error(
                 "new_password",
-                message_dict.password_special_char_criterium_text,
+                message_dict.password_special_char_criterion_text,
             )
         return new_password
 
@@ -53,7 +53,7 @@ class PasswordResetForm(forms.Form):
         if new_password != password_confirmation:
             self.add_error(
                 "password_confirmation",
-                message_dict.password_match_criterium_text,
+                message_dict.password_match_criterion_text,
             )
 
         return cleaned_data

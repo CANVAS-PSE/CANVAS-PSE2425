@@ -14,4 +14,4 @@ class DeleteProjectView(LoginRequiredMixin, View):
         project = Project.objects.get(owner=request.user, name=project_name)
         if project.owner == request.user:
             project.delete()
-            return redirect(view_name_dict.projects_view)
+            return redirect(view_name_dict.project_projects_view)

@@ -18,7 +18,7 @@ class PasswordResetView(FormView):
 
     def get_success_url(self):
         """Get the url where the user gets redirected at runtime."""
-        return reverse(view_name_dict.login_view)
+        return reverse(view_name_dict.account_login_view)
 
     def dispatch(self, request, uidb64, token):
         """Decide where to dispatch this request to.
@@ -29,10 +29,10 @@ class PasswordResetView(FormView):
             uid = urlsafe_base64_decode(uidb64).decode()
             self.user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return redirect(view_name_dict.invalid_link_view)
+            return redirect(view_name_dict.account_invalid_link_view)
 
         if not default_token_generator.check_token(self.user, token):
-            return redirect(view_name_dict.invalid_link_view)
+            return redirect(view_name_dict.account_invalid_link_view)
 
         return super().dispatch(request)
 

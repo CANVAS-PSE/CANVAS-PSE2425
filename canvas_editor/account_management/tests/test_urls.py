@@ -13,15 +13,23 @@ from account_management.views.update_account_view import UpdateAccountView
 from canvas import view_name_dict
 
 URLS_TO_VIEWS = [
-    (view_name_dict.login_view, (), LoginView),
-    (view_name_dict.register_view, (), RegistrationView),
-    (view_name_dict.logout_view, (), LogoutView),
-    (view_name_dict.update_account_view, (), UpdateAccountView),
-    (view_name_dict.delete_account_view, (), DeleteAccountView),
-    (view_name_dict.password_reset_view, ("uidb64", "token"), PasswordResetView),
-    (view_name_dict.invalid_link_view, (), InvalidLinkView),
-    (view_name_dict.confirm_deletion_view, ("uidb64", "token"), ConfirmDeletionView),
-    (view_name_dict.password_forgotten_view, (), PasswordForgottenView),
+    (view_name_dict.account_login_view, (), LoginView),
+    (view_name_dict.account_register_view, (), RegistrationView),
+    (view_name_dict.account_logout_view, (), LogoutView),
+    (view_name_dict.account_update_account_view, (), UpdateAccountView),
+    (view_name_dict.account_delete_account_view, (), DeleteAccountView),
+    (
+        view_name_dict.account_password_reset_view,
+        ("uidb64", "token"),
+        PasswordResetView,
+    ),
+    (view_name_dict.account_invalid_link_view, (), InvalidLinkView),
+    (
+        view_name_dict.account_confirm_deletion_view,
+        ("uidb64", "token"),
+        ConfirmDeletionView,
+    ),
+    (view_name_dict.account_password_forgotten_view, (), PasswordForgottenView),
 ]
 
 

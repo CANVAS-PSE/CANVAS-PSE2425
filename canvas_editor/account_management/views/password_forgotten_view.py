@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -20,7 +20,7 @@ class PasswordForgottenView(FormView):
 
     def get_success_url(self):
         """Get the login view url at runtime."""
-        return reverse(view_name_dict.login_view)
+        return reverse(view_name_dict.account_login_view)
 
     @staticmethod
     def send_password_forgotten_email(user, request):
