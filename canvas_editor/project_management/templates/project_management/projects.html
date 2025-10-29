@@ -1,7 +1,7 @@
-{% extends "base.html" %} 
-{% load static %} 
-{% load custom_filters %} 
-{% block style %} 
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block style %}
   {{ block.super }}
   <link href="{% static 'css/editor.css' %}" rel="stylesheet" type="text/css" />
 {% endblock %}
@@ -23,11 +23,11 @@
   import { ProjectOverviewManager } from "{% static 'js/projectOverviewManager.mjs' %}";
   const manager = new ProjectOverviewManager();
 </script>
-{% endif %} 
-{% endblock script %} 
+{% endif %}
+{% endblock script %}
 {% block body %}
 <!--create project modal-->
-{% include "project_management/modals/createProjectModal.html" %}
+{% include "modals/createNewProjectModal.html" %}
 <!-- message system -->
 {% include "messageSystem.html" %}
 <!--project overview-->
@@ -62,11 +62,11 @@
         You currently have no projects to work on. Create one to get started!
       </i>
     </div>
-    {% else %} 
+    {% else %}
     {% for project in projects %}
     <!--project card-->
-    {% include "project_management/project.html" %} 
-    {% endfor %} 
+    {% include "project_management/project.html" %}
+    {% endfor %}
     {% endif %}
   </div>
   <!-- user -->

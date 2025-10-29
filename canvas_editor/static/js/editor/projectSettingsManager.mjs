@@ -96,7 +96,7 @@ export class ProjectSettingsManager {
       },
     ];
 
-    graphicSettings.forEach(({ label, key, enabled, apply }) => {
+    for (const { label, key, enabled, apply } of graphicSettings) {
       const checkbox = this.#createCheckbox(
         label,
         enabled,
@@ -106,7 +106,7 @@ export class ProjectSettingsManager {
         },
       );
       this.#graphicsSettingsEntry.appendChild(checkbox);
-    });
+    }
   }
 
   /**

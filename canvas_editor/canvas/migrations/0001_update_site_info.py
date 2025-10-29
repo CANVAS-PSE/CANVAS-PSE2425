@@ -6,12 +6,12 @@ from django.db.migrations.state import StateApps
 
 def update_default_site(apps: StateApps, _) -> None:
     """Update the default name and URL of the Django site."""
-    Site = apps.get_model("sites", "Site")
+    site = apps.get_model("sites", "Site")
 
     domain = "canvas-editor.org"
     name = "CANVAS"
 
-    Site.objects.update_or_create(pk=1, defaults={"domain": domain, "name": name})
+    site.objects.update_or_create(pk=1, defaults={"domain": domain, "name": name})
 
 
 class Migration(migrations.Migration):

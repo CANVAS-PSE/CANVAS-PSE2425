@@ -29,7 +29,7 @@
       return storedTheme;
     }
 
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
+    return globalThis.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
   };
@@ -85,7 +85,7 @@
         const theme = document.querySelector("#theme-switcher").value;
         setStoredTheme(theme);
         setTheme(theme);
-        showActiveTheme(theme, true);
+        showActiveTheme(theme);
       });
   });
 })();

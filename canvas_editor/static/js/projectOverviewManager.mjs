@@ -7,11 +7,11 @@ export class ProjectOverviewManager {
    */
   constructor() {
     // handle all favorite buttons
-    document.querySelectorAll(".favoriteButton").forEach((button) => {
+    for (const button of document.querySelectorAll(".favoriteButton")) {
       button.addEventListener("click", () => {
         this.#toggleFavorite(button);
       });
-    });
+    }
 
     this.#handleFavoriteFilter();
   }
@@ -42,7 +42,7 @@ export class ProjectOverviewManager {
     } else {
       throw new Error(`invalid favorite state for project ${projectName}`);
     }
-    fetch(window.location + "toggle_favor/" + projectName, {
+    fetch(globalThis.location + "toggle_favor/" + projectName, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,20 +84,15 @@ export class ProjectOverviewManager {
       );
 
     favoriteSwitch.addEventListener("change", () => {
-      document.querySelectorAll(".project").forEach((project) => {
-        if (favoriteSwitch.checked) {
-          if (project.dataset.isFavorite == "true") {
-            project.classList.add("d-block");
-            project.classList.remove("d-none");
-          } else {
-            project.classList.add("d-none");
-            project.classList.remove("d-block");
-          }
+      for (const project of document.querySelectorAll(".project")) {
+        if (favoriteSwitch.checked && project.dataset.isFavorite == "False") {
+          project.classList.add("d-none");
+          project.classList.remove("d-block");
         } else {
           project.classList.add("d-block");
           project.classList.remove("d-none");
         }
-      });
+      }
     });
   }
 

@@ -470,7 +470,7 @@ export class OpenSettingsPromptCommand extends PromptCommand {
    * Executes the open settings command.
    */
   execute() {
-    window.location.href = "/settings/change_username";
+    globalThis.location.href = "/settings/change_username";
   }
 }
 
@@ -542,14 +542,14 @@ export class LogoutPromptCommand extends PromptCommand {
    * Executes the logout command.
    */
   execute() {
-    fetch(window.location.origin + "/accounts/logout/", {
+    fetch(globalThis.location.origin + "/accounts/logout/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": SaveAndLoadHandler.getCookie("csrftoken"),
       },
     }).then(() => {
-      window.location.href = "/accounts/login";
+      globalThis.location.href = "/accounts/login";
     });
   }
 }
