@@ -31,12 +31,12 @@ from canvas.test_constants import (
     TEST_USERNAME,
 )
 from canvas.view_name_dict import (
-    heliostat_detail_view,
-    light_source_detail_view,
-    project_detail_view,
-    project_list_view,
-    receiver_detail_view,
-    settings_detail_view,
+    autosave_heliostat_detail_view,
+    autosave_light_source_detail_view,
+    autosave_project_detail_view,
+    autosave_project_list_view,
+    autosave_receiver_detail_view,
+    autosave_settings_detail_view,
 )
 from project_management.models import (
     Heliostat,
@@ -61,7 +61,7 @@ class APITestCase(TestCase):
 
     def test_create_project(self):
         """Test creating a new project via the API."""
-        url = reverse(project_list_view)
+        url = reverse(autosave_project_list_view)
         data = {"name": NEW_PROJECT_NAME}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -69,7 +69,7 @@ class APITestCase(TestCase):
 
     def test_get_projects(self):
         """Test retrieving the list of projects for the logged-in user."""
-        url = reverse(project_list_view)
+        url = reverse(autosave_project_list_view)
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -77,7 +77,7 @@ class APITestCase(TestCase):
 
     def test_get_project_detail(self):
         """Test retrieving the details of a specific project."""
-        url = reverse(project_detail_view, kwargs={"pk": self.project.id})
+        url = reverse(autosave_project_detail_view, kwargs={"pk": self.project.id})
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], self.project.name)
@@ -95,7 +95,7 @@ class APITestCase(TestCase):
         heliostat.kinematic_type = TEST_TYPE
         heliostat.save()
         url = reverse(
-            heliostat_detail_view,
+            autosave_heliostat_detail_view,
             kwargs={"project_id": self.project.id, "pk": heliostat.id},
         )
         response = self.client.get(url, format="json")
@@ -121,7 +121,7 @@ class APITestCase(TestCase):
         receiver.resolution_u = POSITION_COORDINATE
         receiver.save()
         url = reverse(
-            receiver_detail_view,
+            autosave_receiver_detail_view,
             kwargs={"project_id": self.project.id, "pk": receiver.id},
         )
         response = self.client.get(url, format="json")
@@ -142,7 +142,7 @@ class APITestCase(TestCase):
         light_source.save()
 
         url = reverse(
-            light_source_detail_view,
+            autosave_light_source_detail_view,
             kwargs={"project_id": self.project.id, "pk": light_source.id},
         )
         response = self.client.get(url, format="json")
@@ -152,7 +152,9 @@ class APITestCase(TestCase):
     def test_update_settings(self):
         """Test updating the settings for a project."""
         settings = Settings.objects.get(project=self.project)
-        url = reverse(settings_detail_view, kwargs={"project_id": self.project.id})
+        url = reverse(
+            autosave_settings_detail_view, kwargs={"project_id": self.project.id}
+        )
         data = {"shadows": False, "fog": False}
         response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)

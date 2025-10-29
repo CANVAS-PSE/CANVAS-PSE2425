@@ -88,4 +88,4 @@ class SharedProjectView(LoginRequiredMixin, View):
         settings.project = project
         settings.save()
 
-        return redirect(view_name_dict.projects_view)
+        return redirect(view_name_dict.project_projects_view)

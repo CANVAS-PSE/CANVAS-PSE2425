@@ -14,7 +14,7 @@ from canvas.test_constants import (
     TEST_PROJECT_NAME,
     TEST_USERNAME,
 )
-from canvas.view_name_dict import upload_view
+from canvas.view_name_dict import editor_upload_view
 from project_management.models import Project
 
 
@@ -24,7 +24,7 @@ class PreviewViewTest(TestCase):
     def setUp(self):
         """Set up a test user, log in, and create a test project for use in all tests."""
         self.upload = reverse(
-            upload_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
+            editor_upload_view, kwargs={PROJECT_NAME_FIELD: TEST_PROJECT_NAME}
         )
         user = User.objects.create_user(
             username=TEST_USERNAME, password=SECURE_PASSWORD

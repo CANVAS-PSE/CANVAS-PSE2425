@@ -15,4 +15,4 @@ class ShareProjectView(LoginRequiredMixin, View):
         project = get_object_or_404(Project, owner=request.user, name=project_name)
         project.last_shared = timezone.now()
         project.save()
-        return redirect(view_name_dict.projects_view)
+        return redirect(view_name_dict.project_projects_view)

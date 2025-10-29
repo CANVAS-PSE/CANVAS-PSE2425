@@ -10,35 +10,35 @@ from project_management.views.toggle_favor_project_view import ToggleFavorProjec
 from project_management.views.update_project_view import UpdateProjectView
 
 urlpatterns = [
-    path("", ProjectsView.as_view(), name=view_name_dict.projects_view),
+    path("", ProjectsView.as_view(), name=view_name_dict.project_projects_view),
     path(
         "updateProject/<str:project_name>",
         UpdateProjectView.as_view(),
-        name=view_name_dict.update_project_view,
+        name=view_name_dict.project_update_project_view,
     ),
     path(
         "deleteProject/<str:project_name>",
         DeleteProjectView.as_view(),
-        name=view_name_dict.delete_project_view,
+        name=view_name_dict.project_delete_project_view,
     ),
     path(
         "toggle_favor/<str:project_name>",
         ToggleFavorProject.as_view(),
-        name=view_name_dict.toggle_favor_project_view,
+        name=view_name_dict.project_toggle_favor_project_view,
     ),
     path(
         "duplicateProject/<str:project_name>",
         DuplicateProjectView.as_view(),
-        name=view_name_dict.duplicate_project_view,
+        name=view_name_dict.project_duplicate_project_view,
     ),
     path(
         "shareProject/<str:project_name>",
         ShareProjectView.as_view(),
-        name=view_name_dict.share_project_view,
+        name=view_name_dict.project_share_project_view,
     ),
     path(
         "sharedProjects/<str:uid>/<str:token>",
         SharedProjectView.as_view(),
-        name=view_name_dict.shared_projects_view,
+        name=view_name_dict.project_shared_projects_view,
     ),
 ]

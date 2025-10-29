@@ -16,13 +16,16 @@ from canvas.test_constants import (
     TEST_PROJECT_NAME,
     TEST_USERNAME,
 )
-from canvas.view_name_dict import create_new_job_view, job_status_view
+from canvas.view_name_dict import job_create_new_job_view, job_status_view
 from job_interface.models import Job
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
 
 class JobInterfaceViewTest(TestCase):
     """Tests for the job interface views."""
+
+    # Note: These tests rely on a mocked job interface. Progress and status updates are simulated
+    # based on elapsed time rather than actual backend computations.
 
     def setUp(self):
         """Set up a test user, log in, and create a test project and job for use in all tests."""
@@ -42,7 +45,7 @@ class JobInterfaceViewTest(TestCase):
         self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         # urls
-        self.createNewJob_url = reverse(create_new_job_view, args=[self.project.pk])
+        self.createNewJob_url = reverse(job_create_new_job_view, args=[self.project.pk])
         self.getJobStatus_url = reverse(
             job_status_view, args=[self.project.pk, self.job.pk]
         )
