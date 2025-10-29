@@ -23,14 +23,13 @@ job_create_new_job_view = "createNewJob"
 job_status_view = "jobStatus"
 
 # project management
-projects_view = "projects"
-update_project_view = "updateProject"
-delete_project_view = "deleteProject"
-toggle_favor_project_view = "toggleFavor"
-duplicate_project_view = "duplicateProject"
-share_project_view = "shareProject"
-shared_projects_view = "sharedProjects"
-projects_view = "projects"
+project_update_project_view = "updateProject"
+project_delete_project_view = "deleteProject"
+project_toggle_favor_project_view = "toggleFavor"
+project_duplicate_project_view = "duplicateProject"
+project_share_project_view = "shareProject"
+project_shared_projects_view = "sharedProjects"
+project_projects_view = "projects"
 
 # user settings
 change_username = "change_username"
