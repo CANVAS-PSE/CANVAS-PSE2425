@@ -18,7 +18,7 @@ class DeleteAccountView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         """Get the url of the login page at runtime."""
-        return reverse(view_name_dict.login_view)
+        return reverse(view_name_dict.account_login_view)
 
     def get_form_kwargs(self):
         """Pass the user to the form."""
@@ -33,7 +33,7 @@ class DeleteAccountView(LoginRequiredMixin, FormView):
                 messages.error(self.request, f"Error in {field.label}: {error}")
 
         return redirect(
-            self.request.META.get("HTTP_REFERER", view_name_dict.projects_view)
+            self.request.META.get("HTTP_REFERER", view_name_dict.account_projects_view)
         )
 
     def form_valid(self, form):

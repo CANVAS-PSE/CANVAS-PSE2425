@@ -19,12 +19,12 @@ class LoginView(FormView):
         Redirects the user to the projects overview page if logged in.
         """
         if request.user.is_authenticated:
-            return redirect(view_name_dict.projects_view)
+            return redirect(view_name_dict.account_projects_view)
         return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         """Get the projects url at runtime."""
-        return reverse(view_name_dict.projects_view)
+        return reverse(view_name_dict.account_projects_view)
 
     def form_invalid(self, form):
         """Handle invalid login form."""

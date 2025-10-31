@@ -56,7 +56,7 @@ OPENID_PROVIDER_FIELD = "google"
 CHECKBOX_TRUE = "1"
 CHECKBOX_FALSE = "0"
 
-# Constants for project_managment tests
+# Constants for project_management tests
 TEST_HELIOSTAT_NAME = "Heliostat"
 TEST_LIGHT_SOURCE_NAME = "Light source"
 TEST_RECEIVER_NAME = "Receiver"

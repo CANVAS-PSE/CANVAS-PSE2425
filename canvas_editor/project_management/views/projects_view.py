@@ -28,7 +28,7 @@ class ProjectsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         """Get a list of all projects of this user.
 
-        Sorts them by data, and adds the necessary attributes for sharing.
+        Sorts them by date, and adds the necessary attributes for sharing.
         """
         queryset = Project.objects.filter(owner=self.request.user).order_by(
             "-last_edited"

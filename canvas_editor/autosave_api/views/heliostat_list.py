@@ -18,7 +18,7 @@ class HeliostatList(generics.ListCreateAPIView):
     # Overwrite the default function to use the project defined by the project_id in the url for saving the heliostat
     def perform_create(self, serializer):
         """Save the new heliostat with the project defined by the project_id in the url."""
-        # kwargs = keyword arguement
+        # kwargs = keyword arguments
         project_id = self.kwargs["project_id"]
         project = generics.get_object_or_404(
             Project, id=project_id, owner=self.request.user

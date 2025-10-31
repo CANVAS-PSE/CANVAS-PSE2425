@@ -19,7 +19,7 @@ class InvalidLinkTest(ParameterizedViewTestMixin, TestCase):
     def setUp(self):
         """Set up the test client and invalid link URL for each test."""
         self.client = Client()
-        self.invalid_link_url = reverse(view_name_dict.invalid_link_view)
+        self.invalid_link_url = reverse(view_name_dict.account_invalid_link_view)
 
     def test_get(self):
         """

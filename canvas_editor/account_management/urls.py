@@ -13,42 +13,46 @@ from account_management.views.update_account_view import UpdateAccountView
 from canvas import view_name_dict
 
 urlpatterns = [
-    path("", LoginView.as_view(), name=view_name_dict.login_view),
-    path("register/", RegistrationView.as_view(), name=view_name_dict.register_view),
-    path("logout/", LogoutView.as_view(), name=view_name_dict.logout_view),
+    path("", LoginView.as_view(), name=view_name_dict.account_login_view),
+    path(
+        "register/",
+        RegistrationView.as_view(),
+        name=view_name_dict.account_register_view,
+    ),
+    path("logout/", LogoutView.as_view(), name=view_name_dict.account_logout_view),
     path(
         "update_account/",
         UpdateAccountView.as_view(),
-        name=view_name_dict.update_account_view,
+        name=view_name_dict.account_update_account_view,
     ),
     path(
         "delete_account/",
         DeleteAccountView.as_view(),
-        name=view_name_dict.delete_account_view,
+        name=view_name_dict.account_delete_account_view,
     ),
     path(
         "password_reset/<uidb64>/<token>/",
         PasswordResetView.as_view(),
-        name=view_name_dict.password_reset_view,
+        name=view_name_dict.account_password_reset_view,
     ),
     path(
         "invalid_link/",
         InvalidLinkView.as_view(),
-        name=view_name_dict.invalid_link_view,
+        name=view_name_dict.account_invalid_link_view,
     ),
     path(
         "confirm_deletion/<uidb64>/<token>/",
         ConfirmDeletionView.as_view(),
-        name=view_name_dict.confirm_deletion_view,
+        name=view_name_dict.account_confirm_deletion_view,
     ),
     path(
         "password_forgotten_view/",
         PasswordForgottenView.as_view(),
-        name=view_name_dict.password_forgotten_view,
+        name=view_name_dict.account_password_forgotten_view,
     ),
     path(
         "get_user_info/",
         GetUserInfoView.as_view(),
-        name=view_name_dict.get_user_info_view,
+        name=view_name_dict.account_get_user_info_view,
     ),
 ]

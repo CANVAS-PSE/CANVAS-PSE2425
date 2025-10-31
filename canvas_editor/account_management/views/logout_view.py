@@ -11,4 +11,4 @@ class LogoutView(View):
     def post(self, request):
         """Log out the current user and redirect to the login page."""
         logout(request)
-        return redirect(view_name_dict.login_view)
+        return redirect(view_name_dict.account_login_view)

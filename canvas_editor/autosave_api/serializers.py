@@ -1,7 +1,7 @@
 """Contains all the serializers for the autosave api.
 
 They are used to convert the models into JSON and back.
-A detail serializer of a model is used when the normal serializer doesn't serialize all attributs
+A detail serializer of a model is used when the normal serializer doesn't serialize all attributes
 of the model, in most cases those would be foreign fields.
 The meta class defines the model used by serializer and also the fields that should be serialized.
 """

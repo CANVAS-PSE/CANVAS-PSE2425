@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                     models.DateTimeField(default=django.utils.timezone.now),
                 ),
                 ("last_shared", models.DateTimeField(blank=True, null=True)),
-                ("favorite", models.CharField(default="false", max_length=5)),
+                ("favorite", models.BooleanField(default=False)),
                 ("preview", models.ImageField(upload_to="project_previews/")),
                 (
                     "owner",

@@ -35,19 +35,19 @@ class RegisterForm(forms.Form):
         password = str(self.cleaned_data.get("password"))
 
         if len(password) < 8:
-            self.add_error("password", message_dict.password_length_criterium_text)
+            self.add_error("password", message_dict.password_length_criterion_text)
         if not any(char.isdigit() for char in password):
-            self.add_error("password", message_dict.password_digit_criterium_text)
+            self.add_error("password", message_dict.password_digit_criterion_text)
         if not any(char.isupper() for char in password):
-            self.add_error("password", message_dict.password_uppercase_criterium_text)
+            self.add_error("password", message_dict.password_uppercase_criterion_text)
         if not any(char.islower() for char in password):
-            self.add_error("password", message_dict.password_lowercase_criterium_text)
+            self.add_error("password", message_dict.password_lowercase_criterion_text)
         if not any(
             char in message_dict.password_special_characters for char in password
         ):
             self.add_error(
                 "password",
-                message_dict.password_special_char_criterium_text,
+                message_dict.password_special_char_criterion_text,
             )
         return password
 
@@ -61,6 +61,6 @@ class RegisterForm(forms.Form):
         password_confirmation = self.cleaned_data.get("password_confirmation")
 
         if password != password_confirmation:
-            self.add_error("password", message_dict.password_match_criterium_text)
+            self.add_error("password", message_dict.password_match_criterion_text)
 
         return cleaned_data

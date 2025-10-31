@@ -35,7 +35,7 @@ class GetUserInfoTest(TestCase):
         self.user = User.objects.create_user(
             username=TEST_USERNAME, email=TEST_EMAIL, password=SECURE_PASSWORD
         )
-        self.get_user_info_url = reverse(view_name_dict.get_user_info_view)
+        self.get_user_info_url = reverse(view_name_dict.account_get_user_info_view)
 
     def test_get_user_info_not_authenticated(self):
         """

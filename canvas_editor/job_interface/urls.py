@@ -8,7 +8,7 @@ urlpatterns = [
     path(
         "<str:project_id>/",
         JobManagementView.as_view(),
-        name=view_name_dict.create_new_job_view,
+        name=view_name_dict.job_create_new_job_view,
     ),
     path(
         "<str:project_id>/<int:job_id>/",

@@ -21,9 +21,9 @@ class ConfirmDeletionView(View):
             uid = urlsafe_base64_decode(uidb64).decode()
             self.user = get_user_model().objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return redirect(view_name_dict.invalid_link_view)
+            return redirect(view_name_dict.account_invalid_link_view)
         if not default_token_generator.check_token(self.user, token):
-            return redirect(view_name_dict.invalid_link_view)
+            return redirect(view_name_dict.account_invalid_link_view)
 
         return super().dispatch(request)
 
@@ -35,4 +35,4 @@ class ConfirmDeletionView(View):
         """Delete and logout the user."""
         logout(request)
         self.user.delete()
-        return redirect(view_name_dict.login_view)
+        return redirect(view_name_dict.account_login_view)

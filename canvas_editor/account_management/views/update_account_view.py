@@ -96,4 +96,6 @@ class UpdateAccountView(LoginRequiredMixin, View):
             for field in form:
                 for error in field.errors:
                     messages.error(request, f"Error in {field.label}: {error}")
-        return redirect(request.META.get("HTTP_REFERER", view_name_dict.projects_view))
+        return redirect(
+            request.META.get("HTTP_REFERER", view_name_dict.account_projects_view)
+        )

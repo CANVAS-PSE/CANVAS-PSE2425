@@ -33,13 +33,13 @@ from canvas.test_constants import (
     UPDATED_PROJECT_NAME,
 )
 from canvas.view_name_dict import (
-    delete_project_view,
-    duplicate_project_view,
-    projects_view,
-    share_project_view,
-    shared_projects_view,
-    toggle_favor_project_view,
-    update_project_view,
+    project_delete_project_view,
+    project_duplicate_project_view,
+    project_projects_view,
+    project_share_project_view,
+    project_shared_projects_view,
+    project_toggle_favor_project_view,
+    project_update_project_view,
 )
 from project_management.models import Heliostat, LightSource, Project, Receiver
 
@@ -64,18 +64,24 @@ class ProjectPageTest(TestCase):
         self.client.login(username=TEST_USERNAME, password=SECURE_PASSWORD)
 
         # urls
-        self.projects_url = reverse(projects_view)
-        self.update_project_url = reverse(update_project_view, args=[self.project.name])
+        self.projects_url = reverse(project_projects_view)
+        self.update_project_url = reverse(
+            project_update_project_view, args=[self.project.name]
+        )
         self.toogle_favor_project_url = reverse(
-            toggle_favor_project_view, args=[self.project.name]
+            project_toggle_favor_project_view, args=[self.project.name]
         )
-        self.delete_project_url = reverse(delete_project_view, args=[self.project.name])
+        self.delete_project_url = reverse(
+            project_delete_project_view, args=[self.project.name]
+        )
         self.duplicate_project_url = reverse(
-            duplicate_project_view, args=[self.project.name]
+            project_duplicate_project_view, args=[self.project.name]
         )
-        self.share_project_url = reverse(share_project_view, args=[self.project.name])
+        self.share_project_url = reverse(
+            project_share_project_view, args=[self.project.name]
+        )
         self.shared_projects_url = reverse(
-            shared_projects_view,
+            project_shared_projects_view,
             args=[
                 urlsafe_base64_encode(str(self.user.pk).encode()),
                 urlsafe_base64_encode(str(self.project.name).encode()),
