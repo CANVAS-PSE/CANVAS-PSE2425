@@ -15,7 +15,7 @@ class UpdateProjectView(LoginRequiredMixin, UpdateView):
     model = Project
     form_class = UpdateProjectForm
     http_method_names = ["post"]
-    success_url = reverse_lazy(view_name_dict.projects_view)
+    success_url = reverse_lazy(view_name_dict.project_projects_view)
 
     def get_object(self, queryset=None):
         """Get the project you should update."""
@@ -29,4 +29,4 @@ class UpdateProjectView(LoginRequiredMixin, UpdateView):
             for error in field.errors:
                 messages.error(self.request, f"Error in {field.label}: {error}")
 
-        return redirect(view_name_dict.projects_view)
+        return redirect(view_name_dict.project_projects_view)
